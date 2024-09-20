@@ -1,6 +1,6 @@
 # Goal - $i^{th}$ : The Meal Planner
 
-Goal - $i^{th}$ utlizes linear programming to optimize dietary plans based on goals defined by you. It adjusts the quantity of food items available for your consumption to meet macronutrient requirements while minimizing the total cost of the diet.
+Goal - $i^{th}$ is a Python-based tool that uses linear programming to create personalized, cost-effective meal plans while meeting specific nutritional requirements. It takes into account both macronutrients (proteins, carbohydrates, fats) and micronutrients (vitamins, minerals) to ensure a balanced diet tailored to your age, gender, and health goals.
 
 **Activity Multiplier Guide:**
 
