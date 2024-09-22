@@ -4,6 +4,7 @@ import numpy as np
 from scipy.optimize import linprog
 import calculator_functions as cf
 import helper_functions as hf
+import os
 
 app = Flask(__name__)
 
@@ -146,4 +147,5 @@ def optimize():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
+    app.run(debug=debug_mode)
