@@ -58,8 +58,8 @@ def calculate():
         print("Calculated result:", result)
         return jsonify(result)
     except Exception as e:
-        print("Error occurred:", str(e))
-        return jsonify({"error": str(e)}), 400
+        app.logger.error("Error occurred: %s", str(e))
+        return jsonify({"error": "An internal error has occurred."}), 400
 
 
 @app.route("/optimize", methods=["POST"])
