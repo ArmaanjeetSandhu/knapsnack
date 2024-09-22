@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template
+from whitenoise import WhiteNoise
 import pandas as pd
 import numpy as np
 from scipy.optimize import linprog
@@ -7,6 +8,7 @@ import helper_functions as hf
 import os
 
 app = Flask(__name__)
+app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
 
 food_items = pd.read_csv("food_items.csv")
 
@@ -147,5 +149,5 @@ def optimize():
 
 
 if __name__ == "__main__":
-    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() in ["true", "1", "t"]
-    app.run(debug=debug_mode)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
