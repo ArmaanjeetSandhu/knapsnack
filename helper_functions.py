@@ -36,7 +36,7 @@ def create_nutrients_df():
     ]
     elements.drop(columns=elementsToBeRemoved, inplace=True)
 
-    vitamins_map = {
+    vitaminsMap = {
         "Vitamin A (µg/d)_x": "VitA_RDA (µg/d)",
         "Vitamin C (mg/d)_x": "VitC_RDA (mg/d)",
         "Vitamin D (µg/d)_x": "VitD_RDA (µg/d)",
@@ -48,13 +48,10 @@ def create_nutrients_df():
         "Vitamin B6 (mg/d)_x": "VitB6_RDA (mg/d)",
         "Folate (µg/d)_x": "Folate_RDA (µg/d)",
         "Vitamin B12 (µg/d)": "VitB12_RDA (µg/d)",
-        "Pantothenic Acid (mg/d)": "PantothenicAcid_RDA (mg/d)",
-        "Biotin (µg/d)": "Biotin_RDA (µg/d)",
-        "Choline (mg/d)": "Choline_RDA (mg/d)",
         "Vitamin A (µg/d)_y": "VitA_UL (µg/d)",
         "Vitamin C (mg/d)_y": "VitC_UL (mg/d)",
         "Vitamin D (µg/d)_y": "VitD_UL (µg/d)",
-        "Vitamin E (mg/d)_y": "VitE_UL (mg/d)",
+        "Vitamin E (mg/d)_y": "VitE_UL (µg/d)",
         "Vitamin K": "VitK_UL (µg/d)",
         "Thiamin": "Thiamin_UL (mg/d)",
         "Riboflavin": "Riboflavin_UL (mg/d)",
@@ -62,22 +59,17 @@ def create_nutrients_df():
         "Vitamin B6 (mg/d)_y": "VitB6_UL (mg/d)",
         "Folate (µg/d)_y": "Folate_UL (µg/d)",
         "Vitamin B12": "VitB12_UL (µg/d)",
-        "Pantothenic Acid": "PantothenicAcid_UL (mg/d)",
-        "Biotin": "Biotin_UL (µg/d)",
-        "Choline (g/d)": "Choline_UL (mg/d)",
     }
-    vitamins.rename(columns=vitamins_map, inplace=True)
+    vitamins.rename(columns=vitaminsMap, inplace=True)
 
-    elements_map = {
+    elementsMap = {
         "Calcium (mg/d)_x": "Calcium_RDA (mg/d)",
         "Chromium (µg/d)_x": "Chromium_RDA (µg/d)",
         "Copper (µg/d)_x": "Copper_RDA (µg/d)",
-        "Fluoride (mg/d)_x": "Fluoride_RDA (mg/d)",
         "Iodine (µg/d)_x": "Iodine_RDA (µg/d)",
         "Iron (mg/d)_x": "Iron_RDA (mg/d)",
         "Magnesium (mg/d)_x": "Magnesium_RDA (mg/d)",
         "Manganese (mg/d)_x": "Manganese_RDA (mg/d)",
-        "Molybdenum (µg/d)_x": "Molybdenum_RDA (µg/d)",
         "Phosphorus (mg/d)_x": "Phosphorus_RDA (mg/d)",
         "Selenium (µg/d)_x": "Selenium_RDA (µg/d)",
         "Zinc (mg/d)_x": "Zinc_RDA (mg/d)",
@@ -87,19 +79,41 @@ def create_nutrients_df():
         "Calcium (mg/d)_y": "Calcium_UL (mg/d)",
         "Chromium (µg/d)_y": "Chromium_UL (µg/d)",
         "Copper (µg/d)_y": "Copper_UL (µg/d)",
-        "Fluoride (mg/d)_y": "Fluoride_UL (mg/d)",
         "Iodine (µg/d)_y": "Iodine_UL (µg/d)",
         "Iron (mg/d)_y": "Iron_UL (mg/d)",
         "Magnesium (mg/d)_y": "Magnesium_UL (mg/d)",
         "Manganese (mg/d)_y": "Manganese_UL (mg/d)",
-        "Molybdenum (µg/d)_y": "Molybdenum_UL (µg/d)",
         "Phosphorus (mg/d)_y": "Phosphorus_UL (mg/d)",
         "Potassium (mg/d)_y": "Potassium_UL (mg/d)",
         "Selenium (µg/d)_y": "Selenium_UL (µg/d)",
-        "Zinc (mg/d)_y": "Zinc_UL (mg/d)",
+        "Zinc (mg/d)_y": "Zinc_UL (µg/d)",
         "Sodium (mg/d)_y": "Sodium_UL (mg/d)",
         "Chloride (g/d)_y": "Chloride_UL (g/d)",
     }
-    elements.rename(columns=elements_map, inplace=True)
+    elements.rename(columns=elementsMap, inplace=True)
 
-    return pd.merge(vitamins, elements, on="Life-Stage Group", how="outer")
+    df = pd.merge(vitamins, elements, on="Life-Stage Group", how="outer")
+
+    columnsToBeRemoved = [
+        col
+        for col in df.columns
+        if any(
+            x in col.lower()
+            for x in ["biotin", "molybdenum", "fluoride", "pantothenic acid", "choline"]
+        )
+    ]
+    df.drop(columns=columnsToBeRemoved, inplace=True)
+
+    rowsToBeRemoved = [
+        "Infants",
+        "Children",
+        "Lactation",
+        "Pregnancy",
+        "Males 9-13 y",
+        "Males 14-18 y",
+        "Females 9-13 y",
+        "Females 14-18 y",
+    ]
+    df = df[~df["Life-Stage Group"].str.contains("|".join(rowsToBeRemoved))]
+
+    return df
