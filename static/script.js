@@ -6,13 +6,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const optimizeButton = document.getElementById("optimize-button");
   const optimizationResults = document.getElementById("optimization-results");
   const dietPlan = document.getElementById("diet-plan");
+  const ageInput = document.getElementById("age");
 
   let nutrientGoals = {};
+
+  ageInput.addEventListener("input", function () {
+    if (this.value < 19) {
+      this.setCustomValidity("Age must be 19 or older");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
 
   personalInfoForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(personalInfoForm);
     const data = Object.fromEntries(formData.entries());
+
+    if (parseInt(data.age) < 19) {
+      alert("Age must be 19 or older");
+      return;
+    }
 
     try {
       const response = await fetch("/calculate", {

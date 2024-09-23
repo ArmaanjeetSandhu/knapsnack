@@ -32,6 +32,10 @@ def calculate():
         weight = int(data["weight"])
         height = int(data["height"])
         age = int(data["age"])
+
+        if age < 19:
+            return jsonify({"error": "Age must be 19 or older"}), 400
+
         activity_multiplier = float(data["activity"])
         goal = data["goal"]
 
@@ -71,6 +75,8 @@ def optimize():
     nutrient_goals = data["nutrient_goals"]
 
     age = int(data["age"])
+    if age < 19:
+        return jsonify({"error": "Age must be 19 or older"}), 400
     gender = data["gender"]
 
     selected_food_items = food_items[food_items["Food"].isin(selected_foods)]
