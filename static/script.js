@@ -184,7 +184,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </table>
             </div>
             <div class="mt-6">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4">Nutrient Totals</h3>
+                <h3 class="text-xl font-semibold text-gray-700 mb-4 relative group">
+                    Daily Nutrition
+                    <span class="tooltip invisible group-hover:visible absolute left-0 top-full mt-1 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                        On following the above 'Recommended Daily Intake'
+                    </span>
+                </h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     ${Object.entries(result.nutrient_totals)
                       .map(
