@@ -64,7 +64,6 @@ def create_nutrients_df():
 
     elementsMap = {
         "Calcium (mg/d)_x": "Calcium_RDA (mg/d)",
-        "Chromium (µg/d)_x": "Chromium_RDA (µg/d)",
         "Copper (µg/d)_x": "Copper_RDA (µg/d)",
         "Iodine (µg/d)_x": "Iodine_RDA (µg/d)",
         "Iron (mg/d)_x": "Iron_RDA (mg/d)",
@@ -77,7 +76,6 @@ def create_nutrients_df():
         "Sodium (mg/d)_x": "Sodium_RDA (mg/d)",
         "Chloride (g/d)_x": "Chloride_RDA (g/d)",
         "Calcium (mg/d)_y": "Calcium_UL (mg/d)",
-        "Chromium (µg/d)_y": "Chromium_UL (µg/d)",
         "Copper (µg/d)_y": "Copper_UL (µg/d)",
         "Iodine (µg/d)_y": "Iodine_UL (µg/d)",
         "Iron (mg/d)_y": "Iron_UL (mg/d)",
@@ -99,7 +97,14 @@ def create_nutrients_df():
         for col in df.columns
         if any(
             x in col.lower()
-            for x in ["biotin", "molybdenum", "fluoride", "pantothenic acid", "choline"]
+            for x in [
+                "biotin",
+                "molybdenum",
+                "fluoride",
+                "pantothenic acid",
+                "choline",
+                "chromium",
+            ]
         )
     ]
     df.drop(columns=columnsToBeRemoved, inplace=True)
