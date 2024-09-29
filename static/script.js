@@ -183,6 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     </tbody>
                 </table>
             </div>
+            <div class="mt-4 flex justify-end">
+                <button id="exportCSV" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                    Export as CSV
+                </button>
+            </div>
             <div class="mt-6">
                 <h3 class="text-xl font-semibold text-gray-700 mb-4 relative group">
                     Daily Nutrition
@@ -209,11 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
                   2
                 )}</p>
             </div>
-            <div class="mt-6">
-                <button id="exportCSV" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                    Export as CSV
-                </button>
-            </div>
         `;
 
     optimizationResults.classList.remove("hidden");
@@ -224,17 +224,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function exportToCSV(result) {
-    let csvContent = "Food Item,Servings,Quantity,Cost\n";
+    // Prepare CSV content
+    let csvContent = "Food Item,Servings,Quantity (g),Cost ($)\n";
     result.food_items.forEach((food, index) => {
-      csvContent += `${food},${result.servings[index]},${
+      csvContent += `"${food}",${result.servings[index]},${
         result.quantity[index]
       },${result.total_cost[index].toFixed(2)}\n`;
     });
-
-    csvContent += "\nDaily Nutrition\n";
-    for (const [nutrient, value] of Object.entries(result.nutrient_totals)) {
-      csvContent += `${nutrient},${value}\n`;
-    }
 
     csvContent += `\nTotal Daily Cost,$${result.total_cost_sum.toFixed(2)}`;
 
