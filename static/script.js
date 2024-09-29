@@ -209,8 +209,46 @@ document.addEventListener("DOMContentLoaded", () => {
                   2
                 )}</p>
             </div>
+            <div class="mt-6">
+                <button id="exportCSV" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                    Export as CSV
+                </button>
+            </div>
         `;
 
     optimizationResults.classList.remove("hidden");
+
+    document.getElementById("exportCSV").addEventListener("click", () => {
+      exportToCSV(result);
+    });
+  }
+
+  function exportToCSV(result) {
+    let csvContent = "Food Item,Servings,Quantity,Cost\n";
+    result.food_items.forEach((food, index) => {
+      csvContent += `${food},${result.servings[index]},${
+        result.quantity[index]
+      },${result.total_cost[index].toFixed(2)}\n`;
+    });
+
+    csvContent += "\nDaily Nutrition\n";
+    for (const [nutrient, value] of Object.entries(result.nutrient_totals)) {
+      csvContent += `${nutrient},${value}\n`;
+    }
+
+    csvContent += `\nTotal Daily Cost,$${result.total_cost_sum.toFixed(2)}`;
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const link = document.createElement("a");
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "recommended_daily_intake.csv");
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 });
