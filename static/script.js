@@ -149,6 +149,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function displayOptimizationResults(result) {
+    const nonZeroItems = result.food_items
+      .map((food, index) => ({
+        food,
+        servings: result.servings[index],
+        quantity: result.quantity[index],
+        cost: result.total_cost[index],
+      }))
+      .filter((item) => item.servings > 0);
+
     dietPlan.innerHTML = `
             <h3 class="text-xl font-semibold text-gray-700 mb-4">Recommended Daily Intake</h3>
             <div class="overflow-x-auto">
@@ -157,25 +166,27 @@ document.addEventListener("DOMContentLoaded", () => {
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Food Item</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servings</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity (g)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost ($)</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        ${result.food_items
+                        ${nonZeroItems
                           .map(
-                            (food, index) => `
+                            (item) => `
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${food}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
-                                  result.servings[index]
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${
+                                  item.food
                                 }</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
-                                  result.quantity[index]
+                                  item.servings
                                 }</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${result.total_cost[
-                                  index
-                                ].toFixed(2)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
+                                  item.quantity
+                                }</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${item.cost.toFixed(
+                                  2
+                                )}</td>
                             </tr>
                         `
                           )
@@ -219,20 +230,19 @@ document.addEventListener("DOMContentLoaded", () => {
     optimizationResults.classList.remove("hidden");
 
     document.getElementById("exportCSV").addEventListener("click", () => {
-      exportToCSV(result);
+      exportToCSV(nonZeroItems, result.total_cost_sum);
     });
   }
 
-  function exportToCSV(result) {
-    // Prepare CSV content
+  function exportToCSV(nonZeroItems, totalCost) {
     let csvContent = "Food Item,Servings,Quantity (g),Cost ($)\n";
-    result.food_items.forEach((food, index) => {
-      csvContent += `"${food}",${result.servings[index]},${
-        result.quantity[index]
-      },${result.total_cost[index].toFixed(2)}\n`;
+    nonZeroItems.forEach((item) => {
+      csvContent += `"${item.food}",${item.servings},${
+        item.quantity
+      },${item.cost.toFixed(2)}\n`;
     });
 
-    csvContent += `\nTotal Daily Cost,$${result.total_cost_sum.toFixed(2)}`;
+    csvContent += `\nTotal Daily Cost,$${totalCost.toFixed(2)}`;
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
