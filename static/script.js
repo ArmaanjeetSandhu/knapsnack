@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const ageInput = document.getElementById("age");
 
   let nutrientGoals = {};
+  let isDragging = false;
+  let startCheckbox = null;
 
   ageInput.addEventListener("input", function () {
     if (this.value < 19) {
@@ -105,6 +107,27 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
       foodOptions.appendChild(checkbox);
     });
+    foodOptions.addEventListener("mousedown", startDragging);
+    foodOptions.addEventListener("mouseover", dragSelect);
+    document.addEventListener("mouseup", stopDragging);
+  }
+
+  function startDragging(e) {
+    if (e.target.type === "checkbox") {
+      isDragging = true;
+      startCheckbox = e.target;
+    }
+  }
+
+  function dragSelect(e) {
+    if (isDragging && e.target.type === "checkbox") {
+      e.target.checked = startCheckbox.checked;
+    }
+  }
+
+  function stopDragging() {
+    isDragging = false;
+    startCheckbox = null;
   }
 
   optimizeButton.addEventListener("click", async () => {
