@@ -103,9 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const checkbox = document.createElement("div");
       checkbox.className = "flex items-center";
       checkbox.innerHTML = `
-            <input type="checkbox" id="${food}" name="food" value="${food}" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-            <label for="${food}" class="ml-2 block text-sm text-gray-900">${food}</label>
-        `;
+        <input type="checkbox" id="${food}" name="food" value="${food}" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+        <label for="${food}" class="ml-2 block text-sm text-gray-900">${food}</label>
+      `;
       foodOptions.appendChild(checkbox);
     });
 
