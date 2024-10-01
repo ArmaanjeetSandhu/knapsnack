@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let nutrientGoals = {};
   let isDragging = false;
   let startCheckbox = null;
+  let lastChecked = null;
 
   ageInput.addEventListener("input", function () {
     if (this.value < 19) {
@@ -102,13 +103,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const checkbox = document.createElement("div");
       checkbox.className = "flex items-center";
       checkbox.innerHTML = `
-                <input type="checkbox" id="${food}" name="food" value="${food}" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                <label for="${food}" class="ml-2 block text-sm text-gray-900">${food}</label>
-            `;
+            <input type="checkbox" id="${food}" name="food" value="${food}" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+            <label for="${food}" class="ml-2 block text-sm text-gray-900">${food}</label>
+        `;
       foodOptions.appendChild(checkbox);
     });
+
     foodOptions.addEventListener("mousedown", startDragging);
-    foodOptions.addEventListener("mouseover", dragSelect);
+    foodOptions.addEventListener("mousemove", dragSelect);
     document.addEventListener("mouseup", stopDragging);
   }
 
@@ -116,13 +118,27 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target.type === "checkbox") {
       isDragging = true;
       startCheckbox = e.target;
+      lastChecked = e.target;
     }
   }
 
   function dragSelect(e) {
-    if (isDragging && e.target.type === "checkbox") {
-      e.target.checked = startCheckbox.checked;
-    }
+    if (!isDragging) return;
+
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let inBetween = false;
+
+    checkboxes.forEach((checkbox) => {
+      if (checkbox === e.target || checkbox === lastChecked) {
+        inBetween = !inBetween;
+      }
+
+      if (inBetween) {
+        checkbox.checked = startCheckbox.checked;
+      }
+    });
+
+    lastChecked = e.target;
   }
 
   function stopDragging() {
