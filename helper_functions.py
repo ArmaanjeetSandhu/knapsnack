@@ -1,7 +1,20 @@
 import pandas as pd
 
 
-def input_validation(prompt, data_type):
+def input_validation(prompt: str, data_type: type) -> any:
+    """
+    Prompt the user for input and validate that it can be converted to the specified data type.
+
+    Parameters:
+        prompt (str): The message displayed to the user when asking for input.
+        data_type (type): The type to which the input should be converted (e.g., int, float).
+
+    Returns:
+        any: The input value converted to the specified data type.
+
+    Raises:
+        ValueError: If the input cannot be converted to the specified data type.
+    """
     while True:
         try:
             return data_type(input(prompt))
@@ -9,14 +22,35 @@ def input_validation(prompt, data_type):
             print(f"Invalid input. Please enter a valid {data_type.__name__}.")
 
 
-def format_weight(weight):
+def format_weight(weight: float) -> str:
+    """
+    Format a weight value into a human-readable string.
+
+    Parameters:
+        weight (float): The weight value in grams.
+
+    Returns:
+        str: The formatted weight as a string, in grams or kilograms depending on the value.
+    """
     if weight < 1000:
         return f"{weight} g"
     else:
         return f"{weight / 1000} kg"
 
 
-def create_nutrients_df():
+def create_nutrients_df() -> pd.DataFrame:
+    """
+    Create a DataFrame containing Recommended Dietary Allowances (RDA) and
+    Tolerable Upper Intake Levels (UL) for vitamins and elements across different
+    life-stage groups.
+
+    The function reads data from CSV files, merges and cleans the data, and
+    formats the nutrient names for easier access.
+
+    Returns:
+        pd.DataFrame: A DataFrame with the RDA and UL values for each nutrient
+        organized by life-stage group.
+    """
     vitaminsRDA = pd.read_csv("nutrient-databases/vitamins-RDAs.csv").replace(
         "ND", None
     )
@@ -51,7 +85,7 @@ def create_nutrients_df():
         "Vitamin A (µg/d)_y": "VitA_UL (µg/d)",
         "Vitamin C (mg/d)_y": "VitC_UL (mg/d)",
         "Vitamin D (µg/d)_y": "VitD_UL (µg/d)",
-        "Vitamin E (mg/d)_y": "VitE_UL (µg/d)",
+        "Vitamin E (mg/d)_y": "VitE_UL (mg/d)",
         "Vitamin K": "VitK_UL (µg/d)",
         "Thiamin": "Thiamin_UL (mg/d)",
         "Riboflavin": "Riboflavin_UL (mg/d)",
@@ -84,7 +118,7 @@ def create_nutrients_df():
         "Phosphorus (mg/d)_y": "Phosphorus_UL (mg/d)",
         "Potassium (mg/d)_y": "Potassium_UL (mg/d)",
         "Selenium (µg/d)_y": "Selenium_UL (µg/d)",
-        "Zinc (mg/d)_y": "Zinc_UL (µg/d)",
+        "Zinc (mg/d)_y": "Zinc_UL (mg/d)",
         "Sodium (mg/d)_y": "Sodium_UL (mg/d)",
         "Chloride (g/d)_y": "Chloride_UL (g/d)",
     }
