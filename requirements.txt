@@ -26,6 +26,6 @@ tornado==6.4.2
 traitlets==5.14.3
 tzdata==2024.1
 wcwidth==0.2.13
-Werkzeug==3.0.4
+Werkzeug==3.0.6
 wheel==0.44.0
 whitenoise==6.7.0
