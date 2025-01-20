@@ -71,26 +71,26 @@ def create_nutrients_df() -> pd.DataFrame:
     elements.drop(columns=elementsToBeRemoved, inplace=True)
 
     vitaminsMap = {
-        "Vitamin A (µg/d)_x": "VitA_RDA (µg/d)",
-        "Vitamin C (mg/d)_x": "VitC_RDA (mg/d)",
-        "Vitamin D (µg/d)_x": "VitD_RDA (µg/d)",
-        "Vitamin E (mg/d)_x": "VitE_RDA (mg/d)",
-        "Vitamin K (µg/d)": "VitK_RDA (µg/d)",
+        "Vitamin A (µg/d)_x": "Vitamin A_RDA (µg/d)",
+        "Vitamin C (mg/d)_x": "Vitamin C_RDA (mg/d)",
+        "Vitamin D (µg/d)_x": "Vitamin D_RDA (µg/d)",
+        "Vitamin E (mg/d)_x": "Vitamin E_RDA (mg/d)",
+        "Vitamin K (µg/d)": "Vitamin K_RDA (µg/d)",
         "Thiamin (mg/d)": "Thiamin_RDA (mg/d)",
         "Riboflavin (mg/d)": "Riboflavin_RDA (mg/d)",
         "Niacin (mg/d)_x": "Niacin_RDA (mg/d)",
-        "Vitamin B6 (mg/d)_x": "VitB6_RDA (mg/d)",
+        "Vitamin B6 (mg/d)_x": "Vitamin B6_RDA (mg/d)",
         "Folate (µg/d)_x": "Folate_RDA (µg/d)",
-        "Vitamin B12 (µg/d)": "VitB12_RDA (µg/d)",
-        "Vitamin A (µg/d)_y": "VitA_UL (µg/d)",
-        "Vitamin C (mg/d)_y": "VitC_UL (mg/d)",
-        "Vitamin D (µg/d)_y": "VitD_UL (µg/d)",
-        "Vitamin E (mg/d)_y": "VitE_UL (mg/d)",
-        "Vitamin K": "VitK_UL (µg/d)",
+        "Vitamin B12 (µg/d)": "Vitamin B12_RDA (µg/d)",
+        "Vitamin A (µg/d)_y": "Vitamin A_UL (µg/d)",
+        "Vitamin C (mg/d)_y": "Vitamin C_UL (mg/d)",
+        "Vitamin D (µg/d)_y": "Vitamin D_UL (µg/d)",
+        "Vitamin E (mg/d)_y": "Vitamin E_UL (mg/d)",
+        "Vitamin K": "Vitamin K_UL (µg/d)",
         "Thiamin": "Thiamin_UL (mg/d)",
         "Riboflavin": "Riboflavin_UL (mg/d)",
         "Niacin (mg/d)_y": "Niacin_UL (mg/d)",
-        "Vitamin B6 (mg/d)_y": "VitB6_UL (mg/d)",
+        "Vitamin B6 (mg/d)_y": "Vitamin B6_UL (mg/d)",
         "Folate (µg/d)_y": "Folate_UL (µg/d)",
         "Vitamin B12": "VitB12_UL (µg/d)",
     }
@@ -108,7 +108,6 @@ def create_nutrients_df() -> pd.DataFrame:
         "Zinc (mg/d)_x": "Zinc_RDA (mg/d)",
         "Potassium (mg/d)_x": "Potassium_RDA (mg/d)",
         "Sodium (mg/d)_x": "Sodium_RDA (mg/d)",
-        "Chloride (g/d)_x": "Chloride_RDA (g/d)",
         "Calcium (mg/d)_y": "Calcium_UL (mg/d)",
         "Copper (µg/d)_y": "Copper_UL (µg/d)",
         "Iodine (µg/d)_y": "Iodine_UL (µg/d)",
@@ -120,7 +119,6 @@ def create_nutrients_df() -> pd.DataFrame:
         "Selenium (µg/d)_y": "Selenium_UL (µg/d)",
         "Zinc (mg/d)_y": "Zinc_UL (mg/d)",
         "Sodium (mg/d)_y": "Sodium_UL (mg/d)",
-        "Chloride (g/d)_y": "Chloride_UL (g/d)",
     }
     elements.rename(columns=elementsMap, inplace=True)
 
@@ -138,6 +136,7 @@ def create_nutrients_df() -> pd.DataFrame:
                 "pantothenic acid",
                 "choline",
                 "chromium",
+                "chloride",
             ]
         )
     ]
