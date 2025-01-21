@@ -35,6 +35,8 @@ def calculate():
 
         if age < 19:
             return jsonify({"error": "Age must be 19 or older"}), 400
+        if age > 100:
+            return jsonify({"error": "Age must be 100 or younger"}), 400
 
         activity_multiplier = float(data["activity"])
         goal = data["goal"]

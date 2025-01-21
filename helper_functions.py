@@ -92,7 +92,7 @@ def create_nutrients_df() -> pd.DataFrame:
         "Niacin (mg/d)_y": "Niacin_UL (mg/d)",
         "Vitamin B6 (mg/d)_y": "Vitamin B6_UL (mg/d)",
         "Folate (µg/d)_y": "Folate_UL (µg/d)",
-        "Vitamin B12": "VitB12_UL (µg/d)",
+        "Vitamin B12": "Vitamin B12_UL (µg/d)",
     }
     vitamins.rename(columns=vitaminsMap, inplace=True)
 
