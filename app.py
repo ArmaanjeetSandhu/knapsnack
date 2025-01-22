@@ -159,7 +159,8 @@ def remove_food():
         )
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        logging.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 
 @app.route("/calculate", methods=["POST"])
