@@ -299,7 +299,7 @@ def optimize():
 
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": "An internal error has occurred. Please try again later."}), 500
 
 
 def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
