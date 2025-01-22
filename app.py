@@ -10,6 +10,9 @@ from dotenv import load_dotenv
 import requests
 from typing import Dict, List, Optional
 import json
+import logging
+
+logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s', handlers=[logging.FileHandler("app.log"), logging.StreamHandler()])
 
 app = Flask(__name__)
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
@@ -98,9 +101,11 @@ def search_food():
         return jsonify({"results": search_results})
 
     except requests.exceptions.RequestException as e:
-        return jsonify({"error": f"API request failed: {str(e)}"}), 500
+        logging.error(f"API request failed: {str(e)}")
+        return jsonify({"error": "API request failed"}), 500
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        logging.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 
 @app.route("/add_food", methods=["POST"])
@@ -129,7 +134,8 @@ def add_food():
         )
 
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        logging.error(f"An error occurred: {str(e)}")
+        return jsonify({"error": "An internal error has occurred"}), 500
 
 
 @app.route("/remove_food", methods=["POST"])
