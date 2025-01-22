@@ -14,6 +14,17 @@
       body {
         font-family: "Poppins", sans-serif;
       }
+      .loading {
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-100">
@@ -52,6 +63,7 @@
             id="personal-info-form"
             class="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
+            <!-- Same personal info form fields as before -->
             <div>
               <label
                 for="gender"
@@ -153,6 +165,7 @@
         </div>
 
         <div id="results" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
+          <!-- Same results section as before -->
           <h2 class="text-2xl font-semibold text-gray-700 mb-4">
             Your Results
           </h2>
@@ -200,15 +213,62 @@
           class="bg-white rounded-lg shadow-md p-6 mb-8 hidden"
         >
           <h2 class="text-2xl font-semibold text-gray-700 mb-4">
-            Select Your Foods
+            Add Foods to Your Plan
           </h2>
-          <div
-            id="food-options"
-            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-          ></div>
+          <div class="mb-4">
+            <div class="flex gap-4">
+              <input
+                type="text"
+                id="food-search"
+                placeholder="Search for foods..."
+                class="flex-grow rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200"
+              />
+              <button
+                id="search-button"
+                class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+          <div id="search-results" class="hidden">
+            <h3 class="font-semibold text-gray-700 mb-2">Search Results</h3>
+            <div id="results-list" class="max-h-60 overflow-y-auto"></div>
+          </div>
+          <div id="selected-foods-section" class="mt-6">
+            <h3 class="font-semibold text-gray-700 mb-2">Selected Foods</h3>
+            <div id="selected-foods-table" class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Food Item
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Price (₹)
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="selected-foods-list"
+                  class="bg-white divide-y divide-gray-200"
+                ></tbody>
+              </table>
+            </div>
+          </div>
           <button
             id="optimize-button"
             class="mt-6 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+            disabled
           >
             Optimize Diet Plan
           </button>

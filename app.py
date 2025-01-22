@@ -6,11 +6,53 @@ from scipy.optimize import linprog
 import calculator_functions as cf
 import helper_functions as hf
 import os
+from dotenv import load_dotenv
+import requests
+from typing import Dict, List, Optional
+import json
 
 app = Flask(__name__)
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
 
-food_items = pd.read_csv("food_items.csv")
+load_dotenv()
+
+# Store selected foods in memory (in production, this should be a database)
+selected_foods = []
+
+# API configuration
+API_KEY = os.environ.get("USDA_API_KEY")
+API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
+
+# Nutrient ID mapping
+NUTRIENT_MAP = {
+    "Vitamin A": "Vitamin A, RAE",
+    "Vitamin C": "Vitamin C, total ascorbic acid",
+    "Vitamin D": "Vitamin D3 (cholecalciferol)",
+    "Vitamin E": "Vitamin E (alpha-tocopherol)",
+    "Vitamin K": "Vitamin K (phylloquinone)",
+    "Thiamin": "Thiamin",
+    "Riboflavin": "Riboflavin",
+    "Niacin": "Niacin",
+    "Vitamin B6": "Vitamin B-6",
+    "Folate": "Folate, total",
+    "Vitamin B12": "Vitamin B-12",
+    "Calcium": "Calcium, Ca",
+    "Carbohydrates": "Carbohydrate, by difference",
+    "Protein": "Protein",
+    "Fats": "Total lipid (fat)",
+    "Saturated Fats": "Fatty acids, total saturated",
+    "Fibre": "Fiber, total dietary",
+    "Copper": "Copper, Cu",
+    "Iodine": "Iodine, I",
+    "Iron": "Iron, Fe",
+    "Magnesium": "Magnesium, Mg",
+    "Manganese": "Manganese, Mn",
+    "Phosphorus": "Phosphorus, P",
+    "Selenium": "Selenium, Se",
+    "Zinc": "Zinc, Zn",
+    "Potassium": "Potassium, K",
+    "Sodium": "Sodium, Na",
+}
 
 
 @app.route("/")
@@ -18,9 +60,100 @@ def home():
     return render_template("index.html")
 
 
-@app.route("/food_options")
-def food_options():
-    return jsonify(food_items["Food"].tolist())
+@app.route("/search_food", methods=["POST"])
+def search_food():
+    """
+    Search for foods using the USDA API.
+    Expected request body: {"query": "search term"}
+    """
+    try:
+        data = request.json
+        search_term = data.get("query")
+
+        if not search_term:
+            return jsonify({"error": "No search term provided"}), 400
+
+        params = {
+            "api_key": API_KEY,
+            "query": search_term,
+            "dataType": ["SR Legacy"],
+            "pageSize": 25,
+            "requireAllWords": True,
+        }
+
+        response = requests.get(API_ENDPOINT, params=params)
+        response.raise_for_status()
+
+        # Extract relevant information from each food item
+        search_results = []
+        for food in response.json().get("foods", []):
+            search_results.append(
+                {
+                    "fdcId": food.get("fdcId"),
+                    "description": food.get("description"),
+                    "nutrients": extract_nutrients(food.get("foodNutrients", [])),
+                }
+            )
+
+        return jsonify({"results": search_results})
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"API request failed: {str(e)}"}), 500
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+@app.route("/add_food", methods=["POST"])
+def add_food():
+    """
+    Add a selected food item to the list.
+    Expected request body: {
+        "fdcId": "food_id",
+        "description": "food name",
+        "price": float,
+        "nutrients": {...}
+    }
+    """
+    try:
+        food_data = request.json
+        required_fields = ["fdcId", "description", "price", "nutrients"]
+
+        if not all(field in food_data for field in required_fields):
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # Add the food to our selected foods list
+        selected_foods.append(food_data)
+
+        return jsonify(
+            {"message": "Food added successfully", "selected_foods": selected_foods}
+        )
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+@app.route("/remove_food", methods=["POST"])
+def remove_food():
+    """
+    Remove a food item from the selected foods list.
+    Expected request body: {"fdcId": "food_id"}
+    """
+    try:
+        data = request.json
+        fdc_id = data.get("fdcId")
+
+        if not fdc_id:
+            return jsonify({"error": "No food ID provided"}), 400
+
+        global selected_foods
+        selected_foods = [food for food in selected_foods if food["fdcId"] != fdc_id]
+
+        return jsonify(
+            {"message": "Food removed successfully", "selected_foods": selected_foods}
+        )
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
 @app.route("/calculate", methods=["POST"])
@@ -72,90 +205,120 @@ def calculate():
 
 @app.route("/optimize", methods=["POST"])
 def optimize():
-    data = request.json
-    selected_foods = data["selected_foods"]
-    nutrient_goals = data["nutrient_goals"]
+    try:
+        data = request.json
+        nutrient_goals = data["nutrient_goals"]
+        age = int(data["age"])
+        gender = data["gender"]
 
-    age = int(data["age"])
-    if age < 19:
-        return jsonify({"error": "Age must be 19 or older"}), 400
-    if age > 100:
-        return jsonify({"error": "Age must be 100 or younger"}), 400
-    gender = data["gender"]
+        if age < 19:
+            return jsonify({"error": "Age must be 19 or older"}), 400
+        if age > 100:
+            return jsonify({"error": "Age must be 100 or younger"}), 400
 
-    selected_food_items = food_items[food_items["Food"].isin(selected_foods)]
+        if not selected_foods:
+            return jsonify({"error": "No foods selected"}), 400
 
-    c = selected_food_items["Price"].values
+        # Create arrays for optimization
+        c = np.array([food["price"] for food in selected_foods])
 
-    A_ub = []
-    b_ub = []
+        A_ub = []
+        b_ub = []
 
-    nutrients = ["Protein", "Carbohydrates", "Fats", "Fibre", "Saturated Fats"]
-    for nutrient in nutrients:
-        column_name = f"{nutrient} (g)"
-        if column_name in selected_food_items.columns:
-            nutrient_key = nutrient.lower().replace(" ", "_")
-            if nutrient_key in nutrient_goals:
+        # Handle macronutrient constraints
+        nutrients = ["Protein", "Carbohydrates", "Fats", "Fibre", "Saturated Fats"]
+        for nutrient in nutrients:
+            if nutrient.lower().replace(" ", "_") in nutrient_goals:
+                goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
+                values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
                 A_ub.extend(
-                    [
-                        -selected_food_items[column_name].values,
-                        selected_food_items[column_name].values,
-                    ]
+                    [[-val for val in values], values]  # Lower bound  # Upper bound
                 )
-                b_ub.extend(
-                    [-nutrient_goals[nutrient_key], nutrient_goals[nutrient_key] * 1.01]
+                b_ub.extend([-goal, goal * 1.01])  # Allow 1% overflow
+
+        # Handle micronutrient constraints based on RDA/UL
+        nutrient_bounds = cf.nutrient_bounds(age, gender)
+        for nutrient, api_name in NUTRIENT_MAP.items():
+            if nutrient not in nutrients:  # Skip macronutrients already handled
+                values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+
+                # RDA constraint
+                rda_key = f"{nutrient}_RDA"
+                if rda_key in nutrient_bounds:
+                    A_ub.append([-val for val in values])
+                    b_ub.append(-nutrient_bounds[rda_key])
+
+                # UL constraint
+                ul_key = f"{nutrient}_UL"
+                if ul_key in nutrient_bounds:
+                    A_ub.append(values)
+                    b_ub.append(nutrient_bounds[ul_key])
+
+        A_ub = np.array(A_ub)
+        b_ub = np.array(b_ub)
+
+        # Solve optimization problem
+        bounds = [(0, None) for _ in range(len(selected_foods))]
+        result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
+
+        if result.success:
+            servings = np.round(result.x, 1)
+            food_items = [food["description"] for food in selected_foods]
+            total_cost = np.round(result.x * c, 2)
+
+            # Calculate nutrient totals
+            nutrient_totals = {}
+            for nutrient in NUTRIENT_MAP.keys():
+                values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+                nutrient_totals[nutrient] = float(
+                    np.round(np.sum(servings * values), 1)
                 )
 
-    nutrients_data = hf.create_nutrients_df()
-    nutrient_bounds = cf.nutrient_bounds(age, gender)
+            result_data = {
+                "food_items": food_items,
+                "servings": servings.tolist(),
+                "total_cost": total_cost.tolist(),
+                "nutrient_totals": nutrient_totals,
+                "total_cost_sum": float(np.sum(total_cost)),
+            }
 
-    for nutrient in nutrients_data.columns[1:]:
-        if nutrient.endswith("_RDA"):
-            base_nutrient = nutrient[:-4]
-            if base_nutrient in selected_food_items.columns:
-                A_ub.append(-selected_food_items[base_nutrient].values)
-                b_ub.append(-nutrient_bounds[nutrient])
-        elif nutrient.endswith("_UL"):
-            base_nutrient = nutrient[:-3]
-            if base_nutrient in selected_food_items.columns:
-                A_ub.append(selected_food_items[base_nutrient].values)
-                b_ub.append(nutrient_bounds[nutrient])
-
-    A_ub = np.array(A_ub)
-    b_ub = np.array(b_ub)
-
-    bounds = [(0, None) for _ in range(len(selected_food_items))]
-
-    result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
-
-    if result.success:
-        servings = np.round(result.x, 1)
-        quantity = np.round(servings * selected_food_items["Serving (g)"], 1)
-        total_cost_per_item = np.round(servings * selected_food_items["Price"], 2)
-
-        nutrient_totals = {}
-        for nutrient in selected_food_items.columns[3:]:
-            nutrient_totals[nutrient] = np.round(
-                np.sum(servings * selected_food_items[nutrient]), 1
+            return jsonify({"success": True, "result": result_data})
+        else:
+            return jsonify(
+                {
+                    "success": False,
+                    "message": "Optimization failed! No feasible solution found.",
+                }
             )
 
-        result_data = {
-            "food_items": selected_food_items["Food"].tolist(),
-            "servings": servings.tolist(),
-            "quantity": quantity.tolist(),
-            "total_cost": total_cost_per_item.tolist(),
-            "nutrient_totals": nutrient_totals,
-            "total_cost_sum": np.sum(total_cost_per_item),
-        }
+    except Exception as e:
+        app.logger.error("Error occurred: %s", str(e))
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-        return jsonify({"success": True, "result": result_data})
-    else:
-        return jsonify(
-            {
-                "success": False,
-                "message": "Optimization failed! No feasible solution found.",
-            }
-        )
+
+def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
+    """
+    Extract relevant nutrients from the API response and convert to our format.
+    """
+    result = {}
+
+    # Create reverse mapping for easier lookup
+    reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
+
+    for nutrient in nutrients_data:
+        api_name = nutrient.get("nutrientName")
+        if api_name in reverse_map:
+            our_name = reverse_map[api_name]
+            value = nutrient.get("value", 0)
+            if value is not None:
+                result[our_name] = float(value)
+
+    # Fill in missing nutrients with 0
+    for our_name in NUTRIENT_MAP.keys():
+        if our_name not in result:
+            result[our_name] = 0.0
+
+    return result
 
 
 if __name__ == "__main__":
