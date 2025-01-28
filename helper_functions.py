@@ -99,7 +99,6 @@ def create_nutrients_df() -> pd.DataFrame:
     elementsMap = {
         "Calcium (mg/d)_x": "Calcium_RDA (mg/d)",
         "Copper (µg/d)_x": "Copper_RDA (µg/d)",
-        "Iodine (µg/d)_x": "Iodine_RDA (µg/d)",
         "Iron (mg/d)_x": "Iron_RDA (mg/d)",
         "Magnesium (mg/d)_x": "Magnesium_RDA (mg/d)",
         "Manganese (mg/d)_x": "Manganese_RDA (mg/d)",
@@ -110,7 +109,6 @@ def create_nutrients_df() -> pd.DataFrame:
         "Sodium (mg/d)_x": "Sodium_RDA (mg/d)",
         "Calcium (mg/d)_y": "Calcium_UL (mg/d)",
         "Copper (µg/d)_y": "Copper_UL (µg/d)",
-        "Iodine (µg/d)_y": "Iodine_UL (µg/d)",
         "Iron (mg/d)_y": "Iron_UL (mg/d)",
         "Magnesium (mg/d)_y": "Magnesium_UL (mg/d)",
         "Manganese (mg/d)_y": "Manganese_UL (mg/d)",
@@ -133,6 +131,7 @@ def create_nutrients_df() -> pd.DataFrame:
                 "biotin",
                 "molybdenum",
                 "fluoride",
+                "iodine",
                 "pantothenic acid",
                 "choline",
                 "chromium",
