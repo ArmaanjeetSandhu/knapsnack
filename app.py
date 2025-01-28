@@ -232,16 +232,25 @@ def optimize():
         A_ub = []
         b_ub = []
 
-        # Handle macronutrient constraints
-        nutrients = ["Protein", "Carbohydrates", "Fats", "Fibre", "Saturated Fats"]
+        nutrients = ["Protein", "Carbohydrates", "Fats", "Fibre"]
         for nutrient in nutrients:
             if nutrient.lower().replace(" ", "_") in nutrient_goals:
                 goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
                 values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
-                A_ub.extend(
-                    [[-val for val in values], values]  # Lower bound  # Upper bound
-                )
-                b_ub.extend([-goal, goal * 1.01])  # Allow 1% overflow
+                A_ub.extend([
+                    [-val for val in values],  # Lower bound
+                    values                     # Upper bound
+                ])
+                b_ub.extend([
+                    -goal,          # Lower bound must be >= goal
+                    goal * 1.01     # Upper bound must be <= goal * 1.01
+            ])
+
+        if "saturated_fats" in nutrient_goals:
+            sat_fat_goal = nutrient_goals["saturated_fats"]
+            sat_fat_values = [food["nutrients"].get("Saturated Fats", 0) for food in selected_foods]
+            A_ub.append(sat_fat_values)          # Upper bound only
+            b_ub.append(sat_fat_goal)            # No overflow for saturated fats
 
         # Handle micronutrient constraints based on RDA/UL
         nutrient_bounds = cf.nutrient_bounds(age, gender)
