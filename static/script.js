@@ -115,11 +115,21 @@ document.addEventListener("DOMContentLoaded", () => {
     row.innerHTML = `
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         ${foodData.description}
+        <div class="text-xs text-gray-500">Base nutrients per 100g</div>
       </td>
       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        <input type="number" step="0.01" min="0" 
-          class="food-price w-24 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200" 
-          placeholder="Enter price" required>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <input type="number" step="0.01" min="0" 
+              class="food-price w-24 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200" 
+              placeholder="Price (₹)" required>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="number" step="1" min="0" 
+              class="serving-size w-24 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200" 
+              placeholder="Serving (g)" required>
+          </div>
+        </div>
       </td>
       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         <button class="remove-food text-red-600 hover:text-red-900">Remove</button>
@@ -127,7 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const priceInput = row.querySelector(".food-price");
+    const servingSizeInput = row.querySelector(".serving-size");
+
+    // Add event listeners for validation
     priceInput.addEventListener("input", updateOptimizeButton);
+    servingSizeInput.addEventListener("input", updateOptimizeButton);
 
     row.querySelector(".remove-food").addEventListener("click", () => {
       selectedFoods.delete(foodData.fdcId);
@@ -140,15 +154,20 @@ document.addEventListener("DOMContentLoaded", () => {
       ...foodData,
       row: row,
       priceInput: priceInput,
+      servingSizeInput: servingSizeInput,
     });
     updateOptimizeButton();
   }
 
   function updateOptimizeButton() {
-    const allPricesEntered = Array.from(selectedFoods.values()).every(
-      (food) => food.priceInput.value && food.priceInput.value > 0
+    const allInputsEntered = Array.from(selectedFoods.values()).every(
+      (food) =>
+        food.priceInput.value &&
+        food.priceInput.value > 0 &&
+        food.servingSizeInput.value &&
+        food.servingSizeInput.value > 0
     );
-    optimizeButton.disabled = selectedFoods.size === 0 || !allPricesEntered;
+    optimizeButton.disabled = selectedFoods.size === 0 || !allInputsEntered;
   }
 
   function displayResults(result) {
@@ -182,12 +201,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showFoodSelection() {
     foodSelectionSection.classList.remove("hidden");
-    // Clear any existing selections
     selectedFoods.clear();
     selectedFoodsList.innerHTML = "";
     searchInput.value = "";
     searchResults.classList.add("hidden");
     updateOptimizeButton();
+  }
+
+  function adjustNutrientsForServingSize(nutrients, servingSize) {
+    const adjustedNutrients = {};
+    for (const [nutrient, value] of Object.entries(nutrients)) {
+      // Convert from per 100g to per serving size
+      adjustedNutrients[nutrient] = (value * servingSize) / 100;
+    }
+    return adjustedNutrients;
   }
 
   optimizeButton.addEventListener("click", async () => {
@@ -196,12 +223,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const foodsData = Array.from(selectedFoods.values()).map((food) => ({
-      fdcId: food.fdcId,
-      description: food.description,
-      price: parseFloat(food.priceInput.value),
-      nutrients: food.nutrients,
-    }));
+    const foodsData = Array.from(selectedFoods.values()).map((food) => {
+      const servingSize = parseFloat(food.servingSizeInput.value);
+      const adjustedNutrients = adjustNutrientsForServingSize(
+        food.nutrients,
+        servingSize
+      );
+
+      return {
+        fdcId: food.fdcId,
+        description: `${food.description} (${servingSize}g serving)`,
+        price: parseFloat(food.priceInput.value),
+        nutrients: adjustedNutrients,
+        servingSize: servingSize,
+      };
+    });
 
     const data = {
       selected_foods: foodsData,
@@ -251,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <thead class="bg-gray-50">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Food Item</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Servings</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number of Servings</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost (₹)</th>
             </tr>
           </thead>
@@ -263,9 +299,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${
                   item.food
                 }</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${
-                  item.servings
-                }</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.servings.toFixed(
+                  1
+                )}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹${item.cost.toFixed(
                   2
                 )}</td>
@@ -312,11 +348,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function exportToCSV(items, totalCost, nutrientTotals) {
-    let csvContent = "Food Item,Servings,Cost (₹)\n";
+    let csvContent = "Food Item,Number of Servings,Cost (₹)\n";
     items.forEach((item) => {
-      csvContent += `"${item.food}",${item.servings},₹${item.cost.toFixed(
-        2
-      )}\n`;
+      csvContent += `"${item.food}",${item.servings.toFixed(
+        1
+      )},₹${item.cost.toFixed(2)}\n`;
     });
 
     csvContent += "\nTotal Daily Cost,₹" + totalCost.toFixed(2) + "\n\n";

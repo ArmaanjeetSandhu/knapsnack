@@ -62,7 +62,6 @@
             id="personal-info-form"
             class="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
-            <!-- Same personal info form fields as before -->
             <div>
               <label
                 for="gender"
@@ -164,7 +163,6 @@
         </div>
 
         <div id="results" class="bg-white rounded-lg shadow-md p-6 mb-8 hidden">
-          <!-- Same results section as before -->
           <h2 class="text-2xl font-semibold text-gray-700 mb-4">
             Your Results
           </h2>
@@ -236,6 +234,12 @@
           </div>
           <div id="selected-foods-section" class="mt-6">
             <h3 class="font-semibold text-gray-700 mb-2">Selected Foods</h3>
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+              <p class="text-sm text-yellow-700">
+                Note: Enter serving size in grams. Base nutrients are per 100g,
+                and will be automatically adjusted based on your serving size.
+              </p>
+            </div>
             <div id="selected-foods-table" class="overflow-x-auto">
               <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -248,7 +252,7 @@
                     <th
                       class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
                     >
-                      Price (₹)
+                      Price & Serving Size
                     </th>
                     <th
                       class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"

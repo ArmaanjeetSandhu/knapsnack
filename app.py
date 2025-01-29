@@ -12,7 +12,11 @@ from typing import Dict, List, Optional
 import json
 import logging
 
-logging.basicConfig(level=logging.ERROR, format='%(asctime)s %(levelname)s %(message)s', handlers=[logging.FileHandler("app.log"), logging.StreamHandler()])
+logging.basicConfig(
+    level=logging.ERROR,
+    format="%(asctime)s %(levelname)s %(message)s",
+    handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
+)
 
 app = Flask(__name__)
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
@@ -116,12 +120,13 @@ def add_food():
         "fdcId": "food_id",
         "description": "food name",
         "price": float,
+        "servingSize": float,
         "nutrients": {...}
     }
     """
     try:
         food_data = request.json
-        required_fields = ["fdcId", "description", "price", "nutrients"]
+        required_fields = ["fdcId", "description", "price", "servingSize", "nutrients"]
 
         if not all(field in food_data for field in required_fields):
             return jsonify({"error": "Missing required fields"}), 400
@@ -210,11 +215,25 @@ def calculate():
         return jsonify({"error": "An internal error has occurred."}), 400
 
 
+def adjust_nutrients_for_serving(
+    nutrients: Dict[str, float], serving_size: float
+) -> Dict[str, float]:
+    """
+    Adjust nutrient values based on serving size.
+    Base nutrients are per 100g, adjust according to specified serving size.
+    """
+    adjusted_nutrients = {}
+    for nutrient, value in nutrients.items():
+        adjusted_nutrients[nutrient] = (value * serving_size) / 100.0
+    return adjusted_nutrients
+
+
 @app.route("/optimize", methods=["POST"])
 def optimize():
     try:
         data = request.json
         nutrient_goals = data["nutrient_goals"]
+        selected_foods_data = data["selected_foods"]
         age = int(data["age"])
         gender = data["gender"]
 
@@ -223,11 +242,11 @@ def optimize():
         if age > 100:
             return jsonify({"error": "Age must be 100 or younger"}), 400
 
-        if not selected_foods:
+        if not selected_foods_data:
             return jsonify({"error": "No foods selected"}), 400
 
         # Create arrays for optimization
-        c = np.array([food["price"] for food in selected_foods])
+        c = np.array([food["price"] for food in selected_foods_data])
 
         A_ub = []
         b_ub = []
@@ -236,27 +255,36 @@ def optimize():
         for nutrient in nutrients:
             if nutrient.lower().replace(" ", "_") in nutrient_goals:
                 goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
-                values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
-                A_ub.extend([
-                    [-val for val in values],  # Lower bound
-                    values                     # Upper bound
-                ])
-                b_ub.extend([
-                    -goal,          # Lower bound must be >= goal
-                    goal * 1.01     # Upper bound must be <= goal * 1.01
-            ])
+                # Get adjusted nutrient values based on serving size
+                values = [
+                    food["nutrients"].get(nutrient, 0) for food in selected_foods_data
+                ]
+                A_ub.extend(
+                    [[-val for val in values], values]  # Lower bound  # Upper bound
+                )
+                b_ub.extend(
+                    [
+                        -goal,  # Lower bound must be >= goal
+                        goal * 1.01,  # Upper bound must be <= goal * 1.01
+                    ]
+                )
 
         if "saturated_fats" in nutrient_goals:
             sat_fat_goal = nutrient_goals["saturated_fats"]
-            sat_fat_values = [food["nutrients"].get("Saturated Fats", 0) for food in selected_foods]
-            A_ub.append(sat_fat_values)          # Upper bound only
-            b_ub.append(sat_fat_goal)            # No overflow for saturated fats
+            sat_fat_values = [
+                food["nutrients"].get("Saturated Fats", 0)
+                for food in selected_foods_data
+            ]
+            A_ub.append(sat_fat_values)  # Upper bound only
+            b_ub.append(sat_fat_goal)  # No overflow for saturated fats
 
         # Handle micronutrient constraints based on RDA/UL
         nutrient_bounds = cf.nutrient_bounds(age, gender)
         for nutrient, api_name in NUTRIENT_MAP.items():
             if nutrient not in nutrients:  # Skip macronutrients already handled
-                values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+                values = [
+                    food["nutrients"].get(nutrient, 0) for food in selected_foods_data
+                ]
 
                 # RDA constraint
                 rda_key = f"{nutrient}_RDA"
@@ -274,18 +302,20 @@ def optimize():
         b_ub = np.array(b_ub)
 
         # Solve optimization problem
-        bounds = [(0, None) for _ in range(len(selected_foods))]
+        bounds = [(0, None) for _ in range(len(selected_foods_data))]
         result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
 
         if result.success:
             servings = np.round(result.x, 1)
-            food_items = [food["description"] for food in selected_foods]
+            food_items = [food["description"] for food in selected_foods_data]
             total_cost = np.round(result.x * c, 2)
 
-            # Calculate nutrient totals
+            # Calculate nutrient totals (using adjusted nutrients)
             nutrient_totals = {}
             for nutrient in NUTRIENT_MAP.keys():
-                values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+                values = [
+                    food["nutrients"].get(nutrient, 0) for food in selected_foods_data
+                ]
                 nutrient_totals[nutrient] = float(
                     np.round(np.sum(servings * values), 1)
                 )
@@ -309,12 +339,18 @@ def optimize():
 
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
-        return jsonify({"error": "An internal error has occurred. Please try again later."}), 500
+        return (
+            jsonify(
+                {"error": "An internal error has occurred. Please try again later."}
+            ),
+            500,
+        )
 
 
 def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
     """
     Extract relevant nutrients from the API response and convert to our format.
+    Returns nutrients per 100g.
     """
     result = {}
 
