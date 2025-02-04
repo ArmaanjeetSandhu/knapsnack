@@ -1,4 +1,4 @@
-Life-Stage Group,Calcium (mg/d),Chromium (µg/d),Copper (µg/d),Fluoride (mg/d),Iodine (µg/d),Iron (mg/d),Magnesium (mg/d),Manganese (mg/d),Molybdenum (µg/d),Phosphorus (mg/d),Selenium (µg/d),Zinc (mg/d),Potassium (mg/d),Sodium (mg/d),Chloride (g/d)
+Life-Stage Group,Calcium (mg),Chromium (µg),Copper (µg),Fluoride (mg),Iodine (µg),Iron (mg),Magnesium (mg),Manganese (mg),Molybdenum (µg),Phosphorus (mg),Selenium (µg),Zinc (mg),Potassium (mg),Sodium (mg),Chloride (g)
 Infants 0-6 mo,200,0.2,200,0.01,110,0.27,30,0.003,2,100,15,2,400,110,0.18
 Infants 7-12 mo,260,5.5,220,0.5,130,11,75,0.6,3,275,20,3,860,370,0.57
 Children 1-3 y,700,11,340,0.7,90,7,80,1.2,17,460,20,3,2000,800,1.5
