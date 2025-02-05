@@ -3,8 +3,7 @@ from whitenoise import WhiteNoise
 import pandas as pd
 import numpy as np
 from scipy.optimize import linprog
-import calculator_functions as cf
-import helper_functions as hf
+from utils import *
 import os
 from dotenv import load_dotenv
 import requests
@@ -26,39 +25,38 @@ load_dotenv()
 # Store selected foods in memory (in production, this should be a database)
 selected_foods = []
 
-# API configuration
 API_KEY = os.environ.get("USDA_API_KEY")
 API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
 
-# Nutrient ID mapping
 NUTRIENT_MAP = {
-    "Vitamin A": "Vitamin A, RAE",
-    "Vitamin C": "Vitamin C, total ascorbic acid",
-    "Vitamin D": "Vitamin D3 (cholecalciferol)",
-    "Vitamin E": "Vitamin E (alpha-tocopherol)",
-    "Vitamin K": "Vitamin K (phylloquinone)",
-    "Thiamin": "Thiamin",
-    "Riboflavin": "Riboflavin",
-    "Niacin": "Niacin",
-    "Vitamin B6": "Vitamin B-6",
-    "Folate": "Folate, total",
-    "Vitamin B12": "Vitamin B-12",
-    "Calcium": "Calcium, Ca",
-    "Carbohydrates": "Carbohydrate, by difference",
-    "Protein": "Protein",
-    "Fats": "Total lipid (fat)",
-    "Saturated Fats": "Fatty acids, total saturated",
-    "Fibre": "Fiber, total dietary",
-    "Copper": "Copper, Cu",
-    "Iodine": "Iodine, I",
-    "Iron": "Iron, Fe",
-    "Magnesium": "Magnesium, Mg",
-    "Manganese": "Manganese, Mn",
-    "Phosphorus": "Phosphorus, P",
-    "Selenium": "Selenium, Se",
-    "Zinc": "Zinc, Zn",
-    "Potassium": "Potassium, K",
-    "Sodium": "Sodium, Na",
+    "Vitamin A (µg)": "Vitamin A, RAE",
+    "Vitamin C (mg)": "Vitamin C, total ascorbic acid",
+    "Vitamin D (µg)": "Vitamin D3 (cholecalciferol)",
+    "Vitamin E (mg)": "Vitamin E (alpha-tocopherol)",
+    "Vitamin K (µg)": "Vitamin K (phylloquinone)",
+    "Thiamin (mg)": "Thiamin",
+    "Riboflavin (mg)": "Riboflavin",
+    "Niacin (mg)": "Niacin",
+    "Vitamin B6 (mg)": "Vitamin B-6",
+    "Folate (µg)": "Folate, total",
+    "Vitamin B12 (µg)": "Vitamin B-12",
+    "Calcium (mg)": "Calcium, Ca",
+    "carbohydrate": "Carbohydrate, by difference",
+    "Choline (mg)": "Choline, total",
+    "protein": "Protein",
+    "fats": "Total lipid (fat)",
+    "saturated_fats": "Fatty acids, total saturated",
+    "fiber": "Fiber, total dietary",
+    "Copper (µg)": "Copper, Cu",
+    "Iron (mg)": "Iron, Fe",
+    "Magnesium (mg)": "Magnesium, Mg",
+    "Manganese (mg)": "Manganese, Mn",
+    "Phosphorus (mg)": "Phosphorus, P",
+    "Selenium (µg)": "Selenium, Se",
+    "Zinc (mg)": "Zinc, Zn",
+    "Potassium (mg)": "Potassium, K",
+    "Sodium (mg)": "Sodium, Na",
+    "Pantothenic Acid (mg)": "Pantothenic acid",
 }
 
 
@@ -91,7 +89,6 @@ def search_food():
         response = requests.get(API_ENDPOINT, params=params)
         response.raise_for_status()
 
-        # Extract relevant information from each food item
         search_results = []
         for food in response.json().get("foods", []):
             search_results.append(
@@ -131,7 +128,6 @@ def add_food():
         if not all(field in food_data for field in required_fields):
             return jsonify({"error": "Missing required fields"}), 400
 
-        # Add the food to our selected foods list
         selected_foods.append(food_data)
 
         return jsonify(
@@ -173,29 +169,38 @@ def calculate():
     try:
         data = request.json
         print("Received data:", data)
+
         gender = data["gender"]
         weight = int(data["weight"])
         height = int(data["height"])
         age = int(data["age"])
-
-        if age < 19:
-            return jsonify({"error": "Age must be 19 or older"}), 400
-        if age > 100:
-            return jsonify({"error": "Age must be 100 or younger"}), 400
-
+        pratio = float(data["protein"]) / 100
+        cratio = float(data["carbohydrate"]) / 100
+        fratio = float(data["fats"]) / 100
         activity_multiplier = float(data["activity"])
-        goal = data["goal"]
+        percentage = float(data["percentage"]) / 100
 
-        bmr = cf.bmr(gender, weight, height, age)
-        tdee = cf.tdee(bmr, activity_multiplier)
-        daily_caloric_intake = {
-            "cutting": 0.75 * tdee,
-            "bulking": 1.10 * tdee,
-            "maintaining": tdee,
-        }.get(goal, tdee)
+        validation_errors = []
 
-        protein, carbohydrates, fats, fibre, saturated_fats = cf.macros(
-            int(daily_caloric_intake), goal
+        if age < 19 or age > 100:
+            validation_errors.append("Age must be between 19 and 100")
+        if weight < 30 or weight > 200:
+            validation_errors.append("Weight must be between 30 and 200 kg")
+        if height < 135 or height > 200:
+            validation_errors.append("Height must be between 135 and 200 cm")
+
+        if validation_errors:
+            return (
+                jsonify({"error": "Validation failed", "messages": validation_errors}),
+                400,
+            )
+
+        bmr = calculate_bmr(gender, weight, height, age)
+        tdee = calculate_tdee(bmr, activity_multiplier)
+        daily_caloric_intake = percentage * tdee
+
+        protein, carbohydrate, fats, fiber, saturated_fats = calculate_macros(
+            int(daily_caloric_intake), pratio, cratio, fratio
         )
 
         result = {
@@ -203,16 +208,23 @@ def calculate():
             "tdee": tdee,
             "daily_caloric_intake": int(daily_caloric_intake),
             "protein": protein,
-            "carbohydrates": carbohydrates,
+            "carbohydrate": carbohydrate,
             "fats": fats,
-            "fibre": fibre,
+            "fiber": fiber,
             "saturated_fats": saturated_fats,
         }
         print("Calculated result:", result)
         return jsonify(result)
+
+    except KeyError as e:
+        app.logger.error("Missing required field: %s", str(e))
+        return jsonify({"error": f"Missing required field: {str(e)}"}), 400
+    except ValueError as e:
+        app.logger.error("Invalid value: %s", str(e))
+        return jsonify({"error": f"Invalid value: {str(e)}"}), 400
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
-        return jsonify({"error": "An internal error has occurred."}), 400
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 def adjust_nutrients_for_serving(
@@ -237,25 +249,21 @@ def optimize():
         age = int(data["age"])
         gender = data["gender"]
 
-        if age < 19:
-            return jsonify({"error": "Age must be 19 or older"}), 400
-        if age > 100:
-            return jsonify({"error": "Age must be 100 or younger"}), 400
+        if age < 19 or age > 100:
+            return jsonify({"error": "Age must be between 19 and 100"}), 400
 
         if not selected_foods_data:
             return jsonify({"error": "No foods selected"}), 400
 
-        # Create arrays for optimization
         c = np.array([food["price"] for food in selected_foods_data])
 
         A_ub = []
         b_ub = []
 
-        nutrients = ["Protein", "Carbohydrates", "Fats", "Fibre"]
+        nutrients = ["Protein", "carbohydrate", "Fats", "fiber"]
         for nutrient in nutrients:
             if nutrient.lower().replace(" ", "_") in nutrient_goals:
                 goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
-                # Get adjusted nutrient values based on serving size
                 values = [
                     food["nutrients"].get(nutrient, 0) for food in selected_foods_data
                 ]
@@ -278,30 +286,30 @@ def optimize():
             A_ub.append(sat_fat_values)  # Upper bound only
             b_ub.append(sat_fat_goal)  # No overflow for saturated fats
 
+        # Get RDA and UL bounds
+        lower_bounds, upper_bounds = nutrient_bounds(age, gender)
+
         # Handle micronutrient constraints based on RDA/UL
-        nutrient_bounds = cf.nutrient_bounds(age, gender)
         for nutrient, api_name in NUTRIENT_MAP.items():
             if nutrient not in nutrients:  # Skip macronutrients already handled
                 values = [
                     food["nutrients"].get(nutrient, 0) for food in selected_foods_data
                 ]
 
-                # RDA constraint
-                rda_key = f"{nutrient}_RDA"
-                if rda_key in nutrient_bounds:
+                # RDA constraint - use lower_bounds
+                rda_key = nutrient
+                if rda_key in lower_bounds and pd.notna(lower_bounds[rda_key]):
                     A_ub.append([-val for val in values])
-                    b_ub.append(-nutrient_bounds[rda_key])
+                    b_ub.append(-float(lower_bounds[rda_key]))
 
-                # UL constraint
-                ul_key = f"{nutrient}_UL"
-                if ul_key in nutrient_bounds:
+                # UL constraint - use upper_bounds
+                if rda_key in upper_bounds and pd.notna(upper_bounds[rda_key]):
                     A_ub.append(values)
-                    b_ub.append(nutrient_bounds[ul_key])
+                    b_ub.append(float(upper_bounds[rda_key]))
 
         A_ub = np.array(A_ub)
         b_ub = np.array(b_ub)
 
-        # Solve optimization problem
         bounds = [(0, None) for _ in range(len(selected_foods_data))]
         result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
 
@@ -310,7 +318,6 @@ def optimize():
             food_items = [food["description"] for food in selected_foods_data]
             total_cost = np.round(result.x * c, 2)
 
-            # Calculate nutrient totals (using adjusted nutrients)
             nutrient_totals = {}
             for nutrient in NUTRIENT_MAP.keys():
                 values = [
@@ -354,7 +361,6 @@ def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
     """
     result = {}
 
-    # Create reverse mapping for easier lookup
     reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
 
     for nutrient in nutrients_data:
@@ -365,7 +371,6 @@ def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
             if value is not None:
                 result[our_name] = float(value)
 
-    # Fill in missing nutrients with 0
     for our_name in NUTRIENT_MAP.keys():
         if our_name not in result:
             result[our_name] = 0.0

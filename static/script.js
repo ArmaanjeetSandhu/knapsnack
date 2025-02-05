@@ -11,13 +11,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const optimizationResults = document.getElementById("optimization-results");
   const dietPlan = document.getElementById("diet-plan");
   const ageInput = document.getElementById("age");
+  const weightInput = document.getElementById("weight");
+  const heightInput = document.getElementById("height");
 
   let nutrientGoals = {};
-  let selectedFoods = new Map(); // Map to store selected foods with their nutritional data
+  let selectedFoods = new Map();
 
   ageInput.addEventListener("input", function () {
-    if (this.value < 19) {
-      this.setCustomValidity("Age must be 19 or older");
+    if (this.value < 19 || this.value > 100) {
+      this.setCustomValidity("Age must be between 19 and 100.");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  weightInput.addEventListener("input", function () {
+    const value = parseInt(this.value);
+    if (value < 30 || value > 200) {
+      this.setCustomValidity("Weight must be between 30 and 200 kg.");
+    } else {
+      this.setCustomValidity("");
+    }
+  });
+
+  heightInput.addEventListener("input", function () {
+    const value = parseInt(this.value);
+    if (value < 135 || value > 200) {
+      this.setCustomValidity("Height must be between 135 and 200 cm.");
     } else {
       this.setCustomValidity("");
     }
@@ -27,9 +47,22 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const formData = new FormData(personalInfoForm);
     const data = Object.fromEntries(formData.entries());
+    const age = parseInt(data.age);
+    const weight = parseInt(data.weight);
+    const height = parseInt(data.height);
 
-    if (parseInt(data.age) < 19) {
-      alert("Age must be 19 or older");
+    if (age < 19 || age > 100) {
+      alert("Age must be between 19 and 100.");
+      return;
+    }
+
+    if (weight < 30 || weight > 200) {
+      alert("Weight must be between 30 and 200 kg.");
+      return;
+    }
+
+    if (height < 135 || height > 200) {
+      alert("Height must be between 135 and 200 cm.");
       return;
     }
 
@@ -139,7 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const priceInput = row.querySelector(".food-price");
     const servingSizeInput = row.querySelector(".serving-size");
 
-    // Add event listeners for validation
     priceInput.addEventListener("input", updateOptimizeButton);
     servingSizeInput.addEventListener("input", updateOptimizeButton);
 
@@ -185,19 +217,82 @@ document.addEventListener("DOMContentLoaded", () => {
     ).textContent = `${result.protein} g`;
     document.getElementById(
       "carbs-result"
-    ).textContent = `${result.carbohydrates} g`;
+    ).textContent = `${result.carbohydrate} g`;
     document.getElementById("fats-result").textContent = `${result.fats} g`;
 
     nutrientGoals = {
       protein: result.protein,
-      carbohydrates: result.carbohydrates,
+      carbohydrate: result.carbohydrate,
       fats: result.fats,
-      fibre: result.fibre,
+      fiber: result.fiber,
       saturated_fats: result.saturated_fats,
     };
 
     resultsSection.classList.remove("hidden");
   }
+
+  optimizeButton.addEventListener("click", async () => {
+    if (selectedFoods.size === 0) {
+      alert("Please select at least one food item.");
+      return;
+    }
+
+    const formData = {
+      age: parseInt(document.getElementById("age").value),
+      gender: document.getElementById("gender").value,
+      protein: parseInt(document.getElementById("protein").value),
+      carbohydrate: parseInt(document.getElementById("carbohydrate").value),
+      fats: parseInt(document.getElementById("fats").value),
+      percentage: parseFloat(document.getElementById("percentage").value) / 100,
+    };
+
+    const foodsData = Array.from(selectedFoods.values()).map((food) => {
+      const servingSize = parseFloat(food.servingSizeInput.value);
+      const adjustedNutrients = adjustNutrientsForServingSize(
+        food.nutrients,
+        servingSize
+      );
+
+      return {
+        fdcId: food.fdcId,
+        description: `${food.description} (${servingSize}g serving)`,
+        price: parseFloat(food.priceInput.value),
+        servingSize: servingSize,
+        nutrients: adjustedNutrients,
+      };
+    });
+
+    const data = {
+      selected_foods: foodsData,
+      nutrient_goals: nutrientGoals,
+      age: formData.age,
+      gender: formData.gender,
+    };
+
+    try {
+      const response = await fetch("/optimize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        displayOptimizationResults(result.result);
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while optimizing. Please try again.");
+    }
+  });
 
   function showFoodSelection() {
     foodSelectionSection.classList.remove("hidden");
@@ -211,7 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function adjustNutrientsForServingSize(nutrients, servingSize) {
     const adjustedNutrients = {};
     for (const [nutrient, value] of Object.entries(nutrients)) {
-      // Convert from per 100g to per serving size
       adjustedNutrients[nutrient] = (value * servingSize) / 100;
     }
     return adjustedNutrients;
@@ -376,7 +470,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Add event listener for Enter key in search input
   searchInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
       searchButton.click();
