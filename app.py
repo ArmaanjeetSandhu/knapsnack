@@ -218,13 +218,13 @@ def calculate():
 
     except KeyError as e:
         app.logger.error("Missing required field: %s", str(e))
-        return jsonify({"error": f"Missing required field: {str(e)}"}), 400
+        return jsonify({"error": "A required field is missing."}), 400
     except ValueError as e:
         app.logger.error("Invalid value: %s", str(e))
-        return jsonify({"error": f"Invalid value: {str(e)}"}), 400
+        return jsonify({"error": "An invalid value was provided."}), 400
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
-        return jsonify({"error": "An internal error has occurred."}), 500
+        return jsonify({"error": "An internal server error has occurred."}), 500
 
 
 def adjust_nutrients_for_serving(
