@@ -1,5 +1,5 @@
-from flask import Flask, request, jsonify, render_template
-from whitenoise import WhiteNoise
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import numpy as np
 from scipy.optimize import linprog
@@ -7,8 +7,7 @@ from utils import *
 import os
 from dotenv import load_dotenv
 import requests
-from typing import Dict, List, Optional
-import json
+from typing import Dict, List
 import logging
 
 logging.basicConfig(
@@ -18,7 +17,7 @@ logging.basicConfig(
 )
 
 app = Flask(__name__)
-app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/", prefix="static/")
+CORS(app)
 
 load_dotenv()
 
@@ -60,12 +59,7 @@ NUTRIENT_MAP = {
 }
 
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-
-@app.route("/search_food", methods=["POST"])
+@app.route("/api/search_food", methods=["POST"])
 def search_food():
     """
     Search for foods using the USDA API.
@@ -109,7 +103,7 @@ def search_food():
         return jsonify({"error": "An internal error has occurred"}), 500
 
 
-@app.route("/add_food", methods=["POST"])
+@app.route("/api/add_food", methods=["POST"])
 def add_food():
     """
     Add a selected food item to the list.
@@ -139,7 +133,7 @@ def add_food():
         return jsonify({"error": "An internal error has occurred"}), 500
 
 
-@app.route("/remove_food", methods=["POST"])
+@app.route("/api/remove_food", methods=["POST"])
 def remove_food():
     """
     Remove a food item from the selected foods list.
@@ -164,7 +158,7 @@ def remove_food():
         return jsonify({"error": "An internal error has occurred"}), 500
 
 
-@app.route("/calculate", methods=["POST"])
+@app.route("/api/calculate", methods=["POST"])
 def calculate():
     try:
         data = request.json
@@ -240,7 +234,7 @@ def adjust_nutrients_for_serving(
     return adjusted_nutrients
 
 
-@app.route("/optimize", methods=["POST"])
+@app.route("/api/optimize", methods=["POST"])
 def optimize():
     try:
         data = request.json
@@ -380,4 +374,4 @@ def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=True)
