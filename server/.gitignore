@@ -1,3 +1,5 @@
+app.log
+
 # Python virtual environment
 goalenv/
 venv/
