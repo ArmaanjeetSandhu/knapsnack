@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { Container, Navbar, Nav } from 'react-bootstrap';
 import PersonalInfoForm from './components/PersonalInfoForm';
 import FoodSearch from './components/FoodSearch';
 import SelectedFoods from './components/SelectedFoods';
 import OptimizationResults from './components/OptimizationResults';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from "./components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "./components/ui/navigation-menu";
 
 function App() {
   const [nutrientGoals, setNutrientGoals] = useState(null);
@@ -21,22 +26,44 @@ function App() {
   };
 
   return (
-    <div className="d-flex flex-column min-vh-100">
-      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-        <Container>
-          <Navbar.Brand href="#home">Goal-ith: The Meal Planner</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#about">About</Nav.Link>
-              <Nav.Link href="#contact">Contact</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-gray-900 text-white py-4 mb-6">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-bold">Goal-ith: The Meal Planner</h1>
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuLink 
+                    className="text-white hover:text-gray-300 px-3 py-2"
+                    href="#home"
+                  >
+                    Home
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink 
+                    className="text-white hover:text-gray-300 px-3 py-2"
+                    href="#about"
+                  >
+                    About
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink 
+                    className="text-white hover:text-gray-300 px-3 py-2"
+                    href="#contact"
+                  >
+                    Contact
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+        </div>
+      </header>
 
-      <Container className="flex-grow-1 mb-4">
+      <main className="container mx-auto px-4 mb-8 flex-grow">
         <PersonalInfoForm onCalculationSuccess={handleCalculationSuccess} />
         
         {nutrientGoals && (
@@ -61,12 +88,12 @@ function App() {
             )}
           </>
         )}
-      </Container>
+      </main>
 
-      <footer className="bg-dark text-white text-center py-3 mt-auto">
-        <Container>
-          <p className="mb-0">&copy; 2025 Goal-ith. All rights reserved.</p>
-        </Container>
+      <footer className="bg-gray-900 text-white py-4 mt-auto">
+        <div className="container mx-auto px-4 text-center">
+          <p>&copy; 2025 Goal-ith. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
