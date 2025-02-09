@@ -8,7 +8,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card"
 import { Input } from "../components/ui/input";
 import { Alert, AlertDescription } from "../components/ui/alert";
 
-// ScrollArea component for handling scrollable content with a nice scrollbar
 import {
   ScrollArea,
   ScrollBar
@@ -20,7 +19,6 @@ const FoodSearch = ({ onFoodSelect }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handle the search submission
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;

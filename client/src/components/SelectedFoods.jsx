@@ -10,7 +10,6 @@ import { Alert, AlertDescription } from "../components/ui/alert";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -27,12 +26,10 @@ const SelectedFoods = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Remove a food item from the selection
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter(food => food.fdcId !== fdcId));
   };
 
-  // Update food item properties (price or serving size)
   const handleInputChange = (fdcId, field, value) => {
     onFoodsUpdate(foods.map(food => {
       if (food.fdcId === fdcId) {
@@ -42,14 +39,12 @@ const SelectedFoods = ({
     }));
   };
 
-  // Handle optimization request
   const handleOptimize = async () => {
     if (!foods.length) {
       setError('Please select at least one food item.');
       return;
     }
 
-    // Validate all inputs are present and valid
     const invalidFoods = foods.filter(food => 
       !food.price || !food.servingSize || 
       parseFloat(food.price) <= 0 || 
@@ -65,7 +60,6 @@ const SelectedFoods = ({
     setError(null);
 
     try {
-      // Prepare food data with adjusted nutrients
       const foodsData = foods.map(food => ({
         fdcId: food.fdcId,
         description: food.description,
@@ -74,7 +68,6 @@ const SelectedFoods = ({
         nutrients: adjustNutrientsForServingSize(food.nutrients, parseFloat(food.servingSize))
       }));
 
-      // Create optimization request data
       const optimizationData = {
         selected_foods: foodsData,
         nutrient_goals: nutrientGoals,
@@ -82,7 +75,6 @@ const SelectedFoods = ({
         gender: userInfo.gender
       };
 
-      // Send optimization request
       const result = await api.optimizeDiet(optimizationData);
       if (result.success) {
         onOptimizationResults(result.result);
@@ -96,7 +88,6 @@ const SelectedFoods = ({
     }
   };
 
-  // Helper function to adjust nutrients based on serving size
   const adjustNutrientsForServingSize = (nutrients, servingSize) => {
     const adjustedNutrients = {};
     for (const [nutrient, value] of Object.entries(nutrients)) {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import api from '../services/api';
+import MacroRatioValidator from './MacroRatioValidator';
 
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
@@ -19,8 +20,8 @@ import { Alert, AlertDescription } from "../components/ui/alert";
 const PersonalInfoForm = ({ onCalculationSuccess }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [macroRatios, setMacroRatios] = useState(null);
 
-  // Initialize form with react-hook-form
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       gender: 'm',
@@ -28,15 +29,16 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
       weight: '',
       height: '',
       activity: '1.2',
-      protein: '30',
-      carbohydrate: '40',
-      fats: '30',
       percentage: '100'
     }
   });
 
-  // Form submission handler
   const onSubmit = async (formData) => {
+    if (!macroRatios) {
+      setError('Please set valid macro ratios using the slider controls');
+      return;
+    }
+
     // Validation checks
     const age = parseInt(formData.age);
     const weight = parseInt(formData.weight);
@@ -61,13 +63,25 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
     setError(null);
 
     try {
-      const result = await api.calculateNutrition(formData);
+      const calculationData = {
+        ...formData,
+        protein: macroRatios.protein,
+        carbohydrate: macroRatios.carbohydrate,
+        fats: macroRatios.fats
+      };
+      
+      const result = await api.calculateNutrition(calculationData);
       onCalculationSuccess({ ...result, age: formData.age, gender: formData.gender });
     } catch (err) {
       setError(err.message || 'An error occurred while calculating');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleValidRatios = (ratios) => {
+    setMacroRatios(ratios);
+    setError(null);
   };
 
   return (
@@ -83,7 +97,6 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
         )}
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Gender and Age Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="gender">Gender</Label>
@@ -116,7 +129,6 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
             </div>
           </div>
 
-          {/* Weight and Height Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="weight">Weight (kg)</Label>
@@ -153,7 +165,6 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
             </div>
           </div>
 
-          {/* Activity Level and Target Caloric Intake Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="activity">Activity Level</Label>
@@ -185,52 +196,15 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
             </div>
           </div>
 
-          {/* Macronutrient Ratios Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="protein">Protein Ratio (%)</Label>
-              <Input
-                type="number"
-                id="protein"
-                {...register("protein", {
-                  required: true,
-                  min: 10,
-                  max: 50
-                })}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="carbohydrate">Carbohydrate Ratio (%)</Label>
-              <Input
-                type="number"
-                id="carbohydrate"
-                {...register("carbohydrate", {
-                  required: true,
-                  min: 20,
-                  max: 65
-                })}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="fats">Fats Ratio (%)</Label>
-              <Input
-                type="number"
-                id="fats"
-                {...register("fats", {
-                  required: true,
-                  min: 15,
-                  max: 40
-                })}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label>Macronutrient Ratios</Label>
+            <MacroRatioValidator onValidRatios={handleValidRatios} />
           </div>
 
           <Button 
             type="submit" 
             className="w-full"
-            disabled={loading}
+            disabled={loading || !macroRatios}
           >
             {loading ? 'Calculating...' : 'Calculate'}
           </Button>

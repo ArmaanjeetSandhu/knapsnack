@@ -13,9 +13,7 @@ import {
   TableFooter,
 } from "../components/ui/table";
 
-// This component handles the display of the optimized diet plan results
 const OptimizationResults = ({ results }) => {
-  // Filter out food items with zero servings for cleaner display
   const nonZeroItems = results.food_items
     .map((food, index) => ({
       food,
@@ -24,26 +22,20 @@ const OptimizationResults = ({ results }) => {
     }))
     .filter(item => item.servings > 0);
 
-  // Handle CSV export of the optimization results
   const handleExportCSV = () => {
-    // Create CSV content starting with the food items
     let csvContent = 'Food Item,Number of Servings,Cost (₹)\n';
     
-    // Add each food item with its servings and cost
     nonZeroItems.forEach(item => {
       csvContent += `"${item.food}",${item.servings.toFixed(1)},₹${item.cost.toFixed(2)}\n`;
     });
 
-    // Add total cost information
     csvContent += '\nTotal Daily Cost,₹' + results.total_cost_sum.toFixed(2) + '\n\n';
     
-    // Add nutritional information
     csvContent += 'Daily Nutrition\n';
     for (const [nutrient, value] of Object.entries(results.nutrient_totals)) {
       csvContent += `${nutrient},${value}\n`;
     }
 
-    // Create and trigger download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -72,7 +64,6 @@ const OptimizationResults = ({ results }) => {
         </div>
       </CardHeader>
       <CardContent className="p-6">
-        {/* Recommended Daily Intake Section */}
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-semibold mb-4">Recommended Daily Intake</h3>
@@ -108,7 +99,6 @@ const OptimizationResults = ({ results }) => {
             </div>
           </div>
 
-          {/* Daily Nutrition Section */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Daily Nutrition</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
