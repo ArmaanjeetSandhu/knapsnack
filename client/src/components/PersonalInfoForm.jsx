@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import api from '../services/api';
 import MacroRatioValidator from './MacroRatioValidator';
+import ActivitySlider from './ActivitySlider';
 
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
@@ -22,7 +23,7 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [macroRatios, setMacroRatios] = useState(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm({
     defaultValues: {
       gender: 'm',
       age: '',
@@ -164,23 +165,14 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
               )}
             </div>
           </div>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="activity">Activity Level</Label>
-              <Select defaultValue="1.2" {...register("activity")}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select activity level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1.2">Sedentary</SelectItem>
-                  <SelectItem value="1.375">Lightly Active</SelectItem>
-                  <SelectItem value="1.55">Moderately Active</SelectItem>
-                  <SelectItem value="1.725">Very Active</SelectItem>
-                  <SelectItem value="1.9">Extremely Active</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <ActivitySlider 
+                value={parseFloat(watch('activity') || 1.2)} 
+                onChange={(value) => setValue('activity', value)} 
+              />
+          </div>
 
             <div className="space-y-2">
               <Label htmlFor="percentage">Target Caloric Intake (%)</Label>

@@ -190,16 +190,6 @@ const MacroRatioValidator = ({ onValidRatios }) => {
             />
           </div>
         ))}
-        
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <div className="text-sm font-medium">Current Distribution:</div>
-          <div className="text-lg">
-            Protein: {macros.protein}% / Carbs: {macros.carbohydrate}% / Fat: {macros.fats}%
-          </div>
-          <div className="text-sm font-medium mt-2">
-            Total: {total}%
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
