@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { Download } from 'lucide-react';
-
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import {
@@ -49,14 +48,14 @@ const OptimizationResults = ({ results }) => {
 
   return (
     <Card className="mb-6 shadow-lg">
-      <CardHeader className="bg-success/10 border-b">
+      <CardHeader className="bg-success/5 dark:bg-success/10 border-b border-border">
         <div className="flex justify-between items-center">
-          <CardTitle>Optimized Diet Plan</CardTitle>
+          <CardTitle className="text-foreground">Optimized Diet Plan</CardTitle>
           <Button 
             variant="outline"
             size="sm"
             onClick={handleExportCSV}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-foreground hover:text-accent-foreground"
           >
             <Download className="w-4 h-4" />
             Export CSV
@@ -66,31 +65,46 @@ const OptimizationResults = ({ results }) => {
       <CardContent className="p-6">
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-semibold mb-4">Recommended Daily Intake</h3>
-            <div className="rounded-md border">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">
+              Recommended Daily Intake
+            </h3>
+            <div className="rounded-md border border-border">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Food Item</TableHead>
-                    <TableHead className="text-right">Number of Servings</TableHead>
-                    <TableHead className="text-right">Cost (₹)</TableHead>
+                  <TableRow className="border-border">
+                    <TableHead className="text-muted-foreground">Food Item</TableHead>
+                    <TableHead className="text-right text-muted-foreground">
+                      Number of Servings
+                    </TableHead>
+                    <TableHead className="text-right text-muted-foreground">
+                      Cost (₹)
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {nonZeroItems.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{item.food}</TableCell>
-                      <TableCell className="text-right">{item.servings.toFixed(1)}</TableCell>
-                      <TableCell className="text-right">₹{item.cost.toFixed(2)}</TableCell>
+                    <TableRow key={index} className="border-border">
+                      <TableCell className="font-medium text-foreground">
+                        {item.food}
+                      </TableCell>
+                      <TableCell className="text-right text-foreground">
+                        {item.servings.toFixed(1)}
+                      </TableCell>
+                      <TableCell className="text-right text-foreground">
+                        ₹{item.cost.toFixed(2)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
                 <TableFooter>
-                  <TableRow>
-                    <TableCell colSpan={2} className="text-right font-semibold">
+                  <TableRow className="border-border">
+                    <TableCell 
+                      colSpan={2} 
+                      className="text-right font-semibold text-foreground"
+                    >
                       Total Daily Cost:
                     </TableCell>
-                    <TableCell className="text-right font-semibold">
+                    <TableCell className="text-right font-semibold text-foreground">
                       ₹{results.total_cost_sum.toFixed(2)}
                     </TableCell>
                   </TableRow>
@@ -100,10 +114,15 @@ const OptimizationResults = ({ results }) => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">Daily Nutrition</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">
+              Daily Nutrition
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {Object.entries(results.nutrient_totals).map(([nutrient, value], index) => (
-                <Card key={index} className="bg-primary/5">
+                <Card 
+                  key={index} 
+                  className="bg-card dark:bg-card/50 border-border"
+                >
                   <CardContent className="p-4">
                     <div className="text-sm font-medium text-muted-foreground mb-1">
                       {nutrient}

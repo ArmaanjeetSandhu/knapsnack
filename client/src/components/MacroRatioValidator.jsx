@@ -52,19 +52,61 @@ const MacroRatioValidator = ({ onValidRatios }) => {
 
   const macroColors = useMemo(() => ({
     protein: {
-      main: '#ec4899',
-      range: '#fce7f3',
-      invalid: '#fdf2f8'
+      text: "text-pink-500 dark:text-pink-400",
+      border: "border-pink-500 dark:border-pink-400",
+      bg: "bg-pink-500 dark:bg-pink-400",
+      range: "bg-pink-100 dark:bg-pink-900/30",
+      invalid: "bg-pink-50 dark:bg-pink-900/10",
+      slider: {
+        light: {
+          invalid: '#fdf2f8',
+          range: '#fce7f3',
+          main: '#ec4899'
+        },
+        dark: {
+          invalid: '#831843',
+          range: '#9d174d',
+          main: '#f472b6'
+        }
+      }
     },
     carbohydrate: {
-      main: '#6366f1',
-      range: '#e0e7ff',
-      invalid: '#eef2ff'
+      text: "text-indigo-500 dark:text-indigo-400",
+      border: "border-indigo-500 dark:border-indigo-400",
+      bg: "bg-indigo-500 dark:bg-indigo-400",
+      range: "bg-indigo-100 dark:bg-indigo-900/30",
+      invalid: "bg-indigo-50 dark:bg-indigo-900/10",
+      slider: {
+        light: {
+          invalid: '#eef2ff',
+          range: '#e0e7ff',
+          main: '#6366f1'
+        },
+        dark: {
+          invalid: '#312e81',
+          range: '#3730a3',
+          main: '#818cf8'
+        }
+      }
     },
     fats: {
-      main: '#eab308',
-      range: '#fef9c3',
-      invalid: '#fefce8'
+      text: "text-yellow-500 dark:text-yellow-400",
+      border: "border-yellow-500 dark:border-yellow-400",
+      bg: "bg-yellow-500 dark:bg-yellow-400",
+      range: "bg-yellow-100 dark:bg-yellow-900/30",
+      invalid: "bg-yellow-50 dark:bg-yellow-900/10",
+      slider: {
+        light: {
+          invalid: '#fefce8',
+          range: '#fef9c3',
+          main: '#eab308'
+        },
+        dark: {
+          invalid: '#713f12',
+          range: '#854d0e',
+          main: '#facc15'
+        }
+      }
     }
   }), []);
 
@@ -103,17 +145,19 @@ const MacroRatioValidator = ({ onValidRatios }) => {
   const getSliderBackground = useCallback((macro) => {
     const range = amdrRanges[macro];
     const value = macros[macro];
-    const colors = macroColors[macro];
+    const colors = macroColors[macro].slider;
+    const isDark = document.documentElement.classList.contains('dark');
+    const currentColors = isDark ? colors.dark : colors.light;
     
     return `linear-gradient(to right,
-      ${colors.invalid} 0%,
-      ${colors.invalid} ${range.min}%,
-      ${colors.range} ${range.min}%,
-      ${colors.main} ${value}%,
-      ${colors.range} ${value}%,
-      ${colors.range} ${range.max}%,
-      ${colors.invalid} ${range.max}%,
-      ${colors.invalid} 100%
+      ${currentColors.invalid} 0%,
+      ${currentColors.invalid} ${range.min}%,
+      ${currentColors.range} ${range.min}%,
+      ${currentColors.main} ${value}%,
+      ${currentColors.range} ${value}%,
+      ${currentColors.range} ${range.max}%,
+      ${currentColors.invalid} ${range.max}%,
+      ${currentColors.invalid} 100%
     )`;
   }, [amdrRanges, macros, macroColors]);
 
@@ -121,9 +165,13 @@ const MacroRatioValidator = ({ onValidRatios }) => {
     <Card className="w-full mb-6">
       <CardContent className="space-y-6 p-6">
         {getAlertMessages().map((alert, index) => (
-          <Alert key={index} variant={alert.type === 'success' ? 'default' : 'warning'}>
+          <Alert 
+            key={index} 
+            variant={alert.type === 'success' ? 'default' : 'warning'}
+            className={alert.type === 'success' ? 'bg-success/10 dark:bg-success/20 border-success/50' : undefined}
+          >
             {alert.type === 'success' ? (
-              <CheckCircle className="h-4 w-4" />
+              <CheckCircle className="h-4 w-4 text-success" />
             ) : (
               <AlertTriangle className="h-4 w-4" />
             )}
@@ -131,11 +179,14 @@ const MacroRatioValidator = ({ onValidRatios }) => {
           </Alert>
         ))}
 
-        <Alert variant="default" className="bg-blue-50">
-          <Info className="h-4 w-4" />
+        <Alert 
+          variant="default" 
+          className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800"
+        >
+          <Info className="h-4 w-4 text-blue-500 dark:text-blue-400" />
           <AlertDescription>
             AMDR Guidelines:
-            <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
+            <div className="grid grid-cols-3 gap-2 mt-2 text-sm text-foreground">
               <div>Protein: {amdrRanges.protein.min}-{amdrRanges.protein.max}%</div>
               <div>Carbs: {amdrRanges.carbohydrate.min}-{amdrRanges.carbohydrate.max}%</div>
               <div>Fat: {amdrRanges.fats.min}-{amdrRanges.fats.max}%</div>
@@ -146,15 +197,15 @@ const MacroRatioValidator = ({ onValidRatios }) => {
         {Object.entries(macros).map(([macro, value]) => (
           <div key={macro} className="space-y-2">
             <div className="flex justify-between">
-              <label className="text-sm font-medium capitalize">
+              <label className="text-sm font-medium capitalize text-foreground">
                 {macro}
               </label>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 {value}%
               </span>
             </div>
             <div className="relative">
-              <div className="absolute -top-2 left-0 right-0 flex justify-between text-xs text-gray-500">
+              <div className="absolute -top-2 left-0 right-0 flex justify-between text-xs text-muted-foreground">
                 <span>0%</span>
                 <span 
                   style={{left: `${amdrRanges[macro].min}%`}}
@@ -177,17 +228,16 @@ const MacroRatioValidator = ({ onValidRatios }) => {
                 step="5"
                 value={value}
                 onChange={(e) => handleMacroChange(macro, e.target.value)}
-                className="w-full mt-4 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                className="w-full mt-4 h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-700 dark:to-gray-700"
                 style={{
                   background: getSliderBackground(macro)
                 }}
               />
             </div>
             <div 
-              className="h-2 rounded-full transition-all duration-200"
+              className={`h-2 rounded-full transition-all duration-200 ${macroColors[macro].bg}`}
               style={{
-                width: `${value}%`,
-                backgroundColor: macroColors[macro].main
+                width: `${value}%`
               }}
             />
           </div>
