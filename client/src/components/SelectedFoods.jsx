@@ -48,11 +48,12 @@ const SelectedFoods = ({
     const invalidFoods = foods.filter(food => 
       !food.price || !food.servingSize || 
       parseFloat(food.price) <= 0 || 
-      parseFloat(food.servingSize) <= 0
+      parseFloat(food.servingSize) <= 0 ||
+      parseFloat(food.maxServing) <= 0  // Add validation for maxServing
     );
 
     if (invalidFoods.length > 0) {
-      setError('Please enter valid price and serving size for all foods.');
+      setError('Please enter valid price, serving size, and maximum serving size for all foods.');
       return;
     }
 
@@ -65,6 +66,7 @@ const SelectedFoods = ({
         description: food.description,
         price: parseFloat(food.price),
         servingSize: parseFloat(food.servingSize),
+        maxServing: parseFloat(food.maxServing),
         nutrients: adjustNutrientsForServingSize(food.nutrients, parseFloat(food.servingSize))
       }));
 
@@ -108,15 +110,6 @@ const SelectedFoods = ({
           </Alert>
         )}
 
-        <div className="mb-6">
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription>
-              Note: Enter serving size in grams. Base nutrients are per 100g and will be 
-              automatically adjusted based on your serving size.
-            </AlertDescription>
-          </Alert>
-        </div>
-
         {foods.length > 0 ? (
           <>
             <div className="rounded-md border">
@@ -126,6 +119,7 @@ const SelectedFoods = ({
                     <TableHead>Food Item</TableHead>
                     <TableHead>Price (₹)</TableHead>
                     <TableHead>Serving Size (g)</TableHead>
+                    <TableHead>Max Serving (g)</TableHead>
                     <TableHead className="w-[100px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -153,6 +147,17 @@ const SelectedFoods = ({
                           value={food.servingSize}
                           onChange={(e) => handleInputChange(food.fdcId, 'servingSize', e.target.value)}
                           className="w-[100px]"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          step="1"
+                          min="0"
+                          value={food.maxServing || 500}
+                          onChange={(e) => handleInputChange(food.fdcId, 'maxServing', e.target.value)}
+                          className="w-[100px]"
+                          placeholder="500"
                         />
                       </TableCell>
                       <TableCell>

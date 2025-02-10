@@ -37,12 +37,12 @@ const FoodSearch = ({ onFoodSelect }) => {
     }
   };
 
-  // Handle food selection and pass to parent component
   const handleFoodSelect = (food) => {
     onFoodSelect({
       ...food,
       price: '',
-      servingSize: '',
+      servingSize: 100,
+      maxServing: 500,
     });
   };
 

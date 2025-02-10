@@ -242,6 +242,7 @@ def optimize():
         selected_foods_data = data["selected_foods"]
         age = int(data["age"])
         gender = data["gender"]
+        default_max_serving = data.get("max_serving_size", 500)  # Global default or override
 
         if age < 19 or age > 100:
             return jsonify({"error": "Age must be between 19 and 100"}), 400
@@ -250,6 +251,11 @@ def optimize():
             return jsonify({"error": "No foods selected"}), 400
 
         c = np.array([food["price"] for food in selected_foods_data])
+
+        max_servings = np.array([
+            food.get("maxServing", default_max_serving) / food["servingSize"]
+            for food in selected_foods_data
+        ])
 
         A_ub = []
         b_ub = []
@@ -261,15 +267,14 @@ def optimize():
                 values = [
                     food["nutrients"].get(nutrient, 0) for food in selected_foods_data
                 ]
-                A_ub.extend(
-                    [[-val for val in values], values]  # Lower bound  # Upper bound
-                )
-                b_ub.extend(
-                    [
-                        -goal,  # Lower bound must be >= goal
-                        goal * 1.01,  # Upper bound must be <= goal * 1.01
-                    ]
-                )
+                A_ub.extend([
+                    [-val for val in values],  # Lower bound
+                    values  # Upper bound
+                ])
+                b_ub.extend([
+                    -goal,  # Lower bound must be >= goal
+                    goal * 1.01  # Upper bound must be <= goal * 1.01
+                ])
 
         if "saturated_fats" in nutrient_goals:
             sat_fat_goal = nutrient_goals["saturated_fats"]
@@ -280,23 +285,19 @@ def optimize():
             A_ub.append(sat_fat_values)  # Upper bound only
             b_ub.append(sat_fat_goal)  # No overflow for saturated fats
 
-        # Get RDA and UL bounds
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
 
-        # Handle micronutrient constraints based on RDA/UL
         for nutrient, api_name in NUTRIENT_MAP.items():
             if nutrient not in nutrients:  # Skip macronutrients already handled
                 values = [
                     food["nutrients"].get(nutrient, 0) for food in selected_foods_data
                 ]
 
-                # RDA constraint - use lower_bounds
                 rda_key = nutrient
                 if rda_key in lower_bounds and pd.notna(lower_bounds[rda_key]):
                     A_ub.append([-val for val in values])
                     b_ub.append(-float(lower_bounds[rda_key]))
 
-                # UL constraint - use upper_bounds
                 if rda_key in upper_bounds and pd.notna(upper_bounds[rda_key]):
                     A_ub.append(values)
                     b_ub.append(float(upper_bounds[rda_key]))
@@ -304,7 +305,8 @@ def optimize():
         A_ub = np.array(A_ub)
         b_ub = np.array(b_ub)
 
-        bounds = [(0, None) for _ in range(len(selected_foods_data))]
+        bounds = [(0, max_serving) for max_serving in max_servings]
+
         result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
 
         if result.success:
@@ -331,22 +333,16 @@ def optimize():
 
             return jsonify({"success": True, "result": result_data})
         else:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": "Optimization failed! No feasible solution found.",
-                }
-            )
+            return jsonify({
+                "success": False,
+                "message": "Optimization failed! No feasible solution found.",
+            })
 
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
-        return (
-            jsonify(
-                {"error": "An internal error has occurred. Please try again later."}
-            ),
-            500,
-        )
-
+        return jsonify(
+            {"error": "An internal error has occurred. Please try again later."}
+        ), 500
 
 def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
     """
