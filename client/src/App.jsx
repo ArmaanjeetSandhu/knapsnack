@@ -3,7 +3,7 @@ import PersonalInfoForm from './components/PersonalInfoForm';
 import FoodSearch from './components/FoodSearch';
 import SelectedFoods from './components/SelectedFoods';
 import OptimizationResults from './components/OptimizationResults';
-import { Button } from "./components/ui/button";
+import api from './services/api';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -17,12 +17,30 @@ function App() {
   const [optimizationResults, setOptimizationResults] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
 
-  const handleCalculationSuccess = (data) => {
-    setNutrientGoals(data);
-    setUserInfo({
-      age: data.age,
-      gender: data.gender
-    });
+  const handleFormSubmit = async (formData) => {
+    try {
+      const calculationData = {
+        gender: formData.gender,
+        age: formData.age,
+        weight: formData.weight,
+        height: formData.height,
+        activity: formData.activity,
+        percentage: formData.percentage,
+        protein: formData.macroRatios.protein,
+        carbohydrate: formData.macroRatios.carbohydrate,
+        fats: formData.macroRatios.fats
+      };
+
+      const result = await api.calculateNutrition(calculationData);
+      
+      setNutrientGoals(result);
+      setUserInfo({
+        age: formData.age,
+        gender: formData.gender
+      });
+    } catch (error) {
+      console.error('Error calculating nutrition:', error);
+    }
   };
 
   return (
@@ -64,9 +82,11 @@ function App() {
       </header>
 
       <main className="container mx-auto px-4 mb-8 flex-grow">
-        <PersonalInfoForm onCalculationSuccess={handleCalculationSuccess} />
-        
-        {nutrientGoals && (
+        {!nutrientGoals ? (
+          <div className="max-w-4xl mx-auto">
+            <PersonalInfoForm onSubmit={handleFormSubmit} />
+          </div>
+        ) : (
           <>
             <FoodSearch 
               onFoodSelect={(food) => setSelectedFoods([...selectedFoods, food])} 
