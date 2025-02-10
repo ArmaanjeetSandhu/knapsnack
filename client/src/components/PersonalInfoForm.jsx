@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import api from '../services/api';
 import MacroRatioValidator from './MacroRatioValidator';
 import ActivitySlider from './ActivitySlider';
+import CalorieTargetSlider from './CalorieTargetSlider';
 
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
@@ -173,19 +174,14 @@ const PersonalInfoForm = ({ onCalculationSuccess }) => {
                 onChange={(value) => setValue('activity', value)} 
               />
           </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="percentage">Target Caloric Intake (%)</Label>
-              <Input
-                type="number"
-                id="percentage"
-                {...register("percentage", {
-                  required: true,
-                  min: 50,
-                  max: 150
-                })}
-              />
-            </div>
+          
+          <div className="space-y-2">
+            <CalorieTargetSlider
+              value={parseFloat(watch('percentage') || 100)}
+              onChange={(value) => setValue('percentage', value)}
+            />
+          </div>
+          
           </div>
 
           <div className="space-y-2">
