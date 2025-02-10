@@ -3,6 +3,7 @@ import PersonalInfoForm from './components/PersonalInfoForm';
 import FoodSearch from './components/FoodSearch';
 import SelectedFoods from './components/SelectedFoods';
 import OptimizationResults from './components/OptimizationResults';
+import ThemeToggle from './components/ThemeToggle';
 import api from './services/api';
 import {
   NavigationMenu,
@@ -74,6 +75,9 @@ function App() {
                   >
                     Contact
                   </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <ThemeToggle />
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
