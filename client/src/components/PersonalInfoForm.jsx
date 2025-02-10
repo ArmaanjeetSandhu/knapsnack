@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
@@ -23,7 +23,12 @@ const PersonalInfoForm = ({ onSubmit }) => {
   });
   const [error, setError] = useState(null);
 
-  const steps = [
+  const handleInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    setError(null);
+  }, []);
+
+  const steps = useMemo(() => [
     {
       title: "First, what's your gender?",
       component: (
@@ -126,14 +131,9 @@ const PersonalInfoForm = ({ onSubmit }) => {
         }
       }
     }
-  ];
+  ], [formData, handleInputChange]);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setError(null);
-  };
-
-  const validateStep = () => {
+  const validateStep = useCallback(() => {
     const currentStepData = steps[currentStep];
     if (currentStepData.validate) {
       const error = currentStepData.validate(formData[Object.keys(formData)[currentStep]]);
@@ -143,9 +143,9 @@ const PersonalInfoForm = ({ onSubmit }) => {
       }
     }
     return true;
-  };
+  }, [currentStep, formData, steps]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (validateStep()) {
       if (currentStep === steps.length - 1) {
         onSubmit(formData);
@@ -153,12 +153,26 @@ const PersonalInfoForm = ({ onSubmit }) => {
         setCurrentStep(prev => prev + 1);
       }
     }
-  };
+  }, [currentStep, formData, onSubmit, validateStep, steps.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     setCurrentStep(prev => prev - 1);
     setError(null);
-  };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.target.tagName.toLowerCase() === 'input') {
+          e.preventDefault();
+        }
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [handleNext]);
 
   return (
     <div className="max-w-2xl mx-auto">
