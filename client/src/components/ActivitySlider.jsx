@@ -6,15 +6,60 @@ const ActivitySlider = ({ value, onChange }) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const categories = [
-    { min: 1.2, max: 1.4, name: "Sedentary", icon: Coffee, color: "text-gray-600", examples: "office workers, drivers" },
-    { min: 1.4, max: 1.6, name: "Light activity", icon: Briefcase, color: "text-green-600", examples: "teachers, retail workers" },
-    { min: 1.6, max: 1.8, name: "Moderate activity", icon: Activity, color: "text-blue-600", examples: "construction workers, waiters" },
-    { min: 1.8, max: 2.0, name: "Very active", icon: Dumbbell, color: "text-purple-600", examples: "athletes, dancers" },
-    { min: 2.0, max: 2.4, name: "Extremely active", icon: Award, color: "text-red-600", examples: "competitive athletes, heavy manual laborers" }
+    { 
+      name: "Sedentary", 
+      icon: Coffee, 
+      color: "text-gray-500", 
+      description: "Office workers, drivers",
+      min: 1.2,
+      max: 1.4
+    },
+    { 
+      name: "Light Activity", 
+      icon: Briefcase, 
+      color: "text-green-500", 
+      description: "Teachers, retail workers",
+      min: 1.4,
+      max: 1.6
+    },
+    { 
+      name: "Moderate Activity", 
+      icon: Activity, 
+      color: "text-blue-500", 
+      description: "Construction workers, waiters",
+      min: 1.6,
+      max: 1.8
+    },
+    { 
+      name: "Very Active", 
+      icon: Dumbbell, 
+      color: "text-purple-500", 
+      description: "Athletes, dancers",
+      min: 1.8,
+      max: 2.0
+    },
+    { 
+      name: "Extremely Active", 
+      icon: Award, 
+      color: "text-red-500", 
+      description: "Competitive athletes, heavy manual laborers",
+      min: 2.0,
+      max: 2.4
+    }
   ];
 
   const getCurrentCategory = (val) => {
-    return categories.find(cat => val >= cat.min && val < cat.max) || categories[categories.length - 1];
+    if (val < 1.4) {
+      return categories[0];
+    } else if (val < 1.6) {
+      return categories[1];
+    } else if (val < 1.8) {
+      return categories[2];
+    } else if (val < 2.0) {
+      return categories[3];
+    } else {
+      return categories[4];
+    }
   };
 
   const handleChange = (e) => {
@@ -33,6 +78,10 @@ const ActivitySlider = ({ value, onChange }) => {
   const currentCategory = getCurrentCategory(value);
   const progress = ((value - 1.2) / (2.4 - 1.2)) * 100;
 
+  const isCategoryActive = (category, value) => {
+    return value >= category.min && value < category.max;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -47,7 +96,7 @@ const ActivitySlider = ({ value, onChange }) => {
         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-gray-400 via-blue-500 to-red-500 transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }}
           />
         </div>
         <input
@@ -76,7 +125,7 @@ const ActivitySlider = ({ value, onChange }) => {
                 {currentCategory.name}
               </h4>
               <p className="text-xs text-gray-600 mt-0.5">
-                Examples: {currentCategory.examples}
+                {currentCategory.description}
               </p>
             </div>
           </div>
@@ -91,12 +140,12 @@ const ActivitySlider = ({ value, onChange }) => {
           <div
             key={cat.name}
             className={`h-2 rounded-full transition-all duration-300 ${
-              value >= cat.min && value <= cat.max 
-                ? cat.color.replace('text-gray-600', 'bg-gray-500')
-                  .replace('text-green-600', 'bg-green-500')
-                  .replace('text-blue-600', 'bg-blue-500')
-                  .replace('text-purple-600', 'bg-purple-500')
-                  .replace('text-red-600', 'bg-red-500')
+              isCategoryActive(cat, value)
+                ? cat.color.replace('text-gray-500', 'bg-gray-500')
+                  .replace('text-green-500', 'bg-green-500')
+                  .replace('text-blue-500', 'bg-blue-500')
+                  .replace('text-purple-500', 'bg-purple-500')
+                  .replace('text-red-500', 'bg-red-500')
                 : 'bg-gray-200'
             }`}
           />
