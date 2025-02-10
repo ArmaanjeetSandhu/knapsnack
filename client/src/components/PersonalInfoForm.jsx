@@ -59,9 +59,10 @@ const PersonalInfoForm = ({ onSubmit }) => {
       ),
       validate: (value) => {
         const age = parseInt(value);
-        if (age < 19 || age > 100) {
+        if (!value || age < 19 || age > 100) {
           return "Age must be between 19 and 100";
         }
+        return null;
       }
     },
     {
@@ -77,9 +78,10 @@ const PersonalInfoForm = ({ onSubmit }) => {
       ),
       validate: (value) => {
         const weight = parseInt(value);
-        if (weight < 30 || weight > 200) {
+        if (!value || weight < 30 || weight > 200) {
           return "Weight must be between 30 and 200 kg";
         }
+        return null;
       }
     },
     {
@@ -95,9 +97,10 @@ const PersonalInfoForm = ({ onSubmit }) => {
       ),
       validate: (value) => {
         const height = parseInt(value);
-        if (height < 135 || height > 200) {
+        if (!value || height < 135 || height > 200) {
           return "Height must be between 135 and 200 cm";
         }
+        return null;
       }
     },
     {
@@ -127,18 +130,21 @@ const PersonalInfoForm = ({ onSubmit }) => {
       ),
       validate: (value) => {
         if (!value) {
-          return "Please set valid macro ratios";
+          return "Please set valid macro ratios that total 100%";
         }
+        return null;
       }
     }
   ], [formData, handleInputChange]);
 
   const validateStep = useCallback(() => {
     const currentStepData = steps[currentStep];
+    const currentValue = formData[Object.keys(formData)[currentStep]];
+    
     if (currentStepData.validate) {
-      const error = currentStepData.validate(formData[Object.keys(formData)[currentStep]]);
-      if (error) {
-        setError(error);
+      const validationError = currentStepData.validate(currentValue);
+      if (validationError) {
+        setError(validationError);
         return false;
       }
     }
@@ -148,12 +154,17 @@ const PersonalInfoForm = ({ onSubmit }) => {
   const handleNext = useCallback(() => {
     if (validateStep()) {
       if (currentStep === steps.length - 1) {
-        onSubmit(formData);
+        if (formData.macroRatios) {
+          onSubmit(formData);
+        } else {
+          setError("Please ensure your macro ratios total 100% and are within the guidelines");
+        }
       } else {
         setCurrentStep(prev => prev + 1);
+        setError(null);
       }
     }
-  }, [currentStep, formData, onSubmit, validateStep, steps.length]);
+  }, [currentStep, formData, onSubmit, steps.length, validateStep]);
 
   const handlePrevious = useCallback(() => {
     setCurrentStep(prev => prev - 1);
@@ -234,6 +245,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
     </div>
   );
 };
+
 PersonalInfoForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };

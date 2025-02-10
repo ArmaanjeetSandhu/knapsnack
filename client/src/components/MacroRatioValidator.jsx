@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardContent } from '../components/ui/card';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 const MacroRatioValidator = ({ onValidRatios }) => {
-  const amdrRanges = {
+  const amdrRanges = useMemo(() => ({
     protein: { min: 10, max: 40 },
     carbohydrate: { min: 40, max: 65 },
     fats: { min: 20, max: 35 }
-  };
+  }), []);
 
   const [macros, setMacros] = useState({
     protein: 30,
@@ -19,7 +19,7 @@ const MacroRatioValidator = ({ onValidRatios }) => {
 
   const total = Object.values(macros).reduce((sum, value) => sum + value, 0);
   
-  const getAMDRViolations = () => {
+  const getAMDRViolations = useCallback(() => {
     const violations = [];
     Object.entries(macros).forEach(([macro, value]) => {
       const range = amdrRanges[macro];
@@ -30,26 +30,45 @@ const MacroRatioValidator = ({ onValidRatios }) => {
       }
     });
     return violations;
-  };
+  }, [macros, amdrRanges]);
 
-  const handleMacroChange = (macroType, newValue) => {
+  useEffect(() => {
+    const violations = getAMDRViolations();
+    const validTotal = total === 100;
+    const isValid = violations.length === 0 && validTotal;
+    
+    onValidRatios(isValid ? macros : null);
+  }, [macros, total, onValidRatios, getAMDRViolations]);
+
+  const handleMacroChange = useCallback((macroType, newValue) => {
     const range = amdrRanges[macroType];
     newValue = Math.max(range.min, Math.min(range.max, Number(newValue)));
     
-    const updatedMacros = {
-      ...macros,
+    setMacros(prev => ({
+      ...prev,
       [macroType]: newValue
-    };
-    
-    setMacros(updatedMacros);
+    }));
+  }, [amdrRanges]);
 
-    const total = Object.values(updatedMacros).reduce((sum, value) => sum + value, 0);
-    if (total === 100 && getAMDRViolations().length === 0) {
-      onValidRatios(updatedMacros);
+  const macroColors = useMemo(() => ({
+    protein: {
+      main: '#ec4899',
+      range: '#fce7f3',
+      invalid: '#fdf2f8'
+    },
+    carbohydrate: {
+      main: '#6366f1',
+      range: '#e0e7ff',
+      invalid: '#eef2ff'
+    },
+    fats: {
+      main: '#eab308',
+      range: '#fef9c3',
+      invalid: '#fefce8'
     }
-  };
+  }), []);
 
-  const getAlertMessages = () => {
+  const getAlertMessages = useCallback(() => {
     const messages = [];
     
     const difference = Math.abs(100 - total);
@@ -79,27 +98,9 @@ const MacroRatioValidator = ({ onValidRatios }) => {
     }
 
     return messages;
-  };
+  }, [total, getAMDRViolations]);
 
-  const macroColors = {
-    protein: {
-      main: '#ec4899',
-      range: '#fce7f3',
-      invalid: '#fdf2f8'
-    },
-    carbohydrate: {
-      main: '#6366f1',
-      range: '#e0e7ff',
-      invalid: '#eef2ff'
-    },
-    fats: {
-      main: '#eab308',
-      range: '#fef9c3',
-      invalid: '#fefce8'
-    }
-  };
-
-  const getSliderBackground = (macro) => {
+  const getSliderBackground = useCallback((macro) => {
     const range = amdrRanges[macro];
     const value = macros[macro];
     const colors = macroColors[macro];
@@ -114,7 +115,7 @@ const MacroRatioValidator = ({ onValidRatios }) => {
       ${colors.invalid} ${range.max}%,
       ${colors.invalid} 100%
     )`;
-  };
+  }, [amdrRanges, macros, macroColors]);
 
   return (
     <Card className="w-full mb-6">
@@ -173,6 +174,7 @@ const MacroRatioValidator = ({ onValidRatios }) => {
                 type="range"
                 min="0"
                 max="100"
+                step="5"
                 value={value}
                 onChange={(e) => handleMacroChange(macro, e.target.value)}
                 className="w-full mt-4 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
@@ -194,6 +196,7 @@ const MacroRatioValidator = ({ onValidRatios }) => {
     </Card>
   );
 };
+
 MacroRatioValidator.propTypes = {
   onValidRatios: PropTypes.func.isRequired
 };
