@@ -99,14 +99,12 @@ const SelectedFoods = ({
   };
 
   const handleExportSelectedFoods = () => {
-    // Create headers for the CSV
     const headers = [
       'Food Item',
       'Price (₹)',
       'Serving Size (g)',
       'Max Serving (g)',
       'FDC ID',
-      // Add all possible nutrient columns
       'Vitamin A (µg)',
       'Vitamin C (mg)',
       'Vitamin D (µg)',
@@ -137,10 +135,8 @@ const SelectedFoods = ({
       'Pantothenic Acid (mg)'
     ];
 
-    // Create CSV content
     let csvContent = headers.join(',') + '\n';
 
-    // Add data rows
     foods.forEach(food => {
       const row = [
         `"${food.description}"`,
@@ -148,7 +144,6 @@ const SelectedFoods = ({
         food.servingSize || '',
         food.maxServing || '',
         food.fdcId,
-        // Add nutrient values, defaulting to empty string if not present
         food.nutrients['Vitamin A (µg)'] || '',
         food.nutrients['Vitamin C (mg)'] || '',
         food.nutrients['Vitamin D (µg)'] || '',
@@ -181,7 +176,6 @@ const SelectedFoods = ({
       csvContent += row.join(',') + '\n';
     });
 
-    // Create and trigger download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);

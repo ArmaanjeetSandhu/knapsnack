@@ -19,12 +19,9 @@ logging.basicConfig(
 app = Flask(__name__)
 CORS(app)
 
-load_dotenv()
-
 # Store selected foods in memory (in production, this should be a database)
 selected_foods = []
 
-API_KEY = os.environ.get("USDA_API_KEY")
 API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
 
 NUTRIENT_MAP = {
@@ -61,19 +58,19 @@ NUTRIENT_MAP = {
 
 @app.route("/api/search_food", methods=["POST"])
 def search_food():
-    """
-    Search for foods using the USDA API.
-    Expected request body: {"query": "search term"}
-    """
     try:
         data = request.json
         search_term = data.get("query")
+        api_key = data.get("api_key")  # Get API key from request
 
         if not search_term:
             return jsonify({"error": "No search term provided"}), 400
+            
+        if not api_key:
+            return jsonify({"error": "No API key provided"}), 400
 
         params = {
-            "api_key": API_KEY,
+            "api_key": api_key,
             "query": search_term,
             "dataType": ["SR Legacy"],
             "pageSize": 25,
@@ -85,13 +82,11 @@ def search_food():
 
         search_results = []
         for food in response.json().get("foods", []):
-            search_results.append(
-                {
-                    "fdcId": food.get("fdcId"),
-                    "description": food.get("description"),
-                    "nutrients": extract_nutrients(food.get("foodNutrients", [])),
-                }
-            )
+            search_results.append({
+                "fdcId": food.get("fdcId"),
+                "description": food.get("description"),
+                "nutrients": extract_nutrients(food.get("foodNutrients", [])),
+            })
 
         return jsonify({"results": search_results})
 
@@ -242,7 +237,7 @@ def optimize():
         selected_foods_data = data["selected_foods"]
         age = int(data["age"])
         gender = data["gender"]
-        default_max_serving = data.get("max_serving_size", 500)  # Global default or override
+        default_max_serving = data.get("max_serving_size", 500)
 
         if age < 19 or age > 100:
             return jsonify({"error": "Age must be between 19 and 100"}), 400

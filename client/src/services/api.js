@@ -3,10 +3,11 @@ import axios from "axios";
 const API_BASE_URL = "http://localhost:5000/api";
 
 const api = {
-  searchFood: async (query) => {
+  searchFood: async (query, apiKey) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/search_food`, {
         query,
+        api_key: apiKey
       });
       return response.data;
     } catch (error) {

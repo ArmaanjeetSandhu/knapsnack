@@ -1,10 +1,5 @@
 app.log
-
-# Python virtual environment
 goalenv/
-venv/
-env/
-.env
 
 # Python cache files
 __pycache__/
@@ -32,10 +27,3 @@ wheels/
 # Flask stuff
 instance/
 .webassets-cache
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Local development settings
-.env
-*.sqlite3
