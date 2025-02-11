@@ -5,7 +5,6 @@ import numpy as np
 from scipy.optimize import linprog
 from utils import *
 import os
-from dotenv import load_dotenv
 import requests
 from typing import Dict, List
 import logging
