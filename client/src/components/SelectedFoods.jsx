@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Trash2, Calculator } from 'lucide-react';
+import { Trash2, Calculator, Download } from 'lucide-react';
 import api from '../services/api';
 
 import { Button } from "../components/ui/button";
@@ -49,7 +49,7 @@ const SelectedFoods = ({
       !food.price || !food.servingSize || 
       parseFloat(food.price) <= 0 || 
       parseFloat(food.servingSize) <= 0 ||
-      parseFloat(food.maxServing) <= 0  // Add validation for maxServing
+      parseFloat(food.maxServing) <= 0
     );
 
     if (invalidFoods.length > 0) {
@@ -98,10 +98,118 @@ const SelectedFoods = ({
     return adjustedNutrients;
   };
 
+  const handleExportSelectedFoods = () => {
+    // Create headers for the CSV
+    const headers = [
+      'Food Item',
+      'Price (₹)',
+      'Serving Size (g)',
+      'Max Serving (g)',
+      'FDC ID',
+      // Add all possible nutrient columns
+      'Vitamin A (µg)',
+      'Vitamin C (mg)',
+      'Vitamin D (µg)',
+      'Vitamin E (mg)',
+      'Vitamin K (µg)',
+      'Thiamin (mg)',
+      'Riboflavin (mg)',
+      'Niacin (mg)',
+      'Vitamin B6 (mg)',
+      'Folate (µg)',
+      'Vitamin B12 (µg)',
+      'Calcium (mg)',
+      'Carbohydrate (g)',
+      'Choline (mg)',
+      'Protein (g)',
+      'Fats (g)',
+      'Saturated Fats (g)',
+      'Fiber (g)',
+      'Copper (µg)',
+      'Iron (mg)',
+      'Magnesium (mg)',
+      'Manganese (mg)',
+      'Phosphorus (mg)',
+      'Selenium (µg)',
+      'Zinc (mg)',
+      'Potassium (mg)',
+      'Sodium (mg)',
+      'Pantothenic Acid (mg)'
+    ];
+
+    // Create CSV content
+    let csvContent = headers.join(',') + '\n';
+
+    // Add data rows
+    foods.forEach(food => {
+      const row = [
+        `"${food.description}"`,
+        food.price || '',
+        food.servingSize || '',
+        food.maxServing || '',
+        food.fdcId,
+        // Add nutrient values, defaulting to empty string if not present
+        food.nutrients['Vitamin A (µg)'] || '',
+        food.nutrients['Vitamin C (mg)'] || '',
+        food.nutrients['Vitamin D (µg)'] || '',
+        food.nutrients['Vitamin E (mg)'] || '',
+        food.nutrients['Vitamin K (µg)'] || '',
+        food.nutrients['Thiamin (mg)'] || '',
+        food.nutrients['Riboflavin (mg)'] || '',
+        food.nutrients['Niacin (mg)'] || '',
+        food.nutrients['Vitamin B6 (mg)'] || '',
+        food.nutrients['Folate (µg)'] || '',
+        food.nutrients['Vitamin B12 (µg)'] || '',
+        food.nutrients['Calcium (mg)'] || '',
+        food.nutrients['carbohydrate'] || '',
+        food.nutrients['Choline (mg)'] || '',
+        food.nutrients['protein'] || '',
+        food.nutrients['fats'] || '',
+        food.nutrients['saturated_fats'] || '',
+        food.nutrients['fiber'] || '',
+        food.nutrients['Copper (µg)'] || '',
+        food.nutrients['Iron (mg)'] || '',
+        food.nutrients['Magnesium (mg)'] || '',
+        food.nutrients['Manganese (mg)'] || '',
+        food.nutrients['Phosphorus (mg)'] || '',
+        food.nutrients['Selenium (µg)'] || '',
+        food.nutrients['Zinc (mg)'] || '',
+        food.nutrients['Potassium (mg)'] || '',
+        food.nutrients['Sodium (mg)'] || '',
+        food.nutrients['Pantothenic Acid (mg)'] || ''
+      ];
+      csvContent += row.join(',') + '\n';
+    });
+
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'selected_foods.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader className="bg-primary">
-        <CardTitle className="text-white">Selected Foods</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle className="text-white">Selected Foods</CardTitle>
+          {foods.length > 0 && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleExportSelectedFoods}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export Foods CSV
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="p-6">
         {error && (
