@@ -254,7 +254,7 @@ def optimize():
         A_ub = []
         b_ub = []
 
-        nutrients = ["Protein", "carbohydrate", "Fats", "fiber"]
+        nutrients = ["protein", "carbohydrate", "fats", "fiber"]
         for nutrient in nutrients:
             if nutrient.lower().replace(" ", "_") in nutrient_goals:
                 goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
@@ -273,7 +273,7 @@ def optimize():
         if "saturated_fats" in nutrient_goals:
             sat_fat_goal = nutrient_goals["saturated_fats"]
             sat_fat_values = [
-                food["nutrients"].get("Saturated Fats", 0)
+                food["nutrients"].get("saturated_fats", 0)
                 for food in selected_foods_data
             ]
             A_ub.append(sat_fat_values)  # Upper bound only
