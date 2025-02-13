@@ -39,16 +39,6 @@ def calculate_macros(
 
 
 def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
-    """
-    Returns nutrient lower bounds (RDAs) and upper bounds (ULs) for the given age and gender.
-
-    Args:
-        age: Age in years
-        gender: 'm' for male or 'f' for female
-
-    Returns:
-        Tuple of (lower_bounds, upper_bounds) as pandas Series
-    """
     if gender.lower() == "m":
         gender_prefix = "Males"
     else:
@@ -67,14 +57,18 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
     else:
         age_group = f"{gender_prefix} > 70 y"
 
-    vitaminsRDA = pd.read_csv("nutrient-databases/vitamins-RDAs.csv").replace("ND", None)
+    vitaminsRDA = pd.read_csv("nutrient-databases/vitamins-RDAs.csv").replace(
+        "ND", None
+    )
     vitaminsRDA.drop(columns=["Biotin (µg)"], inplace=True)
     vitaminsRDA = remove_rows(vitaminsRDA)
 
     vitaminsUL = pd.read_csv("nutrient-databases/vitamins-ULs.csv").replace("ND", None)
     vitaminsUL = remove_rows(vitaminsUL)
 
-    elementsRDA = pd.read_csv("nutrient-databases/elements-RDAs.csv").replace("ND", None)
+    elementsRDA = pd.read_csv("nutrient-databases/elements-RDAs.csv").replace(
+        "ND", None
+    )
     elementsRDA.drop(
         columns=[
             "Chromium (µg)",

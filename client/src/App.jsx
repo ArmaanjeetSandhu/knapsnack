@@ -3,6 +3,7 @@ import PersonalInfoForm from './components/PersonalInfoForm';
 import FoodSearch from './components/FoodSearch';
 import SelectedFoods from './components/SelectedFoods';
 import OptimizationResults from './components/OptimizationResults';
+import CalculationResults from './components/CalculationResults';
 import ThemeToggle from './components/ThemeToggle';
 import GitHubIcon from './components/GitHubIcon';
 import api from './services/api';
@@ -22,6 +23,7 @@ function App() {
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [optimizationResults, setOptimizationResults] = useState(null);
+  const [showCalculationResults, setShowCalculationResults] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
 
@@ -47,6 +49,7 @@ function App() {
         gender: formData.gender,
         smokingStatus: formData.smokingStatus
       });
+      setShowCalculationResults(true);
       setError(null);
     } catch (error) {
       setError('Error calculating nutrition: ' + error.message);
@@ -150,34 +153,42 @@ function App() {
           </Alert>
         )}
 
-        {!nutrientGoals ? (
-          <div className="max-w-4xl mx-auto">
-            <PersonalInfoForm onSubmit={handleFormSubmit} />
-          </div>
-        ) : (
-          <>
-            <FoodSearch 
-              onFoodSelect={handleFoodSelect} 
-              onFoodsImport={handleFoodsImport} 
-              selectedFoodIds={selectedFoods.map(food => food.fdcId)}
+      {!nutrientGoals ? (
+        <div className="max-w-4xl mx-auto">
+          <PersonalInfoForm onSubmit={handleFormSubmit} />
+        </div>
+      ) : showCalculationResults ? (
+        <div className="max-w-4xl mx-auto">
+          <CalculationResults
+            calculationData={nutrientGoals}
+            userInfo={userInfo}
+            onProceed={() => setShowCalculationResults(false)}
+          />
+        </div>
+      ) : (
+        <>
+          <FoodSearch 
+            onFoodSelect={handleFoodSelect} 
+            onFoodsImport={handleFoodsImport} 
+            selectedFoodIds={selectedFoods.map(food => food.fdcId)}
+          />
+          
+          <SelectedFoods 
+            foods={selectedFoods}
+            onFoodsUpdate={setSelectedFoods}
+            nutrientGoals={nutrientGoals}
+            userInfo={userInfo}
+            onOptimizationResults={setOptimizationResults}
+          />
+          
+          {optimizationResults && (
+            <OptimizationResults 
+              results={optimizationResults}
+              selectedFoods={selectedFoods}
             />
-            
-            <SelectedFoods 
-              foods={selectedFoods}
-              onFoodsUpdate={setSelectedFoods}
-              nutrientGoals={nutrientGoals}
-              userInfo={userInfo}
-              onOptimizationResults={setOptimizationResults}
-            />
-            
-            {optimizationResults && (
-              <OptimizationResults 
-                results={optimizationResults}
-                selectedFoods={selectedFoods}
-              />
-            )}
-          </>
-        )}
+          )}
+        </>
+      )}
       </main>
     </div>
   );
