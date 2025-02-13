@@ -236,6 +236,7 @@ def optimize():
         selected_foods_data = data["selected_foods"]
         age = int(data["age"])
         gender = data["gender"]
+        smoking_status = data.get("smokingStatus", "no")
         default_max_serving = data.get("max_serving_size", 500)
 
         if age < 19 or age > 100:
@@ -280,6 +281,11 @@ def optimize():
             b_ub.append(sat_fat_goal)  # No overflow for saturated fats
 
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
+
+        if smoking_status == "yes":
+            vitamin_c_key = "Vitamin C (mg)"
+            if vitamin_c_key in lower_bounds:
+                lower_bounds[vitamin_c_key] = float(lower_bounds[vitamin_c_key]) + 35.0
 
         for nutrient, api_name in NUTRIENT_MAP.items():
             if nutrient not in nutrients:  # Skip macronutrients already handled

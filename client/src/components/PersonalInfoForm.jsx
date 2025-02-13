@@ -1,11 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft, HelpCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Alert, AlertDescription } from '../components/ui/alert';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
 import ActivitySlider from './ActivitySlider';
 import CalorieTargetSlider from './CalorieTargetSlider';
 import MacroRatioValidator from './MacroRatioValidator';
@@ -19,7 +25,8 @@ const PersonalInfoForm = ({ onSubmit }) => {
     height: '',
     activity: 1.2,
     percentage: 100,
-    macroRatios: null
+    macroRatios: null,
+    smokingStatus: 'no'
   });
   const [error, setError] = useState(null);
 
@@ -112,6 +119,45 @@ const PersonalInfoForm = ({ onSubmit }) => {
         />
       )
     },
+    {
+      title: (
+        <div className="flex items-center gap-2">
+          Do you smoke?
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button className="cursor-help">
+                  <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Smokers require an additional 35mg of vitamin C per day.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
+      component: (
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant={formData.smokingStatus === 'no' ? 'default' : 'outline'}
+            className="flex-1"
+            onClick={() => handleInputChange('smokingStatus', 'no')}
+          >
+            No
+          </Button>
+          <Button
+            type="button"
+            variant={formData.smokingStatus === 'yes' ? 'default' : 'outline'}
+            className="flex-1"
+            onClick={() => handleInputChange('smokingStatus', 'yes')}
+          >
+            Yes
+          </Button>
+        </div>
+      )
+    },    
     {
       title: "What's your caloric goal?",
       component: (

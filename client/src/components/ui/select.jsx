@@ -1,19 +1,14 @@
-// components/ui/select.jsx
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown } from "lucide-react"
 import { cn } from "../../lib/utils"
 
-// The Root component serves as the container for the entire select
 const Select = SelectPrimitive.Root
 
-// The Group component allows for grouping of select items
 const SelectGroup = SelectPrimitive.Group
 
-// The Value component displays the currently selected value
 const SelectValue = SelectPrimitive.Value
 
-// The Trigger component is the button that opens the select dropdown
 const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
@@ -31,7 +26,6 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
 ))
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
-// The Content component is the dropdown that contains the options
 const SelectContent = React.forwardRef(({ className, children, position = "popper", ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
@@ -59,7 +53,6 @@ const SelectContent = React.forwardRef(({ className, children, position = "poppe
 ))
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
-// The Item component represents an individual option in the select
 const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
@@ -80,7 +73,6 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
 ))
 SelectItem.displayName = SelectPrimitive.Item.displayName
 
-// The Label component provides a label for groups of items
 const SelectLabel = React.forwardRef(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
@@ -90,7 +82,6 @@ const SelectLabel = React.forwardRef(({ className, ...props }, ref) => (
 ))
 SelectLabel.displayName = SelectPrimitive.Label.displayName
 
-// The Separator component provides a visual divider between items
 const SelectSeparator = React.forwardRef(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}

@@ -1,9 +1,7 @@
-// components/ui/alert.jsx
 import * as React from "react"
 import { cva } from "class-variance-authority"
 import { cn } from "../../lib/utils"
 
-// Define variants for different alert styles using class-variance-authority
 const alertVariants = cva(
   "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
@@ -20,7 +18,6 @@ const alertVariants = cva(
   }
 )
 
-// The main Alert component that serves as a container for alert content
 const Alert = React.forwardRef(({ className, variant, ...props }, ref) => (
   <div
     ref={ref}
@@ -31,7 +28,6 @@ const Alert = React.forwardRef(({ className, variant, ...props }, ref) => (
 ))
 Alert.displayName = "Alert"
 
-// The AlertTitle component for the alert's heading
 const AlertTitle = React.forwardRef(({ className, ...props }, ref) => (
   <h5
     ref={ref}
@@ -41,7 +37,6 @@ const AlertTitle = React.forwardRef(({ className, ...props }, ref) => (
 ))
 AlertTitle.displayName = "AlertTitle"
 
-// The AlertDescription component for the alert's main content
 const AlertDescription = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}

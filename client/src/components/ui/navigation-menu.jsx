@@ -1,9 +1,7 @@
-// components/ui/navigation-menu.jsx
 import * as React from "react"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cn } from "../../lib/utils"
 
-// The main NavigationMenu component that serves as a container for navigation items
 const NavigationMenu = React.forwardRef(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Root
     ref={ref}
@@ -19,7 +17,6 @@ const NavigationMenu = React.forwardRef(({ className, children, ...props }, ref)
 ))
 NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
 
-// The List component that contains navigation items
 const NavigationMenuList = React.forwardRef(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.List
     ref={ref}
@@ -32,7 +29,6 @@ const NavigationMenuList = React.forwardRef(({ className, ...props }, ref) => (
 ))
 NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 
-// The Viewport component that displays dropdown content
 const NavigationMenuViewport = React.forwardRef(({ className, ...props }, ref) => (
   <div className={cn("absolute left-0 top-full flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
@@ -47,10 +43,8 @@ const NavigationMenuViewport = React.forwardRef(({ className, ...props }, ref) =
 ))
 NavigationMenuViewport.displayName = NavigationMenuPrimitive.Viewport.displayName
 
-// The NavigationMenuItem component for individual menu items
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
-// The NavigationMenuTrigger component for dropdown triggers
 const NavigationMenuTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Trigger
     ref={ref}
@@ -65,7 +59,6 @@ const NavigationMenuTrigger = React.forwardRef(({ className, children, ...props 
 ))
 NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
 
-// The NavigationMenuContent component for dropdown content
 const NavigationMenuContent = React.forwardRef(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.Content
     ref={ref}
@@ -78,7 +71,6 @@ const NavigationMenuContent = React.forwardRef(({ className, ...props }, ref) =>
 ))
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
 
-// The NavigationMenuLink component for navigation links
 const NavigationMenuLink = React.forwardRef(({ className, ...props }, ref) => (
   <NavigationMenuPrimitive.Link
     ref={ref}

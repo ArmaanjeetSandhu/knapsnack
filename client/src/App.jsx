@@ -4,6 +4,7 @@ import FoodSearch from './components/FoodSearch';
 import SelectedFoods from './components/SelectedFoods';
 import OptimizationResults from './components/OptimizationResults';
 import ThemeToggle from './components/ThemeToggle';
+import GitHubIcon from './components/GitHubIcon';
 import api from './services/api';
 import {
   NavigationMenu,
@@ -37,18 +38,27 @@ function App() {
         carbohydrate: formData.macroRatios.carbohydrate,
         fats: formData.macroRatios.fats
       };
-
+  
       const result = await api.calculateNutrition(calculationData);
       
       setNutrientGoals(result);
       setUserInfo({
         age: formData.age,
-        gender: formData.gender
+        gender: formData.gender,
+        smokingStatus: formData.smokingStatus
       });
       setError(null);
     } catch (error) {
       setError('Error calculating nutrition: ' + error.message);
     }
+  };
+
+  const handleReset = () => {
+    setNutrientGoals(null);
+    setSelectedFoods([]);
+    setOptimizationResults(null);
+    setUserInfo(null);
+    setError(null);
   };
 
   const handleFoodSelect = (food) => {
@@ -90,7 +100,12 @@ function App() {
       <header className="bg-gray-900 text-white py-4 mb-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold">Goal-ith: The Meal Planner</h1>
+            <button 
+              onClick={handleReset}
+              className="text-xl font-bold hover:text-gray-300 transition-colors"
+            >
+              Goal-ith: The Meal Planner
+            </button>
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
@@ -110,12 +125,14 @@ function App() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink 
-                    className="text-white hover:text-gray-300 px-3 py-2"
-                    href="#contact"
+                  <a
+                    href="https://github.com/ArmaanjeetSandhu/goal-ith"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white hover:text-gray-300 px-3 py-2 inline-flex items-center"
                   >
-                    Contact
-                  </NavigationMenuLink>
+                    <GitHubIcon size={20} />
+                  </a>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <ThemeToggle />

@@ -1,9 +1,7 @@
-// components/ui/scroll-area.jsx
 import * as React from "react"
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
 import { cn } from "../../lib/utils"
 
-// The main ScrollArea component that provides a scrollable viewport
 const ScrollArea = React.forwardRef(({ className, children, ...props }, ref) => (
   <ScrollAreaPrimitive.Root
     ref={ref}
@@ -19,7 +17,6 @@ const ScrollArea = React.forwardRef(({ className, children, ...props }, ref) => 
 ))
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
 
-// The ScrollBar component that provides a styled scrollbar
 const ScrollBar = React.forwardRef(({ className, orientation = "vertical", ...props }, ref) => (
   <ScrollAreaPrimitive.ScrollAreaScrollbar
     ref={ref}

@@ -1,9 +1,6 @@
-// components/ui/input.jsx
 import * as React from "react"
 import { cn } from "../../lib/utils"
 
-// The Input component provides a consistent, styled input field with proper states
-// It handles focus, hover, and disabled states while maintaining accessibility
 const Input = React.forwardRef(({ className, type, ...props }, ref) => {
   return (
     <input
