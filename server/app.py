@@ -167,6 +167,7 @@ def calculate():
         fratio = float(data["fats"]) / 100
         activity_multiplier = float(data["activity"])
         percentage = float(data["percentage"]) / 100
+        smoking_status = data.get("smokingStatus", "no")
 
         validation_errors = []
 
@@ -191,6 +192,19 @@ def calculate():
             int(daily_caloric_intake), pratio, cratio, fratio
         )
 
+        lower_bounds, upper_bounds = nutrient_bounds(age, gender)
+        
+        if smoking_status == "yes":
+            vitamin_c_key = "Vitamin C (mg)"
+            if vitamin_c_key in lower_bounds:
+                lower_bounds[vitamin_c_key] += 35.0
+
+        lower_bounds_dict = lower_bounds.to_dict()
+        upper_bounds_dict = upper_bounds.to_dict()
+        
+        lower_bounds_dict = {k: float(v) for k, v in lower_bounds_dict.items() if pd.notna(v)}
+        upper_bounds_dict = {k: float(v) for k, v in upper_bounds_dict.items() if pd.notna(v)}
+
         result = {
             "bmr": bmr,
             "tdee": tdee,
@@ -200,6 +214,8 @@ def calculate():
             "fats": fats,
             "fiber": fiber,
             "saturated_fats": saturated_fats,
+            "lower_bounds": lower_bounds_dict,
+            "upper_bounds": upper_bounds_dict
         }
         print("Calculated result:", result)
         return jsonify(result)

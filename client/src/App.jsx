@@ -38,14 +38,15 @@ function App() {
         percentage: formData.percentage,
         protein: formData.macroRatios.protein,
         carbohydrate: formData.macroRatios.carbohydrate,
-        fats: formData.macroRatios.fats
+        fats: formData.macroRatios.fats,
+        smokingStatus: formData.smokingStatus
       };
   
       const result = await api.calculateNutrition(calculationData);
       
       setNutrientGoals(result);
       setUserInfo({
-        age: formData.age,
+        age: parseInt(formData.age),
         gender: formData.gender,
         smokingStatus: formData.smokingStatus
       });
