@@ -16,6 +16,14 @@ import {
   TableRow,
 } from "../components/ui/table";
 
+const adjustNutrientsForServingSize = (nutrients, servingSize) => {
+  const adjustedNutrients = {};
+  for (const [nutrient, value] of Object.entries(nutrients)) {
+    adjustedNutrients[nutrient] = (value * servingSize) / 100;
+  }
+  return adjustedNutrients;
+};
+
 const SelectedFoods = ({ 
   foods, 
   onFoodsUpdate, 
@@ -90,14 +98,6 @@ const SelectedFoods = ({
     }
   };
 
-  const adjustNutrientsForServingSize = (nutrients, servingSize) => {
-    const adjustedNutrients = {};
-    for (const [nutrient, value] of Object.entries(nutrients)) {
-      adjustedNutrients[nutrient] = (value * servingSize) / 100;
-    }
-    return adjustedNutrients;
-  };
-
   const handleExportSelectedFoods = () => {
     const headers = [
       'Food Item',
@@ -138,40 +138,45 @@ const SelectedFoods = ({
     let csvContent = headers.join(',') + '\n';
 
     foods.forEach(food => {
+      const adjustedNutrients = adjustNutrientsForServingSize(
+        food.nutrients, 
+        parseFloat(food.servingSize) || 100
+      );
+
       const row = [
         `"${food.description}"`,
         food.price || '',
         food.servingSize || '',
         food.maxServing || '',
         food.fdcId,
-        food.nutrients['Vitamin A (µg)'] || '',
-        food.nutrients['Vitamin C (mg)'] || '',
-        food.nutrients['Vitamin D (µg)'] || '',
-        food.nutrients['Vitamin E (mg)'] || '',
-        food.nutrients['Vitamin K (µg)'] || '',
-        food.nutrients['Thiamin (mg)'] || '',
-        food.nutrients['Riboflavin (mg)'] || '',
-        food.nutrients['Niacin (mg)'] || '',
-        food.nutrients['Vitamin B6 (mg)'] || '',
-        food.nutrients['Folate (µg)'] || '',
-        food.nutrients['Vitamin B12 (µg)'] || '',
-        food.nutrients['Calcium (mg)'] || '',
-        food.nutrients['carbohydrate'] || '',
-        food.nutrients['Choline (mg)'] || '',
-        food.nutrients['protein'] || '',
-        food.nutrients['fats'] || '',
-        food.nutrients['saturated_fats'] || '',
-        food.nutrients['fiber'] || '',
-        food.nutrients['Copper (µg)'] || '',
-        food.nutrients['Iron (mg)'] || '',
-        food.nutrients['Magnesium (mg)'] || '',
-        food.nutrients['Manganese (mg)'] || '',
-        food.nutrients['Phosphorus (mg)'] || '',
-        food.nutrients['Selenium (µg)'] || '',
-        food.nutrients['Zinc (mg)'] || '',
-        food.nutrients['Potassium (mg)'] || '',
-        food.nutrients['Sodium (mg)'] || '',
-        food.nutrients['Pantothenic Acid (mg)'] || ''
+        adjustedNutrients['Vitamin A (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Vitamin C (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Vitamin D (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Vitamin E (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Vitamin K (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Thiamin (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Riboflavin (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Niacin (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Vitamin B6 (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Folate (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Vitamin B12 (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Calcium (mg)']?.toFixed(2) || '',
+        adjustedNutrients['carbohydrate']?.toFixed(2) || '',
+        adjustedNutrients['Choline (mg)']?.toFixed(2) || '',
+        adjustedNutrients['protein']?.toFixed(2) || '',
+        adjustedNutrients['fats']?.toFixed(2) || '',
+        adjustedNutrients['saturated_fats']?.toFixed(2) || '',
+        adjustedNutrients['fiber']?.toFixed(2) || '',
+        adjustedNutrients['Copper (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Iron (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Magnesium (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Manganese (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Phosphorus (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Selenium (µg)']?.toFixed(2) || '',
+        adjustedNutrients['Zinc (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Potassium (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Sodium (mg)']?.toFixed(2) || '',
+        adjustedNutrients['Pantothenic Acid (mg)']?.toFixed(2) || ''
       ];
       csvContent += row.join(',') + '\n';
     });
