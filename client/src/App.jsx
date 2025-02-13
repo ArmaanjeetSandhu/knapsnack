@@ -11,14 +11,19 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "./components/ui/navigation-menu";
+import { Alert, AlertDescription } from "./components/ui/alert";
+
+const isDuplicateFood = (newFood, existingFoods) => {
+  return existingFoods.some(food => food.fdcId === newFood.fdcId);
+};
 
 function App() {
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [optimizationResults, setOptimizationResults] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Handler for form submission (calculating nutrition goals)
   const handleFormSubmit = async (formData) => {
     try {
       const calculationData = {
@@ -40,19 +45,44 @@ function App() {
         age: formData.age,
         gender: formData.gender
       });
+      setError(null);
     } catch (error) {
-      console.error('Error calculating nutrition:', error);
+      setError('Error calculating nutrition: ' + error.message);
     }
   };
 
-  const handleFoodsImport = (importedFoods) => {
-    setSelectedFoods(prevFoods => [...prevFoods, ...importedFoods]);
+  const handleFoodSelect = (food) => {
+    if (isDuplicateFood(food, selectedFoods)) {
+      setError(`"${food.description}" is already in your food list.`);
+      return;
+    }
+    
+    setSelectedFoods(prevFoods => [...prevFoods, {
+      ...food,
+      price: '',
+      servingSize: 100,
+      maxServing: 500,
+    }]);
     setOptimizationResults(null);
+    setError(null);
   };
 
-  const handleFoodSelect = (food) => {
-    setSelectedFoods(prevFoods => [...prevFoods, food]);
-    setOptimizationResults(null);
+  const handleFoodsImport = (importedFoods) => {
+    const uniqueNewFoods = importedFoods.filter(
+      newFood => !isDuplicateFood(newFood, selectedFoods)
+    );
+    
+    const duplicates = importedFoods.length - uniqueNewFoods.length;
+    if (duplicates > 0) {
+      setError(`${duplicates} duplicate food item(s) were skipped during import.`);
+    } else {
+      setError(null);
+    }
+    
+    if (uniqueNewFoods.length > 0) {
+      setSelectedFoods(prevFoods => [...prevFoods, ...uniqueNewFoods]);
+      setOptimizationResults(null);
+    }
   };
 
   return (
@@ -97,6 +127,12 @@ function App() {
       </header>
 
       <main className="container mx-auto px-4 mb-8 flex-grow">
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
         {!nutrientGoals ? (
           <div className="max-w-4xl mx-auto">
             <PersonalInfoForm onSubmit={handleFormSubmit} />
@@ -106,6 +142,7 @@ function App() {
             <FoodSearch 
               onFoodSelect={handleFoodSelect} 
               onFoodsImport={handleFoodsImport} 
+              selectedFoodIds={selectedFoods.map(food => food.fdcId)}
             />
             
             <SelectedFoods 

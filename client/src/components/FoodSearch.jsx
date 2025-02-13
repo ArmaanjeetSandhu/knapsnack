@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Search, Plus, Key, ExternalLink, Upload } from 'lucide-react';
+import { Search, Plus, Key, ExternalLink, Upload, Check } from 'lucide-react';
 import Papa from 'papaparse';
 import api from '../services/api';
 
@@ -13,52 +13,58 @@ import {
   ScrollBar
 } from "../components/ui/scroll-area";
 
-const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
+const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('usda_api_key') || '');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [searchError, setSearchError] = useState(null);
+  const [apiKeyError, setApiKeyError] = useState(null);
+  const [recentlyAdded, setRecentlyAdded] = useState(new Set());
 
   const handleApiKeySubmit = (e) => {
     e.preventDefault();
     if (!apiKey.trim()) {
-      setError('Please enter an API key');
+      setApiKeyError('Please enter an API key');
       return;
     }
     localStorage.setItem('usda_api_key', apiKey);
-    setError(null);
+    setApiKeyError(null);
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     if (!apiKey.trim()) {
-      setError('Please enter your USDA API key first');
+      setApiKeyError('Please enter your USDA API key first');
       return;
     }
 
     setLoading(true);
-    setError(null);
+    setSearchError(null);
 
     try {
       const { results } = await api.searchFood(searchTerm, apiKey);
       setSearchResults(results);
     } catch (err) {
-      setError(err.message || 'An error occurred while searching');
+      setSearchError(err.message || 'An error occurred while searching');
       setSearchResults([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFoodSelect = (food) => {
-    onFoodSelect({
-      ...food,
-      price: '',
-      servingSize: 100,
-      maxServing: 500,
-    });
+  const handleFoodAdd = (food) => {
+    onFoodSelect(food);
+    setRecentlyAdded(prev => new Set([...prev, food.fdcId]));
+    
+    setTimeout(() => {
+      setRecentlyAdded(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(food.fdcId);
+        return newSet;
+      });
+    }, 2000);
   };
 
   const handleFileUpload = (event) => {
@@ -71,13 +77,13 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.errors.length > 0) {
-          setError('Error parsing CSV file. Please ensure the file format is correct.');
+          setSearchError('Error parsing CSV file. Please ensure the file format is correct.');
           return;
         }
 
         try {
           const importedFoods = results.data.map(row => ({
-            fdcId: row['FDC ID'],
+            fdcId: row['FDC ID'].toString(),
             description: row['Food Item'],
             price: row['Price (₹)'],
             servingSize: row['Serving Size (g)'],
@@ -115,17 +121,21 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
           }));
 
           onFoodsImport(importedFoods);
-          setError(null);
+          setSearchError(null);
         } catch {
-          setError('Invalid CSV format. Please use a CSV file exported from this application.');
+          setSearchError('Invalid CSV format. Please use a CSV file exported from this application.');
         }
       },
       error: (error) => {
-        setError(`Error reading file: ${error.message}`);
+        setSearchError(`Error reading file: ${error.message}`);
       }
     });
     
     event.target.value = '';
+  };
+
+  const isAdded = (foodId) => {
+    return selectedFoodIds.includes(foodId) || recentlyAdded.has(foodId);
   };
 
   return (
@@ -137,9 +147,9 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        {error && (
+        {(searchError || apiKeyError) && (
           <Alert variant="destructive" className="mb-6">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>{searchError || apiKeyError}</AlertDescription>
           </Alert>
         )}
 
@@ -153,7 +163,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
               <p className="text-sm text-muted-foreground">
                 Get your free API key from{' '}
                 <a
-                  href="https://fdc.nal.usda.gov/api-key-signup"
+                  href="https://fdc.nal.usda.gov/api-key-signup.html"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-primary hover:underline"
@@ -171,6 +181,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
                 placeholder="Enter your USDA API key"
                 className="flex-1"
               />
+              <Button type="submit">Submit</Button>
             </div>
           </form>
         </div>
@@ -228,30 +239,45 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
             <h6 className="text-sm font-semibold mb-3">Search Results</h6>
             <ScrollArea className="h-[400px] rounded-md border">
               <div className="divide-y">
-                {searchResults.map((food) => (
-                  <div
-                    key={food.fdcId}
-                    className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                  >
-                    <span className="text-sm">{food.description}</span>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleFoodSelect(food)}
-                      className="ml-4"
+                {searchResults.map((food) => {
+                  const added = isAdded(food.fdcId);
+                  return (
+                    <div
+                      key={food.fdcId}
+                      className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
                     >
-                      <Plus className="w-4 h-4 mr-1" />
-                      Add
-                    </Button>
-                  </div>
-                ))}
+                      <span className="text-sm">{food.description}</span>
+                      <Button
+                        variant={added ? "success" : "secondary"}
+                        size="sm"
+                        onClick={() => !added && handleFoodAdd(food)}
+                        disabled={added}
+                        className={`ml-4 transition-all duration-200 ${
+                          added ? 'bg-success hover:bg-success text-success-foreground' : ''
+                        }`}
+                      >
+                        {added ? (
+                          <>
+                            <Check className="w-4 h-4 mr-1" />
+                            Added
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-4 h-4 mr-1" />
+                            Add
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
               <ScrollBar />
             </ScrollArea>
           </div>
         )}
 
-        {searchResults.length === 0 && searchTerm && !loading && !error && (
+        {searchResults.length === 0 && searchTerm && !loading && !searchError && (
           <Alert className="bg-muted">
             <AlertDescription>
               No foods found matching your search. Try different keywords.
@@ -265,7 +291,8 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
 
 FoodSearch.propTypes = {
   onFoodSelect: PropTypes.func.isRequired,
-  onFoodsImport: PropTypes.func.isRequired
+  onFoodsImport: PropTypes.func.isRequired,
+  selectedFoodIds: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default FoodSearch;
