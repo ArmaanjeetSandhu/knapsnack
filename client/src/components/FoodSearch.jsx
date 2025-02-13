@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Search, Plus, Key, ExternalLink } from 'lucide-react';
+import { Search, Plus, Key, ExternalLink, Upload } from 'lucide-react';
+import Papa from 'papaparse';
 import api from '../services/api';
 
 import { Button } from "../components/ui/button";
@@ -12,7 +13,7 @@ import {
   ScrollBar
 } from "../components/ui/scroll-area";
 
-const FoodSearch = ({ onFoodSelect }) => {
+const FoodSearch = ({ onFoodSelect, onFoodsImport }) => {
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('usda_api_key') || '');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -58,6 +59,73 @@ const FoodSearch = ({ onFoodSelect }) => {
       servingSize: 100,
       maxServing: 500,
     });
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      dynamicTyping: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (results.errors.length > 0) {
+          setError('Error parsing CSV file. Please ensure the file format is correct.');
+          return;
+        }
+
+        try {
+          const importedFoods = results.data.map(row => ({
+            fdcId: row['FDC ID'],
+            description: row['Food Item'],
+            price: row['Price (₹)'],
+            servingSize: row['Serving Size (g)'],
+            maxServing: row['Max Serving (g)'],
+            nutrients: {
+              'Vitamin A (µg)': row['Vitamin A (µg)'],
+              'Vitamin C (mg)': row['Vitamin C (mg)'],
+              'Vitamin D (µg)': row['Vitamin D (µg)'],
+              'Vitamin E (mg)': row['Vitamin E (mg)'],
+              'Vitamin K (µg)': row['Vitamin K (µg)'],
+              'Thiamin (mg)': row['Thiamin (mg)'],
+              'Riboflavin (mg)': row['Riboflavin (mg)'],
+              'Niacin (mg)': row['Niacin (mg)'],
+              'Vitamin B6 (mg)': row['Vitamin B6 (mg)'],
+              'Folate (µg)': row['Folate (µg)'],
+              'Vitamin B12 (µg)': row['Vitamin B12 (µg)'],
+              'Calcium (mg)': row['Calcium (mg)'],
+              'carbohydrate': row['Carbohydrate (g)'],
+              'Choline (mg)': row['Choline (mg)'],
+              'protein': row['Protein (g)'],
+              'fats': row['Fats (g)'],
+              'saturated_fats': row['Saturated Fats (g)'],
+              'fiber': row['Fiber (g)'],
+              'Copper (µg)': row['Copper (µg)'],
+              'Iron (mg)': row['Iron (mg)'],
+              'Magnesium (mg)': row['Magnesium (mg)'],
+              'Manganese (mg)': row['Manganese (mg)'],
+              'Phosphorus (mg)': row['Phosphorus (mg)'],
+              'Selenium (µg)': row['Selenium (µg)'],
+              'Zinc (mg)': row['Zinc (mg)'],
+              'Potassium (mg)': row['Potassium (mg)'],
+              'Sodium (mg)': row['Sodium (mg)'],
+              'Pantothenic Acid (mg)': row['Pantothenic Acid (mg)']
+            }
+          }));
+
+          onFoodsImport(importedFoods);
+          setError(null);
+        } catch {
+          setError('Invalid CSV format. Please use a CSV file exported from this application.');
+        }
+      },
+      error: (error) => {
+        setError(`Error reading file: ${error.message}`);
+      }
+    });
+    
+    event.target.value = '';
   };
 
   return (
@@ -107,35 +175,53 @@ const FoodSearch = ({ onFoodSelect }) => {
           </form>
         </div>
 
-        <form onSubmit={handleSearch} className="mb-6">
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Search for foods..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              disabled={loading || !apiKey}
-              className="flex-1"
-            />
-            <Button 
-              type="submit"
-              disabled={loading || !apiKey}
-              className="min-w-[100px]"
-            >
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  <span>Searching</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Search className="w-4 h-4" />
-                  <span>Search</span>
-                </div>
-              )}
-            </Button>
-          </div>
-        </form>
+        <div className="flex gap-4 mb-6">
+          <form onSubmit={handleSearch} className="flex-1">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Search for foods..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                disabled={loading || !apiKey}
+                className="flex-1"
+              />
+              <Button 
+                type="submit"
+                disabled={loading || !apiKey}
+                className="min-w-[100px]"
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span>Searching</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4" />
+                    <span>Search</span>
+                  </div>
+                )}
+              </Button>
+            </div>
+          </form>
+
+          <Button
+            variant="outline"
+            onClick={() => document.getElementById('csv-upload').click()}
+            className="flex items-center gap-2"
+          >
+            <Upload className="w-4 h-4" />
+            Import CSV
+          </Button>
+          <input
+            id="csv-upload"
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+        </div>
 
         {searchResults.length > 0 && (
           <div className="search-results">
@@ -179,6 +265,7 @@ const FoodSearch = ({ onFoodSelect }) => {
 
 FoodSearch.propTypes = {
   onFoodSelect: PropTypes.func.isRequired,
+  onFoodsImport: PropTypes.func.isRequired
 };
 
 export default FoodSearch;

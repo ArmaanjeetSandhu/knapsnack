@@ -18,6 +18,7 @@ function App() {
   const [optimizationResults, setOptimizationResults] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
 
+  // Handler for form submission (calculating nutrition goals)
   const handleFormSubmit = async (formData) => {
     try {
       const calculationData = {
@@ -42,6 +43,16 @@ function App() {
     } catch (error) {
       console.error('Error calculating nutrition:', error);
     }
+  };
+
+  const handleFoodsImport = (importedFoods) => {
+    setSelectedFoods(prevFoods => [...prevFoods, ...importedFoods]);
+    setOptimizationResults(null);
+  };
+
+  const handleFoodSelect = (food) => {
+    setSelectedFoods(prevFoods => [...prevFoods, food]);
+    setOptimizationResults(null);
   };
 
   return (
@@ -93,7 +104,8 @@ function App() {
         ) : (
           <>
             <FoodSearch 
-              onFoodSelect={(food) => setSelectedFoods([...selectedFoods, food])} 
+              onFoodSelect={handleFoodSelect} 
+              onFoodsImport={handleFoodsImport} 
             />
             
             <SelectedFoods 
