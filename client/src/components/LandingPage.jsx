@@ -20,7 +20,7 @@ const LandingPage = ({ onGetStarted }) => {
         </div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-4">
           <h1 className="text-4xl md:text-6xl font-bold text-center mb-6">
-            Goal-ith: The Smart Diet Optimizer
+            Goal-i<sup>th</sup>: The Smart Diet Optimizer
           </h1>
           <p className="text-xl md:text-2xl text-center mb-8 max-w-2xl">
             Create personalized, nutritionally complete meal plans that fit your budget using advanced optimization techniques

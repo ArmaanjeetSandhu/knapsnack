@@ -115,7 +115,7 @@ function App() {
               onClick={handleReset}
               className="text-xl font-bold hover:text-gray-300 transition-colors"
             >
-              Goal-ith: The Meal Planner
+              Goal-i<sup>th</sup>: The Meal Planner
             </button>
             <NavigationMenu>
               <NavigationMenuList>
