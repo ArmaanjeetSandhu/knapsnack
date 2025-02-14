@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, HelpCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import {
   Tooltip,
@@ -37,22 +36,32 @@ const PersonalInfoForm = ({ onSubmit }) => {
 
   const steps = useMemo(() => [
     {
-      title: "First, what's your gender?",
+      title: (
+        <div className="flex items-center gap-2">
+          First, what&apos;s your gender?
+        </div>
+      ),
       component: (
-        <Select 
-          defaultValue={formData.gender}
-          onValueChange={(value) => handleInputChange('gender', value)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select gender" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="m">Male</SelectItem>
-            <SelectItem value="f">Female</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant={formData.gender === 'm' ? 'default' : 'outline'}
+            className="flex-1"
+            onClick={() => handleInputChange('gender', 'm')}
+          >
+            Male
+          </Button>
+          <Button
+            type="button"
+            variant={formData.gender === 'f' ? 'default' : 'outline'}
+            className="flex-1"
+            onClick={() => handleInputChange('gender', 'f')}
+          >
+            Female
+          </Button>
+        </div>
       )
-    },
+    },    
     {
       title: "How old are you?",
       component: (
