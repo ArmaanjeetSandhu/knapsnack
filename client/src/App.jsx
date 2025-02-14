@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import LandingPage from './components/LandingPage';
 import PersonalInfoForm from './components/PersonalInfoForm';
 import FoodSearch from './components/FoodSearch';
 import SelectedFoods from './components/SelectedFoods';
@@ -20,6 +21,7 @@ const isDuplicateFood = (newFood, existingFoods) => {
 };
 
 function App() {
+  const [showLanding, setShowLanding] = useState(true);
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [optimizationResults, setOptimizationResults] = useState(null);
@@ -63,6 +65,7 @@ function App() {
     setOptimizationResults(null);
     setUserInfo(null);
     setError(null);
+    setShowLanding(true);
   };
 
   const handleFoodSelect = (food) => {
@@ -98,6 +101,10 @@ function App() {
       setOptimizationResults(null);
     }
   };
+
+  if (showLanding) {
+    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -154,42 +161,42 @@ function App() {
           </Alert>
         )}
 
-      {!nutrientGoals ? (
-        <div className="max-w-4xl mx-auto">
-          <PersonalInfoForm onSubmit={handleFormSubmit} />
-        </div>
-      ) : showCalculationResults ? (
-        <div className="max-w-4xl mx-auto">
-          <CalculationResults
-            calculationData={nutrientGoals}
-            userInfo={userInfo}
-            onProceed={() => setShowCalculationResults(false)}
-          />
-        </div>
-      ) : (
-        <>
-          <FoodSearch 
-            onFoodSelect={handleFoodSelect} 
-            onFoodsImport={handleFoodsImport} 
-            selectedFoodIds={selectedFoods.map(food => food.fdcId)}
-          />
-          
-          <SelectedFoods 
-            foods={selectedFoods}
-            onFoodsUpdate={setSelectedFoods}
-            nutrientGoals={nutrientGoals}
-            userInfo={userInfo}
-            onOptimizationResults={setOptimizationResults}
-          />
-          
-          {optimizationResults && (
-            <OptimizationResults 
-              results={optimizationResults}
-              selectedFoods={selectedFoods}
+        {!nutrientGoals ? (
+          <div className="max-w-4xl mx-auto">
+            <PersonalInfoForm onSubmit={handleFormSubmit} />
+          </div>
+        ) : showCalculationResults ? (
+          <div className="max-w-4xl mx-auto">
+            <CalculationResults
+              calculationData={nutrientGoals}
+              userInfo={userInfo}
+              onProceed={() => setShowCalculationResults(false)}
             />
-          )}
-        </>
-      )}
+          </div>
+        ) : (
+          <>
+            <FoodSearch 
+              onFoodSelect={handleFoodSelect} 
+              onFoodsImport={handleFoodsImport} 
+              selectedFoodIds={selectedFoods.map(food => food.fdcId)}
+            />
+            
+            <SelectedFoods 
+              foods={selectedFoods}
+              onFoodsUpdate={setSelectedFoods}
+              nutrientGoals={nutrientGoals}
+              userInfo={userInfo}
+              onOptimizationResults={setOptimizationResults}
+            />
+            
+            {optimizationResults && (
+              <OptimizationResults 
+                results={optimizationResults}
+                selectedFoods={selectedFoods}
+              />
+            )}
+          </>
+        )}
       </main>
     </div>
   );
