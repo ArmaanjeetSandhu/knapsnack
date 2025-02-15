@@ -1,7 +1,16 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Download } from 'lucide-react';
+import { 
+  Download, 
+  IndianRupee,
+  Utensils, 
+  Beef, 
+  Beaker
+} from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -9,10 +18,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableFooter,
 } from "../components/ui/table";
 
 const OptimizationResults = ({ results }) => {
+  const [nutrientDisplayMode, setNutrientDisplayMode] = useState('table');
+  
   const nonZeroItems = results.food_items
     .map((food, index) => ({
       food,
@@ -21,15 +31,56 @@ const OptimizationResults = ({ results }) => {
     }))
     .filter(item => item.servings > 0);
 
+  const totalDailyCost = results.total_cost_sum;
+
+  const formatValue = (value) => {
+    return typeof value === 'number' ? value.toLocaleString('en-US', {
+      maximumFractionDigits: 1
+    }) : value;
+  };
+
+  const macronutrients = [
+    { name: 'Protein', value: results.nutrient_totals.protein, unit: 'g' },
+    { name: 'Carbohydrates', value: results.nutrient_totals.carbohydrate, unit: 'g' },
+    { name: 'Fats', value: results.nutrient_totals.fats, unit: 'g' },
+    { name: 'Fiber', value: results.nutrient_totals.fiber, unit: 'g' },
+    { name: 'Saturated Fats', value: results.nutrient_totals['saturated_fats'], unit: 'g' }
+  ];
+
+  const vitamins = [
+    { name: 'Vitamin A', value: results.nutrient_totals['Vitamin A (µg)'], unit: 'µg' },
+    { name: 'Vitamin C', value: results.nutrient_totals['Vitamin C (mg)'], unit: 'mg' },
+    { name: 'Vitamin D', value: results.nutrient_totals['Vitamin D (µg)'], unit: 'µg' },
+    { name: 'Vitamin E', value: results.nutrient_totals['Vitamin E (mg)'], unit: 'mg' },
+    { name: 'Vitamin K', value: results.nutrient_totals['Vitamin K (µg)'], unit: 'µg' },
+    { name: 'Thiamin', value: results.nutrient_totals['Thiamin (mg)'], unit: 'mg' },
+    { name: 'Riboflavin', value: results.nutrient_totals['Riboflavin (mg)'], unit: 'mg' },
+    { name: 'Niacin', value: results.nutrient_totals['Niacin (mg)'], unit: 'mg' },
+    { name: 'Vitamin B6', value: results.nutrient_totals['Vitamin B6 (mg)'], unit: 'mg' },
+    { name: 'Folate', value: results.nutrient_totals['Folate (µg)'], unit: 'µg' },
+    { name: 'Vitamin B12', value: results.nutrient_totals['Vitamin B12 (µg)'], unit: 'µg' },
+    { name: 'Pantothenic Acid', value: results.nutrient_totals['Pantothenic Acid (mg)'], unit: 'mg' }
+  ];
+
+  const minerals = [
+    { name: 'Calcium', value: results.nutrient_totals['Calcium (mg)'], unit: 'mg' },
+    { name: 'Copper', value: results.nutrient_totals['Copper (µg)'], unit: 'µg' },
+    { name: 'Iron', value: results.nutrient_totals['Iron (mg)'], unit: 'mg' },
+    { name: 'Magnesium', value: results.nutrient_totals['Magnesium (mg)'], unit: 'mg' },
+    { name: 'Manganese', value: results.nutrient_totals['Manganese (mg)'], unit: 'mg' },
+    { name: 'Phosphorus', value: results.nutrient_totals['Phosphorus (mg)'], unit: 'mg' },
+    { name: 'Selenium', value: results.nutrient_totals['Selenium (µg)'], unit: 'µg' },
+    { name: 'Zinc', value: results.nutrient_totals['Zinc (mg)'], unit: 'mg' },
+    { name: 'Potassium', value: results.nutrient_totals['Potassium (mg)'], unit: 'mg' },
+    { name: 'Sodium', value: results.nutrient_totals['Sodium (mg)'], unit: 'mg' }
+  ];
+
   const handleExportCSV = () => {
     let csvContent = 'Food Item,Number of Servings,Cost (₹)\n';
-    
     nonZeroItems.forEach(item => {
       csvContent += `"${item.food}",${item.servings.toFixed(1)},₹${item.cost.toFixed(2)}\n`;
     });
-
-    csvContent += '\nTotal Daily Cost,₹' + results.total_cost_sum.toFixed(2) + '\n\n';
-    
+    csvContent += '\nTotal Daily Cost,₹' + totalDailyCost.toFixed(2) + '\n\n';
     csvContent += 'Daily Nutrition\n';
     for (const [nutrient, value] of Object.entries(results.nutrient_totals)) {
       csvContent += `${nutrient},${value}\n`;
@@ -38,7 +89,6 @@ const OptimizationResults = ({ results }) => {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
     link.setAttribute('href', url);
     link.setAttribute('download', 'diet_plan.csv');
     document.body.appendChild(link);
@@ -46,98 +96,184 @@ const OptimizationResults = ({ results }) => {
     document.body.removeChild(link);
   };
 
+  const renderNutrientTable = (nutrients) => (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Nutrient</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+          <TableHead className="text-right">Unit</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {nutrients.map((nutrient, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-medium">{nutrient.name}</TableCell>
+            <TableCell className="text-right">{formatValue(nutrient.value)}</TableCell>
+            <TableCell className="text-right">{nutrient.unit}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
+  const renderNutrientCards = (nutrients) => (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {nutrients.map((nutrient, index) => (
+        <Card key={index}>
+          <CardContent className="pt-6">
+            <h4 className="text-sm font-medium text-muted-foreground">
+              {nutrient.name}
+            </h4>
+            <p className="text-2xl font-bold mt-2">
+              {formatValue(nutrient.value)} {nutrient.unit}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
   return (
-    <Card className="mb-6 shadow-lg">
-      <CardHeader className="bg-success/5 dark:bg-success/10 border-b border-border">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-foreground">Optimized Diet Plan</CardTitle>
-          <Button 
+    <div className="space-y-6">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-2xl font-bold">Optimized Diet Plan</CardTitle>
+          <Button
             variant="outline"
             size="sm"
             onClick={handleExportCSV}
-            className="flex items-center gap-2 text-foreground hover:text-accent-foreground"
+            className="flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
-            Export CSV
+            Export Plan
           </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">
-              Recommended Daily Intake
-            </h3>
-            <div className="rounded-md border border-border">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-border">
-                    <TableHead className="text-muted-foreground">Food Item</TableHead>
-                    <TableHead className="text-right text-muted-foreground">
-                      Number of Servings
-                    </TableHead>
-                    <TableHead className="text-right text-muted-foreground">
-                      Cost (₹)
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {nonZeroItems.map((item, index) => (
-                    <TableRow key={index} className="border-border">
-                      <TableCell className="font-medium text-foreground">
-                        {item.food}
-                      </TableCell>
-                      <TableCell className="text-right text-foreground">
-                        {item.servings.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right text-foreground">
-                        ₹{item.cost.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                <TableFooter>
-                  <TableRow className="border-border">
-                    <TableCell 
-                      colSpan={2} 
-                      className="text-right font-semibold text-foreground"
-                    >
-                      Total Daily Cost:
-                    </TableCell>
-                    <TableCell className="text-right font-semibold text-foreground">
-                      ₹{results.total_cost_sum.toFixed(2)}
-                    </TableCell>
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            </div>
-          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
+                      <IndianRupee className="w-8 h-8 text-green-500 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Total Daily Cost
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {totalDailyCost.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">
-              Daily Nutrition
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.entries(results.nutrient_totals).map(([nutrient, value], index) => (
-                <Card 
-                  key={index} 
-                  className="bg-card dark:bg-card/50 border-border"
-                >
-                  <CardContent className="p-4">
-                    <div className="text-sm font-medium text-muted-foreground mb-1">
-                      {nutrient}
-                    </div>
-                    <div className="text-2xl font-bold text-primary">
-                      {value}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div>
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Utensils className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                Recommended Daily Portions
+              </h3>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Food Item</TableHead>
+                      <TableHead className="text-right">Servings (g)</TableHead>
+                      <TableHead className="text-right">Cost (₹)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {nonZeroItems.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">
+                          {item.food}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {item.servings.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {item.cost.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Beef className="w-5 h-5 text-pink-500 dark:text-pink-400" />
+                Macronutrient Profile
+              </h3>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {macronutrients.map((macro, index) => (
+                  <Card key={index}>
+                    <CardContent className="pt-6">
+                      <h4 className="text-sm font-medium text-muted-foreground">
+                        {macro.name}
+                      </h4>
+                      <p className="text-2xl font-bold mt-2">
+                        {formatValue(macro.value)} {macro.unit}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Beaker className="w-5 h-5 text-purple-500 dark:text-purple-400" />
+                  Micronutrient Profile
+                </h3>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={nutrientDisplayMode === 'cards' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setNutrientDisplayMode('cards')}
+                  >
+                    Cards
+                  </Button>
+                  <Button
+                    variant={nutrientDisplayMode === 'table' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setNutrientDisplayMode('table')}
+                  >
+                    Table
+                  </Button>
+                </div>
+              </div>
+
+              <Tabs defaultValue="vitamins" className="w-full">
+                <TabsList className="w-full">
+                  <TabsTrigger value="vitamins" className="flex-1">Vitamins</TabsTrigger>
+                  <TabsTrigger value="minerals" className="flex-1">Minerals</TabsTrigger>
+                </TabsList>
+                <TabsContent value="vitamins">
+                  <ScrollArea className="h-[400px]">
+                    {nutrientDisplayMode === 'table' ? 
+                      renderNutrientTable(vitamins) : 
+                      renderNutrientCards(vitamins)}
+                  </ScrollArea>
+                </TabsContent>
+                <TabsContent value="minerals">
+                  <ScrollArea className="h-[400px]">
+                    {nutrientDisplayMode === 'table' ? 
+                      renderNutrientTable(minerals) : 
+                      renderNutrientCards(minerals)}
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
@@ -147,7 +283,7 @@ OptimizationResults.propTypes = {
     servings: PropTypes.arrayOf(PropTypes.number).isRequired,
     total_cost: PropTypes.arrayOf(PropTypes.number).isRequired,
     total_cost_sum: PropTypes.number.isRequired,
-    nutrient_totals: PropTypes.objectOf(PropTypes.number).isRequired,
+    nutrient_totals: PropTypes.object.isRequired,
   }).isRequired,
 };
 

@@ -181,7 +181,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                 placeholder="Enter your USDA API key"
                 className="flex-1"
               />
-              <Button type="submit">Submit</Button>
             </div>
           </form>
         </div>
