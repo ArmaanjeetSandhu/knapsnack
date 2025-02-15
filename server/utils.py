@@ -116,4 +116,16 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
     lower_bounds = lower_bounds.drop("Life-Stage Group")
     upper_bounds = upper_bounds.drop("Life-Stage Group")
 
+    lower_bounds = pd.to_numeric(lower_bounds, errors="coerce")
+    upper_bounds = pd.to_numeric(upper_bounds, errors="coerce")
+
+    for nutrient in ["Folate (µg)", "Niacin (mg)", "Vitamin E (mg)"]:
+        if pd.notna(upper_bounds[nutrient]) and pd.notna(lower_bounds[nutrient]):
+            upper_bounds[nutrient] += lower_bounds[nutrient]
+
+    if pd.notna(upper_bounds["Magnesium (mg)"]) and pd.notna(
+        lower_bounds["Magnesium (mg)"]
+    ):
+        upper_bounds["Magnesium (mg)"] += lower_bounds["Magnesium (mg)"]
+
     return lower_bounds, upper_bounds
