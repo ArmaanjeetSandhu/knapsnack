@@ -64,7 +64,7 @@ def search_food():
 
         if not search_term:
             return jsonify({"error": "No search term provided"}), 400
-            
+
         if not api_key:
             return jsonify({"error": "No API key provided"}), 400
 
@@ -81,11 +81,13 @@ def search_food():
 
         search_results = []
         for food in response.json().get("foods", []):
-            search_results.append({
-                "fdcId": food.get("fdcId"),
-                "description": food.get("description"),
-                "nutrients": extract_nutrients(food.get("foodNutrients", [])),
-            })
+            search_results.append(
+                {
+                    "fdcId": food.get("fdcId"),
+                    "description": food.get("description"),
+                    "nutrients": extract_nutrients(food.get("foodNutrients", [])),
+                }
+            )
 
         return jsonify({"results": search_results})
 
@@ -193,7 +195,7 @@ def calculate():
         )
 
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
-        
+
         if smoking_status == "yes":
             vitamin_c_key = "Vitamin C (mg)"
             if vitamin_c_key in lower_bounds:
@@ -201,9 +203,13 @@ def calculate():
 
         lower_bounds_dict = lower_bounds.to_dict()
         upper_bounds_dict = upper_bounds.to_dict()
-        
-        lower_bounds_dict = {k: float(v) for k, v in lower_bounds_dict.items() if pd.notna(v)}
-        upper_bounds_dict = {k: float(v) for k, v in upper_bounds_dict.items() if pd.notna(v)}
+
+        lower_bounds_dict = {
+            k: float(v) for k, v in lower_bounds_dict.items() if pd.notna(v)
+        }
+        upper_bounds_dict = {
+            k: float(v) for k, v in upper_bounds_dict.items() if pd.notna(v)
+        }
 
         result = {
             "bmr": bmr,
@@ -215,7 +221,7 @@ def calculate():
             "fiber": fiber,
             "saturated_fats": saturated_fats,
             "lower_bounds": lower_bounds_dict,
-            "upper_bounds": upper_bounds_dict
+            "upper_bounds": upper_bounds_dict,
         }
         print("Calculated result:", result)
         return jsonify(result)
@@ -263,10 +269,12 @@ def optimize():
 
         c = np.array([food["price"] for food in selected_foods_data])
 
-        max_servings = np.array([
-            food.get("maxServing", default_max_serving) / food["servingSize"]
-            for food in selected_foods_data
-        ])
+        max_servings = np.array(
+            [
+                food.get("maxServing", default_max_serving) / food["servingSize"]
+                for food in selected_foods_data
+            ]
+        )
 
         A_ub = []
         b_ub = []
@@ -278,14 +286,15 @@ def optimize():
                 values = [
                     food["nutrients"].get(nutrient, 0) for food in selected_foods_data
                 ]
-                A_ub.extend([
-                    [-val for val in values],  # Lower bound
-                    values  # Upper bound
-                ])
-                b_ub.extend([
-                    -goal,  # Lower bound must be >= goal
-                    goal * 1.01  # Upper bound must be <= goal * 1.01
-                ])
+                A_ub.extend(
+                    [[-val for val in values], values]  # Lower bound  # Upper bound
+                )
+                b_ub.extend(
+                    [
+                        -goal,  # Lower bound must be >= goal
+                        goal * 1.01,  # Upper bound must be <= goal * 1.01
+                    ]
+                )
 
         if "saturated_fats" in nutrient_goals:
             sat_fat_goal = nutrient_goals["saturated_fats"]
@@ -349,16 +358,22 @@ def optimize():
 
             return jsonify({"success": True, "result": result_data})
         else:
-            return jsonify({
-                "success": False,
-                "message": "Optimization failed! No feasible solution found.",
-            })
+            return jsonify(
+                {
+                    "success": False,
+                    "message": "Optimization failed! No feasible solution found.",
+                }
+            )
 
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
-        return jsonify(
-            {"error": "An internal error has occurred. Please try again later."}
-        ), 500
+        return (
+            jsonify(
+                {"error": "An internal error has occurred. Please try again later."}
+            ),
+            500,
+        )
+
 
 def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
     """
