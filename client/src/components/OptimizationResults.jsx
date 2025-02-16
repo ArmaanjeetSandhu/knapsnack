@@ -19,8 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import handleExportCSV from './ExportHandler';
 
-const OptimizationResults = ({ results }) => {
+const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState('table');
   
   const nonZeroItems = results.food_items
@@ -75,25 +76,8 @@ const OptimizationResults = ({ results }) => {
     { name: 'Sodium', value: results.nutrient_totals['Sodium (mg)'], unit: 'mg' }
   ];
 
-  const handleExportCSV = () => {
-    let csvContent = 'Food Item,Number of Servings,Cost (₹)\n';
-    nonZeroItems.forEach(item => {
-      csvContent += `"${item.food}",${item.servings.toFixed(1)},₹${item.cost.toFixed(2)}\n`;
-    });
-    csvContent += '\nTotal Daily Cost,₹' + totalDailyCost.toFixed(2) + '\n\n';
-    csvContent += 'Daily Nutrition\n';
-    for (const [nutrient, value] of Object.entries(results.nutrient_totals)) {
-      csvContent += `${nutrient},${value}\n`;
-    }
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'diet_plan.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleExportClick = () => {
+    handleExportCSV(results, selectedFoods);
   };
 
   const renderNutrientTable = (nutrients) => (
@@ -142,7 +126,7 @@ const OptimizationResults = ({ results }) => {
           <Button
             variant="outline"
             size="sm"
-            onClick={handleExportCSV}
+            onClick={handleExportClick}
             className="flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
@@ -181,7 +165,7 @@ const OptimizationResults = ({ results }) => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Food Item</TableHead>
-                      <TableHead className="text-right">Servings (g)</TableHead>
+                      <TableHead className="text-right">No. of Servings</TableHead>
                       <TableHead className="text-right">Cost (₹)</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -285,6 +269,15 @@ OptimizationResults.propTypes = {
     total_cost_sum: PropTypes.number.isRequired,
     nutrient_totals: PropTypes.object.isRequired,
   }).isRequired,
+  selectedFoods: PropTypes.arrayOf(
+    PropTypes.shape({
+      fdcId: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      servingSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      nutrients: PropTypes.object.isRequired
+    })
+  ).isRequired
 };
 
 export default OptimizationResults;
