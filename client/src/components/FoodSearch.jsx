@@ -70,7 +70,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-
+  
     Papa.parse(file, {
       header: true,
       dynamicTyping: true,
@@ -80,46 +80,52 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           setSearchError('Error parsing CSV file. Please ensure the file format is correct.');
           return;
         }
-
+  
         try {
-          const importedFoods = results.data.map(row => ({
-            fdcId: row['FDC ID'].toString(),
-            description: row['Food Item'],
-            price: row['Price (₹)'],
-            servingSize: row['Serving Size (g)'],
-            maxServing: row['Max Serving (g)'],
-            nutrients: {
-              'Vitamin A (µg)': row['Vitamin A (µg)'],
-              'Vitamin C (mg)': row['Vitamin C (mg)'],
-              'Vitamin D (µg)': row['Vitamin D (µg)'],
-              'Vitamin E (mg)': row['Vitamin E (mg)'],
-              'Vitamin K (µg)': row['Vitamin K (µg)'],
-              'Thiamin (mg)': row['Thiamin (mg)'],
-              'Riboflavin (mg)': row['Riboflavin (mg)'],
-              'Niacin (mg)': row['Niacin (mg)'],
-              'Vitamin B6 (mg)': row['Vitamin B6 (mg)'],
-              'Folate (µg)': row['Folate (µg)'],
-              'Vitamin B12 (µg)': row['Vitamin B12 (µg)'],
-              'Calcium (mg)': row['Calcium (mg)'],
-              'carbohydrate': row['Carbohydrate (g)'],
-              'Choline (mg)': row['Choline (mg)'],
-              'protein': row['Protein (g)'],
-              'fats': row['Fats (g)'],
-              'saturated_fats': row['Saturated Fats (g)'],
-              'fiber': row['Fiber (g)'],
-              'Copper (µg)': row['Copper (µg)'],
-              'Iron (mg)': row['Iron (mg)'],
-              'Magnesium (mg)': row['Magnesium (mg)'],
-              'Manganese (mg)': row['Manganese (mg)'],
-              'Phosphorus (mg)': row['Phosphorus (mg)'],
-              'Selenium (µg)': row['Selenium (µg)'],
-              'Zinc (mg)': row['Zinc (mg)'],
-              'Potassium (mg)': row['Potassium (mg)'],
-              'Sodium (mg)': row['Sodium (mg)'],
-              'Pantothenic Acid (mg)': row['Pantothenic Acid (mg)']
-            }
-          }));
-
+          const importedFoods = results.data.map(row => {
+            const servingSize = row['Serving Size (g)'] || 100;
+            
+            const normalizedNutrients = {
+              'Vitamin A (µg)': (row['Vitamin A (µg)'] * 100) / servingSize,
+              'Vitamin C (mg)': (row['Vitamin C (mg)'] * 100) / servingSize,
+              'Vitamin D (µg)': (row['Vitamin D (µg)'] * 100) / servingSize,
+              'Vitamin E (mg)': (row['Vitamin E (mg)'] * 100) / servingSize,
+              'Vitamin K (µg)': (row['Vitamin K (µg)'] * 100) / servingSize,
+              'Thiamin (mg)': (row['Thiamin (mg)'] * 100) / servingSize,
+              'Riboflavin (mg)': (row['Riboflavin (mg)'] * 100) / servingSize,
+              'Niacin (mg)': (row['Niacin (mg)'] * 100) / servingSize,
+              'Vitamin B6 (mg)': (row['Vitamin B6 (mg)'] * 100) / servingSize,
+              'Folate (µg)': (row['Folate (µg)'] * 100) / servingSize,
+              'Vitamin B12 (µg)': (row['Vitamin B12 (µg)'] * 100) / servingSize,
+              'Calcium (mg)': (row['Calcium (mg)'] * 100) / servingSize,
+              'carbohydrate': (row['Carbohydrate (g)'] * 100) / servingSize,
+              'Choline (mg)': (row['Choline (mg)'] * 100) / servingSize,
+              'protein': (row['Protein (g)'] * 100) / servingSize,
+              'fats': (row['Fats (g)'] * 100) / servingSize,
+              'saturated_fats': (row['Saturated Fats (g)'] * 100) / servingSize,
+              'fiber': (row['Fiber (g)'] * 100) / servingSize,
+              'Copper (µg)': (row['Copper (µg)'] * 100) / servingSize,
+              'Iron (mg)': (row['Iron (mg)'] * 100) / servingSize,
+              'Magnesium (mg)': (row['Magnesium (mg)'] * 100) / servingSize,
+              'Manganese (mg)': (row['Manganese (mg)'] * 100) / servingSize,
+              'Phosphorus (mg)': (row['Phosphorus (mg)'] * 100) / servingSize,
+              'Selenium (µg)': (row['Selenium (µg)'] * 100) / servingSize,
+              'Zinc (mg)': (row['Zinc (mg)'] * 100) / servingSize,
+              'Potassium (mg)': (row['Potassium (mg)'] * 100) / servingSize,
+              'Sodium (mg)': (row['Sodium (mg)'] * 100) / servingSize,
+              'Pantothenic Acid (mg)': (row['Pantothenic Acid (mg)'] * 100) / servingSize
+            };
+  
+            return {
+              fdcId: row['FDC ID'].toString(),
+              description: row['Food Item'],
+              price: row['Price (₹)'],
+              servingSize: row['Serving Size (g)'],
+              maxServing: row['Max Serving (g)'],
+              nutrients: normalizedNutrients
+            };
+          });
+  
           onFoodsImport(importedFoods);
           setSearchError(null);
         } catch {
