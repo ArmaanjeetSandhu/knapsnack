@@ -5,12 +5,14 @@ import {
   IndianRupee,
   Utensils, 
   Beef, 
-  Beaker
+  Beaker,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from "../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import {
   Table,
   TableBody,
@@ -33,6 +35,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     .filter(item => item.servings > 0);
 
   const totalDailyCost = results.total_cost_sum;
+  const overflowPercent = results.overflow_percent;
 
   const formatValue = (value) => {
     return typeof value === 'number' ? value.toLocaleString('en-US', {
@@ -135,25 +138,57 @@ const OptimizationResults = ({ results, selectedFoods }) => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                      <IndianRupee className="w-8 h-8 text-green-500 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Total Daily Cost
-                      </p>
-                      <p className="text-2xl font-bold">
-                        {totalDailyCost.toFixed(2)}
-                      </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
+                        <IndianRupee className="w-8 h-8 text-green-500 dark:text-green-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Total Daily Cost
+                        </p>
+                        <p className="text-2xl font-bold">
+                          ₹{totalDailyCost.toFixed(2)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                        <AlertTriangle className="w-8 h-8 text-yellow-500 dark:text-yellow-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Nutrient Flexibility Used
+                        </p>
+                        <p className="text-2xl font-bold">
+                          {overflowPercent}% overflow
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {overflowPercent > 10 && (
+              <Alert variant="warning">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  High nutrient flexibility ({overflowPercent}%) was needed to find a feasible solution. 
+                  Consider adding more diverse foods to your selection for better nutrient balance.
+                </AlertDescription>
+              </Alert>
+            )}
 
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -268,6 +303,7 @@ OptimizationResults.propTypes = {
     total_cost: PropTypes.arrayOf(PropTypes.number).isRequired,
     total_cost_sum: PropTypes.number.isRequired,
     nutrient_totals: PropTypes.object.isRequired,
+    overflow_percent: PropTypes.number.isRequired,
   }).isRequired,
   selectedFoods: PropTypes.arrayOf(
     PropTypes.shape({

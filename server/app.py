@@ -84,7 +84,7 @@ def search_food():
     try:
         data = request.json
         search_term = data.get("query")
-        api_key = data.get("api_key")  # Get API key from request
+        api_key = data.get("api_key")
 
         if not search_term:
             return jsonify({"error": "No search term provided"}), 400
@@ -287,35 +287,6 @@ def optimize():
             ]
         )
 
-        A_ub = []
-        b_ub = []
-
-        nutrients = ["protein", "carbohydrate", "fats", "fiber"]
-        for nutrient in nutrients:
-            if nutrient.lower().replace(" ", "_") in nutrient_goals:
-                goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
-                values = [
-                    food["nutrients"].get(nutrient, 0) for food in selected_foods_data
-                ]
-                A_ub.extend(
-                    [[-val for val in values], values]  # Lower bound  # Upper bound
-                )
-                b_ub.extend(
-                    [
-                        -goal,  # Lower bound must be >= goal
-                        goal * 1.01,  # Upper bound must be <= goal * 1.01
-                    ]
-                )
-
-        if "saturated_fats" in nutrient_goals:
-            sat_fat_goal = nutrient_goals["saturated_fats"]
-            sat_fat_values = [
-                food["nutrients"].get("saturated_fats", 0)
-                for food in selected_foods_data
-            ]
-            A_ub.append(sat_fat_values)  # Upper bound only
-            b_ub.append(sat_fat_goal)  # No overflow for saturated fats
-
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
 
         if smoking_status == "yes":
@@ -323,58 +294,91 @@ def optimize():
             if vitamin_c_key in lower_bounds:
                 lower_bounds[vitamin_c_key] = float(lower_bounds[vitamin_c_key]) + 35.0
 
-        for nutrient, api_name in NUTRIENT_MAP.items():
-            if nutrient not in nutrients:  # Skip macronutrients already handled
-                values = [
-                    food["nutrients"].get(nutrient, 0) for food in selected_foods_data
+        for overflow_percent in range(0, 11):
+            overflow_factor = 1 + (overflow_percent / 100)
+
+            A_ub = []
+            b_ub = []
+
+            nutrients = ["protein", "carbohydrate", "fats", "fiber"]
+            for nutrient in nutrients:
+                if nutrient.lower().replace(" ", "_") in nutrient_goals:
+                    goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
+                    values = [
+                        food["nutrients"].get(nutrient, 0)
+                        for food in selected_foods_data
+                    ]
+                    A_ub.extend([[-val for val in values], values])
+                    b_ub.extend(
+                        [
+                            -goal,
+                            goal * overflow_factor,
+                        ]
+                    )
+
+            if "saturated_fats" in nutrient_goals:
+                sat_fat_goal = nutrient_goals["saturated_fats"]
+                sat_fat_values = [
+                    food["nutrients"].get("saturated_fats", 0)
+                    for food in selected_foods_data
                 ]
+                A_ub.append(sat_fat_values)
+                b_ub.append(sat_fat_goal)
 
-                rda_key = nutrient
-                if rda_key in lower_bounds and pd.notna(lower_bounds[rda_key]):
-                    A_ub.append([-val for val in values])
-                    b_ub.append(-float(lower_bounds[rda_key]))
+            for nutrient, api_name in NUTRIENT_MAP.items():
+                if nutrient not in nutrients:
+                    values = [
+                        food["nutrients"].get(nutrient, 0)
+                        for food in selected_foods_data
+                    ]
 
-                if rda_key in upper_bounds and pd.notna(upper_bounds[rda_key]):
-                    A_ub.append(values)
-                    b_ub.append(float(upper_bounds[rda_key]))
+                    rda_key = nutrient
+                    if rda_key in lower_bounds and pd.notna(lower_bounds[rda_key]):
+                        A_ub.append([-val for val in values])
+                        b_ub.append(-float(lower_bounds[rda_key]))
 
-        A_ub = np.array(A_ub)
-        b_ub = np.array(b_ub)
+                    if rda_key in upper_bounds and pd.notna(upper_bounds[rda_key]):
+                        A_ub.append(values)
+                        b_ub.append(float(upper_bounds[rda_key]))
 
-        bounds = [(0, max_serving) for max_serving in max_servings]
+            A_ub = np.array(A_ub)
+            b_ub = np.array(b_ub)
+            bounds = [(0, max_serving) for max_serving in max_servings]
 
-        result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
+            result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
 
-        if result.success:
-            servings = np.round(result.x, 1)
-            food_items = [food["description"] for food in selected_foods_data]
-            total_cost = np.round(result.x * c, 2)
+            if result.success:
+                servings = np.round(result.x, 1)
+                food_items = [food["description"] for food in selected_foods_data]
+                total_cost = np.round(result.x * c, 2)
 
-            nutrient_totals = {}
-            for nutrient in NUTRIENT_MAP.keys():
-                values = [
-                    food["nutrients"].get(nutrient, 0) for food in selected_foods_data
-                ]
-                nutrient_totals[nutrient] = float(
-                    np.round(np.sum(servings * values), 1)
-                )
+                nutrient_totals = {}
+                for nutrient in NUTRIENT_MAP.keys():
+                    values = [
+                        food["nutrients"].get(nutrient, 0)
+                        for food in selected_foods_data
+                    ]
+                    nutrient_totals[nutrient] = float(
+                        np.round(np.sum(servings * values), 1)
+                    )
 
-            result_data = {
-                "food_items": food_items,
-                "servings": servings.tolist(),
-                "total_cost": total_cost.tolist(),
-                "nutrient_totals": nutrient_totals,
-                "total_cost_sum": float(np.sum(total_cost)),
-            }
-
-            return jsonify({"success": True, "result": result_data})
-        else:
-            return jsonify(
-                {
-                    "success": False,
-                    "message": "Optimization failed! No feasible solution found.",
+                result_data = {
+                    "food_items": food_items,
+                    "servings": servings.tolist(),
+                    "total_cost": total_cost.tolist(),
+                    "nutrient_totals": nutrient_totals,
+                    "total_cost_sum": float(np.sum(total_cost)),
+                    "overflow_percent": overflow_percent,
                 }
-            )
+
+                return jsonify({"success": True, "result": result_data})
+
+        return jsonify(
+            {
+                "success": False,
+                "message": "Optimization failed! No feasible solution found even with 20% overflow.",
+            }
+        )
 
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
