@@ -55,6 +55,30 @@ NUTRIENT_MAP = {
 }
 
 
+def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
+    """
+    Extract relevant nutrients from the API response and convert to our format.
+    Returns nutrients per 100g.
+    """
+    result = {}
+
+    reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
+
+    for nutrient in nutrients_data:
+        api_name = nutrient.get("nutrientName")
+        if api_name in reverse_map:
+            our_name = reverse_map[api_name]
+            value = nutrient.get("value", 0)
+            if value is not None:
+                result[our_name] = float(value)
+
+    for our_name in NUTRIENT_MAP.keys():
+        if our_name not in result:
+            result[our_name] = 0.0
+
+    return result
+
+
 @app.route("/api/search_food", methods=["POST"])
 def search_food():
     try:
@@ -237,19 +261,6 @@ def calculate():
         return jsonify({"error": "An internal server error has occurred."}), 500
 
 
-def adjust_nutrients_for_serving(
-    nutrients: Dict[str, float], serving_size: float
-) -> Dict[str, float]:
-    """
-    Adjust nutrient values based on serving size.
-    Base nutrients are per 100g, adjust according to specified serving size.
-    """
-    adjusted_nutrients = {}
-    for nutrient, value in nutrients.items():
-        adjusted_nutrients[nutrient] = (value * serving_size) / 100.0
-    return adjusted_nutrients
-
-
 @app.route("/api/optimize", methods=["POST"])
 def optimize():
     try:
@@ -373,30 +384,6 @@ def optimize():
             ),
             500,
         )
-
-
-def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
-    """
-    Extract relevant nutrients from the API response and convert to our format.
-    Returns nutrients per 100g.
-    """
-    result = {}
-
-    reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
-
-    for nutrient in nutrients_data:
-        api_name = nutrient.get("nutrientName")
-        if api_name in reverse_map:
-            our_name = reverse_map[api_name]
-            value = nutrient.get("value", 0)
-            if value is not None:
-                result[our_name] = float(value)
-
-    for our_name in NUTRIENT_MAP.keys():
-        if our_name not in result:
-            result[our_name] = 0.0
-
-    return result
 
 
 if __name__ == "__main__":
