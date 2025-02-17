@@ -1,0 +1,136 @@
+import { useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { Card, CardContent } from "../components/ui/card";
+import NutrientInfoPopup from './NutrientInfoPopup';
+
+export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
+  const [selectedNutrient, setSelectedNutrient] = useState(null);
+
+  const handleRowClick = (nutrient) => {
+    setSelectedNutrient({
+      name: nutrient.name,
+      rda: lowerBounds[nutrient.name + ` (${nutrient.unit})`],
+      ul: upperBounds[nutrient.name + ` (${nutrient.unit})`],
+      unit: nutrient.unit
+    });
+  };
+
+  return (
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nutrient</TableHead>
+            <TableHead className="text-right">RDA</TableHead>
+            <TableHead className="text-right">UL</TableHead>
+            <TableHead className="text-right">Unit</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {nutrients.map((nutrient, index) => {
+            const fullKey = `${nutrient.name} (${nutrient.unit})`;
+            return (
+              <TableRow 
+                key={index}
+                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => handleRowClick(nutrient)}
+              >
+                <TableCell className="font-medium">{nutrient.name}</TableCell>
+                <TableCell className="text-right">
+                  {lowerBounds[fullKey]?.toLocaleString() || 'N/A'}
+                </TableCell>
+                <TableCell className="text-right">
+                  {upperBounds[fullKey]?.toLocaleString() || 'N/A'}
+                </TableCell>
+                <TableCell className="text-right">{nutrient.unit}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+
+      {selectedNutrient && (
+        <NutrientInfoPopup
+          isOpen={true}
+          onClose={() => setSelectedNutrient(null)}
+          nutrient={selectedNutrient.name}
+          rda={selectedNutrient.rda}
+          ul={selectedNutrient.ul}
+          unit={selectedNutrient.unit}
+        />
+      )}
+    </>
+  );
+};
+
+export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
+  const [selectedNutrient, setSelectedNutrient] = useState(null);
+
+  const handleCardClick = (nutrient) => {
+    setSelectedNutrient({
+      name: nutrient.name,
+      rda: lowerBounds[nutrient.name + ` (${nutrient.unit})`],
+      ul: upperBounds[nutrient.name + ` (${nutrient.unit})`],
+      unit: nutrient.unit
+    });
+  };
+
+  return (
+    <>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {nutrients.map((nutrient, index) => {
+          const fullKey = `${nutrient.name} (${nutrient.unit})`;
+          return (
+            <Card 
+              key={index}
+              className="cursor-pointer hover:shadow-md transition-all duration-200"
+              onClick={() => handleCardClick(nutrient)}
+            >
+              <CardContent className="pt-6">
+                <h4 className="text-sm font-medium text-muted-foreground">
+                  {nutrient.name}
+                </h4>
+                <div className="space-y-1 mt-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm">RDA:</span>
+                    <span className="font-medium">
+                      {lowerBounds[fullKey] ? 
+                        `${lowerBounds[fullKey].toLocaleString()} ${nutrient.unit}` : 
+                        'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm">UL:</span>
+                    <span className="font-medium">
+                      {upperBounds[fullKey] ? 
+                        `${upperBounds[fullKey].toLocaleString()} ${nutrient.unit}` : 
+                        'N/A'}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {selectedNutrient && (
+        <NutrientInfoPopup
+          isOpen={true}
+          onClose={() => setSelectedNutrient(null)}
+          nutrient={selectedNutrient.name}
+          rda={selectedNutrient.rda}
+          ul={selectedNutrient.ul}
+          unit={selectedNutrient.unit}
+        />
+      )}
+    </>
+  );
+};

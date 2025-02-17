@@ -5,14 +5,7 @@ import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
+import { NutrientTable, NutrientCards } from './NutrientDisplay';
 
 const CalculationResults = ({ calculationData, onProceed }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState('table');
@@ -82,64 +75,19 @@ const CalculationResults = ({ calculationData, onProceed }) => {
   ];
 
   const renderNutrientTable = (nutrients) => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nutrient</TableHead>
-          <TableHead>RDA</TableHead>
-          <TableHead>UL</TableHead>
-          <TableHead>Unit</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {nutrients.map((nutrient) => (
-          <TableRow key={nutrient.key}>
-            <TableCell className="font-medium">{nutrient.name}</TableCell>
-            <TableCell>
-              {calculationData.lower_bounds?.[nutrient.key] ? 
-                formatValue(calculationData.lower_bounds[nutrient.key]) : 'N/A'}
-            </TableCell>
-            <TableCell>
-              {calculationData.upper_bounds?.[nutrient.key] ? 
-                formatValue(calculationData.upper_bounds[nutrient.key]) : 'N/A'}
-            </TableCell>
-            <TableCell>{nutrient.unit}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <NutrientTable
+      nutrients={nutrients}
+      lowerBounds={calculationData.lower_bounds}
+      upperBounds={calculationData.upper_bounds}
+    />
   );
 
   const renderNutrientCards = (nutrients) => (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {nutrients.map((nutrient) => (
-        <Card key={nutrient.key}>
-          <CardContent className="pt-6">
-            <h4 className="text-sm font-medium text-muted-foreground mb-2">
-              {nutrient.name}
-            </h4>
-            <div className="space-y-1">
-              <div className="flex justify-between">
-                <span className="text-sm">RDA:</span>
-                <span className="font-medium">
-                  {calculationData.lower_bounds?.[nutrient.key] ? 
-                    `${formatValue(calculationData.lower_bounds[nutrient.key])} ${nutrient.unit}` : 
-                    'N/A'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm">UL:</span>
-                <span className="font-medium">
-                  {calculationData.upper_bounds?.[nutrient.key] ? 
-                    `${formatValue(calculationData.upper_bounds[nutrient.key])} ${nutrient.unit}` : 
-                    'N/A'}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <NutrientCards
+      nutrients={nutrients}
+      lowerBounds={calculationData.lower_bounds}
+      upperBounds={calculationData.upper_bounds}
+    />
   );
 
   return (
