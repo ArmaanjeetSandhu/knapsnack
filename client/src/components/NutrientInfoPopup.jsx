@@ -1,4 +1,4 @@
-import { Check, HelpCircle, Info } from 'lucide-react';
+import { Check, CircleAlert, Info } from 'lucide-react';
 import PropTypes from 'prop-types';
 import {
   Dialog,
@@ -90,20 +90,14 @@ const NutrientInfoPopup = ({
                 <h3 className="font-semibold">Recommended Daily Allowance</h3>
               </div>
               <p className="text-2xl font-bold">{rda?.toLocaleString()} {unit}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Minimum daily intake for healthy individuals
-              </p>
             </div>
 
             <div className="p-4 rounded-lg border bg-card">
               <div className="flex items-center gap-2 mb-2 text-yellow-600 dark:text-yellow-400">
-                <HelpCircle className="h-5 w-5" />
-                <h3 className="font-semibold">Upper Limit</h3>
+                <CircleAlert className="h-5 w-5" />
+                <h3 className="font-semibold">Tolerable Upper Intake Level</h3>
               </div>
               <p className="text-2xl font-bold">{ul ? ul.toLocaleString() : 'Not established'} {ul ? unit : ''}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Maximum safe daily intake
-              </p>
             </div>
           </div>
 

@@ -10,6 +10,10 @@ import {
 import { Card, CardContent } from "../components/ui/card";
 import NutrientInfoPopup from './NutrientInfoPopup';
 
+const BlinkingDot = () => (
+  <div className="w-2 h-2 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+);
+
 export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
 
@@ -42,7 +46,12 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => handleRowClick(nutrient)}
               >
-                <TableCell className="font-medium">{nutrient.name}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    <BlinkingDot />
+                    <span>{nutrient.name}</span>
+                  </div>
+                </TableCell>
                 <TableCell className="text-right">
                   {lowerBounds[fullKey]?.toLocaleString() || 'N/A'}
                 </TableCell>
@@ -94,9 +103,12 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
               onClick={() => handleCardClick(nutrient)}
             >
               <CardContent className="pt-6">
-                <h4 className="text-sm font-medium text-muted-foreground">
-                  {nutrient.name}
-                </h4>
+                <div className="flex items-center gap-2 mb-2">
+                  <BlinkingDot />
+                  <h4 className="text-sm font-medium text-muted-foreground">
+                    {nutrient.name}
+                  </h4>
+                </div>
                 <div className="space-y-1 mt-2">
                   <div className="flex justify-between">
                     <span className="text-sm">RDA:</span>

@@ -143,10 +143,6 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                 <Beaker className="w-5 h-5 text-purple-500 dark:text-purple-400" />
                 Micronutrient Requirements
               </h3>
-              <div className="text-sm text-muted-foreground p-3 rounded-md">
-                <p><strong>RDA</strong>: Recommended Dietary Allowance</p>
-                <p><strong>UL</strong>: Tolerable Upper Intake Level</p>
-              </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant={nutrientDisplayMode === 'cards' ? 'default' : 'outline'}
