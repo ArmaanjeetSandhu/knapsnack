@@ -376,7 +376,7 @@ def optimize():
         return jsonify(
             {
                 "success": False,
-                "message": "Optimization failed! No feasible solution found even with 20% overflow.",
+                "message": "Optimization failed! No feasible solution found even with 10% overflow.",
             }
         )
 
