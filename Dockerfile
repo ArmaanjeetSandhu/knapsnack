@@ -4,14 +4,17 @@ WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
 COPY client/ ./
+# Ensure public directory is copied
+COPY client/public/ ./public/
 RUN npm run build
 
 # Use python image for the backend
 FROM python:3.12-slim
 WORKDIR /app
 
-# Copy frontend build
+# Copy frontend build including video
 COPY --from=frontend-builder /app/client/dist /app/client/dist
+COPY --from=frontend-builder /app/client/public /app/client/dist
 
 # Copy backend files
 COPY server/ /app/server/
