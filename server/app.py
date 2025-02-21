@@ -15,6 +15,9 @@ logging.basicConfig(
     handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
 )
 
+static_folder = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "client", "dist")
+)
 app = Flask(__name__)
 CORS(app)
 
@@ -26,7 +29,7 @@ def serve():
 
 @app.route("/<path:path>")
 def serve_static(path):
-    if path != "" and os.path.exists(app.static_folder + "/" + path):
+    if os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, "index.html")
