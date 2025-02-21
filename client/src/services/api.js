@@ -1,59 +1,52 @@
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5000/api";
+import config from "../config";
 
 const api = {
-  searchFood: async (query, apiKey) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/search_food`, {
-        query,
-        api_key: apiKey
-      });
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
+  async searchFood(query, apiKey) {
+    const response = await fetch(`${config.apiUrl}/search_food`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query, api_key: apiKey }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Search failed");
     }
+
+    return response.json();
   },
 
-  addFood: async (foodData) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/add_food`, foodData);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
+  async calculateNutrition(data) {
+    const response = await fetch(`${config.apiUrl}/calculate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error("Calculation failed");
     }
+
+    return response.json();
   },
 
-  removeFood: async (fdcId) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/remove_food`, {
-        fdcId,
-      });
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  },
+  async optimizeDiet(data) {
+    const response = await fetch(`${config.apiUrl}/optimize`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-  calculateNutrition: async (userData) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/calculate`, userData);
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
+    if (!response.ok) {
+      throw new Error("Optimization failed");
     }
-  },
 
-  optimizeDiet: async (optimizationData) => {
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/optimize`,
-        optimizationData
-      );
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
+    return response.json();
   },
 };
 
