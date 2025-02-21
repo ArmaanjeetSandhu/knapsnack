@@ -28,11 +28,12 @@ mimetypes.add_type("video/mp4", ".mp4")
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    normalized_path = os.path.normpath(os.path.join(app.static_folder, path))
+    if not normalized_path.startswith(app.static_folder):
+        return "Forbidden", 403
+    if path != "" and os.path.exists(normalized_path):
         if path.endswith(".mp4"):
-            return send_file(
-                os.path.join(app.static_folder, path), mimetype="video/mp4"
-            )
+            return send_file(normalized_path, mimetype="video/mp4")
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, "index.html")
