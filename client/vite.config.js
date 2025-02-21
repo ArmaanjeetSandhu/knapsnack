@@ -4,12 +4,23 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
-  css: {
-    postcss: "./postcss.config.js",
-  },
   resolve: {
     alias: {
-      "@": path.resolve(path.dirname(new URL(import.meta.url).pathname), "./src"),
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    emptyOutDir: true,
+    sourcemap: false,
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
+      },
     },
   },
 });
