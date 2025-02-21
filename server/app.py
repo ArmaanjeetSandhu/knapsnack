@@ -3,7 +3,7 @@ from flask_cors import CORS
 import pandas as pd
 import numpy as np
 from scipy.optimize import linprog
-from utils import *
+from server.utils import *
 import os
 import requests
 from typing import Dict, List
