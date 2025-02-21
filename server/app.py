@@ -16,14 +16,12 @@ logging.basicConfig(
     handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
 )
 
-# Get the absolute path to the static files
 static_folder = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "client", "dist")
 )
 app = Flask(__name__, static_folder=static_folder, static_url_path="")
 CORS(app)
 
-# Add MP4 MIME type
 mimetypes.add_type("video/mp4", ".mp4")
 
 
@@ -31,7 +29,6 @@ mimetypes.add_type("video/mp4", ".mp4")
 @app.route("/<path:path>")
 def serve(path):
     if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        # Special handling for video files
         if path.endswith(".mp4"):
             return send_file(
                 os.path.join(app.static_folder, path), mimetype="video/mp4"
