@@ -1,5 +1,10 @@
 import pandas as pd
+import os
 from typing import Dict
+
+NUTRIENT_DB_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "nutrient-databases")
+)
 
 rowsToBeRemoved = [
     "Infants",
@@ -58,18 +63,21 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
     else:
         age_group = f"{gender_prefix} > 70 y"
 
-    vitaminsRDA = pd.read_csv("nutrient-databases/vitamins-RDAs.csv").replace(
-        "ND", None
-    )
+    # Use absolute paths for CSV files
+    vitaminsRDA = pd.read_csv(
+        os.path.join(NUTRIENT_DB_PATH, "vitamins-RDAs.csv")
+    ).replace("ND", None)
     vitaminsRDA.drop(columns=["Biotin (µg)"], inplace=True)
     vitaminsRDA = remove_rows(vitaminsRDA)
 
-    vitaminsUL = pd.read_csv("nutrient-databases/vitamins-ULs.csv").replace("ND", None)
+    vitaminsUL = pd.read_csv(
+        os.path.join(NUTRIENT_DB_PATH, "vitamins-ULs.csv")
+    ).replace("ND", None)
     vitaminsUL = remove_rows(vitaminsUL)
 
-    elementsRDA = pd.read_csv("nutrient-databases/elements-RDAs.csv").replace(
-        "ND", None
-    )
+    elementsRDA = pd.read_csv(
+        os.path.join(NUTRIENT_DB_PATH, "elements-RDAs.csv")
+    ).replace("ND", None)
     elementsRDA.drop(
         columns=[
             "Chromium (µg)",
@@ -82,7 +90,9 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
     )
     elementsRDA = remove_rows(elementsRDA)
 
-    elementsUL = pd.read_csv("nutrient-databases/elements-ULs.csv").replace("ND", None)
+    elementsUL = pd.read_csv(
+        os.path.join(NUTRIENT_DB_PATH, "elements-ULs.csv")
+    ).replace("ND", None)
     elementsUL.drop(
         columns=[
             "Boron (mg)",

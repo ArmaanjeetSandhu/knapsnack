@@ -1,7 +1,7 @@
 const config = {
   apiUrl:
-    process.env.NODE_ENV === "production"
-      ? "/api"
+    window.location.hostname !== "localhost"
+      ? window.location.origin + "/api"
       : "http://localhost:5000/api",
 };
 
