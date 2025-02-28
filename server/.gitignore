@@ -1,5 +1,6 @@
 app.log
 goalenv/
+.mypy_cache/
 
 # Python cache files
 __pycache__/

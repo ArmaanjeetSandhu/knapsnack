@@ -1,14 +1,21 @@
-from flask import Flask, request, jsonify, send_from_directory, send_file
-from flask_cors import CORS
-import pandas as pd
-import numpy as np
-from scipy.optimize import linprog
-from server.utils import *
-import os
-import requests
-from typing import Dict, List
 import logging
 import mimetypes
+import os
+from typing import Dict, List
+
+import numpy as np
+import pandas as pd
+import requests
+from flask import Flask, jsonify, request, send_file, send_from_directory
+from flask_cors import CORS
+from scipy.optimize import linprog  # type: ignore
+
+from server.utils import (
+    calculate_bmr,
+    calculate_macros,
+    calculate_tdee,
+    nutrient_bounds,
+)
 
 logging.basicConfig(
     level=logging.ERROR,

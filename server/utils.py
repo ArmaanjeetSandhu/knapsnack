@@ -1,6 +1,6 @@
-import pandas as pd
 import os
-from typing import Dict
+
+import pandas as pd
 
 NUTRIENT_DB_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "nutrient-databases")
@@ -140,16 +140,3 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
         upper_bounds["Magnesium (mg)"] += lower_bounds["Magnesium (mg)"]
 
     return lower_bounds, upper_bounds
-
-
-def adjust_nutrients_for_serving(
-    nutrients: Dict[str, float], serving_size: float
-) -> Dict[str, float]:
-    """
-    Adjust nutrient values based on serving size.
-    Base nutrients are per 100g, adjust according to specified serving size.
-    """
-    adjusted_nutrients = {}
-    for nutrient, value in nutrients.items():
-        adjusted_nutrients[nutrient] = (value * serving_size) / 100.0
-    return adjusted_nutrients
