@@ -46,9 +46,6 @@ def serve(path):
         return send_from_directory(app.static_folder, "index.html")
 
 
-# Store selected foods in memory (in production, this should be a database)
-selected_foods = []
-
 API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
 
 NUTRIENT_MAP = {
@@ -135,7 +132,7 @@ def search_food():
         for food in response.json().get("foods", []):
             search_results.append(
                 {
-                    "fdcId": food.get("fdcId"),
+                    "fdcId": str(food.get("fdcId")),
                     "description": food.get("description"),
                     "nutrients": extract_nutrients(food.get("foodNutrients", [])),
                 }
@@ -146,61 +143,6 @@ def search_food():
     except requests.exceptions.RequestException as e:
         logging.error(f"API request failed: {str(e)}")
         return jsonify({"error": "API request failed"}), 500
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
-        return jsonify({"error": "An internal error has occurred"}), 500
-
-
-@app.route("/api/add_food", methods=["POST"])
-def add_food():
-    """
-    Add a selected food item to the list.
-    Expected request body: {
-        "fdcId": "food_id",
-        "description": "food name",
-        "price": float,
-        "servingSize": float,
-        "nutrients": {...}
-    }
-    """
-    try:
-        food_data = request.json
-        required_fields = ["fdcId", "description", "price", "servingSize", "nutrients"]
-
-        if not all(field in food_data for field in required_fields):
-            return jsonify({"error": "Missing required fields"}), 400
-
-        selected_foods.append(food_data)
-
-        return jsonify(
-            {"message": "Food added successfully", "selected_foods": selected_foods}
-        )
-
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
-        return jsonify({"error": "An internal error has occurred"}), 500
-
-
-@app.route("/api/remove_food", methods=["POST"])
-def remove_food():
-    """
-    Remove a food item from the selected foods list.
-    Expected request body: {"fdcId": "food_id"}
-    """
-    try:
-        data = request.json
-        fdc_id = data.get("fdcId")
-
-        if not fdc_id:
-            return jsonify({"error": "No food ID provided"}), 400
-
-        global selected_foods
-        selected_foods = [food for food in selected_foods if food["fdcId"] != fdc_id]
-
-        return jsonify(
-            {"message": "Food removed successfully", "selected_foods": selected_foods}
-        )
-
     except Exception as e:
         logging.error(f"An error occurred: {str(e)}")
         return jsonify({"error": "An internal error has occurred"}), 500

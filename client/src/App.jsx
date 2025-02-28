@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import LandingPage from './components/LandingPage';
-import PersonalInfoForm from './components/PersonalInfoForm';
-import FoodSearch from './components/FoodSearch';
-import SelectedFoods from './components/SelectedFoods';
-import OptimizationResults from './components/OptimizationResults';
-import CalculationResults from './components/CalculationResults';
-import ThemeToggle from './components/ThemeToggle';
-import GitHubIcon from './components/GitHubIcon';
-import api from './services/api';
+import { useState, useEffect } from "react";
+import LandingPage from "./components/LandingPage";
+import PersonalInfoForm from "./components/PersonalInfoForm";
+import FoodSearch from "./components/FoodSearch";
+import SelectedFoods from "./components/SelectedFoods";
+import OptimizationResults from "./components/OptimizationResults";
+import CalculationResults from "./components/CalculationResults";
+import ThemeToggle from "./components/ThemeToggle";
+import GitHubIcon from "./components/GitHubIcon";
+import api from "./services/api";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -16,8 +16,14 @@ import {
 } from "./components/ui/navigation-menu";
 import { Alert, AlertDescription } from "./components/ui/alert";
 
+const STORAGE_KEYS = {
+  SELECTED_FOODS: "goalith_selected_foods",
+  NUTRIENT_GOALS: "goalith_nutrient_goals",
+  USER_INFO: "goalith_user_info",
+};
+
 const isDuplicateFood = (newFood, existingFoods) => {
-  return existingFoods.some(food => food.fdcId === newFood.fdcId);
+  return existingFoods.some((food) => food.fdcId === newFood.fdcId);
 };
 
 function App() {
@@ -28,6 +34,53 @@ function App() {
   const [showCalculationResults, setShowCalculationResults] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    try {
+      const storedFoods = localStorage.getItem(STORAGE_KEYS.SELECTED_FOODS);
+      const storedGoals = localStorage.getItem(STORAGE_KEYS.NUTRIENT_GOALS);
+      const storedUserInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
+
+      if (storedFoods) {
+        setSelectedFoods(JSON.parse(storedFoods));
+      }
+
+      if (storedGoals) {
+        setNutrientGoals(JSON.parse(storedGoals));
+        setShowLanding(false);
+      }
+
+      if (storedUserInfo) {
+        setUserInfo(JSON.parse(storedUserInfo));
+      }
+    } catch (err) {
+      console.error("Error loading data from localStorage:", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedFoods.length > 0) {
+      localStorage.setItem(
+        STORAGE_KEYS.SELECTED_FOODS,
+        JSON.stringify(selectedFoods)
+      );
+    }
+  }, [selectedFoods]);
+
+  useEffect(() => {
+    if (nutrientGoals) {
+      localStorage.setItem(
+        STORAGE_KEYS.NUTRIENT_GOALS,
+        JSON.stringify(nutrientGoals)
+      );
+    }
+  }, [nutrientGoals]);
+
+  useEffect(() => {
+    if (userInfo) {
+      localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(userInfo));
+    }
+  }, [userInfo]);
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -41,21 +94,21 @@ function App() {
         protein: formData.macroRatios.protein,
         carbohydrate: formData.macroRatios.carbohydrate,
         fats: formData.macroRatios.fats,
-        smokingStatus: formData.smokingStatus
+        smokingStatus: formData.smokingStatus,
       };
-  
+
       const result = await api.calculateNutrition(calculationData);
-      
+
       setNutrientGoals(result);
       setUserInfo({
         age: parseInt(formData.age),
         gender: formData.gender,
-        smokingStatus: formData.smokingStatus
+        smokingStatus: formData.smokingStatus,
       });
       setShowCalculationResults(true);
       setError(null);
     } catch (error) {
-      setError('Error calculating nutrition: ' + error.message);
+      setError("Error calculating nutrition: " + error.message);
     }
   };
 
@@ -66,6 +119,10 @@ function App() {
     setUserInfo(null);
     setError(null);
     setShowLanding(true);
+
+    localStorage.removeItem(STORAGE_KEYS.SELECTED_FOODS);
+    localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
+    localStorage.removeItem(STORAGE_KEYS.USER_INFO);
   };
 
   const handleFoodSelect = (food) => {
@@ -73,31 +130,36 @@ function App() {
       setError(`"${food.description}" is already in your food list.`);
       return;
     }
-    
-    setSelectedFoods(prevFoods => [...prevFoods, {
-      ...food,
-      price: '',
-      servingSize: 100,
-      maxServing: 500,
-    }]);
+
+    setSelectedFoods((prevFoods) => [
+      ...prevFoods,
+      {
+        ...food,
+        price: "",
+        servingSize: 100,
+        maxServing: 500,
+      },
+    ]);
     setOptimizationResults(null);
     setError(null);
   };
 
   const handleFoodsImport = (importedFoods) => {
     const uniqueNewFoods = importedFoods.filter(
-      newFood => !isDuplicateFood(newFood, selectedFoods)
+      (newFood) => !isDuplicateFood(newFood, selectedFoods)
     );
-    
+
     const duplicates = importedFoods.length - uniqueNewFoods.length;
     if (duplicates > 0) {
-      setError(`${duplicates} duplicate food item(s) were skipped during import.`);
+      setError(
+        `${duplicates} duplicate food item(s) were skipped during import.`
+      );
     } else {
       setError(null);
     }
-    
+
     if (uniqueNewFoods.length > 0) {
-      setSelectedFoods(prevFoods => [...prevFoods, ...uniqueNewFoods]);
+      setSelectedFoods((prevFoods) => [...prevFoods, ...uniqueNewFoods]);
       setOptimizationResults(null);
     }
   };
@@ -111,7 +173,7 @@ function App() {
       <header className="bg-gray-900 text-white py-4 mb-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <button 
+            <button
               onClick={handleReset}
               className="text-xl font-bold hover:text-gray-300 transition-colors"
             >
@@ -120,7 +182,7 @@ function App() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuLink 
+                  <NavigationMenuLink
                     className="text-white hover:text-gray-300 px-3 py-2"
                     href="#home"
                   >
@@ -128,7 +190,7 @@ function App() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <NavigationMenuLink 
+                  <NavigationMenuLink
                     className="text-white hover:text-gray-300 px-3 py-2"
                     href="#about"
                   >
@@ -175,22 +237,22 @@ function App() {
           </div>
         ) : (
           <>
-            <FoodSearch 
-              onFoodSelect={handleFoodSelect} 
-              onFoodsImport={handleFoodsImport} 
-              selectedFoodIds={selectedFoods.map(food => food.fdcId)}
+            <FoodSearch
+              onFoodSelect={handleFoodSelect}
+              onFoodsImport={handleFoodsImport}
+              selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
             />
-            
-            <SelectedFoods 
+
+            <SelectedFoods
               foods={selectedFoods}
               onFoodsUpdate={setSelectedFoods}
               nutrientGoals={nutrientGoals}
               userInfo={userInfo}
               onOptimizationResults={setOptimizationResults}
             />
-            
+
             {optimizationResults && (
-              <OptimizationResults 
+              <OptimizationResults
                 results={optimizationResults}
                 selectedFoods={selectedFoods}
               />

@@ -11,7 +11,8 @@ const api = {
     });
 
     if (!response.ok) {
-      throw new Error("Search failed");
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Search failed");
     }
 
     return response.json();
@@ -27,7 +28,8 @@ const api = {
     });
 
     if (!response.ok) {
-      throw new Error("Calculation failed");
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Calculation failed");
     }
 
     return response.json();
@@ -43,7 +45,8 @@ const api = {
     });
 
     if (!response.ok) {
-      throw new Error("Optimization failed");
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Optimization failed");
     }
 
     return response.json();

@@ -1,10 +1,15 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Trash2, Calculator, Download } from 'lucide-react';
-import api from '../services/api';
+import { useState } from "react";
+import PropTypes from "prop-types";
+import { Trash2, Calculator, Download } from "lucide-react";
+import api from "../services/api";
 
 import { Button } from "../components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import {
@@ -24,44 +29,50 @@ const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   return adjustedNutrients;
 };
 
-const SelectedFoods = ({ 
-  foods, 
-  onFoodsUpdate, 
-  nutrientGoals, 
-  userInfo, 
-  onOptimizationResults 
+const SelectedFoods = ({
+  foods,
+  onFoodsUpdate,
+  nutrientGoals,
+  userInfo,
+  onOptimizationResults,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleRemoveFood = (fdcId) => {
-    onFoodsUpdate(foods.filter(food => food.fdcId !== fdcId));
+    onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
   };
 
   const handleInputChange = (fdcId, field, value) => {
-    onFoodsUpdate(foods.map(food => {
-      if (food.fdcId === fdcId) {
-        return { ...food, [field]: value };
-      }
-      return food;
-    }));
+    onFoodsUpdate(
+      foods.map((food) => {
+        if (food.fdcId === fdcId) {
+          return { ...food, [field]: value };
+        }
+        return food;
+      })
+    );
   };
 
   const handleOptimize = async () => {
     if (!foods.length) {
-      setError('Please select at least one food item.');
+      setError("Please select at least one food item.");
       return;
     }
 
-    const invalidFoods = foods.filter(food => 
-      !food.price || !food.servingSize || 
-      parseFloat(food.price) <= 0 || 
-      parseFloat(food.servingSize) <= 0 ||
-      parseFloat(food.maxServing) <= 0
+    const invalidFoods = foods.filter(
+      (food) =>
+        !food.price ||
+        !food.servingSize ||
+        parseFloat(food.price) <= 0 ||
+        parseFloat(food.servingSize) <= 0 ||
+        parseFloat(food.maxServing) <= 0
     );
 
     if (invalidFoods.length > 0) {
-      setError('Please enter valid price, serving size, and maximum serving size for all foods.');
+      setError(
+        "Please enter valid price, serving size, and maximum serving size for all foods."
+      );
       return;
     }
 
@@ -69,30 +80,34 @@ const SelectedFoods = ({
     setError(null);
 
     try {
-      const foodsData = foods.map(food => ({
+      const foodsData = foods.map((food) => ({
         fdcId: food.fdcId,
         description: food.description,
         price: parseFloat(food.price),
         servingSize: parseFloat(food.servingSize),
         maxServing: parseFloat(food.maxServing),
-        nutrients: adjustNutrientsForServingSize(food.nutrients, parseFloat(food.servingSize))
+        nutrients: adjustNutrientsForServingSize(
+          food.nutrients,
+          parseFloat(food.servingSize)
+        ),
       }));
 
       const optimizationData = {
         selected_foods: foodsData,
         nutrient_goals: nutrientGoals,
         age: parseInt(userInfo.age),
-        gender: userInfo.gender
+        gender: userInfo.gender,
+        smokingStatus: userInfo.smokingStatus,
       };
 
       const result = await api.optimizeDiet(optimizationData);
       if (result.success) {
         onOptimizationResults(result.result);
       } else {
-        setError(result.message || 'Optimization failed');
+        setError(result.message || "Optimization failed");
       }
     } catch (err) {
-      setError(err.message || 'An error occurred during optimization');
+      setError(err.message || "An error occurred during optimization");
     } finally {
       setLoading(false);
     }
@@ -100,93 +115,93 @@ const SelectedFoods = ({
 
   const handleExportSelectedFoods = () => {
     const headers = [
-      'Food Item',
-      'Price (₹)',
-      'Serving Size (g)',
-      'Max Serving (g)',
-      'FDC ID',
-      'Vitamin A (µg)',
-      'Vitamin C (mg)',
-      'Vitamin D (µg)',
-      'Vitamin E (mg)',
-      'Vitamin K (µg)',
-      'Thiamin (mg)',
-      'Riboflavin (mg)',
-      'Niacin (mg)',
-      'Vitamin B6 (mg)',
-      'Folate (µg)',
-      'Vitamin B12 (µg)',
-      'Calcium (mg)',
-      'Carbohydrate (g)',
-      'Choline (mg)',
-      'Protein (g)',
-      'Fats (g)',
-      'Saturated Fats (g)',
-      'Fiber (g)',
-      'Copper (µg)',
-      'Iron (mg)',
-      'Magnesium (mg)',
-      'Manganese (mg)',
-      'Phosphorus (mg)',
-      'Selenium (µg)',
-      'Zinc (mg)',
-      'Potassium (mg)',
-      'Sodium (mg)',
-      'Pantothenic Acid (mg)'
+      "Food Item",
+      "Price (₹)",
+      "Serving Size (g)",
+      "Max Serving (g)",
+      "FDC ID",
+      "Vitamin A (µg)",
+      "Vitamin C (mg)",
+      "Vitamin D (µg)",
+      "Vitamin E (mg)",
+      "Vitamin K (µg)",
+      "Thiamin (mg)",
+      "Riboflavin (mg)",
+      "Niacin (mg)",
+      "Vitamin B6 (mg)",
+      "Folate (µg)",
+      "Vitamin B12 (µg)",
+      "Calcium (mg)",
+      "Carbohydrate (g)",
+      "Choline (mg)",
+      "Protein (g)",
+      "Fats (g)",
+      "Saturated Fats (g)",
+      "Fiber (g)",
+      "Copper (µg)",
+      "Iron (mg)",
+      "Magnesium (mg)",
+      "Manganese (mg)",
+      "Phosphorus (mg)",
+      "Selenium (µg)",
+      "Zinc (mg)",
+      "Potassium (mg)",
+      "Sodium (mg)",
+      "Pantothenic Acid (mg)",
     ];
 
-    let csvContent = headers.join(',') + '\n';
+    let csvContent = headers.join(",") + "\n";
 
-    foods.forEach(food => {
+    foods.forEach((food) => {
       const adjustedNutrients = adjustNutrientsForServingSize(
-        food.nutrients, 
+        food.nutrients,
         parseFloat(food.servingSize) || 100
       );
 
       const row = [
         `"${food.description}"`,
-        food.price || '',
-        food.servingSize || '',
-        food.maxServing || '',
+        food.price || "",
+        food.servingSize || "",
+        food.maxServing || "",
         food.fdcId,
-        adjustedNutrients['Vitamin A (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Vitamin C (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Vitamin D (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Vitamin E (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Vitamin K (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Thiamin (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Riboflavin (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Niacin (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Vitamin B6 (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Folate (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Vitamin B12 (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Calcium (mg)']?.toFixed(2) || '',
-        adjustedNutrients['carbohydrate']?.toFixed(2) || '',
-        adjustedNutrients['Choline (mg)']?.toFixed(2) || '',
-        adjustedNutrients['protein']?.toFixed(2) || '',
-        adjustedNutrients['fats']?.toFixed(2) || '',
-        adjustedNutrients['saturated_fats']?.toFixed(2) || '',
-        adjustedNutrients['fiber']?.toFixed(2) || '',
-        adjustedNutrients['Copper (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Iron (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Magnesium (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Manganese (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Phosphorus (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Selenium (µg)']?.toFixed(2) || '',
-        adjustedNutrients['Zinc (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Potassium (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Sodium (mg)']?.toFixed(2) || '',
-        adjustedNutrients['Pantothenic Acid (mg)']?.toFixed(2) || ''
+        adjustedNutrients["Vitamin A (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Vitamin C (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Vitamin D (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Vitamin E (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Vitamin K (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Thiamin (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Riboflavin (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Niacin (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Vitamin B6 (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Folate (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Vitamin B12 (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Calcium (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["carbohydrate"]?.toFixed(2) || "",
+        adjustedNutrients["Choline (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["protein"]?.toFixed(2) || "",
+        adjustedNutrients["fats"]?.toFixed(2) || "",
+        adjustedNutrients["saturated_fats"]?.toFixed(2) || "",
+        adjustedNutrients["fiber"]?.toFixed(2) || "",
+        adjustedNutrients["Copper (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Iron (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Magnesium (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Manganese (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Phosphorus (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Selenium (µg)"]?.toFixed(2) || "",
+        adjustedNutrients["Zinc (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Potassium (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Sodium (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Pantothenic Acid (mg)"]?.toFixed(2) || "",
       ];
-      csvContent += row.join(',') + '\n';
+      csvContent += row.join(",") + "\n";
     });
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'selected_foods.csv');
+
+    link.setAttribute("href", url);
+    link.setAttribute("download", "selected_foods.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -242,7 +257,13 @@ const SelectedFoods = ({
                           step="0.01"
                           min="0"
                           value={food.price}
-                          onChange={(e) => handleInputChange(food.fdcId, 'price', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              food.fdcId,
+                              "price",
+                              e.target.value
+                            )
+                          }
                           className="w-[100px]"
                         />
                       </TableCell>
@@ -252,7 +273,13 @@ const SelectedFoods = ({
                           step="1"
                           min="0"
                           value={food.servingSize}
-                          onChange={(e) => handleInputChange(food.fdcId, 'servingSize', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              food.fdcId,
+                              "servingSize",
+                              e.target.value
+                            )
+                          }
                           className="w-[100px]"
                         />
                       </TableCell>
@@ -262,7 +289,13 @@ const SelectedFoods = ({
                           step="1"
                           min="0"
                           value={food.maxServing || 500}
-                          onChange={(e) => handleInputChange(food.fdcId, 'maxServing', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange(
+                              food.fdcId,
+                              "maxServing",
+                              e.target.value
+                            )
+                          }
                           className="w-[100px]"
                           placeholder="500"
                         />
@@ -322,16 +355,17 @@ SelectedFoods.propTypes = {
       description: PropTypes.string.isRequired,
       price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       servingSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      nutrients: PropTypes.object.isRequired
+      nutrients: PropTypes.object.isRequired,
     })
   ).isRequired,
   onFoodsUpdate: PropTypes.func.isRequired,
   nutrientGoals: PropTypes.object.isRequired,
   userInfo: PropTypes.shape({
     age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    gender: PropTypes.string.isRequired
+    gender: PropTypes.string.isRequired,
+    smokingStatus: PropTypes.string.isRequired,
   }).isRequired,
-  onOptimizationResults: PropTypes.func.isRequired
+  onOptimizationResults: PropTypes.func.isRequired,
 };
 
 export default SelectedFoods;
