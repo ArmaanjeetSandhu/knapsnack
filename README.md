@@ -7,6 +7,7 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
 - 📄 `.gitattributes`
 - 📄 `.python-version`
 - 📄 `Dockerfile`
+- 📄 `setup.cfg`
 - 📄 `README.md`
 - 📄 `requirements.txt`
 - 📄 `heroku.yml`
