@@ -5,6 +5,7 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
 ## 📂 Project Structure
 
 - 📄 `.gitattributes`
+- 📄 `.gitignore`
 - 📄 `.python-version`
 - 📄 `Dockerfile`
 - 📄 `setup.cfg`
@@ -12,7 +13,6 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
 - 📄 `requirements.txt`
 - 📄 `heroku.yml`
 - 📁 **client**
-  - 📄 `.gitignore`
   - 📄 `index.html`
   - 📄 `eslint.config.js`
   - 📄 `postcss.config.js`
@@ -61,12 +61,9 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
         - 📄 `table.jsx`
         - 📄 `tabs.jsx`
         - 📄 `tooltip.jsx`
-    - 📁 **lib**
-      - 📄 `utils.js`
     - 📁 **services**
       - 📄 `api.js`
 - 📁 **server**
-  - 📄 `.gitignore`
   - 📄 `__init__.py`
   - 📄 `app.py`
   - 📄 `utils.py`
@@ -77,5 +74,11 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
     - 📄 `macros-RDAs.csv`
     - 📄 `vitamins-RDAs.csv`
     - 📄 `vitamins-ULs.csv`
+- 📁 **tests**
+  - 📄 `conftest.py`
+  - 📄 `setup_tests.py`
+  - 📄 `test_api.py`
+  - 📄 `test_integration.py`
+  - 📄 `test_utils.py`
 
 Visualize the repo structure here: https://mango-dune-07a8b7110.1.azurestaticapps.net/?repo=ArmaanjeetSandhu%2Fgoal-ith
