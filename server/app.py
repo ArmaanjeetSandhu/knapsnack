@@ -1,6 +1,7 @@
 import logging
 import mimetypes
 import os
+from itertools import product
 from typing import Dict, List
 
 import numpy as np
@@ -264,20 +265,27 @@ def optimize():
             if vitamin_c_key in lower_bounds:
                 lower_bounds[vitamin_c_key] = float(lower_bounds[vitamin_c_key]) + 35.0
 
-        for overflow_percent in range(0, 11):
-            overflow_factor = 1 + (overflow_percent / 100)
+        overflow_percentages = list(range(0, 11))
+        nutrients = ["protein", "carbohydrate", "fats", "fiber"]
 
+        all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
+
+        sorted_combinations = sorted(all_combinations, key=sum)
+
+        for combo in sorted_combinations:
             A_ub = []
             b_ub = []
 
-            nutrients = ["protein", "carbohydrate", "fats", "fiber"]
-            for nutrient in nutrients:
+            for i, nutrient in enumerate(nutrients):
                 if nutrient.lower().replace(" ", "_") in nutrient_goals:
                     goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
                     values = [
                         food["nutrients"].get(nutrient, 0)
                         for food in selected_foods_data
                     ]
+
+                    overflow_factor = 1 + (combo[i] / 100)
+
                     A_ub.extend([[-val for val in values], values])
                     b_ub.extend(
                         [
@@ -320,7 +328,7 @@ def optimize():
             if result.success:
                 servings = np.round(result.x, 1)
                 food_items = [food["description"] for food in selected_foods_data]
-                total_cost = np.round(result.x * c, 2)
+                total_cost = np.round(servings * c, 2)
 
                 nutrient_totals = {}
                 for nutrient in NUTRIENT_MAP.keys():
@@ -332,13 +340,19 @@ def optimize():
                         np.round(np.sum(servings * values), 1)
                     )
 
+                overflow_by_nutrient = {
+                    nutrient: int(percent)
+                    for nutrient, percent in zip(nutrients, combo)
+                }
+
                 result_data = {
                     "food_items": food_items,
                     "servings": servings.tolist(),
                     "total_cost": total_cost.tolist(),
                     "nutrient_totals": nutrient_totals,
                     "total_cost_sum": float(np.sum(total_cost)),
-                    "overflow_percent": overflow_percent,
+                    "overflow_by_nutrient": overflow_by_nutrient,
+                    "total_overflow": sum(combo),
                 }
 
                 return jsonify({"success": True, "result": result_data})
@@ -346,7 +360,7 @@ def optimize():
         return jsonify(
             {
                 "success": False,
-                "message": "Optimization failed! No feasible solution found even with 10% overflow.",
+                "message": "Optimization failed! No feasible solution found even with maximum allowed nutrient flexibility.",
             }
         )
 

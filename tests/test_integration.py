@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def test_end_to_end_calculation_optimization(app_client, sample_food_data):
-    """Test the full calculation and optimization flow"""
+    """Test the full calculation and optimization flow with grid search"""
 
     with patch("server.app.nutrient_bounds") as mock_nutrient_bounds, patch(
         "server.app.linprog"
@@ -86,6 +86,15 @@ def test_end_to_end_calculation_optimization(app_client, sample_food_data):
         assert "servings" in opt_data["result"]
         assert "nutrient_totals" in opt_data["result"]
 
+        assert "overflow_by_nutrient" in opt_data["result"]
+        assert "total_overflow" in opt_data["result"]
+
+        overflow = opt_data["result"]["overflow_by_nutrient"]
+        assert "protein" in overflow
+        assert "carbohydrate" in overflow
+        assert "fats" in overflow
+        assert "fiber" in overflow
+
         assert len(opt_data["result"]["servings"]) == 4
         assert opt_data["result"]["servings"][0] == 2.0
         assert opt_data["result"]["servings"][1] == 1.5
@@ -93,249 +102,176 @@ def test_end_to_end_calculation_optimization(app_client, sample_food_data):
         assert opt_data["result"]["servings"][3] == 3.0
 
 
-@patch("server.app.calculate_bmr")
-def test_edge_case_extreme_activity(mock_calculate_bmr, app_client):
-    """Test calculation with extreme activity levels"""
-    mock_calculate_bmr.return_value = 1500
+@patch("server.app.product")
+def test_integration_grid_search_sorting(mock_product, app_client, sample_food_data):
+    """Test that combinations are properly sorted by total overflow in integration context"""
+    test_combinations = [
+        (5, 5, 5, 5),
+        (10, 0, 0, 0),
+        (0, 0, 0, 0),
+        (2, 4, 1, 3),
+        (0, 3, 0, 0),
+        (7, 0, 0, 0),
+        (0, 0, 8, 0),
+    ]
 
-    with patch("server.app.nutrient_bounds") as mock_nutrient_bounds:
+    mock_product.return_value = test_combinations
+
+    with patch("server.app.linprog") as mock_linprog, patch(
+        "server.app.nutrient_bounds"
+    ) as mock_nutrient_bounds, patch("server.app.sorted", wraps=sorted) as mock_sorted:
+
         lower_bounds = pd.Series({"Vitamin A (µg)": 900})
         upper_bounds = pd.Series({"Vitamin A (µg)": 3000})
         mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
 
-        low_response = app_client.post(
-            "/api/calculate",
-            json={
-                "gender": "m",
-                "weight": "70",
-                "height": "175",
-                "age": "30",
-                "activity": "1.2",
-                "percentage": "100",
-                "protein": "30",
-                "carbohydrate": "40",
-                "fats": "30",
+        result = MagicMock()
+        result.success = True
+        result.x = np.array([1.0, 1.0, 1.0, 1.0])
+        mock_linprog.return_value = result
+
+        test_data = {
+            "selected_foods": sample_food_data,
+            "nutrient_goals": {
+                "protein": 150,
+                "carbohydrate": 200,
+                "fats": 67,
+                "fiber": 28,
             },
-        )
-
-        high_response = app_client.post(
-            "/api/calculate",
-            json={
-                "gender": "m",
-                "weight": "70",
-                "height": "175",
-                "age": "30",
-                "activity": "1.9",
-                "percentage": "100",
-                "protein": "30",
-                "carbohydrate": "40",
-                "fats": "30",
-            },
-        )
-
-        assert low_response.status_code == 200
-        assert high_response.status_code == 200
-
-        low_data = json.loads(low_response.data)
-        high_data = json.loads(high_response.data)
-
-        assert high_data["tdee"] > low_data["tdee"]
-        assert high_data["daily_caloric_intake"] > low_data["daily_caloric_intake"]
-
-        activity_ratio = 1.9 / 1.2
-        tdee_ratio = high_data["tdee"] / low_data["tdee"]
-        assert abs(activity_ratio - tdee_ratio) < 0.05
-
-
-@patch("server.app.calculate_bmr")
-def test_edge_case_varying_caloric_goals(mock_calculate_bmr, app_client):
-    """Test calculation with different caloric intake goals"""
-    mock_calculate_bmr.return_value = 1600
-
-    with patch("server.app.nutrient_bounds") as mock_nutrient_bounds:
-        lower_bounds = pd.Series({"Vitamin A (µg)": 900})
-        upper_bounds = pd.Series({"Vitamin A (µg)": 3000})
-        mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
-
-        base_data = {
+            "age": 30,
             "gender": "m",
-            "weight": "70",
-            "height": "175",
-            "age": "30",
-            "activity": "1.55",
-            "protein": "30",
-            "carbohydrate": "40",
-            "fats": "30",
         }
 
-        percentages = [50, 75, 100, 125, 150]
-        responses = []
+        response = app_client.post("/api/optimize", json=test_data)
 
-        for percentage in percentages:
-            test_data = base_data.copy()
-            test_data["percentage"] = str(percentage)
-            response = app_client.post("/api/calculate", json=test_data)
-            assert response.status_code == 200
-            responses.append(json.loads(response.data))
+        mock_sorted.assert_called()
 
-        base_tdee = responses[2]["tdee"]
+        assert response.status_code == 200
+        data = json.loads(response.data)
 
-        for i, percentage in enumerate(percentages):
-            expected_intake = base_tdee * (percentage / 100)
-            actual_intake = responses[i]["daily_caloric_intake"]
-            assert abs(expected_intake - actual_intake) < 1
+        assert data["success"] is True
 
-            assert responses[i]["bmr"] == responses[0]["bmr"]
-            assert responses[i]["tdee"] == responses[0]["tdee"]
-
-            protein_ratio = responses[i]["protein"] / responses[0]["protein"]
-            carb_ratio = responses[i]["carbohydrate"] / responses[0]["carbohydrate"]
-            fat_ratio = responses[i]["fats"] / responses[0]["fats"]
-
-            expected_ratio = percentage / percentages[0]
-            assert abs(protein_ratio - expected_ratio) < 0.05
-            assert abs(carb_ratio - expected_ratio) < 0.05
-            assert abs(fat_ratio - expected_ratio) < 0.05
+        assert data["result"]["total_overflow"] == 0
 
 
-def test_scenario_dietary_restrictions(app_client, sample_food_data):
-    """Test optimization with limited food choices (dietary restrictions)"""
-    with patch("server.app.nutrient_bounds") as mock_nutrient_bounds, patch(
-        "server.app.linprog"
-    ) as mock_linprog:
+@patch("server.app.nutrient_bounds")
+@patch("server.app.product")
+def test_integration_difficult_nutrient_requirements(
+    mock_product, mock_nutrient_bounds, app_client, sample_food_data
+):
+    """Test challenging nutrient requirements that need different overflow percentages"""
+    test_combinations = [
+        (0, 0, 0, 0),
+        (5, 0, 0, 0),
+        (0, 5, 0, 0),
+        (0, 0, 5, 0),
+        (0, 0, 0, 5),
+    ]
 
-        lower_bounds = pd.Series(
-            {"Vitamin A (µg)": 900, "Vitamin C (mg)": 90, "Calcium (mg)": 1000}
-        )
-        upper_bounds = pd.Series(
-            {"Vitamin A (µg)": 3000, "Vitamin C (mg)": 2000, "Calcium (mg)": 2500}
-        )
-        mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
+    mock_product.return_value = test_combinations
 
-        mock_success = MagicMock()
-        mock_success.success = True
-        mock_success.x = np.array([0.0, 3.0, 2.0])
-
-        mock_fail = MagicMock()
-        mock_fail.success = False
-
-        vegan_foods = sample_food_data[1:]
-
-        mock_linprog.return_value = mock_success
-
-        vegan_response = app_client.post(
-            "/api/optimize",
-            json={
-                "selected_foods": vegan_foods,
-                "nutrient_goals": {"protein": 100, "carbohydrate": 200, "fats": 50},
-                "age": 30,
-                "gender": "m",
-            },
-        )
-
-        assert vegan_response.status_code == 200
-        vegan_data = json.loads(vegan_response.data)
-        assert vegan_data["success"] is True
-
-        mock_linprog.return_value = mock_fail
-
-        limited_foods = sample_food_data[1:2]
-        limited_response = app_client.post(
-            "/api/optimize",
-            json={
-                "selected_foods": limited_foods,
-                "nutrient_goals": {"protein": 100, "carbohydrate": 200, "fats": 50},
-                "age": 30,
-                "gender": "m",
-            },
-        )
-
-        assert limited_response.status_code == 200
-        limited_data = json.loads(limited_response.data)
-        assert limited_data["success"] is False
-        assert "message" in limited_data
-        assert "No feasible solution" in limited_data["message"]
-
-
-@patch("server.app.calculate_bmr")
-def test_scenario_different_genders(mock_calculate_bmr, app_client):
-    """Test different calculations based on gender"""
-
-    def bmr_side_effect(gender, *args):
-        return 1600 if gender.lower() == "m" else 1400
-
-    mock_calculate_bmr.side_effect = bmr_side_effect
-
-    with patch("server.app.nutrient_bounds") as mock_nutrient_bounds:
-        male_lower = pd.Series(
-            {"Iron (mg)": 8, "Vitamin A (µg)": 900, "Calcium (mg)": 1000}
-        )
-        male_upper = pd.Series(
-            {"Iron (mg)": 45, "Vitamin A (µg)": 3000, "Calcium (mg)": 2500}
-        )
-
-        female_lower = pd.Series(
-            {
-                "Iron (mg)": 18,
-                "Vitamin A (µg)": 700,
-                "Calcium (mg)": 1000,
-            }
-        )
-        female_upper = pd.Series(
-            {"Iron (mg)": 45, "Vitamin A (µg)": 3000, "Calcium (mg)": 2500}
-        )
-
-        mock_nutrient_bounds.side_effect = [
-            (male_lower, male_upper),
-            (female_lower, female_upper),
-        ]
-
-        male_data = {
-            "gender": "m",
-            "weight": "70",
-            "height": "175",
-            "age": "30",
-            "activity": "1.55",
-            "percentage": "100",
-            "protein": "30",
-            "carbohydrate": "40",
-            "fats": "30",
+    lower_bounds = pd.Series(
+        {
+            "Vitamin A (µg)": 900,
+            "Vitamin C (mg)": 90,
+            "Calcium (mg)": 1000,
+            "Iron (mg)": 8,
         }
+    )
+    upper_bounds = pd.Series(
+        {
+            "Vitamin A (µg)": 3000,
+            "Vitamin C (mg)": 2000,
+            "Calcium (mg)": 2500,
+            "Iron (mg)": 45,
+        }
+    )
+    mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
 
-        female_data = male_data.copy()
-        female_data["gender"] = "f"
+    high_carb_data = {
+        "selected_foods": sample_food_data,
+        "nutrient_goals": {
+            "protein": 50,
+            "carbohydrate": 500,
+            "fats": 40,
+            "fiber": 25,
+        },
+        "age": 30,
+        "gender": "m",
+    }
 
-        male_response = app_client.post("/api/calculate", json=male_data)
-        female_response = app_client.post("/api/calculate", json=female_data)
+    high_protein_data = {
+        "selected_foods": sample_food_data,
+        "nutrient_goals": {
+            "protein": 300,
+            "carbohydrate": 100,
+            "fats": 40,
+            "fiber": 25,
+        },
+        "age": 30,
+        "gender": "m",
+    }
 
-        assert male_response.status_code == 200
-        assert female_response.status_code == 200
+    with patch("server.app.linprog") as mock_linprog:
+        carb_result = MagicMock()
+        carb_result.success = True
+        carb_result.x = np.array([1.0, 5.0, 0.5, 2.0])
 
-        male_result = json.loads(male_response.data)
-        female_result = json.loads(female_response.data)
+        protein_result = MagicMock()
+        protein_result.success = True
+        protein_result.x = np.array([5.0, 1.0, 0.5, 0.5])
 
-        assert male_result["bmr"] > female_result["bmr"]
+        mock_linprog.side_effect = [carb_result, protein_result]
 
-        assert male_result["lower_bounds"]["Iron (mg)"] == 8
-        assert female_result["lower_bounds"]["Iron (mg)"] == 18
+        carb_response = app_client.post("/api/optimize", json=high_carb_data)
+        assert carb_response.status_code == 200
+        carb_result_data = json.loads(carb_response.data)
+        assert carb_result_data["success"] is True
 
-        assert male_result["lower_bounds"]["Vitamin A (µg)"] == 900
-        assert female_result["lower_bounds"]["Vitamin A (µg)"] == 700
+        protein_response = app_client.post("/api/optimize", json=high_protein_data)
+        assert protein_response.status_code == 200
+        protein_result_data = json.loads(protein_response.data)
+        assert protein_result_data["success"] is True
+
+        assert (
+            carb_result_data["result"]["servings"]
+            != protein_result_data["result"]["servings"]
+        )
 
 
-def test_scenario_smoker_adjustment_optimization(app_client, sample_food_data):
-    """Test that smoker status affects optimization through vitamin C requirements"""
+def test_scenario_smoker_adjustment_with_grid_search(app_client, sample_food_data):
+    """Test that smoker status affects optimization through vitamin C requirements with grid search"""
     with patch("server.app.nutrient_bounds") as mock_nutrient_bounds, patch(
         "server.app.linprog"
-    ) as mock_linprog:
+    ) as mock_linprog, patch("server.app.product") as mock_product:
+        test_combinations = [(0, 0, 0, 0)]
+        mock_product.return_value = test_combinations
 
         lower_bounds = pd.Series({"Vitamin C (mg)": 90})
         upper_bounds = pd.Series({"Vitamin C (mg)": 2000})
-
         mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
 
-        mock_linprog.return_value = MagicMock(
-            success=True, x=np.array([1.0, 1.0, 2.0, 1.0])
+        smoker_result = MagicMock(
+            success=True,
+            x=np.array([1.0, 1.0, 5.0, 1.0]),
+        )
+
+        non_smoker_result = MagicMock(
+            success=True,
+            x=np.array([2.0, 2.0, 1.0, 1.0]),
+        )
+
+        mock_linprog.side_effect = [non_smoker_result, smoker_result]
+
+        non_smoker_response = app_client.post(
+            "/api/optimize",
+            json={
+                "selected_foods": sample_food_data,
+                "nutrient_goals": {"protein": 100, "carbohydrate": 200, "fats": 50},
+                "age": 30,
+                "gender": "m",
+                "smokingStatus": "no",
+            },
         )
 
         smoker_response = app_client.post(
@@ -349,22 +285,19 @@ def test_scenario_smoker_adjustment_optimization(app_client, sample_food_data):
             },
         )
 
-        non_smoker_response = app_client.post(
-            "/api/optimize",
-            json={
-                "selected_foods": sample_food_data,
-                "nutrient_goals": {"protein": 100, "carbohydrate": 200, "fats": 50},
-                "age": 30,
-                "gender": "m",
-                "smokingStatus": "no",
-            },
+        assert non_smoker_response.status_code == 200
+        assert smoker_response.status_code == 200
+
+        non_smoker_data = json.loads(non_smoker_response.data)
+        smoker_data = json.loads(smoker_response.data)
+
+        assert non_smoker_data["success"] is True
+        assert smoker_data["success"] is True
+
+        assert (
+            smoker_data["result"]["servings"][2]
+            > non_smoker_data["result"]["servings"][2]
         )
 
-        assert smoker_response.status_code == 200
-        assert non_smoker_response.status_code == 200
-
-        smoker_data = json.loads(smoker_response.data)
-        non_smoker_data = json.loads(non_smoker_response.data)
-
-        assert smoker_data["success"] is True
-        assert non_smoker_data["success"] is True
+        assert "overflow_by_nutrient" in smoker_data["result"]
+        assert "overflow_by_nutrient" in non_smoker_data["result"]

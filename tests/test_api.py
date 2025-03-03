@@ -328,7 +328,9 @@ def test_optimize_api(mock_nutrient_bounds, mock_linprog, app_client, sample_foo
     assert "total_cost" in result
     assert "nutrient_totals" in result
     assert "total_cost_sum" in result
-    assert "overflow_percent" in result
+
+    assert "overflow_by_nutrient" in result
+    assert "total_overflow" in result
 
     assert len(result["food_items"]) == 4
     assert result["food_items"][0] == "Chicken Breast"
@@ -358,3 +360,260 @@ def test_optimize_api_no_foods(app_client):
     data = json.loads(response.data)
     assert "error" in data
     assert "No foods selected" in data["error"]
+
+
+@patch("server.app.linprog")
+@patch("server.app.nutrient_bounds")
+@patch("server.app.product")
+def test_optimize_grid_search(
+    mock_product, mock_nutrient_bounds, mock_linprog, app_client, sample_food_data
+):
+    """Test the grid search optimization approach with full range of percentages"""
+    lower_bounds = pd.Series(
+        {
+            "Vitamin A (µg)": 900,
+            "Vitamin C (mg)": 90,
+            "Calcium (mg)": 1000,
+            "Iron (mg)": 8,
+        }
+    )
+    upper_bounds = pd.Series(
+        {
+            "Vitamin A (µg)": 3000,
+            "Vitamin C (mg)": 2000,
+            "Calcium (mg)": 2500,
+            "Iron (mg)": 45,
+        }
+    )
+    mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
+
+    test_combinations = [
+        (0, 0, 0, 0),
+        (1, 0, 0, 0),
+        (0, 0, 3, 0),
+        (0, 0, 0, 7),
+        (2, 4, 0, 0),
+        (1, 2, 3, 4),
+        (10, 10, 10, 10),
+    ]
+    mock_product.return_value = test_combinations
+
+    mock_fail = MagicMock()
+    mock_fail.success = False
+
+    mock_success = MagicMock()
+    mock_success.success = True
+    mock_success.x = np.array([2.0, 1.0, 0.5, 3.0])
+
+    mock_linprog.side_effect = [mock_fail, mock_fail, mock_success] + [mock_fail] * (
+        len(test_combinations) - 3
+    )
+
+    test_data = {
+        "selected_foods": sample_food_data,
+        "nutrient_goals": {
+            "protein": 150,
+            "carbohydrate": 200,
+            "fats": 67,
+            "fiber": 28,
+            "saturated_fats": 22,
+        },
+        "age": 30,
+        "gender": "m",
+    }
+
+    response = app_client.post("/api/optimize", json=test_data)
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+
+    assert data["success"] is True
+    assert "result" in data
+    assert "overflow_by_nutrient" in data["result"]
+
+    overflow = data["result"]["overflow_by_nutrient"]
+    assert overflow["protein"] == 0
+    assert overflow["carbohydrate"] == 0
+    assert overflow["fats"] == 3
+    assert overflow["fiber"] == 0
+
+    assert data["result"]["total_overflow"] == 3
+
+
+@patch("server.app.linprog")
+@patch("server.app.nutrient_bounds")
+@patch("server.app.product")
+@patch("server.app.sorted", wraps=sorted)
+def test_optimize_grid_search_sorting(
+    mock_sorted,
+    mock_product,
+    mock_nutrient_bounds,
+    mock_linprog,
+    app_client,
+    sample_food_data,
+):
+    """Test that combinations are properly sorted by total overflow using the full range of percentages"""
+    lower_bounds = pd.Series({"Vitamin A (µg)": 900})
+    upper_bounds = pd.Series({"Vitamin A (µg)": 3000})
+    mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
+
+    test_combinations = [
+        (10, 10, 10, 10),
+        (5, 5, 5, 5),
+        (0, 0, 0, 0),
+        (1, 2, 3, 4),
+        (0, 9, 0, 0),
+        (3, 3, 3, 0),
+        (6, 0, 0, 0),
+    ]
+    mock_product.return_value = test_combinations
+
+    mock_fail = MagicMock()
+    mock_fail.success = False
+
+    mock_success = MagicMock()
+    mock_success.success = True
+    mock_success.x = np.array([1.0, 1.0, 1.0, 1.0])
+
+    sorted_combos = sorted(test_combinations, key=sum)
+    success_index = sorted_combos.index((6, 0, 0, 0))
+
+    side_effects = (
+        [mock_fail] * success_index
+        + [mock_success]
+        + [mock_fail] * (len(test_combinations) - success_index - 1)
+    )
+    mock_linprog.side_effect = side_effects
+
+    test_data = {
+        "selected_foods": sample_food_data,
+        "nutrient_goals": {
+            "protein": 150,
+            "carbohydrate": 200,
+            "fats": 67,
+            "fiber": 28,
+        },
+        "age": 30,
+        "gender": "m",
+    }
+
+    response = app_client.post("/api/optimize", json=test_data)
+
+    mock_sorted.assert_called()
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+
+    assert data["success"] is True
+
+    overflow = data["result"]["overflow_by_nutrient"]
+    assert overflow["protein"] == 6
+    assert overflow["carbohydrate"] == 0
+    assert overflow["fats"] == 0
+    assert overflow["fiber"] == 0
+
+    assert data["result"]["total_overflow"] == 6
+
+
+@patch("server.app.linprog")
+@patch("server.app.nutrient_bounds")
+def test_optimize_no_feasible_solution(
+    mock_nutrient_bounds, mock_linprog, app_client, sample_food_data
+):
+    """Test the case where no feasible solution is found even with maximum overflow"""
+    lower_bounds = pd.Series({"Vitamin A (µg)": 900})
+    upper_bounds = pd.Series({"Vitamin A (µg)": 3000})
+    mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
+
+    mock_fail = MagicMock()
+    mock_fail.success = False
+    mock_linprog.return_value = mock_fail
+
+    test_data = {
+        "selected_foods": sample_food_data,
+        "nutrient_goals": {
+            "protein": 1000,
+            "carbohydrate": 200,
+            "fats": 67,
+            "fiber": 28,
+        },
+        "age": 30,
+        "gender": "m",
+    }
+
+    response = app_client.post("/api/optimize", json=test_data)
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+
+    assert data["success"] is False
+    assert "message" in data
+    assert "No feasible solution" in data["message"]
+
+
+@patch("server.app.linprog")
+@patch("server.app.nutrient_bounds")
+@patch("server.app.product")
+def test_optimize_varying_nutrient_requirements(
+    mock_product, mock_nutrient_bounds, mock_linprog, app_client, sample_food_data
+):
+    """Test optimization with varying nutrient requirements that need different flexibility levels"""
+    lower_bounds = pd.Series({"Vitamin A (µg)": 900})
+    upper_bounds = pd.Series({"Vitamin A (µg)": 3000})
+    mock_nutrient_bounds.return_value = (lower_bounds, upper_bounds)
+
+    test_combinations = [
+        (0, 0, 0, 0),
+        (1, 0, 0, 0),
+        (0, 1, 0, 0),
+        (0, 0, 1, 0),
+        (0, 0, 0, 1),
+        (3, 7, 0, 0),
+        (0, 3, 7, 2),
+        (10, 10, 10, 10),
+    ]
+    mock_product.return_value = test_combinations
+
+    mock_fail = MagicMock()
+    mock_fail.success = False
+
+    mock_success = MagicMock()
+    mock_success.success = True
+    mock_success.x = np.array([1.0, 2.0, 3.0, 0.5])
+
+    sorted_combos = sorted(test_combinations, key=sum)
+    success_index = sorted_combos.index((0, 3, 7, 2))
+
+    side_effects = (
+        [mock_fail] * success_index
+        + [mock_success]
+        + [mock_fail] * (len(test_combinations) - success_index - 1)
+    )
+    mock_linprog.side_effect = side_effects
+
+    test_data = {
+        "selected_foods": sample_food_data,
+        "nutrient_goals": {
+            "protein": 150,
+            "carbohydrate": 200,
+            "fats": 67,
+            "fiber": 28,
+        },
+        "age": 30,
+        "gender": "m",
+    }
+
+    response = app_client.post("/api/optimize", json=test_data)
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+
+    assert data["success"] is True
+
+    overflow = data["result"]["overflow_by_nutrient"]
+    assert overflow["protein"] == 0
+    assert overflow["carbohydrate"] == 3
+    assert overflow["fats"] == 7
+    assert overflow["fiber"] == 2
+
+    assert data["result"]["total_overflow"] == 12
