@@ -78,6 +78,7 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
   - 📄 `conftest.py`
   - 📄 `setup_tests.py`
   - 📄 `test_api.py`
+  - 📄 `test_grid_search.py`
   - 📄 `test_integration.py`
   - 📄 `test_utils.py`
 
