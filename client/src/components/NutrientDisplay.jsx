@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,24 +8,20 @@ import {
   TableRow,
 } from "../components/ui/table";
 import { Card, CardContent } from "../components/ui/card";
-import NutrientInfoPopup from './NutrientInfoPopup';
-
+import NutrientInfoPopup from "./NutrientInfoPopup";
 const BlinkingDot = () => (
   <div className="w-2 h-2 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
 );
-
 export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
-
   const handleRowClick = (nutrient) => {
     setSelectedNutrient({
       name: nutrient.name,
       rda: lowerBounds[nutrient.name + ` (${nutrient.unit})`],
       ul: upperBounds[nutrient.name + ` (${nutrient.unit})`],
-      unit: nutrient.unit
+      unit: nutrient.unit,
     });
   };
-
   return (
     <>
       <Table>
@@ -41,7 +37,7 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
           {nutrients.map((nutrient, index) => {
             const fullKey = `${nutrient.name} (${nutrient.unit})`;
             return (
-              <TableRow 
+              <TableRow
                 key={index}
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => handleRowClick(nutrient)}
@@ -53,10 +49,10 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  {lowerBounds[fullKey]?.toLocaleString() || 'N/A'}
+                  {lowerBounds[fullKey]?.toLocaleString() || "N/A"}
                 </TableCell>
                 <TableCell className="text-right">
-                  {upperBounds[fullKey]?.toLocaleString() || 'N/A'}
+                  {upperBounds[fullKey]?.toLocaleString() || "N/A"}
                 </TableCell>
                 <TableCell className="text-right">{nutrient.unit}</TableCell>
               </TableRow>
@@ -64,7 +60,6 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
           })}
         </TableBody>
       </Table>
-
       {selectedNutrient && (
         <NutrientInfoPopup
           isOpen={true}
@@ -78,26 +73,23 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
     </>
   );
 };
-
 export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
-
   const handleCardClick = (nutrient) => {
     setSelectedNutrient({
       name: nutrient.name,
       rda: lowerBounds[nutrient.name + ` (${nutrient.unit})`],
       ul: upperBounds[nutrient.name + ` (${nutrient.unit})`],
-      unit: nutrient.unit
+      unit: nutrient.unit,
     });
   };
-
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {nutrients.map((nutrient, index) => {
           const fullKey = `${nutrient.name} (${nutrient.unit})`;
           return (
-            <Card 
+            <Card
               key={index}
               className="cursor-pointer hover:shadow-md transition-all duration-200"
               onClick={() => handleCardClick(nutrient)}
@@ -113,17 +105,21 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
                   <div className="flex justify-between">
                     <span className="text-sm">RDA:</span>
                     <span className="font-medium">
-                      {lowerBounds[fullKey] ? 
-                        `${lowerBounds[fullKey].toLocaleString()} ${nutrient.unit}` : 
-                        'N/A'}
+                      {lowerBounds[fullKey]
+                        ? `${lowerBounds[fullKey].toLocaleString()} ${
+                            nutrient.unit
+                          }`
+                        : "N/A"}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">UL:</span>
                     <span className="font-medium">
-                      {upperBounds[fullKey] ? 
-                        `${upperBounds[fullKey].toLocaleString()} ${nutrient.unit}` : 
-                        'N/A'}
+                      {upperBounds[fullKey]
+                        ? `${upperBounds[fullKey].toLocaleString()} ${
+                            nutrient.unit
+                          }`
+                        : "N/A"}
                     </span>
                   </div>
                 </div>
@@ -132,7 +128,6 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
           );
         })}
       </div>
-
       {selectedNutrient && (
         <NutrientInfoPopup
           isOpen={true}

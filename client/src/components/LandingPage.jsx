@@ -1,7 +1,6 @@
-import PropTypes from 'prop-types';
-import { ArrowRight } from 'lucide-react';
-import { Button } from './ui/button';
-
+import PropTypes from "prop-types";
+import { ArrowRight } from "lucide-react";
+import { Button } from "./ui/button";
 const LandingPage = ({ onGetStarted }) => {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -11,16 +10,15 @@ const LandingPage = ({ onGetStarted }) => {
         muted
         playsInline
         className="absolute w-full h-full object-cover"
-        style={{ 
-          filter: 'brightness(50%)',
-          minWidth: '100%',
-          minHeight: '100%'
+        style={{
+          filter: "brightness(50%)",
+          minWidth: "100%",
+          minHeight: "100%",
         }}
       >
         <source src="/background-video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-
       <div className="relative z-10 text-center text-white px-4">
         <h1 className="text-5xl md:text-6xl font-bold mb-6">
           Goal-i<sup>th</sup>
@@ -28,11 +26,7 @@ const LandingPage = ({ onGetStarted }) => {
         <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
           Your Personalized Diet Optimization Tool
         </p>
-        <Button 
-          size="lg" 
-          onClick={onGetStarted}
-          className="animate-bounce"
-        >
+        <Button size="lg" onClick={onGetStarted} className="animate-bounce">
           Get Started
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
@@ -40,9 +34,7 @@ const LandingPage = ({ onGetStarted }) => {
     </div>
   );
 };
-
 LandingPage.propTypes = {
-  onGetStarted: PropTypes.func.isRequired
+  onGetStarted: PropTypes.func.isRequired,
 };
-
 export default LandingPage;

@@ -33,10 +33,8 @@ import {
   TableRow,
 } from "../components/ui/table";
 import handleExportCSV from "./ExportHandler";
-
 const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
-
   const nonZeroItems = results.food_items
     .map((food, index) => ({
       food,
@@ -44,12 +42,9 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       cost: results.total_cost[index],
     }))
     .filter((item) => item.servings > 0);
-
   const totalDailyCost = results.total_cost_sum;
-
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
-
   const formatValue = (value) => {
     return typeof value === "number"
       ? value.toLocaleString("en-US", {
@@ -57,7 +52,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
         })
       : value;
   };
-
   const macronutrients = [
     { name: "Protein", value: results.nutrient_totals.protein, unit: "g" },
     {
@@ -73,7 +67,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "g",
     },
   ];
-
   const vitamins = [
     {
       name: "Vitamin A",
@@ -136,7 +129,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "mg",
     },
   ];
-
   const minerals = [
     {
       name: "Calcium",
@@ -181,11 +173,9 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "mg",
     },
   ];
-
   const handleExportClick = () => {
     handleExportCSV(results, selectedFoods);
   };
-
   const renderNutrientTable = (nutrients) => (
     <Table>
       <TableHeader>
@@ -208,7 +198,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       </TableBody>
     </Table>
   );
-
   const renderNutrientCards = (nutrients) => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {nutrients.map((nutrient, index) => (
@@ -225,7 +214,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       ))}
     </div>
   );
-
   return (
     <div className="space-y-6">
       <Card>
@@ -265,7 +253,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   </div>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
@@ -275,23 +262,19 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">
-                          Total Nutrient Flexibility
+                          Total Overflow
                         </p>
-                        <p className="text-2xl font-bold">
-                          {totalOverflow}% total overflow
-                        </p>
+                        <p className="text-2xl font-bold">{totalOverflow}%</p>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
-
-            {/* New section for nutrient-specific overflow percentages */}
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Sliders className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
-                Nutrient Flexibility Applied
+                Nutrient Overflow
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {Object.entries(overflowByNutrient).map(
@@ -301,16 +284,13 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                         <h4 className="text-sm font-medium text-muted-foreground">
                           {nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}
                         </h4>
-                        <p className="text-2xl font-bold mt-2">
-                          {percentage}% overflow
-                        </p>
+                        <p className="text-2xl font-bold mt-2">{percentage}%</p>
                       </CardContent>
                     </Card>
                   )
                 )}
               </div>
             </div>
-
             {totalOverflow > 15 && (
               <Alert variant="warning">
                 <AlertTriangle className="h-4 w-4" />
@@ -321,7 +301,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                 </AlertDescription>
               </Alert>
             )}
-
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Utensils className="w-5 h-5 text-blue-500 dark:text-blue-400" />
@@ -356,7 +335,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                 </Table>
               </div>
             </div>
-
             <div>
               <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Beef className="w-5 h-5 text-pink-500 dark:text-pink-400" />
@@ -377,7 +355,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                 ))}
               </div>
             </div>
-
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -405,7 +382,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   </Button>
                 </div>
               </div>
-
               <Tabs defaultValue="vitamins" className="w-full">
                 <TabsList className="w-full">
                   <TabsTrigger value="vitamins" className="flex-1">
@@ -437,7 +413,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     </div>
   );
 };
-
 OptimizationResults.propTypes = {
   results: PropTypes.shape({
     food_items: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -458,5 +433,4 @@ OptimizationResults.propTypes = {
     })
   ).isRequired,
 };
-
 export default OptimizationResults;

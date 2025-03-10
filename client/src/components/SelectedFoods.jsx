@@ -2,7 +2,6 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { Trash2, Calculator, Download } from "lucide-react";
 import api from "../services/api";
-
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -20,7 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-
 const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   const adjustedNutrients = {};
   for (const [nutrient, value] of Object.entries(nutrients)) {
@@ -28,7 +26,6 @@ const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   }
   return adjustedNutrients;
 };
-
 const SelectedFoods = ({
   foods,
   onFoodsUpdate,
@@ -38,11 +35,9 @@ const SelectedFoods = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
   };
-
   const handleInputChange = (fdcId, field, value) => {
     onFoodsUpdate(
       foods.map((food) => {
@@ -53,13 +48,11 @@ const SelectedFoods = ({
       })
     );
   };
-
   const handleOptimize = async () => {
     if (!foods.length) {
       setError("Please select at least one food item.");
       return;
     }
-
     const invalidFoods = foods.filter(
       (food) =>
         !food.price ||
@@ -68,17 +61,14 @@ const SelectedFoods = ({
         parseFloat(food.servingSize) <= 0 ||
         parseFloat(food.maxServing) <= 0
     );
-
     if (invalidFoods.length > 0) {
       setError(
         "Please enter valid price, serving size, and maximum serving size for all foods."
       );
       return;
     }
-
     setLoading(true);
     setError(null);
-
     try {
       const foodsData = foods.map((food) => ({
         fdcId: food.fdcId,
@@ -91,7 +81,6 @@ const SelectedFoods = ({
           parseFloat(food.servingSize)
         ),
       }));
-
       const optimizationData = {
         selected_foods: foodsData,
         nutrient_goals: nutrientGoals,
@@ -99,7 +88,6 @@ const SelectedFoods = ({
         gender: userInfo.gender,
         smokingStatus: userInfo.smokingStatus,
       };
-
       const result = await api.optimizeDiet(optimizationData);
       if (result.success) {
         onOptimizationResults(result.result);
@@ -112,7 +100,6 @@ const SelectedFoods = ({
       setLoading(false);
     }
   };
-
   const handleExportSelectedFoods = () => {
     const headers = [
       "Food Item",
@@ -149,15 +136,12 @@ const SelectedFoods = ({
       "Sodium (mg)",
       "Pantothenic Acid (mg)",
     ];
-
     let csvContent = headers.join(",") + "\n";
-
     foods.forEach((food) => {
       const adjustedNutrients = adjustNutrientsForServingSize(
         food.nutrients,
         parseFloat(food.servingSize) || 100
       );
-
       const row = [
         `"${food.description}"`,
         food.price || "",
@@ -195,18 +179,15 @@ const SelectedFoods = ({
       ];
       csvContent += row.join(",") + "\n";
     });
-
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-
     link.setAttribute("href", url);
     link.setAttribute("download", "selected_foods.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader className="bg-primary">
@@ -231,7 +212,6 @@ const SelectedFoods = ({
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-
         {foods.length > 0 ? (
           <>
             <div className="rounded-md border">
@@ -314,7 +294,6 @@ const SelectedFoods = ({
                 </TableBody>
               </Table>
             </div>
-
             <div className="mt-6">
               <Button
                 className="w-full"
@@ -347,7 +326,6 @@ const SelectedFoods = ({
     </Card>
   );
 };
-
 SelectedFoods.propTypes = {
   foods: PropTypes.arrayOf(
     PropTypes.shape({
@@ -367,5 +345,4 @@ SelectedFoods.propTypes = {
   }).isRequired,
   onOptimizationResults: PropTypes.func.isRequired,
 };
-
 export default SelectedFoods;

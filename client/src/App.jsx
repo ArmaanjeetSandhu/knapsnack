@@ -184,14 +184,6 @@ function App() {
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     className="text-white hover:text-gray-300 px-3 py-2"
-                    href="#home"
-                  >
-                    Home
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink
-                    className="text-white hover:text-gray-300 px-3 py-2"
                     href="#about"
                   >
                     About

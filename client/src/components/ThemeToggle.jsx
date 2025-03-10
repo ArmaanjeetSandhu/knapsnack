@@ -1,24 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Moon, Sun } from 'lucide-react';
-import { Button } from './ui/button';
-
+import { useState, useEffect } from "react";
+import { Moon, Sun } from "lucide-react";
+import { Button } from "./ui/button";
 const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(false);
-
   useEffect(() => {
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     setIsDark(isDarkMode);
-    
     if (isDarkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     }
   }, []);
-
   const toggleTheme = () => {
     setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
+    document.documentElement.classList.toggle("dark");
   };
-
   return (
     <Button
       variant="ghost"
@@ -35,5 +32,4 @@ const ThemeToggle = () => {
     </Button>
   );
 };
-
 export default ThemeToggle;
