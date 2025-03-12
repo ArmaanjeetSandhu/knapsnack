@@ -326,7 +326,10 @@ def optimize():
             result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
 
             if result.success:
-                servings = np.round(result.x, 1)
+                raw_servings = np.round(result.x, 1)
+                servings = np.array(
+                    [0 if s < 0.9 else max(1.0, s) for s in raw_servings]
+                )
                 food_items = [food["description"] for food in selected_foods_data]
                 total_cost = np.round(servings * c, 2)
 
