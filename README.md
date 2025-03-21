@@ -2,13 +2,15 @@
 
 Goal - $i^{th}$ is a Python-based tool that uses linear programming to create personalized, cost-effective meal plans while meeting specific nutritional requirements. It takes into account both macronutrients (proteins, carbohydrates, fats) and micronutrients (vitamins, minerals) to ensure a balanced diet tailored to your age, gender, and health goals.
 
+## 🛠️ System Architecture
+
 ```mermaid
 graph TB
     User((User))
 
     subgraph "Frontend Container"
         WebApp["Web Application<br>React + Vite"]
-        
+
         subgraph "Core Components"
             AppComponent["App Component<br>React"]
             LandingPage["Landing Page<br>React"]
@@ -32,7 +34,7 @@ graph TB
 
     subgraph "Backend Container"
         FlaskServer["API Server<br>Flask + CORS"]
-        
+
         subgraph "API Endpoints"
             SearchEndpoint["Food Search API<br>Flask Route"]
             CalcEndpoint["Calculation API<br>Flask Route"]
@@ -81,7 +83,7 @@ graph TB
 
     classDef container fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
     classDef component fill:#fff,stroke:#326ce5,stroke-width:2px,color:#326ce5
-    
+
     class WebApp,FlaskServer container
     class AppComponent,LandingPage,PersonalForm,FoodSearchComp,ResultsComp,ThemeToggle,Navigation,Forms,Alerts,APIService,ConfigService,SearchEndpoint,CalcEndpoint,OptimizeEndpoint,NutrientCalc,DietOptimizer,DataProcessor,NutrientDB,USDAAPI component
 ```
