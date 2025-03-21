@@ -2,6 +2,90 @@
 
 Goal - $i^{th}$ is a Python-based tool that uses linear programming to create personalized, cost-effective meal plans while meeting specific nutritional requirements. It takes into account both macronutrients (proteins, carbohydrates, fats) and micronutrients (vitamins, minerals) to ensure a balanced diet tailored to your age, gender, and health goals.
 
+```mermaid
+graph TB
+    User((User))
+
+    subgraph "Frontend Container"
+        WebApp["Web Application<br>React + Vite"]
+        
+        subgraph "Core Components"
+            AppComponent["App Component<br>React"]
+            LandingPage["Landing Page<br>React"]
+            PersonalForm["Personal Info Form<br>React + React Hook Form"]
+            FoodSearchComp["Food Search<br>React"]
+            ResultsComp["Results Display<br>React"]
+        end
+
+        subgraph "UI Components"
+            ThemeToggle["Theme Toggle<br>React"]
+            Navigation["Navigation Menu<br>React"]
+            Forms["Form Controls<br>Shadcn/ui"]
+            Alerts["Alert System<br>Shadcn/ui"]
+        end
+
+        subgraph "Service Layer"
+            APIService["API Service<br>JavaScript"]
+            ConfigService["Config Service<br>JavaScript"]
+        end
+    end
+
+    subgraph "Backend Container"
+        FlaskServer["API Server<br>Flask + CORS"]
+        
+        subgraph "API Endpoints"
+            SearchEndpoint["Food Search API<br>Flask Route"]
+            CalcEndpoint["Calculation API<br>Flask Route"]
+            OptimizeEndpoint["Optimization API<br>Flask Route"]
+        end
+
+        subgraph "Core Services"
+            NutrientCalc["Nutrient Calculator<br>Python"]
+            DietOptimizer["Diet Optimizer<br>SciPy"]
+            DataProcessor["Data Processor<br>Pandas"]
+        end
+
+        subgraph "Data Sources"
+            NutrientDB["Nutrient Database<br>CSV Files"]
+            USDAAPI["USDA Food Database<br>External API"]
+        end
+    end
+
+    %% Container Level Relationships
+    User -->|"Interacts with"| WebApp
+    WebApp -->|"Makes API calls"| FlaskServer
+    FlaskServer -->|"Queries"| USDAAPI
+    FlaskServer -->|"Reads"| NutrientDB
+
+    %% Frontend Component Relationships
+    AppComponent -->|"Renders"| LandingPage
+    AppComponent -->|"Renders"| PersonalForm
+    AppComponent -->|"Renders"| FoodSearchComp
+    AppComponent -->|"Renders"| ResultsComp
+    AppComponent -->|"Uses"| Navigation
+    AppComponent -->|"Uses"| ThemeToggle
+    AppComponent -->|"Uses"| Alerts
+    PersonalForm -->|"Uses"| Forms
+    FoodSearchComp -->|"Uses"| Forms
+    APIService -->|"Uses"| ConfigService
+    AppComponent -->|"Uses"| APIService
+
+    %% Backend Component Relationships
+    SearchEndpoint -->|"Uses"| DataProcessor
+    CalcEndpoint -->|"Uses"| NutrientCalc
+    OptimizeEndpoint -->|"Uses"| DietOptimizer
+    NutrientCalc -->|"Uses"| DataProcessor
+    DietOptimizer -->|"Uses"| DataProcessor
+    DataProcessor -->|"Reads"| NutrientDB
+    SearchEndpoint -->|"Queries"| USDAAPI
+
+    classDef container fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
+    classDef component fill:#fff,stroke:#326ce5,stroke-width:2px,color:#326ce5
+    
+    class WebApp,FlaskServer container
+    class AppComponent,LandingPage,PersonalForm,FoodSearchComp,ResultsComp,ThemeToggle,Navigation,Forms,Alerts,APIService,ConfigService,SearchEndpoint,CalcEndpoint,OptimizeEndpoint,NutrientCalc,DietOptimizer,DataProcessor,NutrientDB,USDAAPI component
+```
+
 ## 📂 Project Structure
 
 - 📄 `.gitattributes`
