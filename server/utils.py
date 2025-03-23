@@ -5,7 +5,6 @@ import pandas as pd
 NUTRIENT_DB_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "nutrient-databases")
 )
-
 rowsToBeRemoved = [
     "Infants",
     "Children",
@@ -63,7 +62,6 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
     else:
         age_group = f"{gender_prefix} > 70 y"
 
-    # Use absolute paths for CSV files
     vitaminsRDA = pd.read_csv(
         os.path.join(NUTRIENT_DB_PATH, "vitamins-RDAs.csv")
     ).replace("ND", None)

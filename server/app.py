@@ -23,32 +23,30 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
     handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
 )
-
 static_folder = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "client", "dist")
 )
 app = Flask(__name__, static_folder=static_folder, static_url_path="")
 CORS(app)
-
 mimetypes.add_type("video/mp4", ".mp4")
 
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve(path):
-    normalized_path = os.path.normpath(os.path.join(app.static_folder, path))
-    if not normalized_path.startswith(app.static_folder):
+    static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
+    normalized_path = os.path.normpath(os.path.join(static_folder_str, str(path)))
+    if not normalized_path.startswith(static_folder_str):
         return "Forbidden", 403
     if path != "" and os.path.exists(normalized_path):
         if path.endswith(".mp4"):
             return send_file(normalized_path, mimetype="video/mp4")
-        return send_from_directory(app.static_folder, path)
+        return send_from_directory(static_folder_str, path)
     else:
-        return send_from_directory(app.static_folder, "index.html")
+        return send_from_directory(static_folder_str, "index.html")
 
 
 API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
-
 NUTRIENT_MAP = {
     "Vitamin A (µg)": "Vitamin A, RAE",
     "Vitamin C (mg)": "Vitamin C, total ascorbic acid",
@@ -87,9 +85,7 @@ def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
     Returns nutrients per 100g.
     """
     result = {}
-
     reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
-
     for nutrient in nutrients_data:
         api_name = nutrient.get("nutrientName")
         if api_name in reverse_map:
@@ -97,11 +93,9 @@ def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
             value = nutrient.get("value", 0)
             if value is not None:
                 result[our_name] = float(value)
-
     for our_name in NUTRIENT_MAP.keys():
         if our_name not in result:
             result[our_name] = 0.0
-
     return result
 
 
@@ -109,15 +103,21 @@ def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
 def search_food():
     try:
         data = request.json
+        if data is None:
+            return (
+                jsonify(
+                    {
+                        "error": "No JSON data provided or Content-Type not set to application/json"
+                    }
+                ),
+                400,
+            )
         search_term = data.get("query")
         api_key = data.get("api_key")
-
         if not search_term:
             return jsonify({"error": "No search term provided"}), 400
-
         if not api_key:
             return jsonify({"error": "No API key provided"}), 400
-
         params = {
             "api_key": api_key,
             "query": search_term,
@@ -125,10 +125,8 @@ def search_food():
             "pageSize": 25,
             "requireAllWords": True,
         }
-
         response = requests.get(API_ENDPOINT, params=params)
         response.raise_for_status()
-
         search_results = []
         for food in response.json().get("foods", []):
             search_results.append(
@@ -138,9 +136,7 @@ def search_food():
                     "nutrients": extract_nutrients(food.get("foodNutrients", [])),
                 }
             )
-
         return jsonify({"results": search_results})
-
     except requests.exceptions.RequestException as e:
         logging.error(f"API request failed: {str(e)}")
         return jsonify({"error": "API request failed"}), 500
@@ -154,7 +150,15 @@ def calculate():
     try:
         data = request.json
         print("Received data:", data)
-
+        if data is None:
+            return (
+                jsonify(
+                    {
+                        "error": "No JSON data provided or Content-Type not set to application/json"
+                    }
+                ),
+                400,
+            )
         gender = data["gender"]
         weight = int(data["weight"])
         height = int(data["height"])
@@ -165,47 +169,37 @@ def calculate():
         activity_multiplier = float(data["activity"])
         percentage = float(data["percentage"]) / 100
         smoking_status = data.get("smokingStatus", "no")
-
         validation_errors = []
-
         if age < 19 or age > 100:
             validation_errors.append("Age must be between 19 and 100")
         if weight < 30 or weight > 200:
             validation_errors.append("Weight must be between 30 and 200 kg")
         if height < 135 or height > 200:
             validation_errors.append("Height must be between 135 and 200 cm")
-
         if validation_errors:
             return (
                 jsonify({"error": "Validation failed", "messages": validation_errors}),
                 400,
             )
-
         bmr = calculate_bmr(gender, weight, height, age)
         tdee = calculate_tdee(bmr, activity_multiplier)
         daily_caloric_intake = percentage * tdee
-
         protein, carbohydrate, fats, fiber, saturated_fats = calculate_macros(
             int(daily_caloric_intake), pratio, cratio, fratio
         )
-
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
-
         if smoking_status == "yes":
             vitamin_c_key = "Vitamin C (mg)"
             if vitamin_c_key in lower_bounds:
                 lower_bounds[vitamin_c_key] += 35.0
-
         lower_bounds_dict = lower_bounds.to_dict()
         upper_bounds_dict = upper_bounds.to_dict()
-
         lower_bounds_dict = {
             k: float(v) for k, v in lower_bounds_dict.items() if pd.notna(v)
         }
         upper_bounds_dict = {
             k: float(v) for k, v in upper_bounds_dict.items() if pd.notna(v)
         }
-
         result = {
             "bmr": bmr,
             "tdee": tdee,
@@ -220,7 +214,6 @@ def calculate():
         }
         print("Calculated result:", result)
         return jsonify(result)
-
     except KeyError as e:
         app.logger.error("Missing required field: %s", str(e))
         return jsonify({"error": "A required field is missing."}), 400
@@ -236,46 +229,44 @@ def calculate():
 def optimize():
     try:
         data = request.json
+        if data is None:
+            return (
+                jsonify(
+                    {
+                        "error": "No JSON data provided or Content-Type not set to application/json"
+                    }
+                ),
+                400,
+            )
         nutrient_goals = data["nutrient_goals"]
         selected_foods_data = data["selected_foods"]
         age = int(data["age"])
         gender = data["gender"]
         smoking_status = data.get("smokingStatus", "no")
         default_max_serving = data.get("max_serving_size", 500)
-
         if age < 19 or age > 100:
             return jsonify({"error": "Age must be between 19 and 100"}), 400
-
         if not selected_foods_data:
             return jsonify({"error": "No foods selected"}), 400
-
         c = np.array([food["price"] for food in selected_foods_data])
-
         max_servings = np.array(
             [
                 food.get("maxServing", default_max_serving) / food["servingSize"]
                 for food in selected_foods_data
             ]
         )
-
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
-
         if smoking_status == "yes":
             vitamin_c_key = "Vitamin C (mg)"
             if vitamin_c_key in lower_bounds:
                 lower_bounds[vitamin_c_key] = float(lower_bounds[vitamin_c_key]) + 35.0
-
         overflow_percentages = list(range(0, 11))
         nutrients = ["protein", "carbohydrate", "fats", "fiber"]
-
         all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
-
         sorted_combinations = sorted(all_combinations, key=sum)
-
         for combo in sorted_combinations:
             A_ub = []
             b_ub = []
-
             for i, nutrient in enumerate(nutrients):
                 if nutrient.lower().replace(" ", "_") in nutrient_goals:
                     goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
@@ -283,9 +274,7 @@ def optimize():
                         food["nutrients"].get(nutrient, 0)
                         for food in selected_foods_data
                     ]
-
                     overflow_factor = 1 + (combo[i] / 100)
-
                     A_ub.extend([[-val for val in values], values])
                     b_ub.extend(
                         [
@@ -293,7 +282,6 @@ def optimize():
                             goal * overflow_factor,
                         ]
                     )
-
             if "saturated_fats" in nutrient_goals:
                 sat_fat_goal = nutrient_goals["saturated_fats"]
                 sat_fat_values = [
@@ -302,29 +290,23 @@ def optimize():
                 ]
                 A_ub.append(sat_fat_values)
                 b_ub.append(sat_fat_goal)
-
-            for nutrient, api_name in NUTRIENT_MAP.items():
+            for nutrient, _ in NUTRIENT_MAP.items():
                 if nutrient not in nutrients:
                     values = [
                         food["nutrients"].get(nutrient, 0)
                         for food in selected_foods_data
                     ]
-
                     rda_key = nutrient
                     if rda_key in lower_bounds and pd.notna(lower_bounds[rda_key]):
                         A_ub.append([-val for val in values])
                         b_ub.append(-float(lower_bounds[rda_key]))
-
                     if rda_key in upper_bounds and pd.notna(upper_bounds[rda_key]):
                         A_ub.append(values)
                         b_ub.append(float(upper_bounds[rda_key]))
-
             A_ub = np.array(A_ub)
             b_ub = np.array(b_ub)
             bounds = [(0, max_serving) for max_serving in max_servings]
-
             result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
-
             if result.success:
                 raw_servings = np.round(result.x, 1)
                 servings = np.array(
@@ -332,7 +314,6 @@ def optimize():
                 )
                 food_items = [food["description"] for food in selected_foods_data]
                 total_cost = np.round(servings * c, 2)
-
                 nutrient_totals = {}
                 for nutrient in NUTRIENT_MAP.keys():
                     values = [
@@ -342,12 +323,10 @@ def optimize():
                     nutrient_totals[nutrient] = float(
                         np.round(np.sum(servings * values), 1)
                     )
-
                 overflow_by_nutrient = {
                     nutrient: int(percent)
                     for nutrient, percent in zip(nutrients, combo)
                 }
-
                 result_data = {
                     "food_items": food_items,
                     "servings": servings.tolist(),
@@ -357,16 +336,13 @@ def optimize():
                     "overflow_by_nutrient": overflow_by_nutrient,
                     "total_overflow": sum(combo),
                 }
-
                 return jsonify({"success": True, "result": result_data})
-
         return jsonify(
             {
                 "success": False,
                 "message": "Optimization failed! No feasible solution found even with maximum allowed nutrient flexibility.",
             }
         )
-
     except Exception as e:
         app.logger.error("Error occurred: %s", str(e))
         return (
