@@ -1,6 +1,8 @@
 const handleExportCSV = (results, selectedFoods = []) => {
   const headers = [
     "Food Item",
+    "Serving Size (g)",
+    "No. of Servings",
     "Total Serving (g)",
     "Cost (₹)",
     "Vitamin A (µg)",
@@ -36,7 +38,9 @@ const handleExportCSV = (results, selectedFoods = []) => {
       if (servings <= 0) return null;
       const food = selectedFoods.find((f) => f.description === foodName);
       if (!food) return null;
-      const totalServing = servings * food.servingSize;
+
+      const servingSize = parseFloat(food.servingSize) || 100;
+      const totalServing = servings * servingSize;
       const cost = results.total_cost[index];
       const nutrients = Object.entries(food.nutrients).reduce(
         (acc, [key, value]) => {
@@ -47,6 +51,8 @@ const handleExportCSV = (results, selectedFoods = []) => {
       );
       return {
         name: foodName,
+        servingSize,
+        servings,
         totalServing,
         cost,
         nutrients,
@@ -56,6 +62,8 @@ const handleExportCSV = (results, selectedFoods = []) => {
   foodData.forEach((food) => {
     const row = [
       `"${food.name}"`,
+      food.servingSize.toFixed(1),
+      food.servings.toFixed(1),
       food.totalServing.toFixed(1),
       food.cost.toFixed(2),
       food.nutrients["Vitamin A (µg)"]?.toFixed(2) || "0",
@@ -87,9 +95,16 @@ const handleExportCSV = (results, selectedFoods = []) => {
     csvContent += row.join(",") + "\n";
   });
   const totals = ["Total"];
+  const totalServingSize = "";
+  const totalServings = "";
   const totalGrams = foodData.reduce((sum, food) => sum + food.totalServing, 0);
-  totals.push(totalGrams.toFixed(1), results.total_cost_sum.toFixed(2));
-  headers.slice(3).forEach((header) => {
+  totals.push(
+    totalServingSize,
+    totalServings,
+    totalGrams.toFixed(1),
+    results.total_cost_sum.toFixed(2)
+  );
+  headers.slice(5).forEach((header) => {
     const nutrientTotal = results.nutrient_totals[header] || 0;
     totals.push(nutrientTotal.toFixed(2));
   });

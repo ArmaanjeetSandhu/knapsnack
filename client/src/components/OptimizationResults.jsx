@@ -1,29 +1,23 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
 import {
+  AlertTriangle,
+  Beaker,
+  Beef,
   Download,
   IndianRupee,
-  Utensils,
-  Beef,
-  Beaker,
-  AlertTriangle,
   Sliders,
+  Utensils,
 } from "lucide-react";
+import PropTypes from "prop-types";
+import { useState } from "react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
 } from "../components/ui/card";
 import { ScrollArea } from "../components/ui/scroll-area";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/tabs";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import {
   Table,
   TableBody,
@@ -32,16 +26,37 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 import handleExportCSV from "./ExportHandler";
 const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
+
   const nonZeroItems = results.food_items
-    .map((food, index) => ({
-      food,
-      servings: results.servings[index],
-      cost: results.total_cost[index],
-    }))
-    .filter((item) => item.servings > 0);
+    .map((foodName, index) => {
+      const servings = results.servings[index];
+      if (servings <= 0) return null;
+      const food = selectedFoods.find((f) => f.description === foodName);
+      if (!food) return null;
+
+      const servingSize = parseFloat(food.servingSize) || 100;
+      const totalServing = servings * servingSize;
+      const cost = results.total_cost[index];
+
+      return {
+        food: foodName,
+        servings,
+        servingSize,
+        totalServing,
+        cost,
+      };
+    })
+    .filter((item) => item !== null);
+
   const totalDailyCost = results.total_cost_sum;
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
@@ -296,10 +311,18 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Food Item</TableHead>
-                      <TableHead className="text-right">
+                      <TableHead className="text-center">
+                        Serving Size (g)
+                      </TableHead>
+                      <TableHead className="w-8 text-center text-muted-foreground"></TableHead>
+                      <TableHead className="text-center">
                         No. of Servings
                       </TableHead>
-                      <TableHead className="text-right">Cost (₹)</TableHead>
+                      <TableHead className="w-8 text-center text-muted-foreground"></TableHead>
+                      <TableHead className="text-center">
+                        Total Serving (g)
+                      </TableHead>
+                      <TableHead className="text-center">Cost (₹)</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -308,10 +331,22 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                         <TableCell className="font-medium">
                           {item.food}
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-center">
+                          {item.servingSize.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground text-sm opacity-70">
+                          ×
+                        </TableCell>
+                        <TableCell className="text-center">
                           {item.servings.toFixed(1)}
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-center text-muted-foreground text-sm opacity-70">
+                          =
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {item.totalServing.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-center">
                           {item.cost.toFixed(2)}
                         </TableCell>
                       </TableRow>
