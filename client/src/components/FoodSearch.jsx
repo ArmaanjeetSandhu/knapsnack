@@ -82,7 +82,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
             const normalizedNutrients = {
               "Vitamin A (µg)": (row["Vitamin A (µg)"] * 100) / servingSize,
               "Vitamin C (mg)": (row["Vitamin C (mg)"] * 100) / servingSize,
-              "Vitamin D (µg)": (row["Vitamin D (µg)"] * 100) / servingSize,
               "Vitamin E (mg)": (row["Vitamin E (mg)"] * 100) / servingSize,
               "Vitamin K (µg)": (row["Vitamin K (µg)"] * 100) / servingSize,
               "Thiamin (mg)": (row["Thiamin (mg)"] * 100) / servingSize,
@@ -90,7 +89,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
               "Niacin (mg)": (row["Niacin (mg)"] * 100) / servingSize,
               "Vitamin B6 (mg)": (row["Vitamin B6 (mg)"] * 100) / servingSize,
               "Folate (µg)": (row["Folate (µg)"] * 100) / servingSize,
-              "Vitamin B12 (µg)": (row["Vitamin B12 (µg)"] * 100) / servingSize,
               "Calcium (mg)": (row["Calcium (mg)"] * 100) / servingSize,
               carbohydrate: (row["Carbohydrate (g)"] * 100) / servingSize,
               "Choline (mg)": (row["Choline (mg)"] * 100) / servingSize,
@@ -98,7 +96,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
               fats: (row["Fats (g)"] * 100) / servingSize,
               saturated_fats: (row["Saturated Fats (g)"] * 100) / servingSize,
               fiber: (row["Fiber (g)"] * 100) / servingSize,
-              "Copper (µg)": (row["Copper (µg)"] * 100) / servingSize,
               "Iron (mg)": (row["Iron (mg)"] * 100) / servingSize,
               "Magnesium (mg)": (row["Magnesium (mg)"] * 100) / servingSize,
               "Manganese (mg)": (row["Manganese (mg)"] * 100) / servingSize,

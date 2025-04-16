@@ -56,7 +56,6 @@ const CalculationResults = ({ calculationData, onProceed }) => {
   const vitamins = [
     { name: "Vitamin A", key: "Vitamin A (µg)", unit: "µg" },
     { name: "Vitamin C", key: "Vitamin C (mg)", unit: "mg" },
-    { name: "Vitamin D", key: "Vitamin D (µg)", unit: "µg" },
     { name: "Vitamin E", key: "Vitamin E (mg)", unit: "mg" },
     { name: "Vitamin K", key: "Vitamin K (µg)", unit: "µg" },
     { name: "Thiamin", key: "Thiamin (mg)", unit: "mg" },
@@ -64,13 +63,11 @@ const CalculationResults = ({ calculationData, onProceed }) => {
     { name: "Niacin", key: "Niacin (mg)", unit: "mg" },
     { name: "Vitamin B6", key: "Vitamin B6 (mg)", unit: "mg" },
     { name: "Folate", key: "Folate (µg)", unit: "µg" },
-    { name: "Vitamin B12", key: "Vitamin B12 (µg)", unit: "µg" },
     { name: "Pantothenic Acid", key: "Pantothenic Acid (mg)", unit: "mg" },
     { name: "Choline", key: "Choline (mg)", unit: "mg" },
   ];
   const minerals = [
     { name: "Calcium", key: "Calcium (mg)", unit: "mg" },
-    { name: "Copper", key: "Copper (µg)", unit: "µg" },
     { name: "Iron", key: "Iron (mg)", unit: "mg" },
     { name: "Magnesium", key: "Magnesium (mg)", unit: "mg" },
     { name: "Manganese", key: "Manganese (mg)", unit: "mg" },

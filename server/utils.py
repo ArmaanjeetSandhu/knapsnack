@@ -65,12 +65,15 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
     vitaminsRDA = pd.read_csv(
         os.path.join(NUTRIENT_DB_PATH, "vitamins-RDAs.csv")
     ).replace("ND", None)
-    vitaminsRDA.drop(columns=["Biotin (µg)"], inplace=True)
+    vitaminsRDA.drop(
+        columns=["Biotin (µg)", "Vitamin D (µg)", "Vitamin B12 (µg)"], inplace=True
+    )
     vitaminsRDA = remove_rows(vitaminsRDA)
 
     vitaminsUL = pd.read_csv(
         os.path.join(NUTRIENT_DB_PATH, "vitamins-ULs.csv")
     ).replace("ND", None)
+    vitaminsUL.drop(columns=["Vitamin D (µg)"], inplace=True)
     vitaminsUL = remove_rows(vitaminsUL)
 
     elementsRDA = pd.read_csv(
@@ -83,6 +86,7 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
             "Chloride (g)",
             "Fluoride (mg)",
             "Iodine (µg)",
+            "Copper (µg)",
         ],
         inplace=True,
     )
@@ -100,6 +104,7 @@ def nutrient_bounds(age: int, gender: str) -> tuple[pd.Series, pd.Series]:
             "Iodine (µg)",
             "Nickel (mg)",
             "Vanadium (µg)",
+            "Copper (µg)",
         ],
         inplace=True,
     )

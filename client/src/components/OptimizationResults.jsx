@@ -79,11 +79,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "mg",
     },
     {
-      name: "Vitamin D",
-      value: results.nutrient_totals["Vitamin D (µg)"],
-      unit: "µg",
-    },
-    {
       name: "Vitamin E",
       value: results.nutrient_totals["Vitamin E (mg)"],
       unit: "mg",
@@ -119,11 +114,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "µg",
     },
     {
-      name: "Vitamin B12",
-      value: results.nutrient_totals["Vitamin B12 (µg)"],
-      unit: "µg",
-    },
-    {
       name: "Pantothenic Acid",
       value: results.nutrient_totals["Pantothenic Acid (mg)"],
       unit: "mg",
@@ -134,11 +124,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       name: "Calcium",
       value: results.nutrient_totals["Calcium (mg)"],
       unit: "mg",
-    },
-    {
-      name: "Copper",
-      value: results.nutrient_totals["Copper (µg)"],
-      unit: "µg",
     },
     { name: "Iron", value: results.nutrient_totals["Iron (mg)"], unit: "mg" },
     {

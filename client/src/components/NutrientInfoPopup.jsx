@@ -30,22 +30,6 @@ const NUTRIENT_INFO = {
     toxicitySymptoms: ["Diarrhea", "Nausea", "Abdominal cramps"],
     category: "Water-soluble vitamin",
   },
-  "Vitamin D": {
-    description: "Critical for bone health and immune system function",
-    sources: [
-      "Sunlight exposure",
-      "Fatty fish",
-      "Egg yolks",
-      "Fortified foods",
-    ],
-    deficiencySymptoms: ["Bone pain", "Muscle weakness", "Depression"],
-    toxicitySymptoms: [
-      "Kidney problems",
-      "Calcium buildup in blood",
-      "Confusion",
-    ],
-    category: "Fat-soluble vitamin",
-  },
   Iron: {
     description: "Essential for oxygen transport and energy production",
     sources: ["Red meat", "Spinach", "Lentils", "Fortified cereals"],

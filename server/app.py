@@ -50,7 +50,6 @@ API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
 NUTRIENT_MAP = {
     "Vitamin A (µg)": "Vitamin A, RAE",
     "Vitamin C (mg)": "Vitamin C, total ascorbic acid",
-    "Vitamin D (µg)": "Vitamin D3 (cholecalciferol)",
     "Vitamin E (mg)": "Vitamin E (alpha-tocopherol)",
     "Vitamin K (µg)": "Vitamin K (phylloquinone)",
     "Thiamin (mg)": "Thiamin",
@@ -58,7 +57,6 @@ NUTRIENT_MAP = {
     "Niacin (mg)": "Niacin",
     "Vitamin B6 (mg)": "Vitamin B-6",
     "Folate (µg)": "Folate, total",
-    "Vitamin B12 (µg)": "Vitamin B-12",
     "Calcium (mg)": "Calcium, Ca",
     "carbohydrate": "Carbohydrate, by difference",
     "Choline (mg)": "Choline, total",
@@ -66,7 +64,6 @@ NUTRIENT_MAP = {
     "fats": "Total lipid (fat)",
     "saturated_fats": "Fatty acids, total saturated",
     "fiber": "Fiber, total dietary",
-    "Copper (µg)": "Copper, Cu",
     "Iron (mg)": "Iron, Fe",
     "Magnesium (mg)": "Magnesium, Mg",
     "Manganese (mg)": "Manganese, Mn",
