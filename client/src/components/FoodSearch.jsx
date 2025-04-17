@@ -1,18 +1,26 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
-import { Search, Plus, Key, ExternalLink, Upload, Check } from "lucide-react";
+import {
+  Check,
+  ExternalLink,
+  FastForward,
+  Key,
+  Plus,
+  Search,
+  Upload,
+} from "lucide-react";
 import Papa from "papaparse";
-import api from "../services/api";
+import PropTypes from "prop-types";
+import { useState } from "react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
+import api from "../services/api";
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(
     () => localStorage.getItem("usda_api_key") || ""
@@ -20,6 +28,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sampleLoading, setSampleLoading] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [apiKeyError, setApiKeyError] = useState(null);
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
@@ -62,6 +71,61 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       });
     }, 2000);
   };
+  const processCSVData = (results) => {
+    if (results.errors.length > 0) {
+      setSearchError(
+        "Error parsing CSV file. Please ensure the file format is correct."
+      );
+      return null;
+    }
+    try {
+      const importedFoods = results.data.map((row) => {
+        const servingSize = row["Serving Size (g)"] || 100;
+        const normalizedNutrients = {
+          "Vitamin A (µg)": (row["Vitamin A (µg)"] * 100) / servingSize,
+          "Vitamin C (mg)": (row["Vitamin C (mg)"] * 100) / servingSize,
+          "Vitamin E (mg)": (row["Vitamin E (mg)"] * 100) / servingSize,
+          "Vitamin K (µg)": (row["Vitamin K (µg)"] * 100) / servingSize,
+          "Thiamin (mg)": (row["Thiamin (mg)"] * 100) / servingSize,
+          "Riboflavin (mg)": (row["Riboflavin (mg)"] * 100) / servingSize,
+          "Niacin (mg)": (row["Niacin (mg)"] * 100) / servingSize,
+          "Vitamin B6 (mg)": (row["Vitamin B6 (mg)"] * 100) / servingSize,
+          "Folate (µg)": (row["Folate (µg)"] * 100) / servingSize,
+          "Calcium (mg)": (row["Calcium (mg)"] * 100) / servingSize,
+          carbohydrate: (row["Carbohydrate (g)"] * 100) / servingSize,
+          "Choline (mg)": (row["Choline (mg)"] * 100) / servingSize,
+          protein: (row["Protein (g)"] * 100) / servingSize,
+          fats: (row["Fats (g)"] * 100) / servingSize,
+          saturated_fats: (row["Saturated Fats (g)"] * 100) / servingSize,
+          fiber: (row["Fiber (g)"] * 100) / servingSize,
+          "Iron (mg)": (row["Iron (mg)"] * 100) / servingSize,
+          "Magnesium (mg)": (row["Magnesium (mg)"] * 100) / servingSize,
+          "Manganese (mg)": (row["Manganese (mg)"] * 100) / servingSize,
+          "Phosphorus (mg)": (row["Phosphorus (mg)"] * 100) / servingSize,
+          "Selenium (µg)": (row["Selenium (µg)"] * 100) / servingSize,
+          "Zinc (mg)": (row["Zinc (mg)"] * 100) / servingSize,
+          "Potassium (mg)": (row["Potassium (mg)"] * 100) / servingSize,
+          "Sodium (mg)": (row["Sodium (mg)"] * 100) / servingSize,
+          "Pantothenic Acid (mg)":
+            (row["Pantothenic Acid (mg)"] * 100) / servingSize,
+        };
+        return {
+          fdcId: row["FDC ID"].toString(),
+          description: row["Food Item"],
+          price: row["Price (₹)"],
+          servingSize: row["Serving Size (g)"],
+          maxServing: row["Max Serving (g)"],
+          nutrients: normalizedNutrients,
+        };
+      });
+      return importedFoods;
+    } catch {
+      setSearchError(
+        "Invalid CSV format. Please use a CSV file exported from this application."
+      );
+      return null;
+    }
+  };
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -70,58 +134,10 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: (results) => {
-        if (results.errors.length > 0) {
-          setSearchError(
-            "Error parsing CSV file. Please ensure the file format is correct."
-          );
-          return;
-        }
-        try {
-          const importedFoods = results.data.map((row) => {
-            const servingSize = row["Serving Size (g)"] || 100;
-            const normalizedNutrients = {
-              "Vitamin A (µg)": (row["Vitamin A (µg)"] * 100) / servingSize,
-              "Vitamin C (mg)": (row["Vitamin C (mg)"] * 100) / servingSize,
-              "Vitamin E (mg)": (row["Vitamin E (mg)"] * 100) / servingSize,
-              "Vitamin K (µg)": (row["Vitamin K (µg)"] * 100) / servingSize,
-              "Thiamin (mg)": (row["Thiamin (mg)"] * 100) / servingSize,
-              "Riboflavin (mg)": (row["Riboflavin (mg)"] * 100) / servingSize,
-              "Niacin (mg)": (row["Niacin (mg)"] * 100) / servingSize,
-              "Vitamin B6 (mg)": (row["Vitamin B6 (mg)"] * 100) / servingSize,
-              "Folate (µg)": (row["Folate (µg)"] * 100) / servingSize,
-              "Calcium (mg)": (row["Calcium (mg)"] * 100) / servingSize,
-              carbohydrate: (row["Carbohydrate (g)"] * 100) / servingSize,
-              "Choline (mg)": (row["Choline (mg)"] * 100) / servingSize,
-              protein: (row["Protein (g)"] * 100) / servingSize,
-              fats: (row["Fats (g)"] * 100) / servingSize,
-              saturated_fats: (row["Saturated Fats (g)"] * 100) / servingSize,
-              fiber: (row["Fiber (g)"] * 100) / servingSize,
-              "Iron (mg)": (row["Iron (mg)"] * 100) / servingSize,
-              "Magnesium (mg)": (row["Magnesium (mg)"] * 100) / servingSize,
-              "Manganese (mg)": (row["Manganese (mg)"] * 100) / servingSize,
-              "Phosphorus (mg)": (row["Phosphorus (mg)"] * 100) / servingSize,
-              "Selenium (µg)": (row["Selenium (µg)"] * 100) / servingSize,
-              "Zinc (mg)": (row["Zinc (mg)"] * 100) / servingSize,
-              "Potassium (mg)": (row["Potassium (mg)"] * 100) / servingSize,
-              "Sodium (mg)": (row["Sodium (mg)"] * 100) / servingSize,
-              "Pantothenic Acid (mg)":
-                (row["Pantothenic Acid (mg)"] * 100) / servingSize,
-            };
-            return {
-              fdcId: row["FDC ID"].toString(),
-              description: row["Food Item"],
-              price: row["Price (₹)"],
-              servingSize: row["Serving Size (g)"],
-              maxServing: row["Max Serving (g)"],
-              nutrients: normalizedNutrients,
-            };
-          });
+        const importedFoods = processCSVData(results);
+        if (importedFoods) {
           onFoodsImport(importedFoods);
           setSearchError(null);
-        } catch {
-          setSearchError(
-            "Invalid CSV format. Please use a CSV file exported from this application."
-          );
         }
       },
       error: (error) => {
@@ -129,6 +145,36 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       },
     });
     event.target.value = "";
+  };
+  const handleTrySampleDiet = async () => {
+    setSampleLoading(true);
+    setSearchError(null);
+    try {
+      const response = await fetch("/sample.csv");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch sample diet (${response.status})`);
+      }
+      const csvText = await response.text();
+      Papa.parse(csvText, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        complete: (results) => {
+          const importedFoods = processCSVData(results);
+          if (importedFoods) {
+            onFoodsImport(importedFoods);
+            setSearchError(null);
+          }
+        },
+        error: (error) => {
+          setSearchError(`Error processing sample diet: ${error.message}`);
+        },
+      });
+    } catch (error) {
+      setSearchError(`Error loading sample diet: ${error.message}`);
+    } finally {
+      setSampleLoading(false);
+    }
   };
   const isAdded = (foodId) => {
     return selectedFoodIds.includes(foodId) || recentlyAdded.has(foodId);
@@ -178,7 +224,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
             </div>
           </form>
         </div>
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
           <form onSubmit={handleSearch} className="flex-1">
             <div className="flex gap-2">
               <Input
@@ -208,14 +254,34 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
               </Button>
             </div>
           </form>
-          <Button
-            variant="outline"
-            onClick={() => document.getElementById("csv-upload").click()}
-            className="flex items-center gap-2"
-          >
-            <Upload className="w-4 h-4" />
-            Import CSV
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => document.getElementById("csv-upload").click()}
+              className="flex items-center gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              Import CSV
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleTrySampleDiet}
+              disabled={sampleLoading}
+              className="flex items-center gap-2"
+            >
+              {sampleLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  <span>Loading...</span>
+                </div>
+              ) : (
+                <>
+                  <FastForward className="w-4 h-4" />
+                  <span>Try Sample Diet</span>
+                </>
+              )}
+            </Button>
+          </div>
           <input
             id="csv-upload"
             type="file"

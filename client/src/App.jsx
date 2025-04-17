@@ -277,7 +277,7 @@ function App() {
                 {nutrientGoals && (
                   <Button
                     onClick={handleViewCalculationResults}
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-green-600 hover:bg-green-700"
                   >
                     <Calculator className="w-5 h-5 mr-2" />
                     View Nutrition Requirements
