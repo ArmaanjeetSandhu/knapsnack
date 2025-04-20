@@ -103,7 +103,7 @@ const SelectedFoods = ({
   const handleExportSelectedFoods = () => {
     const headers = [
       "Food Item",
-      "Price (₹)",
+      "Price",
       "Serving Size (g)",
       "Max Serving (g)",
       "FDC ID",
@@ -213,7 +213,7 @@ const SelectedFoods = ({
                 <TableHeader>
                   <TableRow>
                     <TableHead>Food Item</TableHead>
-                    <TableHead>Price (₹)</TableHead>
+                    <TableHead>Price</TableHead>
                     <TableHead>Serving Size (g)</TableHead>
                     <TableHead>Max Serving (g)</TableHead>
                     <TableHead className="w-[100px]">Actions</TableHead>

@@ -112,7 +112,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
         return {
           fdcId: row["FDC ID"].toString(),
           description: row["Food Item"],
-          price: row["Price (₹)"],
+          price: row["Price"],
           servingSize: row["Serving Size (g)"],
           maxServing: row["Max Serving (g)"],
           nutrients: normalizedNutrients,

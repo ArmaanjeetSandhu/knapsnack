@@ -4,7 +4,7 @@ const handleExportCSV = (results, selectedFoods = []) => {
     "Serving Size (g)",
     "No. of Servings",
     "Total Serving (g)",
-    "Cost (₹)",
+    "Cost",
     "Vitamin A (µg)",
     "Vitamin C (mg)",
     "Vitamin E (mg)",

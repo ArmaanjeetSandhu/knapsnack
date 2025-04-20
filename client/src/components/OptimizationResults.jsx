@@ -3,7 +3,6 @@ import {
   Beaker,
   Beef,
   Download,
-  IndianRupee,
   Sliders,
   Utensils,
 } from "lucide-react";
@@ -32,21 +31,19 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
+import CurrencySign from "./CurrencySign";
 import handleExportCSV from "./ExportHandler";
 const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
-
   const nonZeroItems = results.food_items
     .map((foodName, index) => {
       const servings = results.servings[index];
       if (servings <= 0) return null;
       const food = selectedFoods.find((f) => f.description === foodName);
       if (!food) return null;
-
       const servingSize = parseFloat(food.servingSize) || 100;
       const totalServing = servings * servingSize;
       const cost = results.total_cost[index];
-
       return {
         food: foodName,
         servings,
@@ -56,7 +53,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       };
     })
     .filter((item) => item !== null);
-
   const totalDailyCost = results.total_cost_sum;
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
@@ -239,14 +235,14 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                        <IndianRupee className="w-8 h-8 text-green-500 dark:text-green-400" />
+                        <CurrencySign className="w-8 h-8 text-green-500 dark:text-green-400" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">
                           Total Daily Cost
                         </p>
                         <p className="text-2xl font-bold">
-                          ₹{totalDailyCost.toFixed(2)}
+                          {totalDailyCost.toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -322,7 +318,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                       <TableHead className="text-center">
                         Total Serving (g)
                       </TableHead>
-                      <TableHead className="text-center">Cost (₹)</TableHead>
+                      <TableHead className="text-center">Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
