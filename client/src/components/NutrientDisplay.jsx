@@ -1,4 +1,6 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
+import { Card, CardContent } from "../components/ui/card";
 import {
   Table,
   TableBody,
@@ -7,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { Card, CardContent } from "../components/ui/card";
 import NutrientInfoPopup from "./NutrientInfoPopup";
 const BlinkingDot = () => (
   <div className="w-2 h-2 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
@@ -15,10 +16,11 @@ const BlinkingDot = () => (
 export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
   const handleRowClick = (nutrient) => {
+    const key = `${nutrient.name} (${nutrient.unit})`;
     setSelectedNutrient({
       name: nutrient.name,
-      rda: lowerBounds[nutrient.name + ` (${nutrient.unit})`],
-      ul: upperBounds[nutrient.name + ` (${nutrient.unit})`],
+      rda: lowerBounds[key],
+      ul: upperBounds[key],
       unit: nutrient.unit,
     });
   };
@@ -35,7 +37,7 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
         </TableHeader>
         <TableBody>
           {nutrients.map((nutrient, index) => {
-            const fullKey = `${nutrient.name} (${nutrient.unit})`;
+            const key = `${nutrient.name} (${nutrient.unit})`;
             return (
               <TableRow
                 key={index}
@@ -49,10 +51,10 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
-                  {lowerBounds[fullKey]?.toLocaleString() || "N/A"}
+                  {lowerBounds[key]?.toLocaleString() ?? "N/A"}
                 </TableCell>
                 <TableCell className="text-right">
-                  {upperBounds[fullKey]?.toLocaleString() || "N/A"}
+                  {upperBounds[key]?.toLocaleString() ?? "N/A"}
                 </TableCell>
                 <TableCell className="text-right">{nutrient.unit}</TableCell>
               </TableRow>
@@ -76,10 +78,11 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
 export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
   const handleCardClick = (nutrient) => {
+    const key = `${nutrient.name} (${nutrient.unit})`;
     setSelectedNutrient({
       name: nutrient.name,
-      rda: lowerBounds[nutrient.name + ` (${nutrient.unit})`],
-      ul: upperBounds[nutrient.name + ` (${nutrient.unit})`],
+      rda: lowerBounds[key],
+      ul: upperBounds[key],
       unit: nutrient.unit,
     });
   };
@@ -87,7 +90,7 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {nutrients.map((nutrient, index) => {
-          const fullKey = `${nutrient.name} (${nutrient.unit})`;
+          const key = `${nutrient.name} (${nutrient.unit})`;
           return (
             <Card
               key={index}
@@ -105,8 +108,8 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
                   <div className="flex justify-between">
                     <span className="text-sm">RDA:</span>
                     <span className="font-medium">
-                      {lowerBounds[fullKey]
-                        ? `${lowerBounds[fullKey].toLocaleString()} ${
+                      {lowerBounds[key] != null
+                        ? `${lowerBounds[key].toLocaleString()} ${
                             nutrient.unit
                           }`
                         : "N/A"}
@@ -115,8 +118,8 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
                   <div className="flex justify-between">
                     <span className="text-sm">UL:</span>
                     <span className="font-medium">
-                      {upperBounds[fullKey]
-                        ? `${upperBounds[fullKey].toLocaleString()} ${
+                      {upperBounds[key] != null
+                        ? `${upperBounds[key].toLocaleString()} ${
                             nutrient.unit
                           }`
                         : "N/A"}
@@ -140,4 +143,24 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
       )}
     </>
   );
+};
+NutrientTable.propTypes = {
+  nutrients: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      unit: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  lowerBounds: PropTypes.objectOf(PropTypes.number).isRequired,
+  upperBounds: PropTypes.objectOf(PropTypes.number).isRequired,
+};
+NutrientCards.propTypes = {
+  nutrients: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      unit: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  lowerBounds: PropTypes.objectOf(PropTypes.number).isRequired,
+  upperBounds: PropTypes.objectOf(PropTypes.number).isRequired,
 };
