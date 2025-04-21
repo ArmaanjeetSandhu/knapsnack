@@ -3,7 +3,7 @@ import {
   Beaker,
   Beef,
   Download,
-  IndianRupee,
+  Currency,
   Sliders,
   Utensils,
 } from "lucide-react";
@@ -239,14 +239,14 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                        <IndianRupee className="w-8 h-8 text-green-500 dark:text-green-400" />
+                        <Currency className="w-8 h-8 text-green-500 dark:text-green-400" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">
                           Total Daily Cost
                         </p>
                         <p className="text-2xl font-bold">
-                          ₹{totalDailyCost.toFixed(2)}
+                          {totalDailyCost.toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -322,7 +322,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                       <TableHead className="text-center">
                         Total Serving (g)
                       </TableHead>
-                      <TableHead className="text-center">Cost (₹)</TableHead>
+                      <TableHead className="text-center">Cost</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
