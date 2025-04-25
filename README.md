@@ -108,6 +108,7 @@ graph TB
   - 📄 `package.json`
   - 📄 `README.md`
   - 📁 **public**
+    - 📄 `sample.csv`
     - 📄 `background-video.mp4`
   - 📁 **src**
     - 📄 `App.css`
