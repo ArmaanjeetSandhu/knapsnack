@@ -2,8 +2,8 @@ import {
   AlertTriangle,
   Beaker,
   Beef,
-  Download,
   Currency,
+  Download,
   Sliders,
   Utensils,
 } from "lucide-react";
