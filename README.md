@@ -112,6 +112,7 @@ graph TB
   - 📁 **public**
     - 📄 `sample.csv`
     - 📄 `background-video.mp4`
+    - 📄 `header-image.png`
   - 📁 **src**
     - 📄 `App.css`
     - 📄 `index.css`
