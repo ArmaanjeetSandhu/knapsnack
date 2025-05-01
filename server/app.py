@@ -6,13 +6,13 @@ from typing import Dict, List
 
 import numpy as np
 import pandas as pd
+import pulp
 import requests
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
-from scipy.optimize import linprog  # type: ignore
 
 from server.utils import (
-    calculate_bmr,
+    calculate_bmr_mifflin_st_jeor,
     calculate_macros,
     calculate_tdee,
     nutrient_bounds,
@@ -178,11 +178,11 @@ def calculate():
                 jsonify({"error": "Validation failed", "messages": validation_errors}),
                 400,
             )
-        bmr = calculate_bmr(gender, weight, height, age)
+        bmr = calculate_bmr_mifflin_st_jeor(gender, weight, height, age)
         tdee = calculate_tdee(bmr, activity_multiplier)
-        daily_caloric_intake = percentage * tdee
+        daily_caloric_intake = int(percentage * tdee)
         protein, carbohydrate, fats, fiber, saturated_fats = calculate_macros(
-            int(daily_caloric_intake), pratio, cratio, fratio
+            daily_caloric_intake, pratio, cratio, fratio
         )
         lower_bounds, upper_bounds = nutrient_bounds(age, gender)
         if smoking_status == "yes":
@@ -200,7 +200,7 @@ def calculate():
         result = {
             "bmr": bmr,
             "tdee": tdee,
-            "daily_caloric_intake": int(daily_caloric_intake),
+            "daily_caloric_intake": daily_caloric_intake,
             "protein": protein,
             "carbohydrate": carbohydrate,
             "fats": fats,
@@ -245,7 +245,7 @@ def optimize():
             return jsonify({"error": "Age must be between 19 and 100"}), 400
         if not selected_foods_data:
             return jsonify({"error": "No foods selected"}), 400
-        c = np.array([food["price"] for food in selected_foods_data])
+        costs = np.array([food["price"] for food in selected_foods_data])
         max_servings = np.array(
             [
                 food.get("maxServing", default_max_serving) / food["servingSize"]
@@ -262,31 +262,41 @@ def optimize():
         all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
         sorted_combinations = sorted(all_combinations, key=sum)
         for combo in sorted_combinations:
-            A_ub = []
-            b_ub = []
+            prob = pulp.LpProblem("Diet_Optimization", pulp.LpMinimize)
+            num_foods = len(selected_foods_data)
+            x = [
+                pulp.LpVariable(f"x_{i}", 0, max_servings[i]) for i in range(num_foods)
+            ]
+            y = [pulp.LpVariable(f"y_{i}", cat=pulp.LpBinary) for i in range(num_foods)]
+            prob += pulp.lpSum([costs[i] * x[i] for i in range(num_foods)])
+            for i in range(num_foods):
+                prob += x[i] <= max_servings[i] * y[i]
+                prob += x[i] >= y[i]
             for i, nutrient in enumerate(nutrients):
-                if nutrient.lower().replace(" ", "_") in nutrient_goals:
-                    goal = nutrient_goals[nutrient.lower().replace(" ", "_")]
+                nutrient_key = nutrient.lower().replace(" ", "_")
+                if nutrient_key in nutrient_goals:
+                    goal = nutrient_goals[nutrient_key]
                     values = [
                         food["nutrients"].get(nutrient, 0)
                         for food in selected_foods_data
                     ]
                     overflow_factor = 1 + (combo[i] / 100)
-                    A_ub.extend([[-val for val in values], values])
-                    b_ub.extend(
-                        [
-                            -goal,
-                            goal * overflow_factor,
-                        ]
+                    prob += (
+                        pulp.lpSum([values[j] * x[j] for j in range(num_foods)]) >= goal
                     )
+                    prob += pulp.lpSum(
+                        [values[j] * x[j] for j in range(num_foods)]
+                    ) <= int(goal * overflow_factor)
             if "saturated_fats" in nutrient_goals:
                 sat_fat_goal = nutrient_goals["saturated_fats"]
                 sat_fat_values = [
                     food["nutrients"].get("saturated_fats", 0)
                     for food in selected_foods_data
                 ]
-                A_ub.append(sat_fat_values)
-                b_ub.append(sat_fat_goal)
+                prob += (
+                    pulp.lpSum([sat_fat_values[j] * x[j] for j in range(num_foods)])
+                    <= sat_fat_goal
+                )
             for nutrient, _ in NUTRIENT_MAP.items():
                 if nutrient not in nutrients:
                     values = [
@@ -295,22 +305,19 @@ def optimize():
                     ]
                     rda_key = nutrient
                     if rda_key in lower_bounds and pd.notna(lower_bounds[rda_key]):
-                        A_ub.append([-val for val in values])
-                        b_ub.append(-float(lower_bounds[rda_key]))
+                        prob += pulp.lpSum(
+                            [values[j] * x[j] for j in range(num_foods)]
+                        ) >= float(lower_bounds[rda_key])
                     if rda_key in upper_bounds and pd.notna(upper_bounds[rda_key]):
-                        A_ub.append(values)
-                        b_ub.append(float(upper_bounds[rda_key]))
-            A_ub = np.array(A_ub)
-            b_ub = np.array(b_ub)
-            bounds = [(0, max_serving) for max_serving in max_servings]
-            result = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
-            if result.success:
-                raw_servings = np.round(result.x, 1)
-                servings = np.array(
-                    [0 if s < 0.9 else max(1.0, s) for s in raw_servings]
-                )
+                        prob += pulp.lpSum(
+                            [values[j] * x[j] for j in range(num_foods)]
+                        ) <= float(upper_bounds[rda_key])
+            prob.solve(pulp.PULP_CBC_CMD(msg=False))
+            if prob.status == pulp.LpStatusOptimal:
+                servings = np.array([x[i].value() for i in range(num_foods)])
+                servings = np.round(servings, 1)
                 food_items = [food["description"] for food in selected_foods_data]
-                total_cost = np.round(servings * c, 2)
+                total_cost = np.round(servings * costs, 1)
                 nutrient_totals = {}
                 for nutrient in NUTRIENT_MAP.keys():
                     values = [

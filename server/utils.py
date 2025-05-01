@@ -21,11 +21,17 @@ def remove_rows(df: pd.DataFrame) -> pd.DataFrame:
     return df[~df["Life-Stage Group"].str.contains("|".join(rowsToBeRemoved), na=False)]
 
 
-def calculate_bmr(gender: str, weight: float, height: float, age: int) -> int:
+def calculate_bmr_mifflin_st_jeor(
+    gender: str, weight: int, height: int, age: int
+) -> int:
     if gender.lower() == "m":
         return int(10 * weight + 6.25 * height - 5 * age + 5)
     else:
         return int(10 * weight + 6.25 * height - 5 * age - 161)
+
+
+def calculate_bmr_katch_mcardle(lean_body_mass: int) -> int:
+    return int(370 + 21.6 * lean_body_mass)
 
 
 def calculate_tdee(bmr: int, activity_multiplier: float) -> int:
