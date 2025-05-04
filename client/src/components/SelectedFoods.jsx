@@ -264,25 +264,25 @@ const SelectedFoods = ({
                   <TableRow>
                     <TableHead
                       onClick={() => handleSort("food")}
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                     >
                       Food Item{getSortIcon("food")}
                     </TableHead>
                     <TableHead
                       onClick={() => handleSort("price")}
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                     >
                       Price{getSortIcon("price")}
                     </TableHead>
                     <TableHead
                       onClick={() => handleSort("servingSize")}
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                     >
                       Serving Size (g){getSortIcon("servingSize")}
                     </TableHead>
                     <TableHead
                       onClick={() => handleSort("maxServing")}
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                     >
                       Max Serving (g){getSortIcon("maxServing")}
                     </TableHead>

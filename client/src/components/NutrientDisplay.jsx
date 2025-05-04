@@ -80,25 +80,25 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
           <TableRow>
             <TableHead
               onClick={() => handleSort("nutrient")}
-              className="cursor-pointer hover:bg-muted/50 transition-colors"
+              className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
             >
               Nutrient{getSortIcon("nutrient")}
             </TableHead>
             <TableHead
               onClick={() => handleSort("rda")}
-              className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+              className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
             >
               RDA{getSortIcon("rda")}
             </TableHead>
             <TableHead
               onClick={() => handleSort("ul")}
-              className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+              className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
             >
               UL{getSortIcon("ul")}
             </TableHead>
             <TableHead
               onClick={() => handleSort("unit")}
-              className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+              className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
             >
               Unit{getSortIcon("unit")}
             </TableHead>

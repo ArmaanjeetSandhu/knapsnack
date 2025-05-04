@@ -84,19 +84,19 @@ const SortableNutrientTable = ({ nutrients, formatValue }) => {
         <TableRow>
           <TableHead
             onClick={() => handleSort("nutrient")}
-            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
           >
             Nutrient{getSortIcon("nutrient")}
           </TableHead>
           <TableHead
             onClick={() => handleSort("amount")}
-            className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+            className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
           >
             Amount{getSortIcon("amount")}
           </TableHead>
           <TableHead
             onClick={() => handleSort("unit")}
-            className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+            className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
           >
             Unit{getSortIcon("unit")}
           </TableHead>
@@ -435,33 +435,33 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                     <TableRow>
                       <TableHead
                         onClick={() => handlePortionsSort("food")}
-                        className="cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                       >
                         Food Item{getSortIcon("food")}
                       </TableHead>
                       <TableHead
                         onClick={() => handlePortionsSort("servingSize")}
-                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors no-select"
                       >
                         Serving Size (g){getSortIcon("servingSize")}
                       </TableHead>
                       <TableHead className="w-8 text-center text-muted-foreground"></TableHead>
                       <TableHead
                         onClick={() => handlePortionsSort("servings")}
-                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors no-select"
                       >
                         No. of Servings{getSortIcon("servings")}
                       </TableHead>
                       <TableHead className="w-8 text-center text-muted-foreground"></TableHead>
                       <TableHead
                         onClick={() => handlePortionsSort("totalServing")}
-                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors no-select"
                       >
                         Total Serving (g){getSortIcon("totalServing")}
                       </TableHead>
                       <TableHead
                         onClick={() => handlePortionsSort("cost")}
-                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors no-select"
                       >
                         Cost{getSortIcon("cost")}
                       </TableHead>
