@@ -1,26 +1,124 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
 import {
-  ArrowRight,
   Activity,
-  Flame,
-  Target,
-  Beef,
+  ArrowRight,
   Beaker,
+  Beef,
+  Check,
+  Edit,
+  Flame,
+  RotateCcw,
+  Target,
+  X,
 } from "lucide-react";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { NutrientCards, NutrientTable } from "./NutrientDisplay";
+import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { NutrientTable, NutrientCards } from "./NutrientDisplay";
 const CalculationResults = ({ calculationData, onProceed }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
+  const [customizingBounds, setCustomizingBounds] = useState(false);
+  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState({});
+  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState({});
+  const [useCustomBounds, setUseCustomBounds] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  useEffect(() => {
+    setAdjustedLowerBounds({ ...calculationData.lower_bounds });
+    setAdjustedUpperBounds({ ...calculationData.upper_bounds });
+  }, [calculationData]);
   const formatValue = (value) => {
     return typeof value === "number"
       ? value.toLocaleString("en-US", {
           maximumFractionDigits: 1,
         })
       : value;
+  };
+  const handleBoundChange = (nutrientKey, boundsType, value) => {
+    const numValue = parseFloat(value);
+    const bounds =
+      boundsType === "lower" ? adjustedLowerBounds : adjustedUpperBounds;
+    const setBounds =
+      boundsType === "lower" ? setAdjustedLowerBounds : setAdjustedUpperBounds;
+    setBounds({
+      ...bounds,
+      [nutrientKey]: isNaN(numValue) ? "" : numValue,
+    });
+    validateBounds(nutrientKey, boundsType, numValue);
+  };
+  const validateBounds = (nutrientKey, boundsType, value) => {
+    const errors = { ...validationErrors };
+    delete errors[nutrientKey];
+    if (isNaN(value) || value === "") {
+      errors[nutrientKey] = "Value must be a number";
+    } else if (value < 0) {
+      errors[nutrientKey] = "Value cannot be negative";
+    } else if (
+      boundsType === "lower" &&
+      adjustedUpperBounds[nutrientKey] !== undefined &&
+      value > adjustedUpperBounds[nutrientKey]
+    ) {
+      errors[nutrientKey] = "Lower bound cannot exceed upper bound";
+    } else if (
+      boundsType === "upper" &&
+      adjustedLowerBounds[nutrientKey] !== undefined &&
+      value < adjustedLowerBounds[nutrientKey]
+    ) {
+      errors[nutrientKey] = "Upper bound cannot be less than lower bound";
+    }
+    setValidationErrors(errors);
+  };
+  const resetBounds = () => {
+    setAdjustedLowerBounds({ ...calculationData.lower_bounds });
+    setAdjustedUpperBounds({ ...calculationData.upper_bounds });
+    setValidationErrors({});
+  };
+  const toggleEditMode = () => {
+    if (editMode) {
+      const newErrors = {};
+      Object.keys(adjustedLowerBounds).forEach((key) => {
+        if (
+          adjustedLowerBounds[key] !== undefined &&
+          adjustedUpperBounds[key] !== undefined
+        ) {
+          if (adjustedLowerBounds[key] > adjustedUpperBounds[key]) {
+            newErrors[key] = "Lower bound cannot exceed upper bound";
+          }
+        }
+      });
+      setValidationErrors(newErrors);
+      if (Object.keys(newErrors).length === 0) {
+        setEditMode(false);
+      }
+    } else {
+      setEditMode(true);
+    }
+  };
+  const handleProceed = () => {
+    if (Object.keys(validationErrors).length === 0) {
+      onProceed({
+        useCustomBounds,
+        adjustedLowerBounds: useCustomBounds
+          ? adjustedLowerBounds
+          : calculationData.lower_bounds,
+        adjustedUpperBounds: useCustomBounds
+          ? adjustedUpperBounds
+          : calculationData.upper_bounds,
+      });
+    }
   };
   const mainMetrics = [
     {
@@ -91,6 +189,83 @@ const CalculationResults = ({ calculationData, onProceed }) => {
       upperBounds={calculationData.upper_bounds}
     />
   );
+  const renderEditableBoundsTable = (nutrients) => (
+    <div className="space-y-4">
+      {Object.keys(validationErrors).length > 0 && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            Please fix the errors before saving your changes.
+          </AlertDescription>
+        </Alert>
+      )}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nutrient</TableHead>
+            <TableHead>Lower Bound</TableHead>
+            <TableHead>Upper Bound</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {nutrients.map((nutrient) => (
+            <TableRow
+              key={nutrient.key}
+              className={
+                validationErrors[nutrient.key]
+                  ? "bg-red-50 dark:bg-red-900/20"
+                  : ""
+              }
+            >
+              <TableCell>
+                {nutrient.name} ({nutrient.unit})
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={
+                    adjustedLowerBounds[nutrient.key] !== undefined
+                      ? adjustedLowerBounds[nutrient.key]
+                      : ""
+                  }
+                  onChange={(e) =>
+                    handleBoundChange(nutrient.key, "lower", e.target.value)
+                  }
+                  className={`w-[100px] ${
+                    validationErrors[nutrient.key] ? "border-red-500" : ""
+                  }`}
+                />
+              </TableCell>
+              <TableCell>
+                <Input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={
+                    adjustedUpperBounds[nutrient.key] !== undefined
+                      ? adjustedUpperBounds[nutrient.key]
+                      : ""
+                  }
+                  onChange={(e) =>
+                    handleBoundChange(nutrient.key, "upper", e.target.value)
+                  }
+                  className={`w-[100px] ${
+                    validationErrors[nutrient.key] ? "border-red-500" : ""
+                  }`}
+                />
+                {validationErrors[nutrient.key] && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {validationErrors[nutrient.key]}
+                  </p>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
   return (
     <div className="space-y-6">
       <Card>
@@ -144,55 +319,152 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                 Micronutrient Requirements
               </h3>
               <div className="flex items-center gap-2">
-                <Button
-                  variant={
-                    nutrientDisplayMode === "cards" ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => setNutrientDisplayMode("cards")}
-                >
-                  Cards
-                </Button>
-                <Button
-                  variant={
-                    nutrientDisplayMode === "table" ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => setNutrientDisplayMode("table")}
-                >
-                  Table
-                </Button>
+                {!customizingBounds && (
+                  <>
+                    <Button
+                      variant={
+                        nutrientDisplayMode === "cards" ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => setNutrientDisplayMode("cards")}
+                    >
+                      Cards
+                    </Button>
+                    <Button
+                      variant={
+                        nutrientDisplayMode === "table" ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => setNutrientDisplayMode("table")}
+                    >
+                      Table
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCustomizingBounds(true)}
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Customize Bounds
+                    </Button>
+                  </>
+                )}
+                {customizingBounds && (
+                  <>
+                    <Button variant="outline" size="sm" onClick={resetBounds}>
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Reset to Default
+                    </Button>
+                    <Button
+                      variant={editMode ? "destructive" : "outline"}
+                      size="sm"
+                      onClick={toggleEditMode}
+                    >
+                      {editMode ? (
+                        <>
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel Editing
+                        </>
+                      ) : (
+                        <>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit Values
+                        </>
+                      )}
+                    </Button>
+                    {editMode && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={toggleEditMode}
+                        disabled={Object.keys(validationErrors).length > 0}
+                      >
+                        <Check className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCustomizingBounds(false)}
+                    >
+                      <ArrowRight className="w-4 h-4 mr-2" />
+                      Back to View
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
-            <Tabs defaultValue="vitamins" className="w-full">
-              <TabsList className="w-full">
-                <TabsTrigger value="vitamins" className="flex-1">
-                  Vitamins
-                </TabsTrigger>
-                <TabsTrigger value="minerals" className="flex-1">
-                  Minerals
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="vitamins">
-                <ScrollArea className="h-[400px]">
-                  {nutrientDisplayMode === "table"
-                    ? renderNutrientTable(vitamins)
-                    : renderNutrientCards(vitamins)}
-                </ScrollArea>
-              </TabsContent>
-              <TabsContent value="minerals">
-                <ScrollArea className="h-[400px]">
-                  {nutrientDisplayMode === "table"
-                    ? renderNutrientTable(minerals)
-                    : renderNutrientCards(minerals)}
-                </ScrollArea>
-              </TabsContent>
-            </Tabs>
+            {customizingBounds ? (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2 mb-4">
+                  <input
+                    type="checkbox"
+                    id="use-custom-bounds"
+                    checked={useCustomBounds}
+                    onChange={(e) => setUseCustomBounds(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor="use-custom-bounds">
+                    Use custom bounds for optimization
+                  </Label>
+                </div>
+                <Tabs defaultValue="vitamins" className="w-full">
+                  <TabsList className="w-full">
+                    <TabsTrigger value="vitamins" className="flex-1">
+                      Vitamins
+                    </TabsTrigger>
+                    <TabsTrigger value="minerals" className="flex-1">
+                      Minerals
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="vitamins">
+                    <ScrollArea className="h-[400px]">
+                      {renderEditableBoundsTable(vitamins)}
+                    </ScrollArea>
+                  </TabsContent>
+                  <TabsContent value="minerals">
+                    <ScrollArea className="h-[400px]">
+                      {renderEditableBoundsTable(minerals)}
+                    </ScrollArea>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            ) : (
+              <Tabs defaultValue="vitamins" className="w-full">
+                <TabsList className="w-full">
+                  <TabsTrigger value="vitamins" className="flex-1">
+                    Vitamins
+                  </TabsTrigger>
+                  <TabsTrigger value="minerals" className="flex-1">
+                    Minerals
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="vitamins">
+                  <ScrollArea className="h-[400px]">
+                    {nutrientDisplayMode === "table"
+                      ? renderNutrientTable(vitamins)
+                      : renderNutrientCards(vitamins)}
+                  </ScrollArea>
+                </TabsContent>
+                <TabsContent value="minerals">
+                  <ScrollArea className="h-[400px]">
+                    {nutrientDisplayMode === "table"
+                      ? renderNutrientTable(minerals)
+                      : renderNutrientCards(minerals)}
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
+            )}
           </div>
         </CardContent>
       </Card>
-      <Button className="w-full" size="lg" onClick={onProceed}>
-        <span>Ready to meet all these goals?</span>
+      <Button className="w-full" size="lg" onClick={handleProceed}>
+        <span>
+          {useCustomBounds
+            ? "Proceed with Custom Nutrient Bounds"
+            : "Ready to meet all these goals?"}
+        </span>
         <ArrowRight className="w-5 h-5 ml-2" />
       </Button>
     </div>

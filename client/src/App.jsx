@@ -23,6 +23,9 @@ const STORAGE_KEYS = {
   USER_INFO: "goalith_user_info",
   OPTIMIZATION_RESULTS: "goalith_optimization_results",
   SHOW_CALCULATION_RESULTS: "goalith_show_calculation_results",
+  ADJUSTED_LOWER_BOUNDS: "goalith_adjusted_lower_bounds",
+  ADJUSTED_UPPER_BOUNDS: "goalith_adjusted_upper_bounds",
+  USE_CUSTOM_BOUNDS: "goalith_use_custom_bounds",
 };
 const isDuplicateFood = (newFood, existingFoods) => {
   return existingFoods.some((food) => food.fdcId === newFood.fdcId);
@@ -36,6 +39,9 @@ function App() {
   const [showCalculationResults, setShowCalculationResults] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
+  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(null);
+  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(null);
+  const [useCustomBounds, setUseCustomBounds] = useState(false);
   useEffect(() => {
     try {
       const storedFoods = localStorage.getItem(STORAGE_KEYS.SELECTED_FOODS);
@@ -43,6 +49,15 @@ function App() {
       const storedUserInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
       const previousResults = localStorage.getItem(
         STORAGE_KEYS.OPTIMIZATION_RESULTS
+      );
+      const storedLowerBounds = localStorage.getItem(
+        STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS
+      );
+      const storedUpperBounds = localStorage.getItem(
+        STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS
+      );
+      const storedUseCustomBounds = localStorage.getItem(
+        STORAGE_KEYS.USE_CUSTOM_BOUNDS
       );
       if (storedFoods) {
         setSelectedFoods(JSON.parse(storedFoods));
@@ -58,6 +73,15 @@ function App() {
         const parsedResults = JSON.parse(previousResults);
         setStoredResults(parsedResults);
         setOptimizationResults(parsedResults);
+      }
+      if (storedLowerBounds) {
+        setAdjustedLowerBounds(JSON.parse(storedLowerBounds));
+      }
+      if (storedUpperBounds) {
+        setAdjustedUpperBounds(JSON.parse(storedUpperBounds));
+      }
+      if (storedUseCustomBounds) {
+        setUseCustomBounds(JSON.parse(storedUseCustomBounds));
       }
       const showCalcResults = localStorage.getItem(
         STORAGE_KEYS.SHOW_CALCULATION_RESULTS
@@ -99,6 +123,28 @@ function App() {
       setStoredResults(optimizationResults);
     }
   }, [optimizationResults]);
+  useEffect(() => {
+    if (adjustedLowerBounds) {
+      localStorage.setItem(
+        STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS,
+        JSON.stringify(adjustedLowerBounds)
+      );
+    }
+  }, [adjustedLowerBounds]);
+  useEffect(() => {
+    if (adjustedUpperBounds) {
+      localStorage.setItem(
+        STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS,
+        JSON.stringify(adjustedUpperBounds)
+      );
+    }
+  }, [adjustedUpperBounds]);
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEYS.USE_CUSTOM_BOUNDS,
+      JSON.stringify(useCustomBounds)
+    );
+  }, [useCustomBounds]);
   const handleFormSubmit = async (formData) => {
     try {
       const calculationData = {
@@ -122,6 +168,9 @@ function App() {
       });
       setShowCalculationResults(true);
       setError(null);
+      setAdjustedLowerBounds(null);
+      setAdjustedUpperBounds(null);
+      setUseCustomBounds(false);
     } catch (error) {
       setError("Error calculating nutrition: " + error.message);
     }
@@ -135,11 +184,17 @@ function App() {
     setError(null);
     setShowLanding(true);
     setShowCalculationResults(false);
+    setAdjustedLowerBounds(null);
+    setAdjustedUpperBounds(null);
+    setUseCustomBounds(false);
     localStorage.removeItem(STORAGE_KEYS.SELECTED_FOODS);
     localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
     localStorage.removeItem(STORAGE_KEYS.USER_INFO);
     localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
     localStorage.removeItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
+    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
+    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
+    localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
   };
   const handleFoodSelect = (food) => {
     if (isDuplicateFood(food, selectedFoods)) {
@@ -187,7 +242,14 @@ function App() {
     setShowCalculationResults(true);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "true");
   };
-  const handleHideCalculationResults = () => {
+  const handleHideCalculationResults = (boundData) => {
+    if (boundData) {
+      setUseCustomBounds(boundData.useCustomBounds);
+      if (boundData.useCustomBounds) {
+        setAdjustedLowerBounds(boundData.adjustedLowerBounds);
+        setAdjustedUpperBounds(boundData.adjustedUpperBounds);
+      }
+    }
     setShowCalculationResults(false);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
   };
@@ -247,7 +309,7 @@ function App() {
           <div className="max-w-4xl mx-auto">
             <div className="mb-4">
               <Button
-                onClick={handleHideCalculationResults}
+                onClick={() => handleHideCalculationResults()}
                 variant="outline"
                 className="w-full"
               >
@@ -307,10 +369,28 @@ function App() {
                 <SelectedFoods
                   foods={selectedFoods}
                   onFoodsUpdate={setSelectedFoods}
-                  nutrientGoals={nutrientGoals}
+                  nutrientGoals={
+                    useCustomBounds
+                      ? {
+                          ...nutrientGoals,
+                          lower_bounds:
+                            adjustedLowerBounds || nutrientGoals.lower_bounds,
+                          upper_bounds:
+                            adjustedUpperBounds || nutrientGoals.upper_bounds,
+                        }
+                      : nutrientGoals
+                  }
                   userInfo={userInfo}
                   onOptimizationResults={setOptimizationResults}
                 />
+                {useCustomBounds && (
+                  <Alert className="mt-4">
+                    <AlertDescription>
+                      Using custom nutrient bounds for optimization. Visit
+                      &quot;View Nutrition Requirements&quot; to adjust them.
+                    </AlertDescription>
+                  </Alert>
+                )}
               </>
             )}
             {optimizationResults && (
