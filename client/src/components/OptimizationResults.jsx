@@ -128,6 +128,10 @@ SortableNutrientTable.propTypes = {
 };
 const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
+  const [portionsSortConfig, setPortionsSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
   const nonZeroItems = results.food_items
     .map((foodName, index) => {
       const servings = results.servings[index];
@@ -146,6 +150,55 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       };
     })
     .filter((item) => item !== null);
+  const handlePortionsSort = (key) => {
+    let direction = "ascending";
+    if (
+      portionsSortConfig.key === key &&
+      portionsSortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
+    }
+    setPortionsSortConfig({ key, direction });
+  };
+  const getSortedPortions = () => {
+    const sortableItems = [...nonZeroItems];
+    if (portionsSortConfig.key) {
+      sortableItems.sort((a, b) => {
+        let aValue, bValue;
+        if (portionsSortConfig.key === "food") {
+          aValue = a.food.toLowerCase();
+          bValue = b.food.toLowerCase();
+        } else if (portionsSortConfig.key === "servingSize") {
+          aValue = a.servingSize || 0;
+          bValue = b.servingSize || 0;
+        } else if (portionsSortConfig.key === "servings") {
+          aValue = a.servings || 0;
+          bValue = b.servings || 0;
+        } else if (portionsSortConfig.key === "totalServing") {
+          aValue = a.totalServing || 0;
+          bValue = b.totalServing || 0;
+        } else if (portionsSortConfig.key === "cost") {
+          aValue = a.cost || 0;
+          bValue = b.cost || 0;
+        }
+        if (aValue < bValue) {
+          return portionsSortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return portionsSortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  };
+  const getSortIcon = (key) => {
+    if (portionsSortConfig.key !== key) {
+      return null;
+    }
+    return portionsSortConfig.direction === "ascending" ? " ↑" : " ↓";
+  };
+  const sortedPortionItems = getSortedPortions();
   const totalDailyCost = results.total_cost_sum;
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
@@ -380,23 +433,42 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Food Item</TableHead>
-                      <TableHead className="text-center">
-                        Serving Size (g)
+                      <TableHead
+                        onClick={() => handlePortionsSort("food")}
+                        className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      >
+                        Food Item{getSortIcon("food")}
+                      </TableHead>
+                      <TableHead
+                        onClick={() => handlePortionsSort("servingSize")}
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                      >
+                        Serving Size (g){getSortIcon("servingSize")}
                       </TableHead>
                       <TableHead className="w-8 text-center text-muted-foreground"></TableHead>
-                      <TableHead className="text-center">
-                        No. of Servings
+                      <TableHead
+                        onClick={() => handlePortionsSort("servings")}
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                      >
+                        No. of Servings{getSortIcon("servings")}
                       </TableHead>
                       <TableHead className="w-8 text-center text-muted-foreground"></TableHead>
-                      <TableHead className="text-center">
-                        Total Serving (g)
+                      <TableHead
+                        onClick={() => handlePortionsSort("totalServing")}
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                      >
+                        Total Serving (g){getSortIcon("totalServing")}
                       </TableHead>
-                      <TableHead className="text-center">Cost</TableHead>
+                      <TableHead
+                        onClick={() => handlePortionsSort("cost")}
+                        className="text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                      >
+                        Cost{getSortIcon("cost")}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {nonZeroItems.map((item, index) => (
+                    {sortedPortionItems.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell className="font-medium">
                           {item.food}
