@@ -252,11 +252,29 @@ def optimize():
                 for food in selected_foods_data
             ]
         )
-        lower_bounds, upper_bounds = nutrient_bounds(age, gender)
+        custom_lower_bounds = None
+        custom_upper_bounds = None
+        if "lower_bounds" in nutrient_goals and nutrient_goals["lower_bounds"]:
+            custom_lower_bounds = pd.Series(nutrient_goals["lower_bounds"])
+        if "upper_bounds" in nutrient_goals and nutrient_goals["upper_bounds"]:
+            custom_upper_bounds = pd.Series(nutrient_goals["upper_bounds"])
+        if custom_lower_bounds is not None and custom_upper_bounds is not None:
+            lower_bounds = custom_lower_bounds
+            upper_bounds = custom_upper_bounds
+            app.logger.info("Using custom nutrient bounds from request")
+        else:
+            lower_bounds, upper_bounds = nutrient_bounds(age, gender)
+            app.logger.info("Using default nutrient bounds")
         if smoking_status == "yes":
             vitamin_c_key = "Vitamin C (mg)"
             if vitamin_c_key in lower_bounds:
-                lower_bounds[vitamin_c_key] = float(lower_bounds[vitamin_c_key]) + 35.0
+                if custom_lower_bounds is None:
+                    lower_bounds[vitamin_c_key] = (
+                        float(lower_bounds[vitamin_c_key]) + 35.0
+                    )
+                    app.logger.info(
+                        f"Adjusted Vitamin C for smoking: {lower_bounds[vitamin_c_key]}"
+                    )
         overflow_percentages = list(range(0, 11))
         nutrients = ["protein", "carbohydrate", "fats", "fiber"]
         all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
@@ -339,6 +357,7 @@ def optimize():
                     "total_cost_sum": float(np.sum(total_cost)),
                     "overflow_by_nutrient": overflow_by_nutrient,
                     "total_overflow": sum(combo),
+                    "using_custom_bounds": custom_lower_bounds is not None,
                 }
                 return jsonify({"success": True, "result": result_data})
         return jsonify(
