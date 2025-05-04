@@ -15,6 +15,10 @@ const BlinkingDot = () => (
 );
 export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
   const handleRowClick = (nutrient) => {
     const key = `${nutrient.name} (${nutrient.unit})`;
     setSelectedNutrient({
@@ -24,19 +28,84 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
       unit: nutrient.unit,
     });
   };
+  const handleSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+  const getSortedNutrients = () => {
+    const sortableNutrients = [...nutrients];
+    if (sortConfig.key) {
+      sortableNutrients.sort((a, b) => {
+        let aValue, bValue;
+        const keyA = `${a.name} (${a.unit})`;
+        const keyB = `${b.name} (${b.unit})`;
+        if (sortConfig.key === "nutrient") {
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+        } else if (sortConfig.key === "rda") {
+          aValue = lowerBounds[keyA] || 0;
+          bValue = lowerBounds[keyB] || 0;
+        } else if (sortConfig.key === "ul") {
+          aValue = upperBounds[keyA] || 0;
+          bValue = upperBounds[keyB] || 0;
+        } else if (sortConfig.key === "unit") {
+          aValue = a.unit.toLowerCase();
+          bValue = b.unit.toLowerCase();
+        }
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableNutrients;
+  };
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return null;
+    }
+    return sortConfig.direction === "ascending" ? " ↑" : " ↓";
+  };
+  const sortedNutrients = getSortedNutrients();
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nutrient</TableHead>
-            <TableHead className="text-right">RDA</TableHead>
-            <TableHead className="text-right">UL</TableHead>
-            <TableHead className="text-right">Unit</TableHead>
+            <TableHead
+              onClick={() => handleSort("nutrient")}
+              className="cursor-pointer hover:bg-muted/50 transition-colors"
+            >
+              Nutrient{getSortIcon("nutrient")}
+            </TableHead>
+            <TableHead
+              onClick={() => handleSort("rda")}
+              className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+            >
+              RDA{getSortIcon("rda")}
+            </TableHead>
+            <TableHead
+              onClick={() => handleSort("ul")}
+              className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+            >
+              UL{getSortIcon("ul")}
+            </TableHead>
+            <TableHead
+              onClick={() => handleSort("unit")}
+              className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+            >
+              Unit{getSortIcon("unit")}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {nutrients.map((nutrient, index) => {
+          {sortedNutrients.map((nutrient, index) => {
             const key = `${nutrient.name} (${nutrient.unit})`;
             return (
               <TableRow

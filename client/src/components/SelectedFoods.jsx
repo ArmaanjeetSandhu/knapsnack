@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { Calculator, Download, ListCheck, Trash2 } from "lucide-react";
 import PropTypes from "prop-types";
-import { Trash2, Calculator, Download } from "lucide-react";
-import api from "../services/api";
+import { useState } from "react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import {
   Table,
   TableBody,
@@ -19,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import api from "../services/api";
 const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   const adjustedNutrients = {};
   for (const [nutrient, value] of Object.entries(nutrients)) {
@@ -184,9 +184,12 @@ const SelectedFoods = ({
   };
   return (
     <Card className="mb-6 shadow-lg">
-      <CardHeader className="bg-primary">
+      <CardHeader className="bg-primary rounded-t-lg">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-white">Selected Foods</CardTitle>
+          <CardTitle className="text-white flex items-center gap-2">
+            <ListCheck className="w-5 h-5" />
+            Selected Foods
+          </CardTitle>
           {foods.length > 0 && (
             <Button
               variant="secondary"

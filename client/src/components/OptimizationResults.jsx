@@ -33,20 +33,110 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import handleExportCSV from "./ExportHandler";
+const SortableNutrientTable = ({ nutrients, formatValue }) => {
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+  const handleSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+  const getSortedNutrients = () => {
+    const sortableNutrients = [...nutrients];
+    if (sortConfig.key) {
+      sortableNutrients.sort((a, b) => {
+        let aValue, bValue;
+        if (sortConfig.key === "nutrient") {
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+        } else if (sortConfig.key === "amount") {
+          aValue = a.value || 0;
+          bValue = b.value || 0;
+        } else if (sortConfig.key === "unit") {
+          aValue = a.unit.toLowerCase();
+          bValue = b.unit.toLowerCase();
+        }
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableNutrients;
+  };
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return null;
+    }
+    return sortConfig.direction === "ascending" ? " ↑" : " ↓";
+  };
+  const sortedNutrients = getSortedNutrients();
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead
+            onClick={() => handleSort("nutrient")}
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+          >
+            Nutrient{getSortIcon("nutrient")}
+          </TableHead>
+          <TableHead
+            onClick={() => handleSort("amount")}
+            className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+          >
+            Amount{getSortIcon("amount")}
+          </TableHead>
+          <TableHead
+            onClick={() => handleSort("unit")}
+            className="text-right cursor-pointer hover:bg-muted/50 transition-colors"
+          >
+            Unit{getSortIcon("unit")}
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {sortedNutrients.map((nutrient, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-medium">{nutrient.name}</TableCell>
+            <TableCell className="text-right">
+              {formatValue(nutrient.value)}
+            </TableCell>
+            <TableCell className="text-right">{nutrient.unit}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+SortableNutrientTable.propTypes = {
+  nutrients: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      value: PropTypes.number,
+      unit: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  formatValue: PropTypes.func.isRequired,
+};
 const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
-
   const nonZeroItems = results.food_items
     .map((foodName, index) => {
       const servings = results.servings[index];
       if (servings <= 0) return null;
       const food = selectedFoods.find((f) => f.description === foodName);
       if (!food) return null;
-
       const servingSize = parseFloat(food.servingSize) || 100;
       const totalServing = servings * servingSize;
       const cost = results.total_cost[index];
-
       return {
         food: foodName,
         servings,
@@ -56,7 +146,6 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       };
     })
     .filter((item) => item !== null);
-
   const totalDailyCost = results.total_cost_sum;
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
@@ -177,26 +266,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     handleExportCSV(results, selectedFoods);
   };
   const renderNutrientTable = (nutrients) => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nutrient</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
-          <TableHead className="text-right">Unit</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {nutrients.map((nutrient, index) => (
-          <TableRow key={index}>
-            <TableCell className="font-medium">{nutrient.name}</TableCell>
-            <TableCell className="text-right">
-              {formatValue(nutrient.value)}
-            </TableCell>
-            <TableCell className="text-right">{nutrient.unit}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <SortableNutrientTable nutrients={nutrients} formatValue={formatValue} />
   );
   const renderNutrientCards = (nutrients) => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
