@@ -35,6 +35,10 @@ const SelectedFoods = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
   };
@@ -182,6 +186,49 @@ const SelectedFoods = ({
     link.click();
     document.body.removeChild(link);
   };
+  const handleSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+  const getSortedFoods = () => {
+    const sortableFoods = [...foods];
+    if (sortConfig.key) {
+      sortableFoods.sort((a, b) => {
+        let aValue, bValue;
+        if (sortConfig.key === "food") {
+          aValue = a.description.toLowerCase();
+          bValue = b.description.toLowerCase();
+        } else if (sortConfig.key === "price") {
+          aValue = parseFloat(a.price) || 0;
+          bValue = parseFloat(b.price) || 0;
+        } else if (sortConfig.key === "servingSize") {
+          aValue = parseFloat(a.servingSize) || 0;
+          bValue = parseFloat(b.servingSize) || 0;
+        } else if (sortConfig.key === "maxServing") {
+          aValue = parseFloat(a.maxServing) || 0;
+          bValue = parseFloat(b.maxServing) || 0;
+        }
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableFoods;
+  };
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) {
+      return null;
+    }
+    return sortConfig.direction === "ascending" ? " ↑" : " ↓";
+  };
+  const sortedFoods = getSortedFoods();
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader className="bg-primary rounded-t-lg">
@@ -215,15 +262,35 @@ const SelectedFoods = ({
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Food Item</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Serving Size (g)</TableHead>
-                    <TableHead>Max Serving (g)</TableHead>
+                    <TableHead
+                      onClick={() => handleSort("food")}
+                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    >
+                      Food Item{getSortIcon("food")}
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("price")}
+                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    >
+                      Price{getSortIcon("price")}
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("servingSize")}
+                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    >
+                      Serving Size (g){getSortIcon("servingSize")}
+                    </TableHead>
+                    <TableHead
+                      onClick={() => handleSort("maxServing")}
+                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    >
+                      Max Serving (g){getSortIcon("maxServing")}
+                    </TableHead>
                     <TableHead className="w-[100px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {foods.map((food) => (
+                  {sortedFoods.map((food) => (
                     <TableRow key={food.fdcId}>
                       <TableCell className="font-medium">
                         {food.description}
