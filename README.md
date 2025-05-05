@@ -12,7 +12,7 @@ graph TD
     subgraph 981["External Systems"]
         995["USDA FoodData Central API<br>External Service"]
     end
-    subgraph 982["Goal-Ith System"]
+    subgraph 982["Goal-ith System"]
         subgraph 983["Backend API"]
             990["API Server<br>Flask/Python"]
             991["Calculation Service<br>Python"]
@@ -75,7 +75,7 @@ graph TD
       - 📄 `CalculationResults.jsx`
       - 📄 `CalorieTargetSlider.jsx`
       - 📄 `ExportHandler.jsx`
-      - 📄 `Feasibility Analysis.jsx`
+      - 📄 `FeasibilityAnalysis.jsx`
       - 📄 `FoodSearch.jsx`
       - 📄 `GitHubIcon.jsx`
       - 📄 `LandingPage.jsx`
