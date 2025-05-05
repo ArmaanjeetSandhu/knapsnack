@@ -3,14 +3,12 @@ import mimetypes
 import os
 from itertools import product
 from typing import Dict, List
-
 import numpy as np
 import pandas as pd
 import pulp
 import requests
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
-
 from server.utils import (
     calculate_bmr_mifflin_st_jeor,
     calculate_macros,
@@ -222,6 +220,101 @@ def calculate():
         return jsonify({"error": "An internal server error has occurred."}), 500
 
 
+def perform_feasibility_analysis(
+    selected_foods, max_servings, lower_bounds, upper_bounds, nutrient_goals
+):
+    if isinstance(lower_bounds, pd.Series):
+        lower_bounds = lower_bounds.to_dict()
+    if isinstance(upper_bounds, pd.Series):
+        upper_bounds = upper_bounds.to_dict()
+    lower_bounds = {k: float(v) for k, v in lower_bounds.items() if pd.notna(v)}
+    upper_bounds = {k: float(v) for k, v in upper_bounds.items() if pd.notna(v)}
+    lower_bound_issues = []
+    upper_bound_issues = []
+    for nutrient, min_value in lower_bounds.items():
+        try:
+            min_value = float(min_value)
+            if np.isnan(min_value):
+                continue
+        except (ValueError, TypeError):
+            continue
+        max_possible = 0
+        for i, food in enumerate(selected_foods):
+            if nutrient in food["nutrients"]:
+                max_possible += food["nutrients"][nutrient] * max_servings[i]
+        if max_possible < min_value:
+            shortfall = min_value - max_possible
+            shortfall_percentage = (shortfall / min_value) * 100 if min_value > 0 else 0
+            lower_bound_issues.append(
+                {
+                    "nutrient": nutrient,
+                    "required": min_value,
+                    "achievable": max_possible,
+                    "shortfall": shortfall,
+                    "shortfallPercentage": shortfall_percentage,
+                }
+            )
+    for nutrient, max_value in upper_bounds.items():
+        try:
+            max_value = float(max_value)
+            if np.isnan(max_value):
+                continue
+        except (ValueError, TypeError):
+            continue
+        min_possible = 0
+        has_nutrient = False
+        for food in selected_foods:
+            if nutrient in food["nutrients"] and food["nutrients"][nutrient] > 0:
+                has_nutrient = True
+                min_possible += food["nutrients"][nutrient]
+        if has_nutrient and min_possible > max_value:
+            excess = min_possible - max_value
+            excess_percentage = (excess / max_value) * 100 if max_value > 0 else 0
+            upper_bound_issues.append(
+                {
+                    "nutrient": nutrient,
+                    "limit": max_value,
+                    "minimum": min_possible,
+                    "excess": excess,
+                    "excessPercentage": excess_percentage,
+                }
+            )
+    for nutrient in ["protein", "carbohydrate", "fats", "fiber"]:
+        if nutrient in nutrient_goals:
+            min_value = nutrient_goals[nutrient]
+            max_possible = 0
+            for i, food in enumerate(selected_foods):
+                if nutrient in food["nutrients"]:
+                    max_possible += food["nutrients"][nutrient] * max_servings[i]
+            if max_possible < min_value:
+                shortfall = min_value - max_possible
+                shortfall_percentage = (
+                    (shortfall / min_value) * 100 if min_value > 0 else 0
+                )
+                lower_bound_issues.append(
+                    {
+                        "nutrient": nutrient,
+                        "required": min_value,
+                        "achievable": max_possible,
+                        "shortfall": shortfall,
+                        "shortfallPercentage": shortfall_percentage,
+                    }
+                )
+    is_lower_bounds_feasible = len(lower_bound_issues) == 0
+    is_upper_bounds_feasible = len(upper_bound_issues) == 0
+    is_feasible = is_lower_bounds_feasible and is_upper_bounds_feasible
+    lower_bound_issues.sort(key=lambda x: x["shortfallPercentage"], reverse=True)
+    upper_bound_issues.sort(key=lambda x: x["excessPercentage"], reverse=True)
+    return {
+        "analysis": "Feasibility analysis completed",
+        "isLowerBoundsFeasible": is_lower_bounds_feasible,
+        "isUpperBoundsFeasible": is_upper_bounds_feasible,
+        "isFeasible": is_feasible,
+        "lowerBoundIssues": lower_bound_issues,
+        "upperBoundIssues": upper_bound_issues,
+    }
+
+
 @app.route("/api/optimize", methods=["POST"])
 def optimize():
     try:
@@ -275,6 +368,21 @@ def optimize():
                     app.logger.info(
                         f"Adjusted Vitamin C for smoking: {lower_bounds[vitamin_c_key]}"
                     )
+        feasibility_analysis = perform_feasibility_analysis(
+            selected_foods_data,
+            max_servings,
+            lower_bounds,
+            upper_bounds,
+            nutrient_goals,
+        )
+        if not feasibility_analysis["isFeasible"]:
+            return jsonify(
+                {
+                    "success": False,
+                    "message": "Diet optimization is not feasible with the selected foods and nutrient goals.",
+                    "feasibilityAnalysis": feasibility_analysis,
+                }
+            )
         overflow_percentages = list(range(0, 11))
         nutrients = ["protein", "carbohydrate", "fats", "fiber"]
         all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
@@ -364,6 +472,7 @@ def optimize():
             {
                 "success": False,
                 "message": "Optimization failed! No feasible solution found even with maximum allowed nutrient flexibility.",
+                "feasibilityAnalysis": feasibility_analysis,
             }
         )
     except Exception as e:

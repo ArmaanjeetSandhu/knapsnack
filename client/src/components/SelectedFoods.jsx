@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "../components/ui/table";
 import api from "../services/api";
+import FeasibilityAnalysis from "./FeasibilityAnalysis";
 const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   const adjustedNutrients = {};
   for (const [nutrient, value] of Object.entries(nutrients)) {
@@ -39,8 +40,10 @@ const SelectedFoods = ({
     key: null,
     direction: "ascending",
   });
+  const [feasibilityData, setFeasibilityData] = useState(null);
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
+    setFeasibilityData(null);
   };
   const handleInputChange = (fdcId, field, value) => {
     onFoodsUpdate(
@@ -51,6 +54,7 @@ const SelectedFoods = ({
         return food;
       })
     );
+    setFeasibilityData(null);
   };
   const handleOptimize = async () => {
     if (!foods.length) {
@@ -73,6 +77,7 @@ const SelectedFoods = ({
     }
     setLoading(true);
     setError(null);
+    setFeasibilityData(null);
     try {
       const foodsData = foods.map((food) => ({
         fdcId: food.fdcId,
@@ -95,6 +100,8 @@ const SelectedFoods = ({
       const result = await api.optimizeDiet(optimizationData);
       if (result.success) {
         onOptimizationResults(result.result);
+      } else if (result.feasibilityAnalysis) {
+        setFeasibilityData(result.feasibilityAnalysis);
       } else {
         setError(result.message || "Optimization failed");
       }
@@ -229,6 +236,9 @@ const SelectedFoods = ({
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
   const sortedFoods = getSortedFoods();
+  if (feasibilityData) {
+    return <FeasibilityAnalysis feasibilityData={feasibilityData} />;
+  }
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader className="bg-primary rounded-t-lg">

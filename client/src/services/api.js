@@ -44,12 +44,21 @@ const api = {
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Optimization failed");
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      if (result.feasibilityAnalysis) {
+        return {
+          success: false,
+          message: result.message || "Optimization failed",
+          feasibilityAnalysis: result.feasibilityAnalysis,
+        };
+      }
+
+      throw new Error(result.error || result.message || "Optimization failed");
     }
 
-    return response.json();
+    return result;
   },
 };
 

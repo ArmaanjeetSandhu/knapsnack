@@ -7,87 +7,36 @@ Goal - $i^{th}$ is a Python-based tool that uses linear programming to create pe
 ## 🛠️ System Architecture
 
 ```mermaid
-graph TB
-    User((User))
-
-    subgraph "Frontend Container"
-        WebApp["Web Application<br>React + Vite"]
-
-        subgraph "Core Components"
-            AppComponent["App Component<br>React"]
-            LandingPage["Landing Page<br>React"]
-            PersonalForm["Personal Info Form<br>React + React Hook Form"]
-            FoodSearchComp["Food Search<br>React"]
-            ResultsComp["Results Display<br>React"]
+graph TD
+    985["User<br>External Actor"]
+    subgraph 981["External Systems"]
+        995["USDA FoodData Central API<br>External Service"]
+    end
+    subgraph 982["Goal-Ith System"]
+        subgraph 983["Backend API"]
+            990["API Server<br>Flask/Python"]
+            991["Calculation Service<br>Python"]
+            992["Optimization Service<br>Python/PuLP"]
+            993["Food Data Service<br>Python/Requests"]
+            994["Nutrient Database<br>CSV/Pandas"]
+            %% Edges at this level (grouped by source)
+            990["API Server<br>Flask/Python"] -->|Handles /optimize requests using| 992["Optimization Service<br>Python/PuLP"]
+            990["API Server<br>Flask/Python"] -->|Handles /search requests using| 993["Food Data Service<br>Python/Requests"]
+            991["Calculation Service<br>Python"] -->|Reads data from| 994["Nutrient Database<br>CSV/Pandas"]
+            992["Optimization Service<br>Python/PuLP"] -->|Reads data from| 994["Nutrient Database<br>CSV/Pandas"]
         end
-
-        subgraph "UI Components"
-            ThemeToggle["Theme Toggle<br>React"]
-            Navigation["Navigation Menu<br>React"]
-            Forms["Form Controls<br>Shadcn/ui"]
-            Alerts["Alert System<br>Shadcn/ui"]
-        end
-
-        subgraph "Service Layer"
-            APIService["API Service<br>JavaScript"]
-            ConfigService["Config Service<br>JavaScript"]
+        subgraph 984["Frontend Application"]
+            986["Client Application<br>React/Vite"]
+            987["API Service Client<br>JavaScript"]
+            988["Client Configuration<br>JavaScript/JSON"]
+            989["UI Components<br>React/Tailwind"]
+            %% Edges at this level (grouped by source)
+            986["Client Application<br>React/Vite"] -->|Makes API calls via| 987["API Service Client<br>JavaScript"]
         end
     end
-
-    subgraph "Backend Container"
-        FlaskServer["API Server<br>Flask + CORS"]
-
-        subgraph "API Endpoints"
-            SearchEndpoint["Food Search API<br>Flask Route"]
-            CalcEndpoint["Calculation API<br>Flask Route"]
-            OptimizeEndpoint["Optimization API<br>Flask Route"]
-        end
-
-        subgraph "Core Services"
-            NutrientCalc["Nutrient Calculator<br>Python"]
-            DietOptimizer["Diet Optimizer<br>SciPy"]
-            DataProcessor["Data Processor<br>Pandas"]
-        end
-
-        subgraph "Data Sources"
-            NutrientDB["Nutrient Database<br>CSV Files"]
-            USDAAPI["USDA Food Database<br>External API"]
-        end
-    end
-
-    %% Container Level Relationships
-    User -->|"Interacts with"| WebApp
-    WebApp -->|"Makes API calls"| FlaskServer
-    FlaskServer -->|"Queries"| USDAAPI
-    FlaskServer -->|"Reads"| NutrientDB
-
-    %% Frontend Component Relationships
-    AppComponent -->|"Renders"| LandingPage
-    AppComponent -->|"Renders"| PersonalForm
-    AppComponent -->|"Renders"| FoodSearchComp
-    AppComponent -->|"Renders"| ResultsComp
-    AppComponent -->|"Uses"| Navigation
-    AppComponent -->|"Uses"| ThemeToggle
-    AppComponent -->|"Uses"| Alerts
-    PersonalForm -->|"Uses"| Forms
-    FoodSearchComp -->|"Uses"| Forms
-    APIService -->|"Uses"| ConfigService
-    AppComponent -->|"Uses"| APIService
-
-    %% Backend Component Relationships
-    SearchEndpoint -->|"Uses"| DataProcessor
-    CalcEndpoint -->|"Uses"| NutrientCalc
-    OptimizeEndpoint -->|"Uses"| DietOptimizer
-    NutrientCalc -->|"Uses"| DataProcessor
-    DietOptimizer -->|"Uses"| DataProcessor
-    DataProcessor -->|"Reads"| NutrientDB
-    SearchEndpoint -->|"Queries"| USDAAPI
-
-    classDef container fill:#326ce5,stroke:#fff,stroke-width:2px,color:#fff
-    classDef component fill:#fff,stroke:#326ce5,stroke-width:2px,color:#326ce5
-
-    class WebApp,FlaskServer container
-    class AppComponent,LandingPage,PersonalForm,FoodSearchComp,ResultsComp,ThemeToggle,Navigation,Forms,Alerts,APIService,ConfigService,SearchEndpoint,CalcEndpoint,OptimizeEndpoint,NutrientCalc,DietOptimizer,DataProcessor,NutrientDB,USDAAPI component
+    %% Edges at this level (grouped by source)
+    985["User<br>External Actor"] -->|Uses| 986["Client Application<br>React/Vite"]
+    993["Food Data Service<br>Python/Requests"] -->|Fetches food data from| 995["USDA FoodData Central API<br>External Service"]
 ```
 
 ## 📂 Project Structure
@@ -126,6 +75,7 @@ graph TB
       - 📄 `CalculationResults.jsx`
       - 📄 `CalorieTargetSlider.jsx`
       - 📄 `ExportHandler.jsx`
+      - 📄 `Feasibility Analysis.jsx`
       - 📄 `FoodSearch.jsx`
       - 📄 `GitHubIcon.jsx`
       - 📄 `LandingPage.jsx`
