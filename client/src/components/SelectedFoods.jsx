@@ -270,7 +270,7 @@ const SelectedFoods = ({
           <>
             <div className="rounded-md border">
               <Table>
-                <TableHeader>
+                <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
                   <TableRow>
                     <TableHead
                       onClick={() => handleSort("food")}

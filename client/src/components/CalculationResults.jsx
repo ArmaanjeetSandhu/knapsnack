@@ -1,5 +1,6 @@
 import {
   Activity,
+  ArrowLeft,
   ArrowRight,
   Beaker,
   Beef,
@@ -198,72 +199,74 @@ const CalculationResults = ({ calculationData, onProceed }) => {
           </AlertDescription>
         </Alert>
       )}
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nutrient</TableHead>
-            <TableHead>Lower Bound</TableHead>
-            <TableHead>Upper Bound</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {nutrients.map((nutrient) => (
-            <TableRow
-              key={nutrient.key}
-              className={
-                validationErrors[nutrient.key]
-                  ? "bg-red-50 dark:bg-red-900/20"
-                  : ""
-              }
-            >
-              <TableCell>
-                {nutrient.name} ({nutrient.unit})
-              </TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={
-                    adjustedLowerBounds[nutrient.key] !== undefined
-                      ? adjustedLowerBounds[nutrient.key]
-                      : ""
-                  }
-                  onChange={(e) =>
-                    handleBoundChange(nutrient.key, "lower", e.target.value)
-                  }
-                  className={`w-[100px] ${
-                    validationErrors[nutrient.key] ? "border-red-500" : ""
-                  }`}
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={
-                    adjustedUpperBounds[nutrient.key] !== undefined
-                      ? adjustedUpperBounds[nutrient.key]
-                      : ""
-                  }
-                  onChange={(e) =>
-                    handleBoundChange(nutrient.key, "upper", e.target.value)
-                  }
-                  className={`w-[100px] ${
-                    validationErrors[nutrient.key] ? "border-red-500" : ""
-                  }`}
-                />
-                {validationErrors[nutrient.key] && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {validationErrors[nutrient.key]}
-                  </p>
-                )}
-              </TableCell>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+            <TableRow>
+              <TableHead>Nutrient</TableHead>
+              <TableHead>Lower Bound</TableHead>
+              <TableHead>Upper Bound</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {nutrients.map((nutrient) => (
+              <TableRow
+                key={nutrient.key}
+                className={
+                  validationErrors[nutrient.key]
+                    ? "bg-red-50 dark:bg-red-900/20"
+                    : ""
+                }
+              >
+                <TableCell>
+                  {nutrient.name} ({nutrient.unit})
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={
+                      adjustedLowerBounds[nutrient.key] !== undefined
+                        ? adjustedLowerBounds[nutrient.key]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleBoundChange(nutrient.key, "lower", e.target.value)
+                    }
+                    className={`w-[100px] ${
+                      validationErrors[nutrient.key] ? "border-red-500" : ""
+                    }`}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={
+                      adjustedUpperBounds[nutrient.key] !== undefined
+                        ? adjustedUpperBounds[nutrient.key]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleBoundChange(nutrient.key, "upper", e.target.value)
+                    }
+                    className={`w-[100px] ${
+                      validationErrors[nutrient.key] ? "border-red-500" : ""
+                    }`}
+                  />
+                  {validationErrors[nutrient.key] && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {validationErrors[nutrient.key]}
+                    </p>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
   return (
@@ -345,7 +348,7 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                       onClick={() => setCustomizingBounds(true)}
                     >
                       <Edit className="w-4 h-4 mr-2" />
-                      Customize Bounds
+                      Customize
                     </Button>
                   </>
                 )}
@@ -353,7 +356,7 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                   <>
                     <Button variant="outline" size="sm" onClick={resetBounds}>
                       <RotateCcw className="w-4 h-4 mr-2" />
-                      Reset to Default
+                      Reset
                     </Button>
                     <Button
                       variant={editMode ? "destructive" : "outline"}
@@ -363,12 +366,12 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                       {editMode ? (
                         <>
                           <X className="w-4 h-4 mr-2" />
-                          Cancel Editing
+                          Cancel
                         </>
                       ) : (
                         <>
                           <Edit className="w-4 h-4 mr-2" />
-                          Edit Values
+                          Edit
                         </>
                       )}
                     </Button>
@@ -380,7 +383,7 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                         disabled={Object.keys(validationErrors).length > 0}
                       >
                         <Check className="w-4 h-4 mr-2" />
-                        Save Changes
+                        Save
                       </Button>
                     )}
                     <Button
@@ -388,8 +391,8 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                       size="sm"
                       onClick={() => setCustomizingBounds(false)}
                     >
-                      <ArrowRight className="w-4 h-4 mr-2" />
-                      Back to View
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Back
                     </Button>
                   </>
                 )}
@@ -419,12 +422,12 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="vitamins">
-                    <ScrollArea className="h-[400px]">
+                    <ScrollArea className="h-[400px] relative">
                       {renderEditableBoundsTable(vitamins)}
                     </ScrollArea>
                   </TabsContent>
                   <TabsContent value="minerals">
-                    <ScrollArea className="h-[400px]">
+                    <ScrollArea className="h-[400px] relative">
                       {renderEditableBoundsTable(minerals)}
                     </ScrollArea>
                   </TabsContent>

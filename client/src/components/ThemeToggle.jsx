@@ -26,7 +26,7 @@ const ThemeToggle = () => {
       {isDark ? (
         <Sun className="h-5 w-5 text-yellow-500 transition-all" />
       ) : (
-        <Moon className="h-5 w-5 text-slate-900 transition-all" />
+        <Moon className="h-5 w-5 text-white-900 transition-all" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

@@ -181,7 +181,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   };
   return (
     <Card className="mb-6 shadow-lg">
-      <CardHeader className="bg-primary">
+      <CardHeader className="bg-primary rounded-t-lg">
         <CardTitle className="text-white flex items-center gap-2">
           <Search className="w-5 h-5" />
           Search Foods

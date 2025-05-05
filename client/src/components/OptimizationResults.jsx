@@ -80,7 +80,7 @@ const SortableNutrientTable = ({ nutrients, formatValue }) => {
   const sortedNutrients = getSortedNutrients();
   return (
     <Table>
-      <TableHeader>
+      <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
         <TableRow>
           <TableHead
             onClick={() => handleSort("nutrient")}
@@ -431,7 +431,9 @@ const OptimizationResults = ({ results, selectedFoods }) => {
               </h3>
               <div className="rounded-md border">
                 <Table>
-                  <TableHeader>
+                  <TableHeader
+                    style={{ position: "sticky", top: 0, zIndex: 10 }}
+                  >
                     <TableRow>
                       <TableHead
                         onClick={() => handlePortionsSort("food")}
@@ -554,14 +556,14 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="vitamins">
-                  <ScrollArea className="h-[400px]">
+                  <ScrollArea className="h-[400px] relative">
                     {nutrientDisplayMode === "table"
                       ? renderNutrientTable(vitamins)
                       : renderNutrientCards(vitamins)}
                   </ScrollArea>
                 </TabsContent>
                 <TabsContent value="minerals">
-                  <ScrollArea className="h-[400px]">
+                  <ScrollArea className="h-[400px] relative">
                     {nutrientDisplayMode === "table"
                       ? renderNutrientTable(minerals)
                       : renderNutrientCards(minerals)}

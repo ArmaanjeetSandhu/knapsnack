@@ -75,62 +75,64 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
   const sortedNutrients = getSortedNutrients();
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead
-              onClick={() => handleSort("nutrient")}
-              className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
-            >
-              Nutrient{getSortIcon("nutrient")}
-            </TableHead>
-            <TableHead
-              onClick={() => handleSort("rda")}
-              className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
-            >
-              RDA{getSortIcon("rda")}
-            </TableHead>
-            <TableHead
-              onClick={() => handleSort("ul")}
-              className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
-            >
-              UL{getSortIcon("ul")}
-            </TableHead>
-            <TableHead
-              onClick={() => handleSort("unit")}
-              className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
-            >
-              Unit{getSortIcon("unit")}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedNutrients.map((nutrient, index) => {
-            const key = `${nutrient.name} (${nutrient.unit})`;
-            return (
-              <TableRow
-                key={index}
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => handleRowClick(nutrient)}
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
+            <TableRow>
+              <TableHead
+                onClick={() => handleSort("nutrient")}
+                className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
               >
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-2">
-                    <BlinkingDot />
-                    <span>{nutrient.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  {lowerBounds[key]?.toLocaleString() ?? "N/A"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {upperBounds[key]?.toLocaleString() ?? "N/A"}
-                </TableCell>
-                <TableCell className="text-right">{nutrient.unit}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+                Nutrient{getSortIcon("nutrient")}
+              </TableHead>
+              <TableHead
+                onClick={() => handleSort("rda")}
+                className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
+              >
+                RDA{getSortIcon("rda")}
+              </TableHead>
+              <TableHead
+                onClick={() => handleSort("ul")}
+                className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
+              >
+                UL{getSortIcon("ul")}
+              </TableHead>
+              <TableHead
+                onClick={() => handleSort("unit")}
+                className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
+              >
+                Unit{getSortIcon("unit")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedNutrients.map((nutrient, index) => {
+              const key = `${nutrient.name} (${nutrient.unit})`;
+              return (
+                <TableRow
+                  key={index}
+                  className="cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleRowClick(nutrient)}
+                >
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <BlinkingDot />
+                      <span>{nutrient.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {lowerBounds[key]?.toLocaleString() ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {upperBounds[key]?.toLocaleString() ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">{nutrient.unit}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
       {selectedNutrient && (
         <NutrientInfoPopup
           isOpen={true}
