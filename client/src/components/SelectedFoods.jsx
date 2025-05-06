@@ -306,61 +306,93 @@ const SelectedFoods = ({
                         {food.description}
                       </TableCell>
                       <TableCell>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          value={food.price}
-                          onChange={(e) =>
-                            handleInputChange(
-                              food.fdcId,
-                              "price",
-                              e.target.value
-                            )
-                          }
-                          className="w-[100px]"
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            htmlFor={`price-${food.fdcId}`}
+                            className="sr-only"
+                          >
+                            Price for {food.description}
+                          </label>
+                          <Input
+                            id={`price-${food.fdcId}`}
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={food.price}
+                            onChange={(e) =>
+                              handleInputChange(
+                                food.fdcId,
+                                "price",
+                                e.target.value
+                              )
+                            }
+                            className="w-[100px]"
+                            aria-label={`Price for ${food.description}`}
+                          />
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <Input
-                          type="number"
-                          step="1"
-                          min="0"
-                          value={food.servingSize}
-                          onChange={(e) =>
-                            handleInputChange(
-                              food.fdcId,
-                              "servingSize",
-                              e.target.value
-                            )
-                          }
-                          className="w-[100px]"
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            htmlFor={`serving-size-${food.fdcId}`}
+                            className="sr-only"
+                          >
+                            Serving Size in grams for {food.description}
+                          </label>
+                          <Input
+                            id={`serving-size-${food.fdcId}`}
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={food.servingSize}
+                            onChange={(e) =>
+                              handleInputChange(
+                                food.fdcId,
+                                "servingSize",
+                                e.target.value
+                              )
+                            }
+                            className="w-[100px]"
+                            aria-label={`Serving Size in grams for ${food.description}`}
+                          />
+                        </div>
                       </TableCell>
                       <TableCell>
-                        <Input
-                          type="number"
-                          step="1"
-                          min="0"
-                          value={food.maxServing || 500}
-                          onChange={(e) =>
-                            handleInputChange(
-                              food.fdcId,
-                              "maxServing",
-                              e.target.value
-                            )
-                          }
-                          className="w-[100px]"
-                          placeholder="500"
-                        />
+                        <div className="flex flex-col">
+                          <label
+                            htmlFor={`max-serving-${food.fdcId}`}
+                            className="sr-only"
+                          >
+                            Maximum Serving in grams for {food.description}
+                          </label>
+                          <Input
+                            id={`max-serving-${food.fdcId}`}
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={food.maxServing || 500}
+                            onChange={(e) =>
+                              handleInputChange(
+                                food.fdcId,
+                                "maxServing",
+                                e.target.value
+                              )
+                            }
+                            className="w-[100px]"
+                            placeholder="500"
+                            aria-label={`Maximum Serving in grams for ${food.description}`}
+                          />
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Button
                           variant="destructive"
                           size="sm"
                           onClick={() => handleRemoveFood(food.fdcId)}
+                          aria-label={`Remove ${food.description} from selected foods`}
                         >
                           <Trash2 className="w-4 h-4" />
+                          <span className="sr-only">Remove item</span>
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -370,7 +402,7 @@ const SelectedFoods = ({
             </div>
             <div className="mt-6">
               <Button
-                className="w-full"
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
                 size="lg"
                 onClick={handleOptimize}
                 disabled={loading}
@@ -378,12 +410,12 @@ const SelectedFoods = ({
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Optimizing...</span>
+                    <span className="font-medium">Optimizing...</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Calculator className="w-5 h-5" />
-                    <span>Optimize Diet Plan</span>
+                    <span className="font-medium">Optimize Diet Plan</span>
                   </div>
                 )}
               </Button>

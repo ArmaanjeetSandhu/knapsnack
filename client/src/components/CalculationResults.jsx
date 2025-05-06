@@ -201,7 +201,7 @@ const CalculationResults = ({ calculationData, onProceed }) => {
       )}
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+          <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
             <TableRow>
               <TableHead>Nutrient</TableHead>
               <TableHead>Lower Bound</TableHead>
@@ -319,7 +319,7 @@ const CalculationResults = ({ calculationData, onProceed }) => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Beaker className="w-5 h-5 text-purple-500 dark:text-purple-400" />
-                Micronutrient Requirements
+                Micronutrient Targets
               </h3>
               <div className="flex items-center gap-2">
                 {!customizingBounds && (
@@ -462,7 +462,11 @@ const CalculationResults = ({ calculationData, onProceed }) => {
           </div>
         </CardContent>
       </Card>
-      <Button className="w-full" size="lg" onClick={handleProceed}>
+      <Button
+        className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+        size="lg"
+        onClick={handleProceed}
+      >
         <span>
           {useCustomBounds
             ? "Proceed with Custom Nutrient Bounds"

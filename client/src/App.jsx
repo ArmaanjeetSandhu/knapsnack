@@ -282,9 +282,11 @@ function App() {
                     href="https://github.com/ArmaanjeetSandhu/goal-ith"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white hover:text-gray-300 px-3 py-2 inline-flex items-center"
+                    className="text-white hover:text-gray-300 px-3 py-2 inline-flex items-center gap-2"
+                    aria-label="View project on GitHub"
                   >
                     <GitHubIcon size={20} />
+                    <span className="sr-only">GitHub</span>
                   </a>
                 </NavigationMenuItem>
                 <NavigationMenuItem>

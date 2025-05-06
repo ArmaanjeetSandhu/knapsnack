@@ -206,7 +206,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                   href="https://fdc.nal.usda.gov/api-key-signup.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary hover:underline"
+                  className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
                 >
                   here
                   <ExternalLink className="w-3 h-3" />
