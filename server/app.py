@@ -5,6 +5,7 @@ Main Flask application for diet optimization service.
 import logging
 import mimetypes
 import os
+from datetime import datetime, timedelta
 from itertools import product
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -12,7 +13,7 @@ import numpy as np
 import pandas as pd
 import pulp
 import requests
-from flask import Flask, jsonify, request, send_file, send_from_directory
+from flask import Flask, jsonify, make_response, request, send_file, send_from_directory
 from flask_cors import CORS
 
 from server.utils import (
@@ -75,6 +76,53 @@ NUTRIENT_MAP = {
 }
 
 
+@app.after_request
+def add_security_headers(response):
+    """Add security headers to all responses"""
+    response.headers["Strict-Transport-Security"] = (
+        "max-age=31536000; includeSubDomains"
+    )
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    csp = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
+        "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
+        "img-src 'self' data:; "
+        "font-src 'self'; "
+        "connect-src 'self' https://api.nal.usda.gov; "
+        "media-src 'self'; "
+        "object-src 'none'; "
+        "child-src 'none'; "
+        "form-action 'self'; "
+        "frame-ancestors 'none';"
+    )
+    response.headers["Content-Security-Policy"] = csp
+    if "Cache-Control" not in response.headers:
+        if response.mimetype in ["text/html"]:
+            response.headers["Cache-Control"] = "public, max-age=300"
+        elif response.mimetype in ["application/json"]:
+            response.headers["Cache-Control"] = "public, max-age=60"
+        elif response.mimetype in [
+            "text/css",
+            "application/javascript",
+            "image/svg+xml",
+        ]:
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        elif response.mimetype in [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+            "video/mp4",
+        ]:
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        else:
+            response.headers["Cache-Control"] = "public, max-age=86400"
+    return response
+
+
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve(path):
@@ -89,6 +137,60 @@ def serve(path):
         return send_from_directory(static_folder_str, path)
     else:
         return send_from_directory(static_folder_str, "index.html")
+
+
+@app.route("/robots.txt")
+def robots():
+    """Serve robots.txt file"""
+    response = make_response(
+        """
+User-agent: *
+Allow: /
+Disallow: /api/
+
+User-agent: *
+Disallow: /api/
+
+Sitemap: https://goal-ith-4c1eb8835462.herokuapp.com/sitemap.xml
+    """.strip()
+    )
+    response.headers["Content-Type"] = "text/plain"
+    return response
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    """Generate a simple sitemap"""
+    host_url = request.host_url.rstrip("/")
+
+    xml = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        f"  <url><loc>{host_url}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>",
+        "</urlset>",
+    ]
+
+    response = make_response("\n".join(xml))
+    response.headers["Content-Type"] = "application/xml"
+    return response
+
+
+@app.route("/.well-known/security.txt")
+def security_txt():
+    """Serve security.txt file"""
+    expires_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    response = make_response(
+        f"""
+Contact: armaanjeetsandhu430@gmail.com
+Expires: {expires_date}
+Preferred-Languages: en
+Canonical: https://goal-ith-4c1eb8835462.herokuapp.com/.well-known/security.txt
+Policy: https://goal-ith-4c1eb8835462.herokuapp.com/security-policy
+    """.strip()
+    )
+    response.headers["Content-Type"] = "text/plain"
+    return response
 
 
 def extract_nutrients(nutrients_data: List[Dict]) -> Dict[str, float]:
@@ -594,9 +696,7 @@ def optimize():
             and "upper_bounds" in nutrient_goals
             and nutrient_goals["upper_bounds"]
         ):
-            lower_bounds, upper_bounds = nutrient_bounds(
-                age, gender
-            )
+            lower_bounds, upper_bounds = nutrient_bounds(age, gender)
             if isinstance(lower_bounds, pd.Series):
                 for k, v in nutrient_goals["lower_bounds"].items():
                     if k in lower_bounds:

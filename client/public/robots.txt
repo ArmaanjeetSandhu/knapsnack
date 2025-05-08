@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+User-agent: *
+Disallow: /api/
+
+Sitemap: https://goal-ith-4c1eb8835462.herokuapp.com/sitemap.xml
