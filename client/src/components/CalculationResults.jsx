@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   ArrowLeft,
@@ -193,11 +194,17 @@ const CalculationResults = ({ calculationData, onProceed }) => {
   const renderEditableBoundsTable = (nutrients) => (
     <div className="space-y-4">
       {Object.keys(validationErrors).length > 0 && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            Please fix the errors before saving your changes.
-          </AlertDescription>
-        </Alert>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+        >
+          <Alert variant="destructive">
+            <AlertDescription>
+              Please fix the errors before saving your changes.
+            </AlertDescription>
+          </Alert>
+        </motion.div>
       )}
       <div className="overflow-x-auto">
         <Table>
@@ -209,14 +216,21 @@ const CalculationResults = ({ calculationData, onProceed }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {nutrients.map((nutrient) => (
-              <TableRow
+            {nutrients.map((nutrient, index) => (
+              <motion.tr
                 key={nutrient.key}
                 className={
                   validationErrors[nutrient.key]
                     ? "bg-red-50 dark:bg-red-900/20"
                     : ""
                 }
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.3,
+                  delay: index * 0.03,
+                  ease: "easeOut",
+                }}
               >
                 <TableCell>
                   {nutrient.name} ({nutrient.unit})
@@ -257,12 +271,17 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                     }`}
                   />
                   {validationErrors[nutrient.key] && (
-                    <p className="text-xs text-red-500 mt-1">
+                    <motion.p
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="text-xs text-red-500 mt-1"
+                    >
                       {validationErrors[nutrient.key]}
-                    </p>
+                    </motion.p>
                   )}
                 </TableCell>
-              </TableRow>
+              </motion.tr>
             ))}
           </TableBody>
         </Table>
@@ -270,7 +289,12 @@ const CalculationResults = ({ calculationData, onProceed }) => {
     </div>
   );
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <Card>
         <CardHeader>
           <CardTitle>Your Calculated Results</CardTitle>
@@ -278,30 +302,53 @@ const CalculationResults = ({ calculationData, onProceed }) => {
         <CardContent>
           <div className="grid gap-6 md:grid-cols-3">
             {mainMetrics.map((metric, index) => (
-              <Card key={index}>
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4">
-                    <metric.icon className={`w-8 h-8 ${metric.color}`} />
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">
-                        {metric.label}
-                      </p>
-                      <p className="text-2xl font-bold">{metric.value}</p>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: index * 0.15,
+                  ease: "easeOut",
+                }}
+              >
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <metric.icon className={`w-8 h-8 ${metric.color}`} />
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">
+                          {metric.label}
+                        </p>
+                        <p className="text-2xl font-bold">{metric.value}</p>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
-          <div className="mt-6">
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Beef className="w-5 h-5 text-green-500 dark:text-green-400" />
               Macronutrient Targets
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {macroNutrients.map((macro, index) => (
-                <div
+                <motion.div
                   key={index}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: index * 0.05 + 0.3,
+                    ease: "easeOut",
+                  }}
                   className="p-4 rounded-lg border bg-card text-card-foreground"
                 >
                   <p className="text-sm font-medium text-muted-foreground">
@@ -311,11 +358,16 @@ const CalculationResults = ({ calculationData, onProceed }) => {
                     {formatValue(macro.value)}
                     {macro.unit}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
-          <div className="mt-6">
+          </motion.div>
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Beaker className="w-5 h-5 text-purple-500 dark:text-purple-400" />
@@ -323,158 +375,228 @@ const CalculationResults = ({ calculationData, onProceed }) => {
               </h3>
               <div className="flex items-center gap-2">
                 {!customizingBounds && (
-                  <>
-                    <Button
-                      variant={
-                        nutrientDisplayMode === "cards" ? "default" : "outline"
-                      }
-                      size="sm"
-                      onClick={() => setNutrientDisplayMode("cards")}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key="normal-controls"
+                      className="flex items-center gap-2"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      Cards
-                    </Button>
-                    <Button
-                      variant={
-                        nutrientDisplayMode === "table" ? "default" : "outline"
-                      }
-                      size="sm"
-                      onClick={() => setNutrientDisplayMode("table")}
-                    >
-                      Table
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCustomizingBounds(true)}
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Customize
-                    </Button>
-                  </>
+                      <Button
+                        variant={
+                          nutrientDisplayMode === "cards"
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        onClick={() => setNutrientDisplayMode("cards")}
+                      >
+                        Cards
+                      </Button>
+                      <Button
+                        variant={
+                          nutrientDisplayMode === "table"
+                            ? "default"
+                            : "outline"
+                        }
+                        size="sm"
+                        onClick={() => setNutrientDisplayMode("table")}
+                      >
+                        Table
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCustomizingBounds(true)}
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Customize
+                      </Button>
+                    </motion.div>
+                  </AnimatePresence>
                 )}
                 {customizingBounds && (
-                  <>
-                    <Button variant="outline" size="sm" onClick={resetBounds}>
-                      <RotateCcw className="w-4 h-4 mr-2" />
-                      Reset
-                    </Button>
-                    <Button
-                      variant={editMode ? "destructive" : "outline"}
-                      size="sm"
-                      onClick={toggleEditMode}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key="customize-controls"
+                      className="flex items-center gap-2"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {editMode ? (
-                        <>
-                          <X className="w-4 h-4 mr-2" />
-                          Cancel
-                        </>
-                      ) : (
-                        <>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Edit
-                        </>
-                      )}
-                    </Button>
-                    {editMode && (
+                      <Button variant="outline" size="sm" onClick={resetBounds}>
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Reset
+                      </Button>
                       <Button
-                        variant="default"
+                        variant={editMode ? "destructive" : "outline"}
                         size="sm"
                         onClick={toggleEditMode}
-                        disabled={Object.keys(validationErrors).length > 0}
                       >
-                        <Check className="w-4 h-4 mr-2" />
-                        Save
+                        {editMode ? (
+                          <>
+                            <X className="w-4 h-4 mr-2" />
+                            Cancel
+                          </>
+                        ) : (
+                          <>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit
+                          </>
+                        )}
                       </Button>
-                    )}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCustomizingBounds(false)}
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                  </>
+                      {editMode && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={toggleEditMode}
+                          disabled={Object.keys(validationErrors).length > 0}
+                        >
+                          <Check className="w-4 h-4 mr-2" />
+                          Save
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCustomizingBounds(false)}
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Back
+                      </Button>
+                    </motion.div>
+                  </AnimatePresence>
                 )}
               </div>
             </div>
-            {customizingBounds ? (
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2 mb-4">
-                  <input
-                    type="checkbox"
-                    id="use-custom-bounds"
-                    checked={useCustomBounds}
-                    onChange={(e) => setUseCustomBounds(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <Label htmlFor="use-custom-bounds">
-                    Use custom bounds for optimization
-                  </Label>
-                </div>
-                <Tabs defaultValue="vitamins" className="w-full">
-                  <TabsList className="w-full">
-                    <TabsTrigger value="vitamins" className="flex-1">
-                      Vitamins
-                    </TabsTrigger>
-                    <TabsTrigger value="minerals" className="flex-1">
-                      Minerals
-                    </TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="vitamins">
-                    <ScrollArea className="h-[400px] relative">
-                      {renderEditableBoundsTable(vitamins)}
-                    </ScrollArea>
-                  </TabsContent>
-                  <TabsContent value="minerals">
-                    <ScrollArea className="h-[400px] relative">
-                      {renderEditableBoundsTable(minerals)}
-                    </ScrollArea>
-                  </TabsContent>
-                </Tabs>
-              </div>
-            ) : (
-              <Tabs defaultValue="vitamins" className="w-full">
-                <TabsList className="w-full">
-                  <TabsTrigger value="vitamins" className="flex-1">
-                    Vitamins
-                  </TabsTrigger>
-                  <TabsTrigger value="minerals" className="flex-1">
-                    Minerals
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="vitamins">
-                  <ScrollArea className="h-[400px]">
-                    {nutrientDisplayMode === "table"
-                      ? renderNutrientTable(vitamins)
-                      : renderNutrientCards(vitamins)}
-                  </ScrollArea>
-                </TabsContent>
-                <TabsContent value="minerals">
-                  <ScrollArea className="h-[400px]">
-                    {nutrientDisplayMode === "table"
-                      ? renderNutrientTable(minerals)
-                      : renderNutrientCards(minerals)}
-                  </ScrollArea>
-                </TabsContent>
-              </Tabs>
-            )}
-          </div>
+            <AnimatePresence mode="wait">
+              {customizingBounds ? (
+                <motion.div
+                  key="customizing-bounds"
+                  className="space-y-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="flex items-center space-x-2 mb-4">
+                    <input
+                      type="checkbox"
+                      id="use-custom-bounds"
+                      checked={useCustomBounds}
+                      onChange={(e) => setUseCustomBounds(e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <Label htmlFor="use-custom-bounds">
+                      Use custom bounds for optimization
+                    </Label>
+                  </div>
+                  <Tabs defaultValue="vitamins" className="w-full">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="vitamins" className="flex-1">
+                        Vitamins
+                      </TabsTrigger>
+                      <TabsTrigger value="minerals" className="flex-1">
+                        Minerals
+                      </TabsTrigger>
+                    </TabsList>
+                    <AnimatePresence mode="wait">
+                      <TabsContent value="vitamins">
+                        <ScrollArea className="h-[400px] relative">
+                          {renderEditableBoundsTable(vitamins)}
+                        </ScrollArea>
+                      </TabsContent>
+                      <TabsContent value="minerals">
+                        <ScrollArea className="h-[400px] relative">
+                          {renderEditableBoundsTable(minerals)}
+                        </ScrollArea>
+                      </TabsContent>
+                    </AnimatePresence>
+                  </Tabs>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="viewing-bounds"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <Tabs defaultValue="vitamins" className="w-full">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="vitamins" className="flex-1">
+                        Vitamins
+                      </TabsTrigger>
+                      <TabsTrigger value="minerals" className="flex-1">
+                        Minerals
+                      </TabsTrigger>
+                    </TabsList>
+                    <AnimatePresence mode="wait">
+                      <TabsContent value="vitamins">
+                        <ScrollArea className="h-[400px]">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={nutrientDisplayMode}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {nutrientDisplayMode === "table"
+                                ? renderNutrientTable(vitamins)
+                                : renderNutrientCards(vitamins)}
+                            </motion.div>
+                          </AnimatePresence>
+                        </ScrollArea>
+                      </TabsContent>
+                      <TabsContent value="minerals">
+                        <ScrollArea className="h-[400px]">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={nutrientDisplayMode}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {nutrientDisplayMode === "table"
+                                ? renderNutrientTable(minerals)
+                                : renderNutrientCards(minerals)}
+                            </motion.div>
+                          </AnimatePresence>
+                        </ScrollArea>
+                      </TabsContent>
+                    </AnimatePresence>
+                  </Tabs>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </CardContent>
       </Card>
-      <Button
-        className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
-        size="lg"
-        onClick={handleProceed}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        whileHover={{ scale: 1.02 }}
       >
-        <span>
-          {useCustomBounds
-            ? "Proceed with Custom Nutrient Bounds"
-            : "Ready to meet all these goals?"}
-        </span>
-        <ArrowRight className="w-5 h-5 ml-2" />
-      </Button>
-    </div>
+        <Button
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+          size="lg"
+          onClick={handleProceed}
+        >
+          <span>
+            {useCustomBounds
+              ? "Proceed with Custom Nutrient Bounds"
+              : "Ready to meet all these goals?"}
+          </span>
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 };
 CalculationResults.propTypes = {

@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Check,
   ExternalLink,
@@ -179,173 +180,238 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const isAdded = (foodId) => {
     return selectedFoodIds.includes(foodId) || recentlyAdded.has(foodId);
   };
+  const errorVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0 },
+  };
   return (
-    <Card className="mb-6 shadow-lg">
-      <CardHeader className="bg-primary rounded-t-lg">
-        <CardTitle className="text-white flex items-center gap-2">
-          <Search className="w-5 h-5" />
-          Search Foods
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        {(searchError || apiKeyError) && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertDescription>{searchError || apiKeyError}</AlertDescription>
-          </Alert>
-        )}
-        <div className="mb-6">
-          <form onSubmit={handleApiKeySubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Key className="w-4 h-4" />
-                USDA API Key
-              </label>
-              <p className="text-sm text-muted-foreground">
-                Get your free API key from{" "}
-                <a
-                  href="https://fdc.nal.usda.gov/api-key-signup.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
-                >
-                  here
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter your USDA API key"
-                className="flex-1"
-              />
-            </div>
-          </form>
-        </div>
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <form onSubmit={handleSearch} className="flex-1">
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Search for foods..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                disabled={loading || !apiKey}
-                className="flex-1"
-              />
-              <Button
-                type="submit"
-                disabled={loading || !apiKey}
-                className="min-w-[100px]"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="mb-6 shadow-lg">
+        <CardHeader className="bg-primary rounded-t-lg">
+          <CardTitle className="text-white flex items-center gap-2">
+            <Search className="w-5 h-5" />
+            Search Foods
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <AnimatePresence>
+            {(searchError || apiKeyError) && (
+              <motion.div
+                variants={errorVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="mb-6"
               >
-                {loading ? (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    {searchError || apiKeyError}
+                  </AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <form onSubmit={handleApiKeySubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Key className="w-4 h-4" />
+                  USDA API Key
+                </label>
+                <p className="text-sm text-muted-foreground">
+                  Get your free API key from{" "}
+                  <a
+                    href="https://fdc.nal.usda.gov/api-key-signup.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
+                  >
+                    here
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="Enter your USDA API key"
+                  className="flex-1"
+                />
+              </div>
+            </form>
+          </motion.div>
+          <motion.div
+            className="flex flex-col md:flex-row gap-4 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <form onSubmit={handleSearch} className="flex-1">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Search for foods..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  disabled={loading || !apiKey}
+                  className="flex-1"
+                />
+                <Button
+                  type="submit"
+                  disabled={loading || !apiKey}
+                  className="min-w-[100px]"
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <span>Searching</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Search className="w-4 h-4" />
+                      <span>Search</span>
+                    </div>
+                  )}
+                </Button>
+              </div>
+            </form>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => document.getElementById("csv-upload").click()}
+                className="flex items-center gap-2"
+              >
+                <Upload className="w-4 h-4" />
+                Import CSV
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleTrySampleDiet}
+                disabled={sampleLoading}
+                className="flex items-center gap-2"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {sampleLoading ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Searching</span>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    <span>Loading...</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
-                    <Search className="w-4 h-4" />
-                    <span>Search</span>
-                  </div>
+                  <>
+                    <FastForward className="w-4 h-4" />
+                    <span>Try Sample Diet</span>
+                  </>
                 )}
               </Button>
             </div>
-          </form>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => document.getElementById("csv-upload").click()}
-              className="flex items-center gap-2"
-            >
-              <Upload className="w-4 h-4" />
-              Import CSV
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={handleTrySampleDiet}
-              disabled={sampleLoading}
-              className="flex items-center gap-2"
-            >
-              {sampleLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                  <span>Loading...</span>
-                </div>
-              ) : (
-                <>
-                  <FastForward className="w-4 h-4" />
-                  <span>Try Sample Diet</span>
-                </>
+            <input
+              id="csv-upload"
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </motion.div>
+          <AnimatePresence>
+            {searchResults.length > 0 && (
+              <motion.div
+                className="search-results"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <h6 className="text-sm font-semibold mb-3">Search Results</h6>
+                <ScrollArea className="h-[400px] rounded-md border">
+                  <div className="divide-y">
+                    <AnimatePresence initial={false}>
+                      {searchResults.map((food, index) => {
+                        const added = isAdded(food.fdcId);
+                        return (
+                          <motion.div
+                            key={food.fdcId}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              duration: 0.2,
+                              delay: index * 0.03,
+                            }}
+                            className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                          >
+                            <span className="text-sm">{food.description}</span>
+                            <motion.div
+                              whileHover={{ scale: added ? 1 : 1.05 }}
+                              whileTap={{ scale: added ? 1 : 0.95 }}
+                            >
+                              <Button
+                                variant={added ? "success" : "secondary"}
+                                size="sm"
+                                onClick={() => !added && handleFoodAdd(food)}
+                                disabled={added}
+                                className={`ml-4 transition-all duration-200 ${
+                                  added
+                                    ? "bg-success hover:bg-success text-success-foreground"
+                                    : ""
+                                }`}
+                              >
+                                {added ? (
+                                  <>
+                                    <Check className="w-4 h-4 mr-1" />
+                                    Added
+                                  </>
+                                ) : (
+                                  <>
+                                    <Plus className="w-4 h-4 mr-1" />
+                                    Add
+                                  </>
+                                )}
+                              </Button>
+                            </motion.div>
+                          </motion.div>
+                        );
+                      })}
+                    </AnimatePresence>
+                  </div>
+                  <ScrollBar />
+                </ScrollArea>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {searchResults.length === 0 &&
+              searchTerm &&
+              !loading &&
+              !searchError && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Alert className="bg-muted">
+                    <AlertDescription>
+                      No foods found matching your search. Try different
+                      keywords.
+                    </AlertDescription>
+                  </Alert>
+                </motion.div>
               )}
-            </Button>
-          </div>
-          <input
-            id="csv-upload"
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </div>
-        {searchResults.length > 0 && (
-          <div className="search-results">
-            <h6 className="text-sm font-semibold mb-3">Search Results</h6>
-            <ScrollArea className="h-[400px] rounded-md border">
-              <div className="divide-y">
-                {searchResults.map((food) => {
-                  const added = isAdded(food.fdcId);
-                  return (
-                    <div
-                      key={food.fdcId}
-                      className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                    >
-                      <span className="text-sm">{food.description}</span>
-                      <Button
-                        variant={added ? "success" : "secondary"}
-                        size="sm"
-                        onClick={() => !added && handleFoodAdd(food)}
-                        disabled={added}
-                        className={`ml-4 transition-all duration-200 ${
-                          added
-                            ? "bg-success hover:bg-success text-success-foreground"
-                            : ""
-                        }`}
-                      >
-                        {added ? (
-                          <>
-                            <Check className="w-4 h-4 mr-1" />
-                            Added
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="w-4 h-4 mr-1" />
-                            Add
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-              <ScrollBar />
-            </ScrollArea>
-          </div>
-        )}
-        {searchResults.length === 0 &&
-          searchTerm &&
-          !loading &&
-          !searchError && (
-            <Alert className="bg-muted">
-              <AlertDescription>
-                No foods found matching your search. Try different keywords.
-              </AlertDescription>
-            </Alert>
-          )}
-      </CardContent>
-    </Card>
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 FoodSearch.propTypes = {
