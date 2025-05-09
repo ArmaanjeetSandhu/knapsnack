@@ -1,14 +1,22 @@
-import PropTypes from "prop-types";
 import { ArrowRight } from "lucide-react";
+import PropTypes from "prop-types";
 import { Button } from "./ui/button";
 const LandingPage = ({ onGetStarted }) => {
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <div
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      style={{
+        backgroundImage: "url('/background-fallback.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <video
         autoPlay
         loop
         muted
         playsInline
+        poster="/background-fallback.png"
         className="absolute w-full h-full object-cover"
         style={{
           filter: "brightness(50%)",
