@@ -1,0 +1,3 @@
+"""
+Diet optimization service package.
+"""
