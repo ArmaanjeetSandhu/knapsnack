@@ -2,4 +2,3 @@ Contact: armaanjeetsandhu430@gmail.com
 Expires: 2026-05-09T06:41:03Z
 Preferred-Languages: en
 Canonical: https://goal-ith-4c1eb8835462.herokuapp.com/.well-known/security.txt
-Policy: https://goal-ith-4c1eb8835462.herokuapp.com/security-policy
