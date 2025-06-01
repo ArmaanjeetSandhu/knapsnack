@@ -1,8 +1,8 @@
-# Goal - $i^{th}$ : The Meal Planner
+# Knap[Snack] : The Meal Planner
 
 ![Header Image](https://raw.githubusercontent.com/ArmaanjeetSandhu/goal-ith/refs/heads/main/client/public/header-image.png)
 
-Goal - $i^{th}$ is a Python-based tool that uses linear programming to create personalized, cost-effective meal plans while meeting specific nutritional requirements. It takes into account both macronutrients (proteins, carbohydrates, fats) and micronutrients (vitamins, minerals) to ensure a balanced diet tailored to your age, gender, and health goals.
+Knap[Snack] is a Python-based tool that uses mixed-integer linear programming to help you create personalized, cost-effective meal plans while meeting specific nutritional requirements. It takes into account both macronutrients (proteins, carbohydrates, fats) and micronutrients (vitamins, minerals) to ensure a balanced diet tailored to your age, gender, and health goals.
 
 ## 🛠️ System Architecture
 
@@ -12,7 +12,7 @@ graph TD
     subgraph 981["External Systems"]
         995["USDA FoodData Central API<br>External Service"]
     end
-    subgraph 982["Goal-ith System"]
+    subgraph 982["Knap[Snack] System"]
         subgraph 983["Backend API"]
             990["API Server<br>Flask/Python"]
             991["Calculation Service<br>Python"]

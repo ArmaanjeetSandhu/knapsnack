@@ -28,9 +28,7 @@ const LandingPage = ({ onGetStarted }) => {
         Your browser does not support the video tag.
       </video>
       <div className="relative z-10 text-center text-white px-4">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6">
-          Goal-i<sup>th</sup>
-        </h1>
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">Knap[Snack]</h1>
         <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
           Your Personalized Diet Optimization Tool
         </p>

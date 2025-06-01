@@ -18,14 +18,14 @@ import {
 } from "./components/ui/navigation-menu";
 import api from "./services/api";
 const STORAGE_KEYS = {
-  SELECTED_FOODS: "goalith_selected_foods",
-  NUTRIENT_GOALS: "goalith_nutrient_goals",
-  USER_INFO: "goalith_user_info",
-  OPTIMIZATION_RESULTS: "goalith_optimization_results",
-  SHOW_CALCULATION_RESULTS: "goalith_show_calculation_results",
-  ADJUSTED_LOWER_BOUNDS: "goalith_adjusted_lower_bounds",
-  ADJUSTED_UPPER_BOUNDS: "goalith_adjusted_upper_bounds",
-  USE_CUSTOM_BOUNDS: "goalith_use_custom_bounds",
+  SELECTED_FOODS: "knapsnack_selected_foods",
+  NUTRIENT_GOALS: "knapsnack_nutrient_goals",
+  USER_INFO: "knapsnack_user_info",
+  OPTIMIZATION_RESULTS: "knapsnack_optimization_results",
+  SHOW_CALCULATION_RESULTS: "knapsnack_show_calculation_results",
+  ADJUSTED_LOWER_BOUNDS: "knapsnack_adjusted_lower_bounds",
+  ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
+  USE_CUSTOM_BOUNDS: "knapsnack_use_custom_bounds",
 };
 const isDuplicateFood = (newFood, existingFoods) => {
   return existingFoods.some((food) => food.fdcId === newFood.fdcId);
@@ -265,7 +265,7 @@ function App() {
               onClick={handleReset}
               className="text-xl font-bold hover:text-gray-300 transition-colors"
             >
-              Goal-i<sup>th</sup>: The Meal Planner
+              Knap[Snack]: The Meal Planner
             </button>
             <NavigationMenu>
               <NavigationMenuList>

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://goal-ith-4c1eb8835462.herokuapp.com/sitemap.xml
+Sitemap: https://knapsnack-b4b10d2b0910.herokuapp.com/sitemap.xml

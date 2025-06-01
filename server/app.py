@@ -92,7 +92,7 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://goal-ith-4c1eb8835462.herokuapp.com/sitemap.xml
+Sitemap: https://knapsnack-b4b10d2b0910.herokuapp.com/sitemap.xml
     """.strip()
     )
     response.headers["Content-Type"] = "text/plain"
@@ -126,7 +126,7 @@ def security_txt():
 Contact: armaanjeetsandhu430@gmail.com
 Expires: {expires_date}
 Preferred-Languages: en
-Canonical: https://goal-ith-4c1eb8835462.herokuapp.com/.well-known/security.txt
+Canonical: https://knapsnack-b4b10d2b0910.herokuapp.com/.well-known/security.txt
     """.strip()
     )
     response.headers["Content-Type"] = "text/plain"
