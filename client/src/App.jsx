@@ -279,7 +279,7 @@ function App() {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <a
-                    href="https://github.com/ArmaanjeetSandhu/goal-ith"
+                    href="https://github.com/ArmaanjeetSandhu/knapsnack"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-white hover:text-gray-300 px-3 py-2 inline-flex items-center gap-2"

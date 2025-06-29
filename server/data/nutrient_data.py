@@ -68,6 +68,10 @@ def get_age_group(age: int, gender: str) -> str:
         return "Children 1-3 y"
     elif 4 <= age <= 8:
         return "Children 4-8 y"
+    elif 9 <= age <= 13:
+        return f"{gender_prefix} 9-13 y"
+    elif 14 <= age <= 18:
+        return f"{gender_prefix} 14-18 y"
     elif 19 <= age <= 30:
         return f"{gender_prefix} 19-30 y"
     elif 31 <= age <= 50:
