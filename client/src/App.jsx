@@ -1,5 +1,6 @@
-import { ArrowLeft, Calculator, Eye, RefreshCw } from "lucide-react";
+import { ArrowLeft, Calculator, Eye, Info, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
+import AboutPage from "./components/AboutPage";
 import CalculationResults from "./components/CalculationResults";
 import FoodSearch from "./components/FoodSearch";
 import GitHubIcon from "./components/GitHubIcon";
@@ -13,10 +14,10 @@ import { Button } from "./components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
 } from "./components/ui/navigation-menu";
 import api from "./services/api";
+
 const STORAGE_KEYS = {
   SELECTED_FOODS: "knapsnack_selected_foods",
   NUTRIENT_GOALS: "knapsnack_nutrient_goals",
@@ -27,11 +28,14 @@ const STORAGE_KEYS = {
   ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
   USE_CUSTOM_BOUNDS: "knapsnack_use_custom_bounds",
 };
+
 const isDuplicateFood = (newFood, existingFoods) => {
   return existingFoods.some((food) => food.fdcId === newFood.fdcId);
 };
+
 function App() {
   const [showLanding, setShowLanding] = useState(true);
+  const [showAboutPage, setShowAboutPage] = useState(false);
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [optimizationResults, setOptimizationResults] = useState(null);
@@ -42,6 +46,7 @@ function App() {
   const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(null);
   const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(null);
   const [useCustomBounds, setUseCustomBounds] = useState(false);
+
   useEffect(() => {
     try {
       const storedFoods = localStorage.getItem(STORAGE_KEYS.SELECTED_FOODS);
@@ -59,6 +64,7 @@ function App() {
       const storedUseCustomBounds = localStorage.getItem(
         STORAGE_KEYS.USE_CUSTOM_BOUNDS
       );
+
       if (storedFoods) {
         setSelectedFoods(JSON.parse(storedFoods));
       }
@@ -83,6 +89,7 @@ function App() {
       if (storedUseCustomBounds) {
         setUseCustomBounds(JSON.parse(storedUseCustomBounds));
       }
+
       const showCalcResults = localStorage.getItem(
         STORAGE_KEYS.SHOW_CALCULATION_RESULTS
       );
@@ -93,6 +100,7 @@ function App() {
       console.error("Error loading data from localStorage:", err);
     }
   }, []);
+
   useEffect(() => {
     if (selectedFoods.length > 0) {
       localStorage.setItem(
@@ -101,6 +109,7 @@ function App() {
       );
     }
   }, [selectedFoods]);
+
   useEffect(() => {
     if (nutrientGoals) {
       localStorage.setItem(
@@ -109,11 +118,13 @@ function App() {
       );
     }
   }, [nutrientGoals]);
+
   useEffect(() => {
     if (userInfo) {
       localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(userInfo));
     }
   }, [userInfo]);
+
   useEffect(() => {
     if (optimizationResults) {
       localStorage.setItem(
@@ -123,6 +134,7 @@ function App() {
       setStoredResults(optimizationResults);
     }
   }, [optimizationResults]);
+
   useEffect(() => {
     if (adjustedLowerBounds) {
       localStorage.setItem(
@@ -131,6 +143,7 @@ function App() {
       );
     }
   }, [adjustedLowerBounds]);
+
   useEffect(() => {
     if (adjustedUpperBounds) {
       localStorage.setItem(
@@ -139,12 +152,14 @@ function App() {
       );
     }
   }, [adjustedUpperBounds]);
+
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEYS.USE_CUSTOM_BOUNDS,
       JSON.stringify(useCustomBounds)
     );
   }, [useCustomBounds]);
+
   const handleFormSubmit = async (formData) => {
     try {
       const calculationData = {
@@ -175,6 +190,7 @@ function App() {
       setError("Error calculating nutrition: " + error.message);
     }
   };
+
   const handleReset = () => {
     setNutrientGoals(null);
     setSelectedFoods([]);
@@ -184,6 +200,7 @@ function App() {
     setError(null);
     setShowLanding(true);
     setShowCalculationResults(false);
+    setShowAboutPage(false);
     setAdjustedLowerBounds(null);
     setAdjustedUpperBounds(null);
     setUseCustomBounds(false);
@@ -196,6 +213,7 @@ function App() {
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
   };
+
   const handleFoodSelect = (food) => {
     if (isDuplicateFood(food, selectedFoods)) {
       setError(`"${food.description}" is already in your food list.`);
@@ -213,6 +231,7 @@ function App() {
     setOptimizationResults(null);
     setError(null);
   };
+
   const handleFoodsImport = (importedFoods) => {
     const uniqueNewFoods = importedFoods.filter(
       (newFood) => !isDuplicateFood(newFood, selectedFoods)
@@ -230,18 +249,22 @@ function App() {
       setOptimizationResults(null);
     }
   };
+
   const handleViewPreviousResults = () => {
     if (storedResults) {
       setOptimizationResults(storedResults);
     }
   };
+
   const handleHideResults = () => {
     setOptimizationResults(null);
   };
+
   const handleViewCalculationResults = () => {
     setShowCalculationResults(true);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "true");
   };
+
   const handleHideCalculationResults = (boundData) => {
     if (boundData) {
       setUseCustomBounds(boundData.useCustomBounds);
@@ -253,9 +276,11 @@ function App() {
     setShowCalculationResults(false);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
   };
+
   if (showLanding) {
     return <LandingPage onGetStarted={() => setShowLanding(false)} />;
   }
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-gray-900 text-white py-4 mb-6">
@@ -270,12 +295,15 @@ function App() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuLink
-                    className="text-white hover:text-gray-300 px-3 py-2"
-                    href="#about"
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowAboutPage(true)}
+                    className="text-white hover:text-gray-300"
+                    aria-label="About Knap[Snack]"
                   >
-                    About
-                  </NavigationMenuLink>
+                    <Info className="h-5 w-5" />
+                  </Button>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <a
@@ -298,108 +326,117 @@ function App() {
         </div>
       </header>
       <main className="container mx-auto px-4 mb-8 flex-grow">
-        {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        {!nutrientGoals ? (
-          <div className="max-w-4xl mx-auto">
-            <PersonalInfoForm onSubmit={handleFormSubmit} />
-          </div>
-        ) : showCalculationResults ? (
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-4">
-              <Button
-                onClick={() => handleHideCalculationResults()}
-                variant="outline"
-                className="w-full"
-              >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Back to Food Selection
-              </Button>
-            </div>
-            <CalculationResults
-              calculationData={nutrientGoals}
-              userInfo={userInfo}
-              onProceed={handleHideCalculationResults}
-            />
-          </div>
+        {showAboutPage ? (
+          <AboutPage onBack={() => setShowAboutPage(false)} />
         ) : (
           <>
-            {!optimizationResults && !showCalculationResults && (
-              <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {storedResults && (
-                  <Button
-                    onClick={handleViewPreviousResults}
-                    className="w-full bg-green-600 hover:bg-green-700"
-                  >
-                    <Eye className="w-5 h-5 mr-2" />
-                    View Previous Optimization Results
-                  </Button>
-                )}
-                {nutrientGoals && (
-                  <Button
-                    onClick={handleViewCalculationResults}
-                    className="w-full bg-green-600 hover:bg-green-700"
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    View Nutrition Requirements
-                  </Button>
-                )}
-              </div>
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
-            {optimizationResults && storedResults && (
-              <div className="mb-4">
-                <Button
-                  onClick={handleHideResults}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <RefreshCw className="w-5 h-5 mr-2" />
-                  Hide Results and Modify Foods
-                </Button>
+            {!nutrientGoals ? (
+              <div className="max-w-4xl mx-auto">
+                <PersonalInfoForm onSubmit={handleFormSubmit} />
               </div>
-            )}
-            {!optimizationResults && (
-              <>
-                <FoodSearch
-                  onFoodSelect={handleFoodSelect}
-                  onFoodsImport={handleFoodsImport}
-                  selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
-                />
-                <SelectedFoods
-                  foods={selectedFoods}
-                  onFoodsUpdate={setSelectedFoods}
-                  nutrientGoals={
-                    useCustomBounds
-                      ? {
-                          ...nutrientGoals,
-                          lower_bounds:
-                            adjustedLowerBounds || nutrientGoals.lower_bounds,
-                          upper_bounds:
-                            adjustedUpperBounds || nutrientGoals.upper_bounds,
-                        }
-                      : nutrientGoals
-                  }
+            ) : showCalculationResults ? (
+              <div className="max-w-4xl mx-auto">
+                <div className="mb-4">
+                  <Button
+                    onClick={() => handleHideCalculationResults()}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <ArrowLeft className="w-5 h-5 mr-2" />
+                    Back to Food Selection
+                  </Button>
+                </div>
+                <CalculationResults
+                  calculationData={nutrientGoals}
                   userInfo={userInfo}
-                  onOptimizationResults={setOptimizationResults}
+                  onProceed={handleHideCalculationResults}
                 />
-                {useCustomBounds && (
-                  <Alert className="mt-4">
-                    <AlertDescription>
-                      Using custom nutrient bounds for optimization. Visit
-                      &quot;View Nutrition Requirements&quot; to adjust them.
-                    </AlertDescription>
-                  </Alert>
+              </div>
+            ) : (
+              <>
+                {!optimizationResults && !showCalculationResults && (
+                  <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {storedResults && (
+                      <Button
+                        onClick={handleViewPreviousResults}
+                        className="w-full bg-green-600 hover:bg-green-700"
+                      >
+                        <Eye className="w-5 h-5 mr-2" />
+                        View Previous Optimization Results
+                      </Button>
+                    )}
+                    {nutrientGoals && (
+                      <Button
+                        onClick={handleViewCalculationResults}
+                        className="w-full bg-green-600 hover:bg-green-700"
+                      >
+                        <Calculator className="w-5 h-5 mr-2" />
+                        View Nutrition Requirements
+                      </Button>
+                    )}
+                  </div>
+                )}
+                {optimizationResults && storedResults && (
+                  <div className="mb-4">
+                    <Button
+                      onClick={handleHideResults}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <RefreshCw className="w-5 h-5 mr-2" />
+                      Hide Results and Modify Foods
+                    </Button>
+                  </div>
+                )}
+                {!optimizationResults && (
+                  <>
+                    <FoodSearch
+                      onFoodSelect={handleFoodSelect}
+                      onFoodsImport={handleFoodsImport}
+                      selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
+                    />
+                    <SelectedFoods
+                      foods={selectedFoods}
+                      onFoodsUpdate={setSelectedFoods}
+                      nutrientGoals={
+                        useCustomBounds
+                          ? {
+                              ...nutrientGoals,
+                              lower_bounds:
+                                adjustedLowerBounds ||
+                                nutrientGoals.lower_bounds,
+                              upper_bounds:
+                                adjustedUpperBounds ||
+                                nutrientGoals.upper_bounds,
+                            }
+                          : nutrientGoals
+                      }
+                      userInfo={userInfo}
+                      onOptimizationResults={setOptimizationResults}
+                    />
+                    {useCustomBounds && (
+                      <Alert className="mt-4">
+                        <AlertDescription>
+                          Using custom nutrient bounds for optimization. Visit
+                          &quot;View Nutrition Requirements&quot; to adjust
+                          them.
+                        </AlertDescription>
+                      </Alert>
+                    )}
+                  </>
+                )}
+                {optimizationResults && (
+                  <OptimizationResults
+                    results={optimizationResults}
+                    selectedFoods={selectedFoods}
+                  />
                 )}
               </>
-            )}
-            {optimizationResults && (
-              <OptimizationResults
-                results={optimizationResults}
-                selectedFoods={selectedFoods}
-              />
             )}
           </>
         )}
@@ -407,4 +444,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
