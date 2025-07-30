@@ -1,7 +1,16 @@
-import { ArrowLeft, Calculator, Eye, Info, RefreshCw } from "lucide-react";
+import {
+  ArrowLeft,
+  Calculator,
+  Eye,
+  Info,
+  Newspaper,
+  RefreshCw,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import AboutPage from "./components/AboutPage";
+import BlogPage from "./components/BlogPage";
+import BlogPostPage from "./components/BlogPostPage";
 import CalculationResults from "./components/CalculationResults";
 import FoodSearch from "./components/FoodSearch";
 import GitHubIcon from "./components/GitHubIcon";
@@ -417,6 +426,17 @@ function App() {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
+                  <Link to="/blog" aria-label="Blog">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white hover:text-gray-300"
+                    >
+                      <Newspaper className="h-5 w-5" />
+                    </Button>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
                   <a
                     href="https://github.com/ArmaanjeetSandhu/knapsnack"
                     target="_blank"
@@ -442,6 +462,8 @@ function App() {
             path="/about"
             element={<AboutPage onBack={() => navigate(-1)} />}
           />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/*" element={<MainPlanner />} />
         </Routes>
       </main>

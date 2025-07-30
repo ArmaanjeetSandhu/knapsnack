@@ -27,6 +27,7 @@ from server.config import (
     WEIGHT_MIN,
 )
 from server.data.nutrient_data import get_nutrient_bounds
+from server.services.blog_service import get_all_posts, get_post_by_slug
 from server.services.calculation import (
     adjust_nutrient_bounds,
     calculate_nutrition_requirements,
@@ -131,6 +132,26 @@ Canonical: https://knapsnack-b4b10d2b0910.herokuapp.com/.well-known/security.txt
     )
     response.headers["Content-Type"] = "text/plain"
     return response
+
+
+@app.route("/api/posts", methods=["GET"])
+def get_posts_api():
+    """API endpoint to fetch all blog posts."""
+    posts = get_all_posts()
+    if posts is None:
+        return create_error_response(
+            "Could not fetch posts from Contentful", status_code=503
+        )
+    return jsonify(posts)
+
+
+@app.route("/api/posts/<string:slug>", methods=["GET"])
+def get_post_api(slug):
+    """API endpoint to get a single blog post by slug."""
+    post = get_post_by_slug(slug)
+    if not post:
+        return create_error_response("Post not found.", status_code=404)
+    return jsonify(post)
 
 
 @app.route("/api/search_food", methods=["POST"])

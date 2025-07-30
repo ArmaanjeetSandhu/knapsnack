@@ -60,6 +60,23 @@ const api = {
 
     return result;
   },
+
+  async getBlogPosts() {
+    const response = await fetch(`${config.apiUrl}/posts`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch blog posts");
+    }
+    return response.json();
+  },
+
+  async getBlogPost(slug) {
+    const response = await fetch(`${config.apiUrl}/posts/${slug}`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `Failed to fetch post: ${slug}`);
+    }
+    return response.json();
+  },
 };
 
 export default api;

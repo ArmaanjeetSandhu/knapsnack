@@ -4,6 +4,10 @@ Configuration settings and constants for the diet optimization service.
 
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 DEFAULT_PORT = 5000
 API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
 DEFAULT_MAX_SERVING = 500
@@ -83,6 +87,10 @@ ELEMENTS_UL_EXCLUDE = [
     "Vanadium (µg)",
     "Copper (µg)",
 ]
+
+CONTENTFUL_SPACE_ID = os.environ.get("CONTENTFUL_SPACE_ID")
+CONTENTFUL_ACCESS_TOKEN = os.environ.get("CONTENTFUL_ACCESS_TOKEN")
+CONTENTFUL_CONTENT_TYPE_ID = "blogPost"
 
 SECURITY_HEADERS = {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
