@@ -1,5 +1,6 @@
 import { ArrowLeft, Calculator, Eye, Info, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import AboutPage from "./components/AboutPage";
 import CalculationResults from "./components/CalculationResults";
 import FoodSearch from "./components/FoodSearch";
@@ -35,7 +36,6 @@ const isDuplicateFood = (newFood, existingFoods) => {
 
 function App() {
   const [showLanding, setShowLanding] = useState(true);
-  const [showAboutPage, setShowAboutPage] = useState(false);
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [optimizationResults, setOptimizationResults] = useState(null);
@@ -46,6 +46,7 @@ function App() {
   const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(null);
   const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(null);
   const [useCustomBounds, setUseCustomBounds] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     try {
@@ -200,7 +201,6 @@ function App() {
     setError(null);
     setShowLanding(true);
     setShowCalculationResults(false);
-    setShowAboutPage(false);
     setAdjustedLowerBounds(null);
     setAdjustedUpperBounds(null);
     setUseCustomBounds(false);
@@ -212,6 +212,7 @@ function App() {
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
+    navigate("/");
   };
 
   const handleFoodSelect = (food) => {
@@ -277,6 +278,116 @@ function App() {
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
   };
 
+  const MainPlanner = () => (
+    <>
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      {!nutrientGoals ? (
+        <div className="max-w-4xl mx-auto">
+          <PersonalInfoForm onSubmit={handleFormSubmit} />
+        </div>
+      ) : showCalculationResults ? (
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-4">
+            <Button
+              onClick={() => handleHideCalculationResults()}
+              variant="outline"
+              className="w-full"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Back to Food Selection
+            </Button>
+          </div>
+          <CalculationResults
+            calculationData={nutrientGoals}
+            userInfo={userInfo}
+            onProceed={handleHideCalculationResults}
+          />
+        </div>
+      ) : (
+        <>
+          {!optimizationResults && !showCalculationResults && (
+            <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {storedResults && (
+                <Button
+                  onClick={handleViewPreviousResults}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  <Eye className="w-5 h-5 mr-2" />
+                  View Previous Optimization Results
+                </Button>
+              )}
+              {nutrientGoals && (
+                <Button
+                  onClick={handleViewCalculationResults}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  <Calculator className="w-5 h-5 mr-2" />
+                  View Nutrition Requirements
+                </Button>
+              )}
+            </div>
+          )}
+          {optimizationResults && storedResults && (
+            <div className="mb-4">
+              <Button
+                onClick={handleHideResults}
+                variant="outline"
+                className="w-full"
+              >
+                <RefreshCw className="w-5 h-5 mr-2" />
+                Hide Results and Modify Foods
+              </Button>
+            </div>
+          )}
+          {!optimizationResults && (
+            <>
+              <FoodSearch
+                onFoodSelect={handleFoodSelect}
+                onFoodsImport={handleFoodsImport}
+                selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
+              />
+              <SelectedFoods
+                foods={selectedFoods}
+                onFoodsUpdate={setSelectedFoods}
+                nutrientGoals={
+                  useCustomBounds
+                    ? {
+                        ...nutrientGoals,
+                        lower_bounds:
+                          adjustedLowerBounds || nutrientGoals.lower_bounds,
+                        upper_bounds:
+                          adjustedUpperBounds || nutrientGoals.upper_bounds,
+                      }
+                    : nutrientGoals
+                }
+                userInfo={userInfo}
+                onOptimizationResults={setOptimizationResults}
+              />
+              {useCustomBounds && (
+                <Alert className="mt-4">
+                  <AlertDescription>
+                    Using custom nutrient bounds for optimization. Visit
+                    &quot;View Nutrition Requirements&quot; to adjust them.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </>
+          )}
+          {optimizationResults && (
+            <OptimizationResults
+              results={optimizationResults}
+              selectedFoods={selectedFoods}
+            />
+          )}
+        </>
+      )}
+    </>
+  );
+
   if (showLanding) {
     return <LandingPage onGetStarted={() => setShowLanding(false)} />;
   }
@@ -295,15 +406,15 @@ function App() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setShowAboutPage(true)}
-                    className="text-white hover:text-gray-300"
-                    aria-label="About Knap[Snack]"
-                  >
-                    <Info className="h-5 w-5" />
-                  </Button>
+                  <Link to="/about" aria-label="About Knap[Snack]">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white hover:text-gray-300"
+                    >
+                      <Info className="h-5 w-5" />
+                    </Button>
+                  </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <a
@@ -326,120 +437,13 @@ function App() {
         </div>
       </header>
       <main className="container mx-auto px-4 mb-8 flex-grow">
-        {showAboutPage ? (
-          <AboutPage onBack={() => setShowAboutPage(false)} />
-        ) : (
-          <>
-            {error && (
-              <Alert variant="destructive" className="mb-4">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            {!nutrientGoals ? (
-              <div className="max-w-4xl mx-auto">
-                <PersonalInfoForm onSubmit={handleFormSubmit} />
-              </div>
-            ) : showCalculationResults ? (
-              <div className="max-w-4xl mx-auto">
-                <div className="mb-4">
-                  <Button
-                    onClick={() => handleHideCalculationResults()}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <ArrowLeft className="w-5 h-5 mr-2" />
-                    Back to Food Selection
-                  </Button>
-                </div>
-                <CalculationResults
-                  calculationData={nutrientGoals}
-                  userInfo={userInfo}
-                  onProceed={handleHideCalculationResults}
-                />
-              </div>
-            ) : (
-              <>
-                {!optimizationResults && !showCalculationResults && (
-                  <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {storedResults && (
-                      <Button
-                        onClick={handleViewPreviousResults}
-                        className="w-full bg-green-600 hover:bg-green-700"
-                      >
-                        <Eye className="w-5 h-5 mr-2" />
-                        View Previous Optimization Results
-                      </Button>
-                    )}
-                    {nutrientGoals && (
-                      <Button
-                        onClick={handleViewCalculationResults}
-                        className="w-full bg-green-600 hover:bg-green-700"
-                      >
-                        <Calculator className="w-5 h-5 mr-2" />
-                        View Nutrition Requirements
-                      </Button>
-                    )}
-                  </div>
-                )}
-                {optimizationResults && storedResults && (
-                  <div className="mb-4">
-                    <Button
-                      onClick={handleHideResults}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      <RefreshCw className="w-5 h-5 mr-2" />
-                      Hide Results and Modify Foods
-                    </Button>
-                  </div>
-                )}
-                {!optimizationResults && (
-                  <>
-                    <FoodSearch
-                      onFoodSelect={handleFoodSelect}
-                      onFoodsImport={handleFoodsImport}
-                      selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
-                    />
-                    <SelectedFoods
-                      foods={selectedFoods}
-                      onFoodsUpdate={setSelectedFoods}
-                      nutrientGoals={
-                        useCustomBounds
-                          ? {
-                              ...nutrientGoals,
-                              lower_bounds:
-                                adjustedLowerBounds ||
-                                nutrientGoals.lower_bounds,
-                              upper_bounds:
-                                adjustedUpperBounds ||
-                                nutrientGoals.upper_bounds,
-                            }
-                          : nutrientGoals
-                      }
-                      userInfo={userInfo}
-                      onOptimizationResults={setOptimizationResults}
-                    />
-                    {useCustomBounds && (
-                      <Alert className="mt-4">
-                        <AlertDescription>
-                          Using custom nutrient bounds for optimization. Visit
-                          &quot;View Nutrition Requirements&quot; to adjust
-                          them.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                  </>
-                )}
-                {optimizationResults && (
-                  <OptimizationResults
-                    results={optimizationResults}
-                    selectedFoods={selectedFoods}
-                  />
-                )}
-              </>
-            )}
-          </>
-        )}
+        <Routes>
+          <Route
+            path="/about"
+            element={<AboutPage onBack={() => navigate(-1)} />}
+          />
+          <Route path="/*" element={<MainPlanner />} />
+        </Routes>
       </main>
     </div>
   );
