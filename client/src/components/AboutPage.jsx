@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ChevronDown } from "lucide-react";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -220,6 +220,18 @@ const otherFaqs = faqs.slice(1);
 
 const AboutPage = ({ onBack }) => {
   const [openItemIndex, setOpenItemIndex] = useState(null);
+  const faqRefs = useRef([]);
+
+  useEffect(() => {
+    if (openItemIndex !== null && faqRefs.current[openItemIndex]) {
+      setTimeout(() => {
+        faqRefs.current[openItemIndex]?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 400);
+    }
+  }, [openItemIndex]);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -237,7 +249,11 @@ const AboutPage = ({ onBack }) => {
           </div>
           <div className="w-full pt-2">
             {otherFaqs.map((faq, index) => (
-              <div key={index} className="border-b last:border-b-0">
+              <div
+                key={index}
+                ref={(el) => (faqRefs.current[index] = el)}
+                className="border-b last:border-b-0 scroll-mt-5"
+              >
                 <button
                   onClick={() =>
                     setOpenItemIndex(openItemIndex === index ? null : index)
