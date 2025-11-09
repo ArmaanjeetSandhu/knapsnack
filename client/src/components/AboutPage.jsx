@@ -9,13 +9,18 @@ import { Card, CardContent } from "./ui/card";
 const faqs = [
   {
     question: "What is Knap[Snack]?",
-    answer:
-      "Knap[Snack] is a cost-aware meal planning application that solves a problem most nutrition apps ignore: creating the cheapest possible diet that still meets all your nutritional needs.\nYou provide your personal stats (age, height, weight, etc.) and your fitness goal. Then you input a list of foods available to you—whatever's in your kitchen or locally accessible—along with their prices. Knap[Snack] then uses mathematical optimization to calculate the exact combination and quantities of those foods that will meet all your macro and micronutrient targets at the lowest possible cost.\nThe result is a personalized, goal-specific meal plan that hits your nutritional requirements without wasting money.",
+    answer: [
+      "Knap[Snack] is a cost-aware meal planning application that solves a problem most nutrition apps ignore: creating the cheapest possible diet that still meets all your nutritional needs.",
+      "You provide your personal stats (age, height, weight, etc.) and your fitness goal. Then you input a list of foods available to you—whatever's in your kitchen or locally accessible—along with their prices. Knap[Snack] then uses mathematical optimization to calculate the exact combination and quantities of those foods that will meet all your macro and micronutrient targets at the lowest possible cost.",
+      "The result is a personalized, goal-specific meal plan that hits your nutritional requirements without wasting money.",
+    ],
   },
   {
     question: "Isn't that just what MyFitnessPal does?",
-    answer:
-      "The key distinction lies in planning versus tracking. MyFitnessPal and similar apps are meal trackers, not planners. They follow a reactive approach: you log what you've already eaten, observe patterns over time, and then manually adjust future meals based on past entries. This creates a time-consuming cycle of trial and error.\nThese tracking apps also lack automatic meal plan generation. Most importantly, they completely ignore cost optimization—even if you manage to create a nutritionally perfect plan, there's no guarantee it's the most economical option available to you.\nKnap[Snack], on the other hand, is proactive and cost-optimized from the start.",
+    answer: [
+      "The key distinction lies in planning versus tracking. MyFitnessPal and similar apps are meal trackers, not planners. They follow a reactive approach: you log what you've already eaten, observe patterns over time, and then manually adjust future meals based on past entries. This creates a time-consuming cycle of trial and error.\nThese tracking apps also lack automatic meal plan generation. Most importantly, they completely ignore cost optimization—even if you manage to create a nutritionally perfect plan, there's no guarantee it's the most economical option available to you.",
+      "Knap[Snack], on the other hand, is proactive and cost-optimized from the start.",
+    ],
   },
   {
     question: "So should I ditch MyFitnessPal?",
@@ -72,8 +77,10 @@ const faqs = [
   },
   {
     question: "How do you determine my macro requirements?",
-    answer:
-      "Knap[Snack] uses the Mifflin-St. Jeor equation to calculate your BMR (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your TDEE (Total Daily Energy Expenditure) is calculated, which is the actual number of calories you burn in a typical day. Depending on your fitness goals, you choose a target intake between 75% and 125% of your TDEE. This becomes your daily caloric goal. Finally, you customize how you distribute those calories across fats, carbohydrates, and protein.\nWhile Mifflin-St Jeor works for most people, I plan to incorporate additional equations to provide the most accurate calculation for your specific profile.",
+    answer: [
+      "Knap[Snack] uses the Mifflin-St. Jeor equation to calculate your BMR (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your TDEE (Total Daily Energy Expenditure) is calculated, which is the actual number of calories you burn in a typical day. Depending on your fitness goals, you choose a target intake between 75% and 125% of your TDEE. This becomes your daily caloric goal. Finally, you customize how you distribute those calories across fats, carbohydrates, and protein.",
+      "While Mifflin-St Jeor works for most people, I plan to incorporate additional equations to provide the most accurate calculation for your specific profile.",
+    ],
   },
   {
     question: "How do you determine my micro requirements?",
@@ -82,13 +89,17 @@ const faqs = [
   },
   {
     question: "I don't see vitamin D here. What's up with that?",
-    answer:
-      "Adding more variables to linear programming increases computational complexity and can prevent the algorithm from finding solutions. Vitamin D is particularly problematic because most whole foods contain minimal amounts—especially for vegans and vegetarians. Rather than have the system fail to find any solution due to one nutrient, I excluded vitamin D.\nMore importantly, food sources are not the primary way humans should obtain vitamin D. Sun exposure remains the most effective method, with fortified foods and supplements being your next best bets. You can figure out your personal vitamin D requirements here: [[DRI Calculator]]",
+    answer: [
+      "Adding more variables to linear programming increases computational complexity and can prevent the algorithm from finding solutions. Vitamin D is particularly problematic because most whole foods contain minimal amounts—especially for vegans and vegetarians. Rather than have the system fail to find any solution due to one nutrient, I excluded vitamin D.",
+      "More importantly, food sources are not the primary way humans should obtain vitamin D. Sun exposure remains the most effective method, with fortified foods and supplements being your next best bets. You can figure out your personal vitamin D requirements here: [[DRI Calculator]]",
+    ],
   },
   {
     question: "I don't see vitamin B12 here. What's up with that?",
-    answer:
-      "Similar to vitamin D, B12 is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans and vegetarians from getting any meal plan at all.\nIf you follow a plant-based diet, prioritize B12-fortified foods and supplements. Those with no dietary reservations can rely on eggs and dairy products, though they still contain less B12 than meat. You can figure out your personal vitamin B12 requirements here: [[DRI Calculator]]",
+    answer: [
+      "Similar to vitamin D, B12 is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans and vegetarians from getting any meal plan at all.",
+      "If you follow a plant-based diet, prioritize B12-fortified foods and supplements. Those with no dietary reservations can rely on eggs and dairy products, though they still contain less B12 than meat. You can figure out your personal vitamin B12 requirements here: [[DRI Calculator]]",
+    ],
   },
   {
     question: "I don't see copper here. What's up with that?",
@@ -97,13 +108,17 @@ const faqs = [
   },
   {
     question: "I take supplements. Can I include those here?",
-    answer:
-      "The food search pulls data from the USDA FoodData Central database, which doesn't include supplements. However, you can import a CSV file with the nutritional profiles of your supplements. Just ensure it matches the format of exported CSV files from the app's selected foods section.\nOne of Knap[Snack]'s goals is reducing supplement dependence by optimizing whole food choices, but the flexibility is there if needed.",
+    answer: [
+      "The food search pulls data from the USDA FoodData Central database, which doesn't include supplements. However, you can import a CSV file with the nutritional profiles of your supplements. Just ensure it matches the format of exported CSV files from the app's selected foods section.",
+      "One of Knap[Snack]'s goals is reducing supplement dependence by optimizing whole food choices, but the flexibility is there if needed.",
+    ],
   },
   {
     question: "Why doesn't the food search have everything I eat?",
-    answer:
-      "The food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. A more comprehensive alternative is the NCCDB, which I'd love to integrate, but it's prohibitively expensive for now.\nHowever, the workaround is similar to that for supplements: import a CSV file with the nutritional profiles of all the foods you want to include in your diet but don't see in the food search. Just ensure it matches the format of exported CSV files from the app's selected foods section.",
+    answer: [
+      "The food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. A more comprehensive alternative is the NCCDB, which I'd love to integrate, but it's prohibitively expensive for now.",
+      "However, the workaround is similar to that for supplements: import a CSV file with the nutritional profiles of all the foods you want to include in your diet but don't see in the food search. Just ensure it matches the format of exported CSV files from the app's selected foods section.",
+    ],
   },
   {
     question: 'I got an "Optimization Failed" error. What now?',
@@ -117,8 +132,13 @@ const faqs = [
   },
   {
     question: "So cool! Where can I learn more?",
-    answer:
-      "Thanks! You might want to check out the Knap[Snack] blog, which dives deeper into nutrition science, best practices, and other ideas.\nI'm also inspired by and recommend these excellent resources:\n• [[MacroFactor's Blog]]\n• [[CronoMeter's Blog]]",
+    answer: [
+      "Thanks! You might want to check out the Knap[Snack] blog, which dives deeper into nutrition science, best practices, and other ideas.",
+      "I'm also inspired by and recommend these excellent resources:",
+      "• [[MacroFactor's Blog]]",
+      "• [[CronoMeter's Blog]]",
+      "• [[Gut Bites MD's Blog]]",
+    ],
   },
 ];
 
@@ -128,6 +148,7 @@ const ContentRenderer = ({ content }) => {
     "knapsack problem": "https://en.wikipedia.org/wiki/Knapsack_problem",
     "MacroFactor's Blog": "https://macrofactorapp.com/articles/",
     "CronoMeter's Blog": "https://cronometer.com/blog/",
+    "Gut Bites MD's Blog": "https://gutbites.org/stories/",
   };
 
   const parseText = (text) => {
