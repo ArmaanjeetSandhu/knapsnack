@@ -27,9 +27,9 @@ COPY --from=frontend-builder /app/client/public /app/client/dist
 COPY server/ /app/server/
 COPY requirements.txt .
 
-# Install Python dependencies as root, then switch to non-root user
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies (pip warning is expected in Docker and safe here)
+RUN pip install --upgrade pip --quiet && \
+    pip install --no-cache-dir -r requirements.txt --quiet
 
 # Copy nutrient databases
 COPY server/nutrient-databases /app/server/nutrient-databases
