@@ -287,7 +287,7 @@ function App() {
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
   };
 
-  const MainPlanner = () => (
+  const mainPlanner = (
     <>
       {error && (
         <Alert variant="destructive" className="mb-4">
@@ -464,7 +464,7 @@ function App() {
           />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/*" element={<MainPlanner />} />
+          <Route path="/*" element={mainPlanner} />
         </Routes>
       </main>
     </div>
