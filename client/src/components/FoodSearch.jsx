@@ -80,7 +80,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       return null;
     }
     try {
-      const importedFoods = results.data.map((row) => {
+      const importedFoods = results.data.map((row, index) => {
         const servingSize = row["Serving Size (g)"] || 100;
         const normalizedNutrients = {
           "Vitamin A (µg)": (row["Vitamin A (µg)"] * 100) / servingSize,
@@ -111,7 +111,9 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
             (row["Pantothenic Acid (mg)"] * 100) / servingSize,
         };
         return {
-          fdcId: row["FDC ID"].toString(),
+          fdcId: row["FDC ID"]
+            ? row["FDC ID"].toString()
+            : `imported-${Date.now()}-${index}`,
           description: row["Food Item"],
           price: row["Price"],
           servingSize: row["Serving Size (g)"],
