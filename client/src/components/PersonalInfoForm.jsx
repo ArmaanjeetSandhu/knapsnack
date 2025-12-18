@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import PropTypes from "prop-types";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, ChevronLeft, HelpCircle } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import {
   Tooltip,
   TooltipContent,
@@ -65,6 +65,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         component: (
           <Input
             type="number"
+            autoFocus
             value={formData.age}
             onChange={(e) => handleInputChange("age", e.target.value)}
             placeholder="Enter your age"
@@ -84,6 +85,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         component: (
           <Input
             type="number"
+            autoFocus
             value={formData.weight}
             onChange={(e) => handleInputChange("weight", e.target.value)}
             placeholder="Enter your weight (kg)"
@@ -103,6 +105,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         component: (
           <Input
             type="number"
+            autoFocus
             value={formData.height}
             onChange={(e) => handleInputChange("height", e.target.value)}
             placeholder="Enter your height (cm)"
