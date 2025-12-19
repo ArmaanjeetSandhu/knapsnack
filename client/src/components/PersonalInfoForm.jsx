@@ -67,6 +67,12 @@ const PersonalInfoForm = ({ onSubmit }) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
   }, []);
+  const handleMacroRatiosUpdate = useCallback(
+    (ratios) => {
+      handleInputChange("macroRatios", ratios);
+    },
+    [handleInputChange]
+  );
   const steps = useMemo(
     () => [
       {
@@ -220,7 +226,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         component: (
           <MacroRatioValidator
             initialMacros={formData.macroRatios}
-            onValidRatios={(ratios) => handleInputChange("macroRatios", ratios)}
+            onValidRatios={handleMacroRatiosUpdate}
           />
         ),
         validate: (value) => {
@@ -231,7 +237,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         },
       },
     ],
-    [formData, handleInputChange]
+    [formData, handleInputChange, handleMacroRatiosUpdate]
   );
   const validateStep = useCallback(() => {
     const currentStepData = steps[currentStep];
