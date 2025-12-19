@@ -591,7 +591,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
           className="w-full"
         >
           <RotateCcw className="w-5 h-5 mr-2" />
-          Recalculate Goals
+          Modify Personal Info
         </Button>
         <Button
           className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"

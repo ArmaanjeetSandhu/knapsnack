@@ -402,7 +402,7 @@ function App() {
                 className="w-full"
               >
                 <RefreshCw className="w-5 h-5 mr-2" />
-                Hide Results and Modify Foods
+                Modify Foods
               </Button>
             </div>
           )}
@@ -484,7 +484,7 @@ function App() {
                   className="w-full"
                 >
                   <RefreshCw className="w-5 h-5 mr-2" />
-                  Hide Results and Modify Foods
+                  Modify Foods
                 </Button>
               </div>
             </>
