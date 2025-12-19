@@ -131,9 +131,9 @@ const faqs = [
       "The name is a play on the classic [[knapsack problem]] in computer science—an optimization challenge that, like meal planning, involves selecting the best combination of items under constraints. Certain variants of the knapsack problem are solvable using linear programming, which is what Knap[Snack] uses, making it a fitting inspiration.",
   },
   {
-    question: "So cool! Where can I learn more?",
+    question: "Where can I learn more?",
     answer: [
-      "Thanks! You might want to check out the Knap[Snack] blog, which dives deeper into nutrition science, best practices, and other ideas.",
+      "You might want to check out the [[Knap[Snack] blog]], which dives deeper into nutrition science, best practices, and other ideas.",
       "I'm also inspired by and recommend these excellent resources:",
       "• [[MacroFactor's Blog]]",
       "• [[CronoMeter's Blog]]",
@@ -149,6 +149,7 @@ const ContentRenderer = ({ content }) => {
     "MacroFactor's Blog": "https://macrofactorapp.com/articles/",
     "CronoMeter's Blog": "https://cronometer.com/blog/",
     "Gut Bites MD's Blog": "https://gutbites.org/stories/",
+    "Knap[Snack] blog": "https://knapsnack-b4b10d2b0910.herokuapp.com/blog",
   };
 
   const parseText = (text) => {
@@ -157,7 +158,11 @@ const ContentRenderer = ({ content }) => {
       if (!part) return null;
 
       if (part.startsWith("$$") && part.endsWith("$$")) {
-        return <BlockMath key={index} math={part.slice(2, -2)} />;
+        return (
+          <div key={index} className="overflow-x-auto w-full py-2">
+            <BlockMath math={part.slice(2, -2)} />
+          </div>
+        );
       }
       if (part.startsWith("$") && part.endsWith("$")) {
         return <InlineMath key={index} math={part.slice(1, -1)} />;
