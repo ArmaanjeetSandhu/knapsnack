@@ -14,19 +14,55 @@ import {
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
+
+const STORAGE_KEY = "knapsnack_form_state";
+
 const PersonalInfoForm = ({ onSubmit }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({
-    gender: "m",
-    age: "",
-    weight: "",
-    height: "",
-    activity: 1.2,
-    percentage: 100,
-    macroRatios: null,
-    smokingStatus: "no",
+  const [currentStep, setCurrentStep] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved).step : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [formData, setFormData] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved
+        ? JSON.parse(saved).data
+        : {
+            gender: "m",
+            age: "",
+            weight: "",
+            height: "",
+            activity: 1.2,
+            percentage: 100,
+            macroRatios: null,
+            smokingStatus: "no",
+          };
+    } catch {
+      return {
+        gender: "m",
+        age: "",
+        weight: "",
+        height: "",
+        activity: 1.2,
+        percentage: 100,
+        macroRatios: null,
+        smokingStatus: "no",
+      };
+    }
   });
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ step: currentStep, data: formData })
+    );
+  }, [currentStep, formData]);
+
   const handleInputChange = useCallback((field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
@@ -183,6 +219,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         title: "Finally, let's set your macro ratios",
         component: (
           <MacroRatioValidator
+            initialMacros={formData.macroRatios}
             onValidRatios={(ratios) => handleInputChange("macroRatios", ratios)}
           />
         ),

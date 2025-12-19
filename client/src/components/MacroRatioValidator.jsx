@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import PropTypes from "prop-types";
-import { Card, CardContent } from "../components/ui/card";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import { AlertTriangle, CheckCircle, Info } from "lucide-react";
-const MacroRatioValidator = ({ onValidRatios }) => {
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Card, CardContent } from "../components/ui/card";
+const MacroRatioValidator = ({ onValidRatios, initialMacros }) => {
   const amdrRanges = useMemo(
     () => ({
       protein: { min: 10, max: 40 },
@@ -12,11 +12,13 @@ const MacroRatioValidator = ({ onValidRatios }) => {
     }),
     []
   );
-  const [macros, setMacros] = useState({
-    protein: 30,
-    carbohydrate: 40,
-    fats: 30,
-  });
+  const [macros, setMacros] = useState(
+    initialMacros || {
+      protein: 30,
+      carbohydrate: 40,
+      fats: 30,
+    }
+  );
   const total = Object.values(macros).reduce((sum, value) => sum + value, 0);
   const getAMDRViolations = useCallback(() => {
     const violations = [];
@@ -252,5 +254,6 @@ const MacroRatioValidator = ({ onValidRatios }) => {
 };
 MacroRatioValidator.propTypes = {
   onValidRatios: PropTypes.func.isRequired,
+  initialMacros: PropTypes.object,
 };
 export default MacroRatioValidator;

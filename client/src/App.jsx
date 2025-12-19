@@ -37,6 +37,7 @@ const STORAGE_KEYS = {
   ADJUSTED_LOWER_BOUNDS: "knapsnack_adjusted_lower_bounds",
   ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
   USE_CUSTOM_BOUNDS: "knapsnack_use_custom_bounds",
+  FORM_STATE: "knapsnack_form_state",
 };
 
 const isDuplicateFood = (newFood, existingFoods) => {
@@ -221,6 +222,7 @@ function App() {
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
+    localStorage.removeItem(STORAGE_KEYS.FORM_STATE);
     navigate("/");
   };
 
