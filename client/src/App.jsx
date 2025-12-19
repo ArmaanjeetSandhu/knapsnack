@@ -347,11 +347,16 @@ function App() {
       ) : (
         <>
           {!optimizationResults && !showCalculationResults && (
-            <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div
+              className={`mb-4 grid grid-cols-1 ${
+                storedResults ? "md:grid-cols-2" : ""
+              } gap-4`}
+            >
               {storedResults && (
                 <Button
                   onClick={handleViewPreviousResults}
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  variant="outline"
+                  className="w-full"
                 >
                   <Eye className="w-5 h-5 mr-2" />
                   View Previous Optimization Results
@@ -360,7 +365,8 @@ function App() {
               {nutrientGoals && (
                 <Button
                   onClick={handleViewCalculationResults}
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  variant="outline"
+                  className="w-full"
                 >
                   <Calculator className="w-5 h-5 mr-2" />
                   View Nutrition Requirements
@@ -369,7 +375,6 @@ function App() {
             </div>
           )}
 
-          {/* Top Button: Shown only when results are active */}
           {optimizationResults && (
             <div className="mb-4">
               <Button
@@ -414,6 +419,35 @@ function App() {
                     &quot;View Nutrition Requirements&quot; to adjust them.
                   </AlertDescription>
                 </Alert>
+              )}
+
+              {!showCalculationResults && (
+                <div
+                  className={`mt-6 grid grid-cols-1 ${
+                    storedResults ? "md:grid-cols-2" : ""
+                  } gap-4`}
+                >
+                  {storedResults && (
+                    <Button
+                      onClick={handleViewPreviousResults}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Eye className="w-5 h-5 mr-2" />
+                      View Previous Optimization Results
+                    </Button>
+                  )}
+                  {nutrientGoals && (
+                    <Button
+                      onClick={handleViewCalculationResults}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <Calculator className="w-5 h-5 mr-2" />
+                      View Nutrition Requirements
+                    </Button>
+                  )}
+                </div>
               )}
             </>
           )}
