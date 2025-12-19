@@ -317,6 +317,7 @@ function App() {
   const handleViewCalculationResults = () => {
     setShowCalculationResults(true);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "true");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleHideCalculationResults = (boundData) => {
