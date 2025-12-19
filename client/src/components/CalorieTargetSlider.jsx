@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { Scale, TrendingDown, Minus, TrendingUp } from "lucide-react";
+import { Minus, Scale, TrendingDown, TrendingUp } from "lucide-react";
 import PropTypes from "prop-types";
-const CalorieTargetSlider = ({ value, onChange }) => {
+import { useEffect, useRef, useState } from "react";
+const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
+  const inputRef = useRef(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const categories = [
     {
@@ -61,6 +62,11 @@ const CalorieTargetSlider = ({ value, onChange }) => {
     setIsAnimating(true);
   };
   useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
+  useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => setIsAnimating(false), 500);
       return () => clearTimeout(timer);
@@ -100,6 +106,7 @@ const CalorieTargetSlider = ({ value, onChange }) => {
           />
         </div>
         <input
+          ref={inputRef}
           type="range"
           min="75"
           max="125"
@@ -168,5 +175,6 @@ const CalorieTargetSlider = ({ value, onChange }) => {
 CalorieTargetSlider.propTypes = {
   value: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
+  autoFocus: PropTypes.bool,
 };
 export default CalorieTargetSlider;

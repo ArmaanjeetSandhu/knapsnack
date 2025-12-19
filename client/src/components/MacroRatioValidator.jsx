@@ -1,9 +1,10 @@
 import { AlertTriangle, CheckCircle, Info } from "lucide-react";
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Card, CardContent } from "../components/ui/card";
-const MacroRatioValidator = ({ onValidRatios, initialMacros }) => {
+const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
+  const firstInputRef = useRef(null);
   const amdrRanges = useMemo(
     () => ({
       protein: { min: 10, max: 40 },
@@ -38,6 +39,11 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros }) => {
     const isValid = violations.length === 0 && validTotal;
     onValidRatios(isValid ? macros : null);
   }, [macros, total, onValidRatios, getAMDRViolations]);
+  useEffect(() => {
+    if (autoFocus && firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, [autoFocus]);
   const handleMacroChange = useCallback(
     (macroType, newValue) => {
       const range = amdrRanges[macroType];
@@ -202,7 +208,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros }) => {
             </div>
           </AlertDescription>
         </Alert>
-        {Object.entries(macros).map(([macro, value]) => (
+        {Object.entries(macros).map(([macro, value], index) => (
           <div key={macro} className="space-y-2">
             <div className="flex justify-between">
               <label className="text-sm font-medium capitalize text-foreground">
@@ -228,6 +234,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros }) => {
                 <span>100%</span>
               </div>
               <input
+                ref={index === 0 ? firstInputRef : null}
                 type="range"
                 min="0"
                 max="100"
@@ -255,5 +262,6 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros }) => {
 MacroRatioValidator.propTypes = {
   onValidRatios: PropTypes.func.isRequired,
   initialMacros: PropTypes.object,
+  autoFocus: PropTypes.bool,
 };
 export default MacroRatioValidator;

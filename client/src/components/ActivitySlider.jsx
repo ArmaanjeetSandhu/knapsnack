@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
 import {
   Activity,
-  Heart,
-  Coffee,
-  Briefcase,
-  Dumbbell,
   Award,
+  Briefcase,
+  Coffee,
+  Dumbbell,
+  Heart,
 } from "lucide-react";
 import PropTypes from "prop-types";
-const ActivitySlider = ({ value, onChange }) => {
+import { useEffect, useRef, useState } from "react";
+const ActivitySlider = ({ value, onChange, autoFocus }) => {
+  const inputRef = useRef(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const categories = [
     {
@@ -106,6 +107,11 @@ const ActivitySlider = ({ value, onChange }) => {
     setIsAnimating(true);
   };
   useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
+  useEffect(() => {
     if (isAnimating) {
       const timer = setTimeout(() => setIsAnimating(false), 500);
       return () => clearTimeout(timer);
@@ -138,6 +144,7 @@ const ActivitySlider = ({ value, onChange }) => {
           />
         </div>
         <input
+          ref={inputRef}
           type="range"
           min="1.2"
           max="2.4"
@@ -205,5 +212,6 @@ const ActivitySlider = ({ value, onChange }) => {
 ActivitySlider.propTypes = {
   value: PropTypes.number.isRequired,
   onChange: PropTypes.func.isRequired,
+  autoFocus: PropTypes.bool,
 };
 export default ActivitySlider;

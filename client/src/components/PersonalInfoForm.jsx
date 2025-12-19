@@ -168,6 +168,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
           <ActivitySlider
             value={formData.activity}
             onChange={(value) => handleInputChange("activity", value)}
+            autoFocus={true}
           />
         ),
       },
@@ -218,6 +219,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
           <CalorieTargetSlider
             value={formData.percentage}
             onChange={(value) => handleInputChange("percentage", value)}
+            autoFocus={true}
           />
         ),
       },
@@ -227,6 +229,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
           <MacroRatioValidator
             initialMacros={formData.macroRatios}
             onValidRatios={handleMacroRatiosUpdate}
+            autoFocus={true}
           />
         ),
         validate: (value) => {
