@@ -20,7 +20,6 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { ScrollArea } from "./ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -506,14 +505,14 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                     </TabsList>
                     <AnimatePresence mode="wait">
                       <TabsContent value="vitamins">
-                        <ScrollArea className="h-[400px] relative">
+                        <div className="h-[400px] overflow-y-auto relative">
                           {renderEditableBoundsTable(vitamins)}
-                        </ScrollArea>
+                        </div>
                       </TabsContent>
                       <TabsContent value="minerals">
-                        <ScrollArea className="h-[400px] relative">
+                        <div className="h-[400px] overflow-y-auto relative">
                           {renderEditableBoundsTable(minerals)}
-                        </ScrollArea>
+                        </div>
                       </TabsContent>
                     </AnimatePresence>
                   </Tabs>
@@ -537,7 +536,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                     </TabsList>
                     <AnimatePresence mode="wait">
                       <TabsContent value="vitamins">
-                        <ScrollArea className="h-[400px]">
+                        <div className="h-[400px] overflow-y-auto relative">
                           <AnimatePresence mode="wait">
                             <motion.div
                               key={nutrientDisplayMode}
@@ -551,10 +550,10 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 : renderNutrientCards(vitamins)}
                             </motion.div>
                           </AnimatePresence>
-                        </ScrollArea>
+                        </div>
                       </TabsContent>
                       <TabsContent value="minerals">
-                        <ScrollArea className="h-[400px]">
+                        <div className="h-[400px] overflow-y-auto relative">
                           <AnimatePresence mode="wait">
                             <motion.div
                               key={nutrientDisplayMode}
@@ -568,7 +567,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 : renderNutrientCards(minerals)}
                             </motion.div>
                           </AnimatePresence>
-                        </ScrollArea>
+                        </div>
                       </TabsContent>
                     </AnimatePresence>
                   </Tabs>
