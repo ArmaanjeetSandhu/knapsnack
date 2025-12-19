@@ -1,21 +1,45 @@
-import { useState, useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+
 const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(false);
+
   useEffect(() => {
-    const isDarkMode = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    setIsDark(isDarkMode);
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
+    const storedTheme = localStorage.getItem("knapsnack_theme");
+
+    if (storedTheme) {
+      const isDarkStored = storedTheme === "dark";
+      setIsDark(isDarkStored);
+      if (isDarkStored) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    } else {
+      const isSystemDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setIsDark(isSystemDark);
+      if (isSystemDark) {
+        document.documentElement.classList.add("dark");
+      }
     }
   }, []);
+
   const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle("dark");
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+
+    if (newIsDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("knapsnack_theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("knapsnack_theme", "light");
+    }
   };
+
   return (
     <Button
       variant="ghost"
@@ -32,4 +56,5 @@ const ThemeToggle = () => {
     </Button>
   );
 };
+
 export default ThemeToggle;

@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import PropTypes from "prop-types";
 import { Button } from "./ui/button";
+
 const LandingPage = ({ onGetStarted }) => {
   return (
     <div
@@ -30,9 +31,13 @@ const LandingPage = ({ onGetStarted }) => {
       <div className="relative z-10 text-center text-white px-4">
         <h1 className="text-5xl md:text-6xl font-bold mb-6">Knap[Snack]</h1>
         <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
-          Your Personalized Diet Optimization Tool
+          The Cost-Optimized Meal Planner
         </p>
-        <Button size="lg" onClick={onGetStarted} className="animate-bounce">
+        <Button
+          size="lg"
+          onClick={onGetStarted}
+          className="animate-bounce bg-white/90 text-black hover:bg-white-800 border-none"
+        >
           Get Started
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
@@ -40,7 +45,9 @@ const LandingPage = ({ onGetStarted }) => {
     </div>
   );
 };
+
 LandingPage.propTypes = {
   onGetStarted: PropTypes.func.isRequired,
 };
+
 export default LandingPage;
