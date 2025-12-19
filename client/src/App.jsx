@@ -38,6 +38,7 @@ const STORAGE_KEYS = {
   ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
   USE_CUSTOM_BOUNDS: "knapsnack_use_custom_bounds",
   FORM_STATE: "knapsnack_form_state",
+  HAS_VISITED_FOOD_SELECTION: "knapsnack_has_visited_food_selection",
 };
 
 const isDuplicateFood = (newFood, existingFoods) => {
@@ -56,6 +57,7 @@ function App() {
   const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(null);
   const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(null);
   const [useCustomBounds, setUseCustomBounds] = useState(false);
+  const [hasVisitedFoodSelection, setHasVisitedFoodSelection] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -74,6 +76,9 @@ function App() {
       );
       const storedUseCustomBounds = localStorage.getItem(
         STORAGE_KEYS.USE_CUSTOM_BOUNDS
+      );
+      const storedVisitedFoodSelection = localStorage.getItem(
+        STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION
       );
 
       if (storedFoods) {
@@ -99,6 +104,9 @@ function App() {
       }
       if (storedUseCustomBounds) {
         setUseCustomBounds(JSON.parse(storedUseCustomBounds));
+      }
+      if (storedVisitedFoodSelection) {
+        setHasVisitedFoodSelection(JSON.parse(storedVisitedFoodSelection));
       }
 
       const showCalcResults = localStorage.getItem(
@@ -171,6 +179,19 @@ function App() {
     );
   }, [useCustomBounds]);
 
+  useEffect(() => {
+    localStorage.setItem(
+      STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION,
+      JSON.stringify(hasVisitedFoodSelection)
+    );
+  }, [hasVisitedFoodSelection]);
+
+  useEffect(() => {
+    if (nutrientGoals && !showCalculationResults && !optimizationResults) {
+      setHasVisitedFoodSelection(true);
+    }
+  }, [nutrientGoals, showCalculationResults, optimizationResults]);
+
   const handleFormSubmit = async (formData) => {
     try {
       const calculationData = {
@@ -214,6 +235,7 @@ function App() {
     setAdjustedLowerBounds(null);
     setAdjustedUpperBounds(null);
     setUseCustomBounds(false);
+    setHasVisitedFoodSelection(false);
     localStorage.removeItem(STORAGE_KEYS.SELECTED_FOODS);
     localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
     localStorage.removeItem(STORAGE_KEYS.USER_INFO);
@@ -223,6 +245,7 @@ function App() {
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.FORM_STATE);
+    localStorage.removeItem(STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION);
     navigate("/");
   };
 
@@ -302,16 +325,18 @@ function App() {
         </div>
       ) : showCalculationResults ? (
         <div className="max-w-4xl mx-auto">
-          <div className="mb-4">
-            <Button
-              onClick={() => handleHideCalculationResults()}
-              variant="outline"
-              className="w-full"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Food Selection
-            </Button>
-          </div>
+          {hasVisitedFoodSelection && (
+            <div className="mb-4">
+              <Button
+                onClick={() => handleHideCalculationResults()}
+                variant="outline"
+                className="w-full"
+              >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back to Food Selection
+              </Button>
+            </div>
+          )}
           <CalculationResults
             calculationData={nutrientGoals}
             userInfo={userInfo}
