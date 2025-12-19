@@ -46,7 +46,7 @@ logging.basicConfig(
 static_folder = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "client", "dist")
 )
-app = Flask(__name__, static_folder=static_folder, static_url_path="")
+app = Flask(__name__, static_folder=static_folder)
 CORS(app)
 mimetypes.add_type("video/mp4", ".mp4")
 
