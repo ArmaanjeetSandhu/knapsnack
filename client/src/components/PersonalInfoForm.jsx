@@ -56,6 +56,8 @@ const PersonalInfoForm = ({ onSubmit }) => {
   });
   const [error, setError] = useState(null);
 
+  const [showSmokingHelp, setShowSmokingHelp] = useState(false);
+
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEY,
@@ -73,6 +75,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
     },
     [handleInputChange]
   );
+
   const steps = useMemo(
     () => [
       {
@@ -174,22 +177,42 @@ const PersonalInfoForm = ({ onSubmit }) => {
       },
       {
         title: (
-          <div className="flex items-center gap-2">
-            Do you smoke?
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button className="cursor-help">
-                    <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>
-                    Smokers require an additional 35mg of vitamin C per day.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              Do you smoke?
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="cursor-help"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowSmokingHelp((prev) => !prev);
+                      }}
+                    >
+                      <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>
+                      Smokers require an additional 35mg of vitamin C per day.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <AnimatePresence>
+              {showSmokingHelp && (
+                <motion.p
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="text-base font-normal text-muted-foreground"
+                >
+                  Smokers require an additional 35mg of vitamin C per day.
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         ),
         component: (
@@ -240,8 +263,9 @@ const PersonalInfoForm = ({ onSubmit }) => {
         },
       },
     ],
-    [formData, handleInputChange, handleMacroRatiosUpdate]
+    [formData, handleInputChange, handleMacroRatiosUpdate, showSmokingHelp]
   );
+
   const validateStep = useCallback(() => {
     const currentStepData = steps[currentStep];
     const currentValue = formData[Object.keys(formData)[currentStep]];
