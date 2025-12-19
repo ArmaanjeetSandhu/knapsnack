@@ -2,7 +2,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS } from "@contentful/rich-text-types";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import { Button } from "./ui/button";
 
@@ -33,6 +33,7 @@ const BlogPostPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -48,17 +49,21 @@ const BlogPostPage = () => {
     fetchPost();
   }, [slug]);
 
+  const handleBackToBlog = () => {
+    if (location.state?.from === "blog") {
+      navigate(-1); // Go back in history if we came from the blog list
+    } else {
+      navigate("/blog"); // Otherwise push /blog (e.g., direct link access)
+    }
+  };
+
   if (loading) return <div>Loading post...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!post) return <div>Post not found.</div>;
 
   return (
     <article className="max-w-3xl mx-auto">
-      <Button
-        onClick={() => navigate("/blog")}
-        variant="outline"
-        className="mb-6"
-      >
+      <Button onClick={handleBackToBlog} variant="outline" className="mb-6">
         <ArrowLeft className="w-4 h-4 mr-2" /> Back to Blog
       </Button>
       <h1 className="text-4xl font-bold mb-2">{post.title}</h1>

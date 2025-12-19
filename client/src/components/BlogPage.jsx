@@ -46,6 +46,7 @@ const BlogPage = () => {
             <Link
               to={`/blog/${post.slug}`}
               key={post.id}
+              state={{ from: "blog" }}
               className="block hover:no-underline"
             >
               <Card className="hover:border-primary transition-colors">
