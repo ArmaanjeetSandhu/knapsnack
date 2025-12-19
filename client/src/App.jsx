@@ -293,6 +293,7 @@ function App() {
 
   const handleHideResults = () => {
     setOptimizationResults(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleViewCalculationResults = () => {
@@ -367,7 +368,9 @@ function App() {
               )}
             </div>
           )}
-          {optimizationResults && storedResults && (
+
+          {/* Top Button: Shown only when results are active */}
+          {optimizationResults && (
             <div className="mb-4">
               <Button
                 onClick={handleHideResults}
@@ -379,6 +382,7 @@ function App() {
               </Button>
             </div>
           )}
+
           {!optimizationResults && (
             <>
               <FoodSearch
@@ -413,11 +417,24 @@ function App() {
               )}
             </>
           )}
+
           {optimizationResults && (
-            <OptimizationResults
-              results={optimizationResults}
-              selectedFoods={selectedFoods}
-            />
+            <>
+              <OptimizationResults
+                results={optimizationResults}
+                selectedFoods={selectedFoods}
+              />
+              <div className="mt-6">
+                <Button
+                  onClick={handleHideResults}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <RefreshCw className="w-5 h-5 mr-2" />
+                  Hide Results and Modify Foods
+                </Button>
+              </div>
+            </>
           )}
         </>
       )}
