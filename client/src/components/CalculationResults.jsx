@@ -30,7 +30,8 @@ import {
   TableRow,
 } from "./ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-const CalculationResults = ({ calculationData, onProceed }) => {
+
+const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
   const [customizingBounds, setCustomizingBounds] = useState(false);
   const [adjustedLowerBounds, setAdjustedLowerBounds] = useState({});
@@ -578,11 +579,20 @@ const CalculationResults = ({ calculationData, onProceed }) => {
         </CardContent>
       </Card>
       <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.5 }}
-        whileHover={{ scale: 1.02 }}
       >
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={onRecalculate}
+          className="w-full"
+        >
+          <RotateCcw className="w-5 h-5 mr-2" />
+          Recalculate Goals
+        </Button>
         <Button
           className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
           size="lg"
@@ -617,5 +627,6 @@ CalculationResults.propTypes = {
     gender: PropTypes.string.isRequired,
   }).isRequired,
   onProceed: PropTypes.func.isRequired,
+  onRecalculate: PropTypes.func.isRequired,
 };
 export default CalculationResults;

@@ -249,6 +249,24 @@ function App() {
     navigate("/");
   };
 
+  const handleRecalculate = () => {
+    setNutrientGoals(null);
+    setOptimizationResults(null);
+    setStoredResults(null);
+    setShowCalculationResults(false);
+    setAdjustedLowerBounds(null);
+    setAdjustedUpperBounds(null);
+    setUseCustomBounds(false);
+
+    localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
+    localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
+    localStorage.removeItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
+    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
+    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
+    localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
+    localStorage.removeItem(STORAGE_KEYS.FORM_STATE);
+  };
+
   const handleFoodSelect = (food) => {
     if (isDuplicateFood(food, selectedFoods)) {
       setError(`"${food.description}" is already in your food list.`);
@@ -342,6 +360,7 @@ function App() {
             calculationData={nutrientGoals}
             userInfo={userInfo}
             onProceed={handleHideCalculationResults}
+            onRecalculate={handleRecalculate}
           />
         </div>
       ) : (
