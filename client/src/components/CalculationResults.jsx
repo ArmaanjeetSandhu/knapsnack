@@ -355,6 +355,8 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                     {macro.label}
                   </p>
                   <p className="text-2xl font-bold">
+                    {macro.label === "Fiber" && "≥ "}
+                    {macro.label === "Saturated Fats" && "≤ "}
                     {formatValue(macro.value)}
                     {macro.unit}
                   </p>
