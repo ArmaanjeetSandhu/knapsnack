@@ -22,6 +22,7 @@ import {
 import { Input } from "../components/ui/input";
 import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
 import api from "../services/api";
+
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(
     () => localStorage.getItem("usda_api_key") || ""
@@ -33,6 +34,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [searchError, setSearchError] = useState(null);
   const [apiKeyError, setApiKeyError] = useState(null);
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
+
   const handleApiKeySubmit = (e) => {
     e.preventDefault();
     if (!apiKey.trim()) {
@@ -42,6 +44,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     localStorage.setItem("usda_api_key", apiKey);
     setApiKeyError(null);
   };
+
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
@@ -61,6 +64,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       setLoading(false);
     }
   };
+
   const handleFoodAdd = (food) => {
     onFoodSelect(food);
     setRecentlyAdded((prev) => new Set([...prev, food.fdcId]));
@@ -72,6 +76,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       });
     }, 2000);
   };
+
   const processCSVData = (results) => {
     if (results.errors.length > 0) {
       setSearchError(
@@ -110,6 +115,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           "Pantothenic Acid (mg)":
             (row["Pantothenic Acid (mg)"] * 100) / servingSize,
         };
+
         return {
           fdcId: row["FDC ID"]
             ? row["FDC ID"].toString()
@@ -118,6 +124,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           price: row["Price"],
           servingSize: row["Serving Size (g)"],
           maxServing: row["Max Serving (g)"],
+          integerServings: row["Discrete Servings"] === "Yes",
           nutrients: normalizedNutrients,
         };
       });
@@ -129,6 +136,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       return null;
     }
   };
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -149,6 +157,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     });
     event.target.value = "";
   };
+
   const handleTrySampleDiet = async () => {
     setSampleLoading(true);
     setSearchError(null);
@@ -179,13 +188,16 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       setSampleLoading(false);
     }
   };
+
   const isAdded = (foodId) => {
     return selectedFoodIds.includes(foodId) || recentlyAdded.has(foodId);
   };
+
   const errorVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0 },
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -416,9 +428,11 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     </motion.div>
   );
 };
+
 FoodSearch.propTypes = {
   onFoodSelect: PropTypes.func.isRequired,
   onFoodsImport: PropTypes.func.isRequired,
   selectedFoodIds: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
+
 export default FoodSearch;
