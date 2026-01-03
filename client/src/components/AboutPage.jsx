@@ -114,21 +114,30 @@ const faqs = [
   {
     question: "I take supplements. Can I include those here?",
     answer: [
-      "The food search pulls data from the USDA FoodData Central database, which doesn't include supplements. However, you can import a CSV file with the nutritional profiles of your supplements. Just ensure it matches the format of exported CSV files from the app's selected foods section.",
-      "One of Knap[Snack]'s goals is reducing supplement dependence by optimizing whole food choices, but the flexibility is there if needed.",
+      "One of Knap[Snack]'s goals is to reduce supplement dependence by optimizing whole food choices, but the flexibility is there if needed. To include supplements, you need to import a CSV file containing their nutritional profiles. Ensure the file format matches the CSVs exported from the app's selected foods section.",
+      <h4 key="discrete-supps" className="font-semibold mt-2">
+        Discrete Supplements (e.g., pills, capsules)
+      </h4>,
+      "For items taken in whole units, tick the corresponding boxes in the 'Discrete Servings' column. This ensures the optimizer only recommends whole numbers (e.g., 2 pills, not 1.5). Set the 'Serving Size (g)' to 1 so that one unit equals one pill. In the 'Max Serving (g)' column, enter the maximum number of pills you are comfortable consuming daily.",
+      <h4 key="continuous-supps" className="font-semibold mt-2">
+        Continuous Supplements (e.g., powders, liquids)
+      </h4>,
+      "For items measured flexibly, leave the 'Discrete Servings' column unchecked. You can then configure the logic in two ways:",
+      "\t• By unit (e.g., scoops): Set the 'Serving Size (g)' to 1. This treats one unit as one scoop. In the 'Max Serving (g)' column, enter the maximum number of scoops you are comfortable consuming daily.\n\t• By weight (e.g., grams): Set the 'Serving Size (g)' to the actual weight of one unit (e.g., 20 for a 20g scoop). In the 'Max Serving (g)' column, enter the maximum total weight in grams you are comfortable consuming daily.",
     ],
   },
   {
     question: "Why doesn't the food search have everything I eat?",
     answer: [
-      "The food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. A more comprehensive alternative is the NCCDB, which I'd love to integrate, but it's prohibitively expensive for now.",
-      "However, the workaround is similar to that for supplements: import a CSV file with the nutritional profiles of all the foods you want to include in your diet but don't see in the food search. Just ensure it matches the format of exported CSV files from the app's selected foods section.",
+      "Knap[Snack]'s food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. To include food items that you don't see in the food search, you can import a CSV with their nutritional profiles (taken from a reliable source). Just ensure that the CSV matches the format of exported CSV files from the app's selected foods section, and that the nutrient values in each row correspond to the amount specified in the 'Serving Size (g)' column.",
     ],
   },
   {
     question: 'I got an "Optimization Failed" error. What now?',
-    answer:
-      "Unfortunately, linear programming can fail to converge on a solution even when the solution space is feasible. I am trying to make the backend robust to such cases, but until then, you can try adding more food variety to your list, or increasing maximum serving sizes.",
+    answer: [
+      "This can happen because the math problem Knap[Snack] solves is NP-hard. As you add more constraints, the difficulty increases exponentially, and the solver may fail to converge on a solution.",
+      "To help the solver, you can try relaxing the constraints: add more variety to your food list, or increase the maximum serving sizes.",
+    ],
   },
   {
     question: "Why is it called Knap[Snack]?",
