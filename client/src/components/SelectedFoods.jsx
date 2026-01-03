@@ -20,6 +20,7 @@ import {
 } from "../components/ui/table";
 import api from "../services/api";
 import FeasibilityAnalysis from "./FeasibilityAnalysis";
+
 const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   const adjustedNutrients = {};
   for (const [nutrient, value] of Object.entries(nutrients)) {
@@ -27,6 +28,7 @@ const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   }
   return adjustedNutrients;
 };
+
 const SelectedFoods = ({
   foods,
   onFoodsUpdate,
@@ -41,10 +43,12 @@ const SelectedFoods = ({
     direction: "ascending",
   });
   const [feasibilityData, setFeasibilityData] = useState(null);
+
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
     setFeasibilityData(null);
   };
+
   const handleInputChange = (fdcId, field, value) => {
     onFoodsUpdate(
       foods.map((food) => {
@@ -56,6 +60,7 @@ const SelectedFoods = ({
     );
     setFeasibilityData(null);
   };
+
   const handleOptimize = async () => {
     if (!foods.length) {
       setError("Please select at least one food item.");
@@ -85,6 +90,7 @@ const SelectedFoods = ({
         price: parseFloat(food.price),
         servingSize: parseFloat(food.servingSize),
         maxServing: parseFloat(food.maxServing),
+        requires_integer_servings: !!food.integerServings,
         nutrients: adjustNutrientsForServingSize(
           food.nutrients,
           parseFloat(food.servingSize)
@@ -111,13 +117,14 @@ const SelectedFoods = ({
       setLoading(false);
     }
   };
+
   const handleExportSelectedFoods = () => {
     const headers = [
+      "Discrete Servings",
       "Food Item",
       "Price",
       "Serving Size (g)",
       "Max Serving (g)",
-      // "FDC ID",
       "Vitamin A (µg)",
       "Vitamin C (mg)",
       "Vitamin E (mg)",
@@ -151,11 +158,11 @@ const SelectedFoods = ({
         parseFloat(food.servingSize) || 100
       );
       const row = [
+        food.integerServings ? "Yes" : "No",
         `"${food.description}"`,
         food.price || "",
         food.servingSize || "",
         food.maxServing || "",
-        // food.fdcId,
         adjustedNutrients["Vitamin A (µg)"]?.toFixed(2) || "",
         adjustedNutrients["Vitamin C (mg)"]?.toFixed(2) || "",
         adjustedNutrients["Vitamin E (mg)"]?.toFixed(2) || "",
@@ -193,6 +200,7 @@ const SelectedFoods = ({
     link.click();
     document.body.removeChild(link);
   };
+
   const handleSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -200,6 +208,7 @@ const SelectedFoods = ({
     }
     setSortConfig({ key, direction });
   };
+
   const getSortedFoods = () => {
     const sortableFoods = [...foods];
     if (sortConfig.key) {
@@ -229,16 +238,20 @@ const SelectedFoods = ({
     }
     return sortableFoods;
   };
+
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) {
       return null;
     }
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
+
   const sortedFoods = getSortedFoods();
+
   if (feasibilityData) {
     return <FeasibilityAnalysis feasibilityData={feasibilityData} />;
   }
+
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader className="bg-primary rounded-t-lg">
@@ -272,6 +285,9 @@ const SelectedFoods = ({
               <Table>
                 <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
                   <TableRow>
+                    <TableHead className="w-[100px] text-center">
+                      Discrete Servings
+                    </TableHead>
                     <TableHead
                       onClick={() => handleSort("food")}
                       className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
@@ -302,6 +318,23 @@ const SelectedFoods = ({
                 <TableBody>
                   {sortedFoods.map((food) => (
                     <TableRow key={food.fdcId}>
+                      <TableCell>
+                        <div className="flex justify-center items-center h-full pt-2">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                            checked={!!food.integerServings}
+                            onChange={(e) =>
+                              handleInputChange(
+                                food.fdcId,
+                                "integerServings",
+                                e.target.checked
+                              )
+                            }
+                            aria-label={`Require discrete servings for ${food.description}`}
+                          />
+                        </div>
+                      </TableCell>
                       <TableCell className="font-medium">
                         {food.description}
                       </TableCell>
@@ -432,6 +465,7 @@ const SelectedFoods = ({
     </Card>
   );
 };
+
 SelectedFoods.propTypes = {
   foods: PropTypes.arrayOf(
     PropTypes.shape({
@@ -440,6 +474,7 @@ SelectedFoods.propTypes = {
       price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       servingSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       nutrients: PropTypes.object.isRequired,
+      integerServings: PropTypes.bool,
     })
   ).isRequired,
   onFoodsUpdate: PropTypes.func.isRequired,
@@ -451,4 +486,5 @@ SelectedFoods.propTypes = {
   }).isRequired,
   onOptimizationResults: PropTypes.func.isRequired,
 };
+
 export default SelectedFoods;

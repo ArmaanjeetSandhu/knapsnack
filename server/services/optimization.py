@@ -259,7 +259,14 @@ def solve_optimization_problem(
 
     prob = pulp.LpProblem("Diet_Optimization", pulp.LpMinimize)
 
-    x = [pulp.LpVariable(f"x_{i}", 0, max_servings[i]) for i in range(num_foods)]
+    x = []
+    for i in range(num_foods):
+        if selected_foods[i].get("requires_integer_servings", False):
+            var = pulp.LpVariable(f"x_{i}", 0, max_servings[i], cat=pulp.LpInteger)
+        else:
+            var = pulp.LpVariable(f"x_{i}", 0, max_servings[i], cat=pulp.LpContinuous)
+        x.append(var)
+
     y = [pulp.LpVariable(f"y_{i}", cat=pulp.LpBinary) for i in range(num_foods)]
 
     prob += pulp.lpSum([costs[i] * x[i] for i in range(num_foods)])
