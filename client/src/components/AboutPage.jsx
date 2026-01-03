@@ -36,7 +36,7 @@ const faqs = [
       </h3>,
       "The objective is to minimize the total cost of the diet:",
       "$$\n\\text{Minimize } \\sum_{i=1}^{n} c_i x_i\n$$",
-      "where:\n• $n$ is the number of available food items\n• $c_i$ is the cost per serving of food item $i$\n• $x_i$ is the number of servings of food item $i$",
+      "where:\n\t• $n$ is the number of available food items\n\t• $c_i$ is the cost per serving of food item $i$\n\t• $x_i$ is the number of servings of food item $i$",
       <h3 key="constraints-header" className="text-xl font-semibold mt-4">
         Constraints
       </h3>,
@@ -48,7 +48,7 @@ const faqs = [
       "$$\n\\sum_{i=1}^{n} a_{ij} x_i \\geq b_j \\quad \\forall j \\in \\{1,2,...,m\\}\n$$",
       "For nutrients with established upper limits, the total amount must not exceed the maximum allowable intake:",
       "$$\n\\sum_{i=1}^{n} a_{ij} x_i \\leq u_j \\quad \\forall j \\in \\{1,2,...,p\\}\n$$",
-      "where:\n• $m$ is the number of nutrients\n• $p$ is the number of micronutrients with upper limits\n• $a_{ij}$ is the amount of nutrient $j$ in one serving of food item $i$\n• $b_j$ is the minimum required amount of nutrient $j$ (RDA value)\n• $u_j$ is the maximum allowable amount of nutrient $j$ (UL value)",
+      "where:\n\t• $m$ is the number of nutrients\n\t• $p$ is the number of micronutrients with upper limits\n\t• $a_{ij}$ is the amount of nutrient $j$ in one serving of food item $i$\n\t• $b_j$ is the minimum required amount of nutrient $j$ (RDA value)\n\t• $u_j$ is the maximum allowable amount of nutrient $j$ (UL value)",
       <h4 key="macronutrients-header" className="font-semibold mt-2">
         Macronutrients
       </h4>,
@@ -56,32 +56,35 @@ const faqs = [
       "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\geq \\frac{C \\times r_p}{4 \\text{ kcal/g}}\n$$",
       "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\geq \\frac{C \\times r_c}{4 \\text{ kcal/g}}\n$$",
       "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\geq \\frac{C \\times r_f}{9 \\text{ kcal/g}}\n$$",
-      "where:\n• $C$ is your daily caloric goal\n• $r_p, r_c$ and $r_f$ are the proportion of calories from protein, carbs, and fats respectively\n• $a_{i,p}, a_{i,c}$ and $a_{i,f}$ are grams of protein, carbs, and fats in food item $i$",
+      "where:\n\t• $C$ is your daily caloric goal\n\t• $r_p, r_c$ and $r_f$ are the proportion of calories from protein, carbs, and fats respectively\n\t• $a_{i,p}, a_{i,c}$ and $a_{i,f}$ are grams of protein, carbs, and fats in food item $i$",
       "As per Acceptable Macronutrient Distribution Ranges (AMDR) guidelines, $r_p, r_c$ and $r_f$ must fall within the following percentage ranges:",
       "$$\n10\\% \\le r_p \\le 40\\%, \\quad 40\\% \\le r_c \\le 65\\%, \\quad 20\\% \\le r_f \\le 35\\%\n$$",
-      "Unlike micronutrients, macronutrients don't have well-defined toxicity thresholds, so they typically don't require strict upper limits. However, without any upper bounds, the optimizer might converge on solutions where macronutrient values are significantly higher than their intended targets, disrupting your desired macronutrient ratios and resulting in excessive overall intake.",
-      "At the same time, enforcing zero deviation from each macronutrient target may make it impossible for the optimizer to find a feasible solution. To balance these competing needs, Knap[Snack] allows controlled deviations above your macronutrient targets:",
-      "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\leq \\frac{C \\times r_p}{4 \\text{ kcal/g}} \\times (1 + \\delta_p)$$",
-      "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\leq \\frac{C \\times r_c}{4 \\text{ kcal/g}} \\times (1 + \\delta_c)$$",
-      "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\leq \\frac{C \\times r_f}{9 \\text{ kcal/g}} \\times (1 + \\delta_f)$$",
-      "where $\\delta_p, \\delta_c,$ and $\\delta_f$ represent allowable deviation percentages (ranging from 0% to 10%) for protein, carbohydrates, and fats respectively.",
-      "This creates a dual-objective optimization problem: minimizing both the total cost of the diet and deviations from your target macronutrient values. Knap[Snack] solves this using a systematic grid search approach that explores combinations of allowable deviations, prioritizing solutions that stay closest to your nutritional targets while still finding feasible, cost-effective meal plans.",
       "Additionally, in accordance with evidence-based recommendations, fibre has been given a lower limit of 14 grams per 1000 calories:",
       "$$\n\\sum_{i=1}^{n} a_{i,fb} x_i \\geq \\frac{14 \\times C}{1000}\n$$",
       "And saturated fats have been capped at 10% of your daily caloric goal:",
       "$$\n\\sum_{i=1}^{n} a_{i,sf} x_i \\leq \\frac{0.10 \\times C}{9 \\text{ kcal/g}}\n$$",
+      "Unlike micronutrients, macronutrients don't have well-defined toxicity thresholds, so they typically don't require strict upper limits. However, without any upper bounds, the optimizer might converge on solutions where macronutrient values are significantly higher than their intended targets, disrupting your desired macronutrient ratios and resulting in excessive overall intake. At the same time, enforcing zero deviation from each macronutrient target may make it impossible for the optimizer to find a feasible solution. To balance these competing needs, Knap[Snack] allows controlled deviations above your macronutrient targets:",
+      "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\leq \\frac{C \\times r_p}{4 \\text{ kcal/g}} \\times (1 + \\delta_p)$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\leq \\frac{C \\times r_c}{4 \\text{ kcal/g}} \\times (1 + \\delta_c)$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\leq \\frac{C \\times r_f}{9 \\text{ kcal/g}} \\times (1 + \\delta_f)$$",
+      "where $\\delta_p, \\delta_c,$ and $\\delta_f$ represent allowable deviation percentages (ranging from 0% to 10%) for protein, carbohydrates, and fats respectively.",
+      "This creates a dual-objective optimization problem:",
+      "\t• minimizing the total cost of the diet, and",
+      "\t• minimizing deviations from your target macronutrient values.",
+      "Knap[Snack] solves this using a systematic grid search approach that explores combinations of allowable deviations, prioritizing solutions that stay closest to your nutritional targets while still finding feasible, cost-effective meal plans.",
       <h4 key="servings-header" className="font-semibold mt-2">
         Servings
       </h4>,
       "Each food has a maximum practical serving size $s_i$ (as set by you), and a binary variable $y_i \\in \\{0, 1\\}$ that determines whether the food is included at all. If $y_i = 0$, then $x_i = 0$. If $y_i = 1$, the food must be served in at least 1 unit, but no more than $s_i$:",
       "$$\n x_i \\leq s_i \\cdot y_i \\quad \\text{and} \\quad x_i \\geq y_i \\quad \\forall i \\in \\{1,2,\\dots,n\\}\n$$",
+      "If a food item is explicitly marked for 'Discrete Servings', an additional constraint ensures $x_i$ is a natural number, preventing fractional recommendations (e.g., 1.5 eggs):",
+      "$$\n x_i \\in \\mathbb{N}\n$$",
     ],
   },
   {
     question: "How do you determine my macro requirements?",
     answer: [
       "Knap[Snack] uses the Mifflin-St. Jeor equation to calculate your BMR (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your TDEE (Total Daily Energy Expenditure) is calculated, which is the actual number of calories you burn in a typical day. Depending on your fitness goals, you choose a target intake between 75% and 125% of your TDEE. This becomes your daily caloric goal. Finally, you customize how you distribute those calories across fats, carbohydrates, and protein.",
-      "While Mifflin-St Jeor works for most people, I plan to incorporate additional equations to provide the most accurate calculation for your specific profile.",
     ],
   },
   {
@@ -137,9 +140,9 @@ const faqs = [
     answer: [
       "You might want to check out the [[Knap[Snack] blog]], which dives deeper into nutrition science, best practices, and other ideas.",
       "I'm also inspired by and recommend these excellent resources:",
-      "• [[MacroFactor's Blog]]",
-      "• [[CronoMeter's Blog]]",
-      "• [[Gut Bites MD's Blog]]",
+      "\t• [[MacroFactor's Blog]]",
+      "\t• [[CronoMeter's Blog]]",
+      "\t• [[Gut Bites MD's Blog]]",
     ],
   },
 ];
