@@ -204,7 +204,7 @@ def optimize_diet(
         Optimization result or None if no feasible solution
     """
     overflow_percentages = list(range(0, 11))
-    nutrients = ["protein", "carbohydrate", "fats", "fiber"]
+    nutrients = ["protein", "carbohydrate", "fats"]
 
     all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
     sorted_combinations = sorted(all_combinations, key=sum)
@@ -245,7 +245,7 @@ def solve_optimization_problem(
         nutrient_goals: Target nutrient goals
         lower_bounds: Lower bounds for nutrients
         upper_bounds: Upper bounds for nutrients
-        overflow_percentages: Overflow percentages for (protein, carbs, fats, fiber)
+        overflow_percentages: Overflow percentages for (protein, carbs, fats)
 
     Returns:
         Result dictionary if optimization succeeds, None otherwise
@@ -254,7 +254,7 @@ def solve_optimization_problem(
         lower_bounds, upper_bounds
     )
 
-    nutrients = ["protein", "carbohydrate", "fats", "fiber"]
+    nutrients = ["protein", "carbohydrate", "fats"]
     num_foods = len(selected_foods)
 
     prob = pulp.LpProblem("Diet_Optimization", pulp.LpMinimize)
