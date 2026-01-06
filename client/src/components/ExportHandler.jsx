@@ -5,33 +5,45 @@ const handleExportCSV = (results, selectedFoods = []) => {
     "No. of Servings",
     "Total Serving (g)",
     "Cost",
+    "Water (mL)",
+    "Carbohydrate (g)",
+    "Fiber (g)",
+    "Fats (g)",
+    "Saturated Fats (g)",
+    "Protein (g)",
+    "Thiamin (mg)",
+    "Riboflavin (mg)",
+    "Niacin (mg)",
+    "Pantothenic Acid (mg)",
+    "Vitamin B6 (mg)",
+    "Choline (mg)",
+    "Folate (µg)",
     "Vitamin A (µg)",
     "Vitamin C (mg)",
     "Vitamin E (mg)",
     "Vitamin K (µg)",
-    "Thiamin (mg)",
-    "Riboflavin (mg)",
-    "Niacin (mg)",
-    "Vitamin B6 (mg)",
-    "Folate (µg)",
     "Calcium (mg)",
-    "Carbohydrate (g)",
-    "Choline (mg)",
-    "Protein (g)",
-    "Fats (g)",
-    "Saturated Fats (g)",
-    "Fiber (g)",
     "Iron (mg)",
     "Magnesium (mg)",
     "Manganese (mg)",
     "Phosphorus (mg)",
-    "Selenium (µg)",
-    "Zinc (mg)",
     "Potassium (mg)",
+    "Selenium (µg)",
     "Sodium (mg)",
-    "Pantothenic Acid (mg)",
-    "Water (mL)",
+    "Zinc (mg)",
   ];
+
+  const getNutrientKey = (header) => {
+    const mapping = {
+      "Carbohydrate (g)": "carbohydrate",
+      "Fiber (g)": "fiber",
+      "Fats (g)": "fats",
+      "Saturated Fats (g)": "saturated_fats",
+      "Protein (g)": "protein",
+    };
+    return mapping[header] || header;
+  };
+
   let csvContent = headers.join(",") + "\n";
   const foodData = results.food_items
     .map((foodName, index) => {
@@ -60,6 +72,7 @@ const handleExportCSV = (results, selectedFoods = []) => {
       };
     })
     .filter((item) => item !== null);
+
   foodData.forEach((food) => {
     const row = [
       `"${food.name}"`,
@@ -67,35 +80,16 @@ const handleExportCSV = (results, selectedFoods = []) => {
       food.servings.toFixed(1),
       food.totalServing.toFixed(1),
       food.cost.toFixed(2),
-      food.nutrients["Vitamin A (µg)"]?.toFixed(2) || "0",
-      food.nutrients["Vitamin C (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Vitamin E (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Vitamin K (µg)"]?.toFixed(2) || "0",
-      food.nutrients["Thiamin (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Riboflavin (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Niacin (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Vitamin B6 (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Folate (µg)"]?.toFixed(2) || "0",
-      food.nutrients["Calcium (mg)"]?.toFixed(2) || "0",
-      food.nutrients["carbohydrate"]?.toFixed(2) || "0",
-      food.nutrients["Choline (mg)"]?.toFixed(2) || "0",
-      food.nutrients["protein"]?.toFixed(2) || "0",
-      food.nutrients["fats"]?.toFixed(2) || "0",
-      food.nutrients["saturated_fats"]?.toFixed(2) || "0",
-      food.nutrients["fiber"]?.toFixed(2) || "0",
-      food.nutrients["Iron (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Magnesium (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Manganese (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Phosphorus (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Selenium (µg)"]?.toFixed(2) || "0",
-      food.nutrients["Zinc (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Potassium (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Sodium (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Pantothenic Acid (mg)"]?.toFixed(2) || "0",
-      food.nutrients["Water (mL)"]?.toFixed(2) || "0",
     ];
+
+    headers.slice(5).forEach((header) => {
+      const key = getNutrientKey(header);
+      row.push(food.nutrients[key]?.toFixed(2) || "0");
+    });
+
     csvContent += row.join(",") + "\n";
   });
+
   const totals = ["Total"];
   const totalServingSize = "";
   const totalServings = "";
@@ -106,10 +100,13 @@ const handleExportCSV = (results, selectedFoods = []) => {
     totalGrams.toFixed(1),
     results.total_cost_sum.toFixed(2)
   );
+
   headers.slice(5).forEach((header) => {
-    const nutrientTotal = results.nutrient_totals[header] || 0;
+    const key = getNutrientKey(header);
+    const nutrientTotal = results.nutrient_totals[key] || 0;
     totals.push(nutrientTotal.toFixed(2));
   });
+
   csvContent += totals.join(",") + "\n";
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
@@ -121,4 +118,5 @@ const handleExportCSV = (results, selectedFoods = []) => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
+
 export default handleExportCSV;

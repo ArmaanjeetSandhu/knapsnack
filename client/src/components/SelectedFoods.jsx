@@ -125,33 +125,45 @@ const SelectedFoods = ({
       "Price",
       "Serving Size (g)",
       "Max Serving (g)",
+      "Water (mL)",
+      "Carbohydrate (g)",
+      "Fiber (g)",
+      "Fats (g)",
+      "Saturated Fats (g)",
+      "Protein (g)",
+      "Thiamin (mg)",
+      "Riboflavin (mg)",
+      "Niacin (mg)",
+      "Pantothenic Acid (mg)",
+      "Vitamin B6 (mg)",
+      "Choline (mg)",
+      "Folate (µg)",
       "Vitamin A (µg)",
       "Vitamin C (mg)",
       "Vitamin E (mg)",
       "Vitamin K (µg)",
-      "Thiamin (mg)",
-      "Riboflavin (mg)",
-      "Niacin (mg)",
-      "Vitamin B6 (mg)",
-      "Folate (µg)",
       "Calcium (mg)",
-      "Carbohydrate (g)",
-      "Choline (mg)",
-      "Protein (g)",
-      "Fats (g)",
-      "Saturated Fats (g)",
-      "Fiber (g)",
       "Iron (mg)",
       "Magnesium (mg)",
       "Manganese (mg)",
       "Phosphorus (mg)",
-      "Selenium (µg)",
-      "Zinc (mg)",
       "Potassium (mg)",
+      "Selenium (µg)",
       "Sodium (mg)",
-      "Pantothenic Acid (mg)",
-      "Water (mL)",
+      "Zinc (mg)",
     ];
+
+    const getNutrientKey = (header) => {
+      const mapping = {
+        "Carbohydrate (g)": "carbohydrate",
+        "Fiber (g)": "fiber",
+        "Fats (g)": "fats",
+        "Saturated Fats (g)": "saturated_fats",
+        "Protein (g)": "protein",
+      };
+      return mapping[header] || header;
+    };
+
     let csvContent = headers.join(",") + "\n";
     foods.forEach((food) => {
       const adjustedNutrients = adjustNutrientsForServingSize(
@@ -164,33 +176,13 @@ const SelectedFoods = ({
         food.price || "",
         food.servingSize || "",
         food.maxServing || "",
-        adjustedNutrients["Vitamin A (µg)"]?.toFixed(2) || "",
-        adjustedNutrients["Vitamin C (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Vitamin E (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Vitamin K (µg)"]?.toFixed(2) || "",
-        adjustedNutrients["Thiamin (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Riboflavin (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Niacin (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Vitamin B6 (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Folate (µg)"]?.toFixed(2) || "",
-        adjustedNutrients["Calcium (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["carbohydrate"]?.toFixed(2) || "",
-        adjustedNutrients["Choline (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["protein"]?.toFixed(2) || "",
-        adjustedNutrients["fats"]?.toFixed(2) || "",
-        adjustedNutrients["saturated_fats"]?.toFixed(2) || "",
-        adjustedNutrients["fiber"]?.toFixed(2) || "",
-        adjustedNutrients["Iron (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Magnesium (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Manganese (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Phosphorus (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Selenium (µg)"]?.toFixed(2) || "",
-        adjustedNutrients["Zinc (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Potassium (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Sodium (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Pantothenic Acid (mg)"]?.toFixed(2) || "",
-        adjustedNutrients["Water (mL)"]?.toFixed(2) || "",
       ];
+
+      headers.slice(5).forEach((header) => {
+        const key = getNutrientKey(header);
+        row.push(adjustedNutrients[key]?.toFixed(2) || "");
+      });
+
       csvContent += row.join(",") + "\n";
     });
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
