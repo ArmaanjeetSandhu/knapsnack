@@ -14,6 +14,7 @@ from server.config import (
     NUTRIENT_DB_PATH,
     VITAMINS_RDA_EXCLUDE,
     VITAMINS_UL_EXCLUDE,
+    MACROS_RDA_EXCLUDE,
 )
 
 
@@ -99,27 +100,36 @@ def get_nutrient_bounds(age: int, gender: str) -> Tuple[pd.Series, pd.Series]:
     vitamins_ul = load_process_nutrient_data("vitamins-ULs.csv", VITAMINS_UL_EXCLUDE)
     elements_rda = load_process_nutrient_data("elements-RDAs.csv", ELEMENTS_RDA_EXCLUDE)
     elements_ul = load_process_nutrient_data("elements-ULs.csv", ELEMENTS_UL_EXCLUDE)
+    macros_rda = load_process_nutrient_data("macros-RDAs.csv", MACROS_RDA_EXCLUDE)
 
     vitamin_lower = vitamins_rda[vitamins_rda["Life-Stage Group"] == age_group]
     element_lower = elements_rda[elements_rda["Life-Stage Group"] == age_group]
+    macro_lower = macros_rda[macros_rda["Life-Stage Group"] == age_group]
     vitamin_upper = vitamins_ul[vitamins_ul["Life-Stage Group"] == age_group]
     element_upper = elements_ul[elements_ul["Life-Stage Group"] == age_group]
 
     if (
         vitamin_lower.empty
         or element_lower.empty
+        or macro_lower.empty
         or vitamin_upper.empty
         or element_upper.empty
     ):
         raise ValueError(f"No nutrient data found for age group: {age_group}")
 
-    lower_bounds = pd.concat([vitamin_lower.iloc[0], element_lower.iloc[0]])
+    lower_bounds = pd.concat(
+        [vitamin_lower.iloc[0], element_lower.iloc[0], macro_lower.iloc[0]]
+    )
     upper_bounds = pd.concat([vitamin_upper.iloc[0], element_upper.iloc[0]])
 
     lower_bounds = lower_bounds.drop("Life-Stage Group")
     upper_bounds = upper_bounds.drop("Life-Stage Group")
     lower_bounds = pd.to_numeric(lower_bounds, errors="coerce")
     upper_bounds = pd.to_numeric(upper_bounds, errors="coerce")
+
+    if "Total Water (L)" in lower_bounds:
+        lower_bounds["Water (mL)"] = lower_bounds["Total Water (L)"] * 1000
+        lower_bounds = lower_bounds.drop("Total Water (L)")
 
     for nutrient in ["Folate (µg)", "Niacin (mg)", "Vitamin E (mg)"]:
         if pd.notna(upper_bounds[nutrient]) and pd.notna(lower_bounds[nutrient]):

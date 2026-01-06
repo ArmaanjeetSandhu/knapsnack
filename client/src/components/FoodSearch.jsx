@@ -114,6 +114,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           "Sodium (mg)": (row["Sodium (mg)"] * 100) / servingSize,
           "Pantothenic Acid (mg)":
             (row["Pantothenic Acid (mg)"] * 100) / servingSize,
+          "Water (mL)": (row["Water (mL)"] * 100) / servingSize,
         };
 
         return {

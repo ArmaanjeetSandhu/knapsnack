@@ -30,6 +30,7 @@ const handleExportCSV = (results, selectedFoods = []) => {
     "Potassium (mg)",
     "Sodium (mg)",
     "Pantothenic Acid (mg)",
+    "Water (mL)",
   ];
   let csvContent = headers.join(",") + "\n";
   const foodData = results.food_items
@@ -91,6 +92,7 @@ const handleExportCSV = (results, selectedFoods = []) => {
       food.nutrients["Potassium (mg)"]?.toFixed(2) || "0",
       food.nutrients["Sodium (mg)"]?.toFixed(2) || "0",
       food.nutrients["Pantothenic Acid (mg)"]?.toFixed(2) || "0",
+      food.nutrients["Water (mL)"]?.toFixed(2) || "0",
     ];
     csvContent += row.join(",") + "\n";
   });

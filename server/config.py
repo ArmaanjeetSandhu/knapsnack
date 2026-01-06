@@ -54,6 +54,7 @@ NUTRIENT_MAP = {
     "Potassium (mg)": "Potassium, K",
     "Sodium (mg)": "Sodium, Na",
     "Pantothenic Acid (mg)": "Pantothenic acid",
+    "Water (mL)": "Water",
 }
 
 EXCLUDED_AGE_GROUPS = [
@@ -86,6 +87,14 @@ ELEMENTS_UL_EXCLUDE = [
     "Nickel (mg)",
     "Vanadium (µg)",
     "Copper (µg)",
+]
+MACROS_RDA_EXCLUDE = [
+    "Carbohydrate (g)",
+    "Total Fiber (g)",
+    "Fat (g)",
+    "Linoleic Acid (g)",
+    "α-Linolenic Acid (g)",
+    "Protein (g)",
 ]
 
 CONTENTFUL_SPACE_ID = os.environ.get("CONTENTFUL_SPACE_ID")

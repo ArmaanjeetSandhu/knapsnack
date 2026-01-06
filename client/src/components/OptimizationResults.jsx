@@ -4,6 +4,7 @@ import {
   Beef,
   Currency,
   Download,
+  Droplets,
   Sliders,
   Utensils,
 } from "lucide-react";
@@ -315,6 +316,13 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "mg",
     },
   ];
+  const hydration = [
+    {
+      name: "Water",
+      value: results.nutrient_totals["Water (mL)"],
+      unit: "mL",
+    },
+  ];
   const handleExportClick = () => {
     handleExportCSV(results, selectedFoods);
   };
@@ -518,6 +526,13 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   </Card>
                 ))}
               </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Droplets className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                Hydration
+              </h3>
+              {renderNutrientCards(hydration)}
             </div>
             <div>
               <div className="flex items-center justify-between mb-4">

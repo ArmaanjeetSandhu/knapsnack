@@ -92,8 +92,9 @@ def analyze_lower_bound_feasibility(
 
         max_possible = 0
         for i, food in enumerate(selected_foods):
-            if nutrient in food["nutrients"]:
-                max_possible += food["nutrients"][nutrient] * max_servings[i]
+            val = food["nutrients"].get(nutrient)
+            if val is not None:
+                max_possible += val * max_servings[i]
 
         if max_possible < min_value:
             shortfall = min_value - max_possible
@@ -113,8 +114,9 @@ def analyze_lower_bound_feasibility(
             min_value = nutrient_goals[nutrient]
             max_possible = 0
             for i, food in enumerate(selected_foods):
-                if nutrient in food["nutrients"]:
-                    max_possible += food["nutrients"][nutrient] * max_servings[i]
+                val = food["nutrients"].get(nutrient)
+                if val is not None:
+                    max_possible += val * max_servings[i]
 
             if max_possible < min_value:
                 shortfall = min_value - max_possible
@@ -161,9 +163,10 @@ def analyze_upper_bound_feasibility(
         min_possible = 0
         has_nutrient = False
         for food in selected_foods:
-            if nutrient in food["nutrients"] and food["nutrients"][nutrient] > 0:
+            val = food["nutrients"].get(nutrient)
+            if val is not None and val > 0:
                 has_nutrient = True
-                min_possible += food["nutrients"][nutrient]
+                min_possible += val
 
         if has_nutrient and min_possible > max_value:
             excess = min_possible - max_value
@@ -279,7 +282,7 @@ def solve_optimization_problem(
         nutrient_key = nutrient.lower().replace(" ", "_")
         if nutrient_key in nutrient_goals:
             goal = nutrient_goals[nutrient_key]
-            values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+            values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
             overflow_factor = 1 + (overflow_percentages[i] / 100)
 
             prob += pulp.lpSum([values[j] * x[j] for j in range(num_foods)]) >= goal
@@ -291,7 +294,7 @@ def solve_optimization_problem(
     if "saturated_fats" in nutrient_goals:
         sat_fat_goal = nutrient_goals["saturated_fats"]
         sat_fat_values = [
-            food["nutrients"].get("saturated_fats", 0) for food in selected_foods
+            (food["nutrients"].get("saturated_fats") or 0) for food in selected_foods
         ]
         prob += (
             pulp.lpSum([sat_fat_values[j] * x[j] for j in range(num_foods)])
@@ -300,7 +303,7 @@ def solve_optimization_problem(
 
     for nutrient, _ in NUTRIENT_MAP.items():
         if nutrient not in nutrients:
-            values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+            values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
 
             if nutrient in lower_bounds_dict:
                 prob += pulp.lpSum(
@@ -351,7 +354,7 @@ def format_optimization_result(
 
     nutrient_totals = {}
     for nutrient in NUTRIENT_MAP.keys():
-        values = [food["nutrients"].get(nutrient, 0) for food in selected_foods]
+        values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
         nutrient_totals[nutrient] = float(np.round(np.sum(servings * values), 1))
 
     overflow_by_nutrient = {

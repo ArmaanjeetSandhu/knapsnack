@@ -150,6 +150,7 @@ const SelectedFoods = ({
       "Potassium (mg)",
       "Sodium (mg)",
       "Pantothenic Acid (mg)",
+      "Water (mL)",
     ];
     let csvContent = headers.join(",") + "\n";
     foods.forEach((food) => {
@@ -188,6 +189,7 @@ const SelectedFoods = ({
         adjustedNutrients["Potassium (mg)"]?.toFixed(2) || "",
         adjustedNutrients["Sodium (mg)"]?.toFixed(2) || "",
         adjustedNutrients["Pantothenic Acid (mg)"]?.toFixed(2) || "",
+        adjustedNutrients["Water (mL)"]?.toFixed(2) || "",
       ];
       csvContent += row.join(",") + "\n";
     });

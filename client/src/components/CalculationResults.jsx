@@ -177,6 +177,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     { name: "Potassium", key: "Potassium (mg)", unit: "mg" },
     { name: "Sodium", key: "Sodium (mg)", unit: "mg" },
   ];
+  const hydration = [{ name: "Water", key: "Water (mL)", unit: "mL" }];
   const renderNutrientTable = (nutrients) => (
     <NutrientTable
       nutrients={nutrients}
@@ -504,6 +505,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       <TabsTrigger value="minerals" className="flex-1">
                         Minerals
                       </TabsTrigger>
+                      <TabsTrigger value="hydration" className="flex-1">
+                        Hydration
+                      </TabsTrigger>
                     </TabsList>
                     <AnimatePresence mode="wait">
                       <TabsContent value="vitamins">
@@ -514,6 +518,11 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       <TabsContent value="minerals">
                         <div className="h-[400px] overflow-y-auto relative">
                           {renderEditableBoundsTable(minerals)}
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="hydration">
+                        <div className="h-[400px] overflow-y-auto relative">
+                          {renderEditableBoundsTable(hydration)}
                         </div>
                       </TabsContent>
                     </AnimatePresence>
@@ -534,6 +543,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       </TabsTrigger>
                       <TabsTrigger value="minerals" className="flex-1">
                         Minerals
+                      </TabsTrigger>
+                      <TabsTrigger value="hydration" className="flex-1">
+                        Hydration
                       </TabsTrigger>
                     </TabsList>
                     <AnimatePresence mode="wait">
@@ -567,6 +579,23 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                               {nutrientDisplayMode === "table"
                                 ? renderNutrientTable(minerals)
                                 : renderNutrientCards(minerals)}
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="hydration">
+                        <div className="h-[400px] overflow-y-auto relative">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={nutrientDisplayMode}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {nutrientDisplayMode === "table"
+                                ? renderNutrientTable(hydration)
+                                : renderNutrientCards(hydration)}
                             </motion.div>
                           </AnimatePresence>
                         </div>
