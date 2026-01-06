@@ -6,6 +6,7 @@ import {
   Beaker,
   Beef,
   Check,
+  Droplets,
   Edit,
   Flame,
   RotateCcw,
@@ -177,7 +178,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     { name: "Potassium", key: "Potassium (mg)", unit: "mg" },
     { name: "Sodium", key: "Sodium (mg)", unit: "mg" },
   ];
-  const hydration = [{ name: "Water", key: "Water (mL)", unit: "mL" }];
+
   const renderNutrientTable = (nutrients) => (
     <NutrientTable
       nutrients={nutrients}
@@ -371,6 +372,37 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Droplets className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+              Hydration Target
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.3,
+                  delay: 0.35,
+                  ease: "easeOut",
+                }}
+                className="p-4 rounded-lg border bg-card text-card-foreground"
+              >
+                <p className="text-sm font-medium text-muted-foreground">
+                  Water
+                </p>
+                <p className="text-2xl font-bold">
+                  ≥ {formatValue(calculationData.lower_bounds?.["Water (mL)"])}
+                  mL
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <Beaker className="w-5 h-5 text-purple-500 dark:text-purple-400" />
@@ -505,9 +537,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       <TabsTrigger value="minerals" className="flex-1">
                         Minerals
                       </TabsTrigger>
-                      <TabsTrigger value="hydration" className="flex-1">
-                        Hydration
-                      </TabsTrigger>
                     </TabsList>
                     <AnimatePresence mode="wait">
                       <TabsContent value="vitamins">
@@ -518,11 +547,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       <TabsContent value="minerals">
                         <div className="h-[400px] overflow-y-auto relative">
                           {renderEditableBoundsTable(minerals)}
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="hydration">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          {renderEditableBoundsTable(hydration)}
                         </div>
                       </TabsContent>
                     </AnimatePresence>
@@ -543,9 +567,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       </TabsTrigger>
                       <TabsTrigger value="minerals" className="flex-1">
                         Minerals
-                      </TabsTrigger>
-                      <TabsTrigger value="hydration" className="flex-1">
-                        Hydration
                       </TabsTrigger>
                     </TabsList>
                     <AnimatePresence mode="wait">
@@ -579,23 +600,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                               {nutrientDisplayMode === "table"
                                 ? renderNutrientTable(minerals)
                                 : renderNutrientCards(minerals)}
-                            </motion.div>
-                          </AnimatePresence>
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="hydration">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          <AnimatePresence mode="wait">
-                            <motion.div
-                              key={nutrientDisplayMode}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              {nutrientDisplayMode === "table"
-                                ? renderNutrientTable(hydration)
-                                : renderNutrientCards(hydration)}
                             </motion.div>
                           </AnimatePresence>
                         </div>
