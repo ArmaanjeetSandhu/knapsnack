@@ -34,6 +34,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [searchError, setSearchError] = useState(null);
   const [apiKeyError, setApiKeyError] = useState(null);
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleApiKeySubmit = (e) => {
     e.preventDefault();
@@ -57,9 +58,11 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     try {
       const { results } = await api.searchFood(searchTerm, apiKey);
       setSearchResults(results);
+      setHasSearched(true);
     } catch (err) {
       setSearchError(err.message || "An error occurred while searching");
       setSearchResults([]);
+      setHasSearched(false);
     } finally {
       setLoading(false);
     }
@@ -278,7 +281,10 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                   type="text"
                   placeholder="Search for foods..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setHasSearched(false);
+                  }}
                   disabled={loading || !apiKey}
                   className="flex-1"
                 />
@@ -407,6 +413,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           <AnimatePresence>
             {searchResults.length === 0 &&
               searchTerm &&
+              hasSearched &&
               !loading &&
               !searchError && (
                 <motion.div
