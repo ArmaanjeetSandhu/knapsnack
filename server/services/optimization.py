@@ -42,7 +42,7 @@ def analyze_feasibility(
     )
 
     upper_bound_issues = analyze_upper_bound_feasibility(
-        selected_foods, upper_bounds_dict
+        selected_foods, upper_bounds_dict, nutrient_goals
     )
 
     is_lower_bounds_feasible = len(lower_bound_issues) == 0
@@ -139,47 +139,60 @@ def analyze_lower_bound_feasibility(
 def analyze_upper_bound_feasibility(
     selected_foods: List[Dict[str, Any]],
     upper_bounds: Dict[str, float],
+    nutrient_goals: Dict[str, Any],
 ) -> List[Dict[str, Any]]:
     """
     Analyze upper bound feasibility for nutrients.
+    Flags any single food item that exceeds a limit on its own at 1 serving.
 
     Args:
         selected_foods: List of food dictionaries with nutrients
         upper_bounds: Upper bounds for nutrients
+        nutrient_goals: Target nutrient goals (for saturated fats)
 
     Returns:
         List of issues with upper bounds
     """
     upper_bound_issues = []
+    checked_nutrients = set()
+
+    def check_limit(nutrient_name, limit_value, is_sat_fat=False):
+        try:
+            limit_value = float(limit_value)
+            if np.isnan(limit_value):
+                return
+        except (ValueError, TypeError):
+            return
+
+        for food in selected_foods:
+            val = food["nutrients"].get(nutrient_name)
+
+            if val is not None and val > limit_value:
+                excess = val - limit_value
+                excess_percentage = (
+                    (excess / limit_value) * 100 if limit_value > 0 else 0
+                )
+
+                display_name = (
+                    f"{nutrient_name} ({food.get('description', 'Unknown Food')})"
+                )
+
+                upper_bound_issues.append(
+                    {
+                        "nutrient": display_name,
+                        "limit": limit_value,
+                        "minimum": val,
+                        "excess": excess,
+                        "excessPercentage": excess_percentage,
+                    }
+                )
 
     for nutrient, max_value in upper_bounds.items():
-        try:
-            max_value = float(max_value)
-            if np.isnan(max_value):
-                continue
-        except (ValueError, TypeError):
-            continue
+        check_limit(nutrient, max_value)
+        checked_nutrients.add(nutrient)
 
-        min_possible = 0
-        has_nutrient = False
-        for food in selected_foods:
-            val = food["nutrients"].get(nutrient)
-            if val is not None and val > 0:
-                has_nutrient = True
-                min_possible += val
-
-        if has_nutrient and min_possible > max_value:
-            excess = min_possible - max_value
-            excess_percentage = (excess / max_value) * 100 if max_value > 0 else 0
-            upper_bound_issues.append(
-                {
-                    "nutrient": nutrient,
-                    "limit": max_value,
-                    "minimum": min_possible,
-                    "excess": excess,
-                    "excessPercentage": excess_percentage,
-                }
-            )
+    if "saturated_fats" in nutrient_goals and "saturated_fats" not in checked_nutrients:
+        check_limit("saturated_fats", nutrient_goals["saturated_fats"], is_sat_fat=True)
 
     return upper_bound_issues
 
