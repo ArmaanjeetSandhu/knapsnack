@@ -33,6 +33,7 @@ const STORAGE_KEYS = {
   NUTRIENT_GOALS: "knapsnack_nutrient_goals",
   USER_INFO: "knapsnack_user_info",
   OPTIMIZATION_RESULTS: "knapsnack_optimization_results",
+  SNAPSHOT_FOODS: "knapsnack_snapshot_foods",
   SHOW_CALCULATION_RESULTS: "knapsnack_show_calculation_results",
   ADJUSTED_LOWER_BOUNDS: "knapsnack_adjusted_lower_bounds",
   ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
@@ -50,6 +51,7 @@ function App() {
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
   const [optimizationResults, setOptimizationResults] = useState(null);
+  const [snapshotFoods, setSnapshotFoods] = useState([]);
   const [storedResults, setStoredResults] = useState(null);
   const [showCalculationResults, setShowCalculationResults] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
@@ -68,6 +70,7 @@ function App() {
       const previousResults = localStorage.getItem(
         STORAGE_KEYS.OPTIMIZATION_RESULTS
       );
+      const storedSnapshot = localStorage.getItem(STORAGE_KEYS.SNAPSHOT_FOODS);
       const storedLowerBounds = localStorage.getItem(
         STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS
       );
@@ -95,6 +98,9 @@ function App() {
         const parsedResults = JSON.parse(previousResults);
         setStoredResults(parsedResults);
         setOptimizationResults(parsedResults);
+      }
+      if (storedSnapshot) {
+        setSnapshotFoods(JSON.parse(storedSnapshot));
       }
       if (storedLowerBounds) {
         setAdjustedLowerBounds(JSON.parse(storedLowerBounds));
@@ -153,6 +159,15 @@ function App() {
       setStoredResults(optimizationResults);
     }
   }, [optimizationResults]);
+
+  useEffect(() => {
+    if (snapshotFoods.length > 0) {
+      localStorage.setItem(
+        STORAGE_KEYS.SNAPSHOT_FOODS,
+        JSON.stringify(snapshotFoods)
+      );
+    }
+  }, [snapshotFoods]);
 
   useEffect(() => {
     if (adjustedLowerBounds) {
@@ -228,6 +243,7 @@ function App() {
     setSelectedFoods([]);
     setOptimizationResults(null);
     setStoredResults(null);
+    setSnapshotFoods([]);
     setUserInfo(null);
     setError(null);
     setShowLanding(true);
@@ -240,6 +256,7 @@ function App() {
     localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
     localStorage.removeItem(STORAGE_KEYS.USER_INFO);
     localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
+    localStorage.removeItem(STORAGE_KEYS.SNAPSHOT_FOODS);
     localStorage.removeItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
@@ -253,6 +270,7 @@ function App() {
     setNutrientGoals(null);
     setOptimizationResults(null);
     setStoredResults(null);
+    setSnapshotFoods([]);
     setShowCalculationResults(false);
     setAdjustedLowerBounds(null);
     setAdjustedUpperBounds(null);
@@ -260,11 +278,17 @@ function App() {
 
     localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
     localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
+    localStorage.removeItem(STORAGE_KEYS.SNAPSHOT_FOODS);
     localStorage.removeItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
     localStorage.removeItem(STORAGE_KEYS.FORM_STATE);
+  };
+
+  const handleOptimizationSuccess = (result) => {
+    setOptimizationResults(result);
+    setSnapshotFoods(selectedFoods);
   };
 
   const handleFoodSelect = (food) => {
@@ -430,7 +454,7 @@ function App() {
                     : nutrientGoals
                 }
                 userInfo={userInfo}
-                onOptimizationResults={setOptimizationResults}
+                onOptimizationResults={handleOptimizationSuccess}
               />
               {useCustomBounds && (
                 <Alert className="mt-4">
@@ -476,7 +500,7 @@ function App() {
             <>
               <OptimizationResults
                 results={optimizationResults}
-                selectedFoods={selectedFoods}
+                selectedFoods={snapshotFoods}
               />
               <div className="mt-6">
                 <Button
