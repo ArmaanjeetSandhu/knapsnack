@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
-  ArrowLeft,
   ArrowRight,
   Beaker,
   Beef,
@@ -20,7 +19,6 @@ import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import {
   Table,
   TableBody,
@@ -37,12 +35,13 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   const [adjustedLowerBounds, setAdjustedLowerBounds] = useState({});
   const [adjustedUpperBounds, setAdjustedUpperBounds] = useState({});
   const [useCustomBounds, setUseCustomBounds] = useState(false);
-  const [editMode, setEditMode] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+
   useEffect(() => {
     setAdjustedLowerBounds({ ...calculationData.lower_bounds });
     setAdjustedUpperBounds({ ...calculationData.upper_bounds });
   }, [calculationData]);
+
   const formatValue = (value) => {
     return typeof value === "number"
       ? value.toLocaleString("en-US", {
@@ -50,6 +49,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
         })
       : value;
   };
+
   const handleBoundChange = (nutrientKey, boundsType, value) => {
     const numValue = parseFloat(value);
     const bounds =
@@ -62,6 +62,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     });
     validateBounds(nutrientKey, boundsType, numValue);
   };
+
   const validateBounds = (nutrientKey, boundsType, value) => {
     const errors = { ...validationErrors };
     delete errors[nutrientKey];
@@ -84,32 +85,26 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     }
     setValidationErrors(errors);
   };
+
   const resetBounds = () => {
     setAdjustedLowerBounds({ ...calculationData.lower_bounds });
     setAdjustedUpperBounds({ ...calculationData.upper_bounds });
     setValidationErrors({});
   };
-  const toggleEditMode = () => {
-    if (editMode) {
-      const newErrors = {};
-      Object.keys(adjustedLowerBounds).forEach((key) => {
-        if (
-          adjustedLowerBounds[key] !== undefined &&
-          adjustedUpperBounds[key] !== undefined
-        ) {
-          if (adjustedLowerBounds[key] > adjustedUpperBounds[key]) {
-            newErrors[key] = "Lower bound cannot exceed upper bound";
-          }
-        }
-      });
-      setValidationErrors(newErrors);
-      if (Object.keys(newErrors).length === 0) {
-        setEditMode(false);
-      }
-    } else {
-      setEditMode(true);
+
+  const handleSave = () => {
+    if (Object.keys(validationErrors).length === 0) {
+      setUseCustomBounds(true);
+      setCustomizingBounds(false);
     }
   };
+
+  const handleCancel = () => {
+    resetBounds();
+    setUseCustomBounds(false);
+    setCustomizingBounds(false);
+  };
+
   const handleProceed = () => {
     if (Object.keys(validationErrors).length === 0) {
       onProceed({
@@ -123,6 +118,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       });
     }
   };
+
   const mainMetrics = [
     {
       icon: Flame,
@@ -143,6 +139,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       color: "text-green-500 dark:text-green-400",
     },
   ];
+
   const macroNutrients = [
     { label: "Protein", value: calculationData.protein, unit: "g" },
     { label: "Carbohydrates", value: calculationData.carbohydrate, unit: "g" },
@@ -154,6 +151,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       unit: "g",
     },
   ];
+
   const vitamins = [
     { name: "Vitamin A", key: "Vitamin A (µg)", unit: "µg" },
     { name: "Vitamin C", key: "Vitamin C (mg)", unit: "mg" },
@@ -167,6 +165,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     { name: "Pantothenic Acid", key: "Pantothenic Acid (mg)", unit: "mg" },
     { name: "Choline", key: "Choline (mg)", unit: "mg" },
   ];
+
   const minerals = [
     { name: "Calcium", key: "Calcium (mg)", unit: "mg" },
     { name: "Iron", key: "Iron (mg)", unit: "mg" },
@@ -186,6 +185,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       upperBounds={calculationData.upper_bounds}
     />
   );
+
   const renderNutrientCards = (nutrients) => (
     <NutrientCards
       nutrients={nutrients}
@@ -193,6 +193,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       upperBounds={calculationData.upper_bounds}
     />
   );
+
   const renderEditableBoundsTable = (nutrients) => (
     <div className="space-y-4">
       {Object.keys(validationErrors).length > 0 && (
@@ -290,6 +291,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       </div>
     </div>
   );
+
   return (
     <motion.div
       className="space-y-6"
@@ -467,40 +469,21 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                         Reset
                       </Button>
                       <Button
-                        variant={editMode ? "destructive" : "outline"}
+                        variant="default"
                         size="sm"
-                        onClick={toggleEditMode}
+                        onClick={handleSave}
+                        disabled={Object.keys(validationErrors).length > 0}
                       >
-                        {editMode ? (
-                          <>
-                            <X className="w-4 h-4 mr-2" />
-                            Cancel
-                          </>
-                        ) : (
-                          <>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit
-                          </>
-                        )}
+                        <Check className="w-4 h-4 mr-2" />
+                        Save
                       </Button>
-                      {editMode && (
-                        <Button
-                          variant="default"
-                          size="sm"
-                          onClick={toggleEditMode}
-                          disabled={Object.keys(validationErrors).length > 0}
-                        >
-                          <Check className="w-4 h-4 mr-2" />
-                          Save
-                        </Button>
-                      )}
                       <Button
-                        variant="outline"
+                        variant="destructive"
                         size="sm"
-                        onClick={() => setCustomizingBounds(false)}
+                        onClick={handleCancel}
                       >
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back
+                        <X className="w-4 h-4 mr-2" />
+                        Cancel
                       </Button>
                     </motion.div>
                   </AnimatePresence>
@@ -517,18 +500,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <div className="flex items-center space-x-2 mb-4">
-                    <input
-                      type="checkbox"
-                      id="use-custom-bounds"
-                      checked={useCustomBounds}
-                      onChange={(e) => setUseCustomBounds(e.target.checked)}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <Label htmlFor="use-custom-bounds">
-                      Use custom bounds for optimization
-                    </Label>
-                  </div>
                   <Tabs defaultValue="vitamins" className="w-full">
                     <TabsList className="w-full">
                       <TabsTrigger value="vitamins" className="flex-1">
@@ -643,6 +614,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     </motion.div>
   );
 };
+
 CalculationResults.propTypes = {
   calculationData: PropTypes.shape({
     bmr: PropTypes.number.isRequired,
@@ -663,4 +635,5 @@ CalculationResults.propTypes = {
   onProceed: PropTypes.func.isRequired,
   onRecalculate: PropTypes.func.isRequired,
 };
+
 export default CalculationResults;
