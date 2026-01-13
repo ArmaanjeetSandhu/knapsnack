@@ -5,12 +5,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../components/ui/tooltip";
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
@@ -180,26 +174,16 @@ const PersonalInfoForm = ({ onSubmit }) => {
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               Do you smoke?
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className="cursor-help"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowSmokingHelp((prev) => !prev);
-                      }}
-                    >
-                      <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    <p>
-                      Smokers require an additional 35mg of vitamin C per day.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <button
+                type="button"
+                className="cursor-help"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowSmokingHelp((prev) => !prev);
+                }}
+              >
+                <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+              </button>
             </div>
             <AnimatePresence>
               {showSmokingHelp && (
@@ -209,7 +193,8 @@ const PersonalInfoForm = ({ onSubmit }) => {
                   exit={{ height: 0, opacity: 0 }}
                   className="text-base font-normal text-muted-foreground"
                 >
-                  Smokers require an additional 35mg of vitamin C per day.
+                  Knap[Snack] adjusts your vitamin C requirements to account for
+                  the increased oxidative stress associated with smoking.
                 </motion.p>
               )}
             </AnimatePresence>
