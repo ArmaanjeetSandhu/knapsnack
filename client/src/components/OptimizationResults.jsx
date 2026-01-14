@@ -316,6 +316,13 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "mg",
     },
   ];
+  const others = [
+    {
+      name: "Choline",
+      value: results.nutrient_totals["Choline (mg)"],
+      unit: "mg",
+    },
+  ];
   const hydration = [
     {
       name: "Water",
@@ -569,6 +576,9 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   <TabsTrigger value="minerals" className="flex-1">
                     Minerals
                   </TabsTrigger>
+                  <TabsTrigger value="others" className="flex-1">
+                    Others
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="vitamins">
                   <ScrollArea className="h-[400px] relative">
@@ -582,6 +592,13 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                     {nutrientDisplayMode === "table"
                       ? renderNutrientTable(minerals)
                       : renderNutrientCards(minerals)}
+                  </ScrollArea>
+                </TabsContent>
+                <TabsContent value="others">
+                  <ScrollArea className="h-[400px] relative">
+                    {nutrientDisplayMode === "table"
+                      ? renderNutrientTable(others)
+                      : renderNutrientCards(others)}
                   </ScrollArea>
                 </TabsContent>
               </Tabs>

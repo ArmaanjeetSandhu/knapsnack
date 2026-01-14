@@ -163,7 +163,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     { name: "Vitamin B6", key: "Vitamin B6 (mg)", unit: "mg" },
     { name: "Folate", key: "Folate (µg)", unit: "µg" },
     { name: "Pantothenic Acid", key: "Pantothenic Acid (mg)", unit: "mg" },
-    { name: "Choline", key: "Choline (mg)", unit: "mg" },
   ];
 
   const minerals = [
@@ -177,6 +176,8 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     { name: "Potassium", key: "Potassium (mg)", unit: "mg" },
     { name: "Sodium", key: "Sodium (mg)", unit: "mg" },
   ];
+
+  const others = [{ name: "Choline", key: "Choline (mg)", unit: "mg" }];
 
   const renderNutrientTable = (nutrients) => (
     <NutrientTable
@@ -508,6 +509,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       <TabsTrigger value="minerals" className="flex-1">
                         Minerals
                       </TabsTrigger>
+                      <TabsTrigger value="others" className="flex-1">
+                        Others
+                      </TabsTrigger>
                     </TabsList>
                     <AnimatePresence mode="wait">
                       <TabsContent value="vitamins">
@@ -518,6 +522,11 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       <TabsContent value="minerals">
                         <div className="h-[400px] overflow-y-auto relative">
                           {renderEditableBoundsTable(minerals)}
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="others">
+                        <div className="h-[400px] overflow-y-auto relative">
+                          {renderEditableBoundsTable(others)}
                         </div>
                       </TabsContent>
                     </AnimatePresence>
@@ -538,6 +547,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       </TabsTrigger>
                       <TabsTrigger value="minerals" className="flex-1">
                         Minerals
+                      </TabsTrigger>
+                      <TabsTrigger value="others" className="flex-1">
+                        Others
                       </TabsTrigger>
                     </TabsList>
                     <AnimatePresence mode="wait">
@@ -571,6 +583,23 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                               {nutrientDisplayMode === "table"
                                 ? renderNutrientTable(minerals)
                                 : renderNutrientCards(minerals)}
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
+                      </TabsContent>
+                      <TabsContent value="others">
+                        <div className="h-[400px] overflow-y-auto relative">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={nutrientDisplayMode}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              {nutrientDisplayMode === "table"
+                                ? renderNutrientTable(others)
+                                : renderNutrientCards(others)}
                             </motion.div>
                           </AnimatePresence>
                         </div>
