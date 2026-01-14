@@ -347,28 +347,18 @@ def format_optimization_result(
 ) -> Dict[str, Any]:
     """
     Format the optimization result for API response.
-
-    Args:
-        selected_foods: List of food dictionaries
-        x: List of decision variables with solution values
-        costs: Array of costs for each food
-        nutrients: List of nutrient names
-        overflow_percentages: Overflow percentages used
-
-    Returns:
-        Formatted result dictionary
     """
     num_foods = len(selected_foods)
     servings = np.array([x[i].value() for i in range(num_foods)])
-    servings = np.round(servings, 1)
 
     food_items = [food["description"] for food in selected_foods]
-    total_cost = np.round(servings * costs, 1)
+
+    total_cost = servings * costs
 
     nutrient_totals = {}
     for nutrient in NUTRIENT_MAP.keys():
         values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
-        nutrient_totals[nutrient] = float(np.round(np.sum(servings * values), 1))
+        nutrient_totals[nutrient] = float(np.sum(servings * values))
 
     overflow_by_nutrient = {
         nutrient: percent for nutrient, percent in zip(nutrients, overflow_percentages)
