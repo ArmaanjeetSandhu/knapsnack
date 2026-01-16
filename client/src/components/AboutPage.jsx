@@ -49,20 +49,20 @@ const faqs = [
         Macronutrients
       </h4>,
       "Once Knap[Snack] calculates your daily caloric target, you specify how you want to split that into protein, carbs, and fats. These values then form the lower limits for those nutrients:",
-      "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\geq \\frac{C \\times r_p}{4 \\text{ kcal/g}}\n$$",
-      "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\geq \\frac{C \\times r_c}{4 \\text{ kcal/g}}\n$$",
-      "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\geq \\frac{C \\times r_f}{9 \\text{ kcal/g}}\n$$",
-      "where:\n\t• $C$ is your daily caloric goal\n\t• $r_p, r_c$ and $r_f$ are the proportion of calories from protein, carbs, and fats respectively\n\t• $a_{i,p}, a_{i,c}$ and $a_{i,f}$ are grams of protein, carbs, and fats in food item $i$",
+      "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\geq \\frac{C \\times r_p}{w_p}\n$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\geq \\frac{C \\times r_c}{w_c}\n$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\geq \\frac{C \\times r_f}{w_f}\n$$",
+      "where:\n\t• $C$ is your daily caloric goal\n\t• $r_p, r_c$ and $r_f$ are the proportion of calories from protein, carbs, and fats respectively\n\t• $a_{i,p}, a_{i,c}$ and $a_{i,f}$ are grams of protein, carbs, and fats in food item $i$\n\t• $w_p, w_c$ and $w_f$ are the Atwater energy factors for protein (4 kcal/g), carbs (4 kcal/g), and fats (9 kcal/g)",
       "As per Acceptable Macronutrient Distribution Ranges (AMDR) guidelines, $r_p, r_c$ and $r_f$ must fall within the following percentage ranges:",
       "$$\n10\\% \\le r_p \\le 40\\%, \\quad 40\\% \\le r_c \\le 65\\%, \\quad 20\\% \\le r_f \\le 35\\%\n$$",
       "Additionally, in accordance with evidence-based recommendations, fibre has been given a lower limit of 14 grams per 1000 calories:",
       "$$\n\\sum_{i=1}^{n} a_{i,fb} x_i \\geq \\frac{14 \\times C}{1000}\n$$",
       "And saturated fats have been capped at 10% of your daily caloric goal:",
-      "$$\n\\sum_{i=1}^{n} a_{i,sf} x_i \\leq \\frac{0.10 \\times C}{9 \\text{ kcal/g}}\n$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,sf} x_i \\leq \\frac{0.10 \\times C}{w_f}\n$$",
       "Unlike micronutrients, macronutrients don't have well-defined toxicity thresholds, so they typically don't require strict upper limits. However, without any upper bounds, the optimizer might converge on solutions where macronutrient values are significantly higher than their intended targets, disrupting your desired macronutrient ratios and resulting in excessive overall intake. At the same time, enforcing zero deviation from each macronutrient target may make it impossible for the optimizer to find a feasible solution. To balance these competing needs, Knap[Snack] allows controlled deviations above your macronutrient targets:",
-      "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\leq \\frac{C \\times r_p}{4 \\text{ kcal/g}} \\times (1 + \\delta_p)$$",
-      "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\leq \\frac{C \\times r_c}{4 \\text{ kcal/g}} \\times (1 + \\delta_c)$$",
-      "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\leq \\frac{C \\times r_f}{9 \\text{ kcal/g}} \\times (1 + \\delta_f)$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\leq \\frac{C \\times r_p}{w_p} \\times (1 + \\delta_p)$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\leq \\frac{C \\times r_c}{w_c} \\times (1 + \\delta_c)$$",
+      "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\leq \\frac{C \\times r_f}{w_f} \\times (1 + \\delta_f)$$",
       "where $\\delta_p, \\delta_c,$ and $\\delta_f$ represent allowable deviation percentages (ranging from 0% to 10%) for protein, carbohydrates, and fats respectively.",
       "This creates a dual-objective optimization problem:",
       "\t• minimizing the total cost of the diet, and",
@@ -78,15 +78,17 @@ const faqs = [
     ],
   },
   {
-    question: "How do you determine my macro requirements?",
+    question: "How do you determine my nutritional requirements?",
     answer: [
+      <h4 key="macros" className="font-semibold mt-2">
+        Macronutrients
+      </h4>,
       "Knap[Snack] uses the Mifflin-St. Jeor equation to calculate your BMR (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your TDEE (Total Daily Energy Expenditure) is calculated, which is the actual number of calories you burn in a typical day. Depending on your fitness goals, you choose a target intake between 75% and 125% of your TDEE. This becomes your daily caloric goal. Finally, you customize how you distribute those calories across fats, carbohydrates, and protein.",
-    ],
-  },
-  {
-    question: "How do you determine my micro requirements?",
-    answer:
+      <h4 key="micros" className="font-semibold mt-2">
+        Micronutrients
+      </h4>,
       "Your daily micronutrient targets—RDAs (minimums) and ULs (safe maximums)—are determined based on your age and gender, using the Dietary Reference Intakes published by the National Institutes of Health (NIH).",
+    ],
   },
   {
     question: "There are some nutrients that I don't see here. Why is that?",
@@ -180,7 +182,7 @@ const faqs = [
   {
     question: "Why doesn't the food search have everything I eat?",
     answer: [
-      "Knap[Snack]'s food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. To include food items that you don't see in the food search, you can import a CSV with their nutritional profiles (taken from a reliable source). Just ensure that the file format matches the CSVs exported from the app's selected foods section., and that the nutrient values in each row correspond to the amount specified in the 'Serving Size (g)' column.",
+      "Knap[Snack]'s food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. To include food items that you don't see in the food search, you can import a CSV that contains their nutritional profiles taken from a reliable source. Just ensure that the file format matches the CSVs exported from the app's selected foods section, and that the nutrient values in each row correspond to the amount specified in the 'Serving Size (g)' column.",
     ],
   },
   {
