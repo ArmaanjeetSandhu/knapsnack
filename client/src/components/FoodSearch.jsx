@@ -106,7 +106,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           protein: (row["Protein (g)"] * 100) / servingSize,
           fats: (row["Fats (g)"] * 100) / servingSize,
           saturated_fats: (row["Saturated Fats (g)"] * 100) / servingSize,
-          fiber: (row["Fiber (g)"] * 100) / servingSize,
+          fibre: (row["Fibre (g)"] * 100) / servingSize,
           "Iron (mg)": (row["Iron (mg)"] * 100) / servingSize,
           "Magnesium (mg)": (row["Magnesium (mg)"] * 100) / servingSize,
           "Manganese (mg)": (row["Manganese (mg)"] * 100) / servingSize,

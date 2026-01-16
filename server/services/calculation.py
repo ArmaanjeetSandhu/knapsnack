@@ -94,7 +94,7 @@ def calculate_nutrition_requirements(
     tdee = calculate_tdee(bmr, activity_multiplier)
     daily_caloric_intake = int(percentage * tdee)
 
-    protein, carbohydrate, fats, fiber, saturated_fats = calculate_macros(
+    protein, carbohydrate, fats, fibre, saturated_fats = calculate_macros(
         daily_caloric_intake, pratio, cratio, fratio
     )
 
@@ -119,7 +119,7 @@ def calculate_nutrition_requirements(
         "protein": protein,
         "carbohydrate": carbohydrate,
         "fats": fats,
-        "fiber": fiber,
+        "fibre": fibre,
         "saturated_fats": saturated_fats,
         "lower_bounds": lower_bounds_dict,
         "upper_bounds": upper_bounds_dict,

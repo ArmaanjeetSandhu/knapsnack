@@ -135,7 +135,7 @@ const SelectedFoods = ({
       "Max Serving (g)",
       "Water (mL)",
       "Carbohydrate (g)",
-      "Fiber (g)",
+      "Fibre (g)",
       "Fats (g)",
       "Saturated Fats (g)",
       "Protein (g)",
@@ -164,7 +164,7 @@ const SelectedFoods = ({
     const getNutrientKey = (header) => {
       const mapping = {
         "Carbohydrate (g)": "carbohydrate",
-        "Fiber (g)": "fiber",
+        "Fibre (g)": "fibre",
         "Fats (g)": "fats",
         "Saturated Fats (g)": "saturated_fats",
         "Protein (g)": "protein",

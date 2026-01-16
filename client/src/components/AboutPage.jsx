@@ -91,7 +91,7 @@ const faqs = [
   {
     question: "There are some nutrients that I don't see here. Why is that?",
     answer: [
-      "Some nutrients have been deliberately excluded because adding more variables to a linear programming model increases computational complexity and can prevent the algorithm from finding a viable solution. Broadly, there are two reasons certain nutrients are not included:",
+      "Some nutrients have been deliberately excluded for two broad reasons:",
 
       <h3 key="vegans" className="text-xl font-semibold mt-4">
         Ensuring Convergence for Vegans/Vegetarians
@@ -108,7 +108,7 @@ const faqs = [
       "Similar to vitamin D, vitamin B12 is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans, and often vegetarians, from receiving any meal plan. If you follow a vegan diet, prioritize B12-fortified foods and supplements. If you a follow a vegetarian diet, eggs and dairy can help, though they still contain less B12 than meat.",
 
       <h3 key="deficiency-rare" className="text-xl font-semibold mt-4">
-        Deficiencies are Rare in the General Population
+        Rare Deficiencies in the General Population
       </h3>,
 
       <h4 key="copper" className="font-semibold mt-2">
@@ -140,6 +140,8 @@ const faqs = [
         Fluoride
       </h4>,
       "Fluoride deficiency, particularly with respect to dental health, is rare due to community water fluoridation, widespread use of fluoride-containing dental products, and natural dietary sources such as tea and seafood.",
+
+      "\nAdding more variables to a linear programming model increases computational complexity, and so excluding these nutrients helps Knap[Snack] converge on solutions more efficiently.",
     ],
   },
   {
@@ -157,7 +159,7 @@ const faqs = [
       <h4 key="sugar" className="font-semibold mt-2">
         Added Sugars
       </h4>,
-      "The Dietary Guidelines for Americans recommend limiting added sugars to less than 10% of total daily calories, while the WHO conditionally recommends reducing intake to below 5% for additional health benefits, such as a reduced risk of dental caries. Because the food database used by Knap[Snack] does not provide information on added sugars, this metric is not explicitly tracked. But you already know which foods to avoid or limit to keep added sugar intake low.",
+      "Because the food database used by Knap[Snack] does not provide information on added sugars, this metric is not explicitly tracked. Using Knap[Snack] in conjunction with a meal tracker can help you monitor and manage your added sugar intake effectively. The Dietary Guidelines for Americans recommend limiting added sugars to less than 10% of total daily calories, while the WHO conditionally recommends reducing intake to below 5% for additional health benefits, such as a reduced risk of dental caries.",
     ],
   },
   {
@@ -178,7 +180,7 @@ const faqs = [
   {
     question: "Why doesn't the food search have everything I eat?",
     answer: [
-      "Knap[Snack]'s food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. To include food items that you don't see in the food search, you can import a CSV with their nutritional profiles (taken from a reliable source). Just ensure that the CSV matches the format of exported CSV files from the app's selected foods section, and that the nutrient values in each row correspond to the amount specified in the 'Serving Size (g)' column.",
+      "Knap[Snack]'s food search pulls data from the USDA FoodData Central database, which is quite limited in its scope. To include food items that you don't see in the food search, you can import a CSV with their nutritional profiles (taken from a reliable source). Just ensure that the file format matches the CSVs exported from the app's selected foods section., and that the nutrient values in each row correspond to the amount specified in the 'Serving Size (g)' column.",
     ],
   },
   {

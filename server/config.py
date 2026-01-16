@@ -44,7 +44,7 @@ NUTRIENT_MAP = {
     "protein": "Protein",
     "fats": "Total lipid (fat)",
     "saturated_fats": "Fatty acids, total saturated",
-    "fiber": "Fiber, total dietary",
+    "fibre": "Fiber, total dietary",
     "Iron (mg)": "Iron, Fe",
     "Magnesium (mg)": "Magnesium, Mg",
     "Manganese (mg)": "Manganese, Mn",
@@ -90,7 +90,7 @@ ELEMENTS_UL_EXCLUDE = [
 ]
 MACROS_RDA_EXCLUDE = [
     "Carbohydrate (g)",
-    "Total Fiber (g)",
+    "Total Fibre (g)",
     "Fat (g)",
     "Linoleic Acid (g)",
     "α-Linolenic Acid (g)",

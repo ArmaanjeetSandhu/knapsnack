@@ -98,7 +98,7 @@ const NUTRIENT_INFO = {
     description: "Governs protein metabolism and neurotransmitter synthesis",
     sources: ["Chickpeas", "Beef liver", "Tuna", "Salmon"],
     deficiencySymptoms: [
-      "Microcytic anemia",
+      "Microcytic anaemia",
       "Depression/Confusion",
       "Inflammation of lips/tongue",
     ],
@@ -113,8 +113,8 @@ const NUTRIENT_INFO = {
     description: "Crucial for DNA synthesis and cell division",
     sources: ["Beef liver", "Spinach", "Black-eyed peas", "Fortified cereals"],
     deficiencySymptoms: [
-      "Megaloblastic anemia",
-      "Neural tube defects (fetus)",
+      "Megaloblastic anaemia",
+      "Neural tube defects (foetus)",
       "Gastrointestinal issues",
     ],
     toxicitySymptoms: [
@@ -215,7 +215,7 @@ const NUTRIENT_INFO = {
     description: "Essential for oxygen transport (hemoglobin) and energy",
     sources: ["Fortified cereals", "Oysters", "White beans", "Beef liver"],
     deficiencySymptoms: [
-      "Microcytic anemia",
+      "Microcytic anaemia",
       "Extreme fatigue",
       "Pale skin/Weakness",
     ],

@@ -144,7 +144,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     { label: "Protein", value: calculationData.protein, unit: "g" },
     { label: "Carbohydrates", value: calculationData.carbohydrate, unit: "g" },
     { label: "Fats", value: calculationData.fats, unit: "g" },
-    { label: "Fiber", value: calculationData.fiber, unit: "g" },
+    { label: "Fibre", value: calculationData.fibre, unit: "g" },
     {
       label: "Saturated Fats",
       value: calculationData.saturated_fats,
@@ -360,7 +360,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                     {macro.label}
                   </p>
                   <p className="text-2xl font-bold">
-                    {macro.label === "Fiber" && "≥ "}
+                    {macro.label === "Fibre" && "≥ "}
                     {macro.label === "Saturated Fats" && "≤ "}
                     {formatValue(macro.value)}
                     {macro.unit}
@@ -652,7 +652,7 @@ CalculationResults.propTypes = {
     protein: PropTypes.number.isRequired,
     carbohydrate: PropTypes.number.isRequired,
     fats: PropTypes.number.isRequired,
-    fiber: PropTypes.number.isRequired,
+    fibre: PropTypes.number.isRequired,
     saturated_fats: PropTypes.number.isRequired,
     lower_bounds: PropTypes.object,
     upper_bounds: PropTypes.object,

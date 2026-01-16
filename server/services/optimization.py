@@ -109,7 +109,7 @@ def analyze_lower_bound_feasibility(
                 }
             )
 
-    for nutrient in ["protein", "carbohydrate", "fats", "fiber"]:
+    for nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
         if nutrient in nutrient_goals:
             min_value = nutrient_goals[nutrient]
             max_possible = 0

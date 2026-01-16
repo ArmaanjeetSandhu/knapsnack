@@ -218,7 +218,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "g",
     },
     { name: "Fats", value: results.nutrient_totals.fats, unit: "g" },
-    { name: "Fiber", value: results.nutrient_totals.fiber, unit: "g" },
+    { name: "Fibre", value: results.nutrient_totals.fibre, unit: "g" },
     {
       name: "Saturated Fats",
       value: results.nutrient_totals["saturated_fats"],

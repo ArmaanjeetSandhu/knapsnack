@@ -77,16 +77,16 @@ def calculate_macros(
         fratio: Fat ratio (0.0-1.0)
 
     Returns:
-        Tuple of (protein, carbohydrate, fats, fiber, saturated_fats) in grams
+        Tuple of (protein, carbohydrate, fats, fibre, saturated_fats) in grams
     """
     protein = int(pratio * daily_caloric_intake / PROTEIN_CALORIES_PER_GRAM)
     carbohydrate = int(cratio * daily_caloric_intake / CARB_CALORIES_PER_GRAM)
     fats = int(fratio * daily_caloric_intake / FAT_CALORIES_PER_GRAM)
-    fiber = int(FIBER_RATIO * daily_caloric_intake)
+    fibre = int(FIBER_RATIO * daily_caloric_intake)
     saturated_fats = int(
         SATURATED_FAT_RATIO * daily_caloric_intake / FAT_CALORIES_PER_GRAM
     )
-    return protein, carbohydrate, fats, fiber, saturated_fats
+    return protein, carbohydrate, fats, fibre, saturated_fats
 
 
 def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
