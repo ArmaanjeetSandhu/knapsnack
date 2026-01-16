@@ -16,16 +16,12 @@ const faqs = [
     ],
   },
   {
-    question: "Isn't that just what MyFitnessPal does?",
+    question: "What about MyFitnessPal?",
     answer: [
-      "The key distinction lies in planning versus tracking. MyFitnessPal and similar apps are meal trackers, not planners. They follow a reactive approach: you log what you've already eaten, observe patterns over time, and then manually adjust future meals based on past entries. This creates a time-consuming cycle of trial and error.\nThese tracking apps also lack automatic meal plan generation. Most importantly, they completely ignore cost optimization—even if you manage to create a nutritionally perfect plan, there's no guarantee it's the most economical option available to you.",
+      "Apps like MyFitnessPal, Cronometer, and MacroFactor are meal trackers, not planners. When you use them to plan your meals, you follow a reactive approach: logging what you've already eaten, observing patterns over time, and then manually adjusting future meals based on past entries. This can create a time-consuming cycle of trial and error. Moreover, these tracking apps don't account for cost. Even if you manage to create a nutritionally perfect plan, there's no guarantee it's the most economical option available to you.",
       "Knap[Snack], on the other hand, is proactive and cost-optimized from the start.",
+      "The most effective approach combines both tools: Knap[Snack] to plan your meals, and your preferred tracker to monitor your adherence to that plan.",
     ],
-  },
-  {
-    question: "So should I ditch MyFitnessPal?",
-    answer:
-      "Not at all. The most effective approach combines both tools: use Knap[Snack] to plan your meals, then use your preferred tracker (MyFitnessPal, Cronometer, MacroFactor, etc.) to monitor your adherence to that plan. Think of Knap[Snack] as your meal architect and your tracker as your accountability partner.",
   },
   {
     question: "How does Knap[Snack] work?",
@@ -93,23 +89,76 @@ const faqs = [
       "Your daily micronutrient targets—RDAs (minimums) and ULs (safe maximums)—are determined based on your age and gender, using the Dietary Reference Intakes published by the National Institutes of Health (NIH).",
   },
   {
-    question: "I don't see vitamin D here. What's up with that?",
+    question: "There are some nutrients that I don't see here. Why is that?",
     answer: [
-      "Adding more variables to linear programming increases computational complexity and can prevent the algorithm from finding solutions. Vitamin D is particularly problematic because most whole foods contain minimal amounts—especially for vegans and vegetarians. Rather than have the system fail to find any solution due to one nutrient, I excluded vitamin D.",
-      "More importantly, food sources are not the primary way humans should obtain vitamin D. Sun exposure remains the most effective method, with fortified foods and supplements being your next best bets. You can figure out your personal vitamin D requirements here: [[DRI Calculator]]",
+      "Some nutrients have been deliberately excluded because adding more variables to a linear programming model increases computational complexity and can prevent the algorithm from finding a viable solution. Broadly, there are two reasons certain nutrients are not included:",
+
+      <h3 key="vegans" className="text-xl font-semibold mt-4">
+        Ensuring Convergence for Vegans/Vegetarians
+      </h3>,
+
+      <h4 key="vitamin-d" className="font-semibold mt-2">
+        Vitamin D
+      </h4>,
+      "Most whole foods contain minimal amounts of vitamin D. Including vitamin D as a constraint can prevent the system from converging on any solution at all, even for those without any dietary reservations. More importantly, food sources are not the primary way humans should obtain vitamin D. Sun exposure remains the most effective method, with fortified foods and supplements being the next best options.",
+
+      <h4 key="vitamin-b12" className="font-semibold mt-2">
+        Vitamin B12
+      </h4>,
+      "Similar to vitamin D, vitamin B12 is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans, and often vegetarians, from receiving any meal plan. If you follow a vegan diet, prioritize B12-fortified foods and supplements. If you a follow a vegetarian diet, eggs and dairy can help, though they still contain less B12 than meat.",
+
+      <h3 key="deficiency-rare" className="text-xl font-semibold mt-4">
+        Deficiencies are Rare in the General Population
+      </h3>,
+
+      <h4 key="copper" className="font-semibold mt-2">
+        Copper
+      </h4>,
+      "Copper deficiency is rare because the body uses robust homeostatic mechanisms to regulate absorption and excretion, while drawing from skeletal and muscular reserves as needed.",
+
+      <h4 key="biotin" className="font-semibold mt-2">
+        Biotin
+      </h4>,
+      "Biotin deficiency is uncommon due to its wide availability across many food groups, contributions from intestinal microbiota, and efficient renal and enzymatic recycling.",
+
+      <h4 key="chromium" className="font-semibold mt-2">
+        Chromium
+      </h4>,
+      "Chromium deficiency is exceedingly rare because the mineral is ubiquitous in the environment and frequently enters the diet through soil accumulation or food processing equipment such as stainless steel.",
+
+      <h4 key="molybdenum" className="font-semibold mt-2">
+        Molybdenum
+      </h4>,
+      "Molybdenum deficiency is rare because the body requires only trace amounts, which are easily met through its widespread presence in soils, plants, and dairy products.",
+
+      <h4 key="chloride" className="font-semibold mt-2">
+        Chloride
+      </h4>,
+      "Chloride deficiency is virtually nonexistent in modern diets due to the abundance of sodium chloride in foods and the tight physiological coupling between sodium and chloride regulation.",
+
+      <h4 key="fluoride" className="font-semibold mt-2">
+        Fluoride
+      </h4>,
+      "Fluoride deficiency, particularly with respect to dental health, is rare due to community water fluoridation, widespread use of fluoride-containing dental products, and natural dietary sources such as tea and seafood.",
     ],
   },
   {
-    question: "I don't see vitamin B12 here. What's up with that?",
+    question: "What about trans fat, cholesterol, and added sugars?",
     answer: [
-      "Similar to vitamin D, B12 is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans and vegetarians from getting any meal plan at all.",
-      "If you follow a plant-based diet, prioritize B12-fortified foods and supplements. Those with no dietary reservations can rely on eggs and dairy products, though they still contain less B12 than meat. You can figure out your personal vitamin B12 requirements here: [[DRI Calculator]]",
+      <h4 key="trans-fats" className="font-semibold mt-2">
+        Trans Fat
+      </h4>,
+      "The World Health Organization (WHO) recommends limiting trans fat intake to less than 1% of total daily energy intake. By prioritizing whole food choices over highly processed ones, a diet planned using Knap[Snack] will naturally keep trans fat intake well below this threshold.",
+      <h4 key="cholesterol" className="font-semibold mt-2">
+        Cholesterol
+      </h4>,
+      "Earlier versions of the Dietary Guidelines for Americans had set an upper limit of 300 mg per day, but this recommendation was removed in 2015 due to evidence that dietary cholesterol had only a limited effect on blood cholesterol levels for most people. Since there is no longer a defined quantitative upper limit, cholesterol is not explicitly accounted for in Knap[Snack].",
+      "If you are concerned, you can read more [[here]], and then apply those insights when planning meals.",
+      <h4 key="sugar" className="font-semibold mt-2">
+        Added Sugars
+      </h4>,
+      "The Dietary Guidelines for Americans recommend limiting added sugars to less than 10% of total daily calories, while the WHO conditionally recommends reducing intake to below 5% for additional health benefits, such as a reduced risk of dental caries. Because the food database used by Knap[Snack] does not provide information on added sugars, this metric is not explicitly tracked. But you already know which foods to avoid or limit to keep added sugar intake low.",
     ],
-  },
-  {
-    question: "I don't see copper here. What's up with that?",
-    answer:
-      "Copper deficiency is extremely rare in healthy individuals. Including copper constraints would add complexity to the optimization without providing meaningful benefit for most users. Unless you have specific health conditions that affect copper metabolism, this mineral rarely requires special attention in meal planning.",
   },
   {
     question: "I take supplements. Can I include those here?",
@@ -158,12 +207,12 @@ const faqs = [
 
 const ContentRenderer = ({ content }) => {
   const linkMap = {
-    "DRI Calculator": "https://www.omnicalculator.com/health/dri",
     "knapsack problem": "https://en.wikipedia.org/wiki/Knapsack_problem",
     "MacroFactor's Blog": "https://macrofactorapp.com/articles/",
     "CronoMeter's Blog": "https://cronometer.com/blog/",
     "Gut Bites MD's Blog": "https://gutbites.org/stories/",
     "Knap[Snack] blog": "https://knapsnack-b4b10d2b0910.herokuapp.com/blog",
+    here: "https://health.clevelandclinic.org/how-much-cholesterol-per-day",
   };
 
   const parseText = (text) => {
