@@ -1,5 +1,5 @@
 import contentful
-
+from datetime import datetime
 from server.config import (
     CONTENTFUL_ACCESS_TOKEN,
     CONTENTFUL_CONTENT_TYPE_ID,
@@ -11,6 +11,30 @@ try:
 except Exception as e:
     client = None
     print(f"Failed to initialize Contentful client: {e}")
+
+
+def normalize_contentful_data(data):
+    """
+    Recursively converts Contentful SDK objects (Entries, Assets, datetimes)
+    into JSON-serializable dictionaries and strings.
+    """
+    if isinstance(data, list):
+        return [normalize_contentful_data(item) for item in data]
+
+    if isinstance(data, dict):
+        return {k: normalize_contentful_data(v) for k, v in data.items()}
+
+    if hasattr(data, "sys") and hasattr(data, "fields"):
+        fields = data.fields()
+        return {
+            "sys": normalize_contentful_data(data.sys),
+            "fields": normalize_contentful_data(fields),
+        }
+
+    if isinstance(data, datetime):
+        return data.isoformat()
+
+    return data
 
 
 def get_all_posts():
@@ -31,7 +55,9 @@ def get_all_posts():
                 "title": entry.fields().get("title"),
                 "slug": entry.fields().get("slug"),
                 "summary": entry.fields().get("summary"),
-                "published_date": entry.sys["created_at"],
+                "published_date": normalize_contentful_data(
+                    entry.sys.get("created_at")
+                ),
             }
             for entry in entries
         ]
@@ -57,12 +83,16 @@ def get_post_by_slug(slug):
             return None
 
         entry = entries[0]
+
+        normalized_content = normalize_contentful_data(entry.fields().get("content"))
+        normalized_date = normalize_contentful_data(entry.sys.get("created_at"))
+
         return {
             "id": entry.id,
             "title": entry.fields().get("title"),
             "slug": entry.fields().get("slug"),
-            "content": entry.fields().get("content"),
-            "published_date": entry.sys["created_at"],
+            "content": normalized_content,
+            "published_date": normalized_date,
         }
     except Exception as e:
         print(f"Error fetching post '{slug}' from Contentful: {e}")
