@@ -68,22 +68,6 @@ def add_security_headers(response):
     return response
 
 
-@app.route("/", defaults={"path": ""})
-@app.route("/<path:path>")
-def serve(path):
-    """Serve static files or fallback to index.html for SPA routing."""
-    static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
-    normalized_path = os.path.normpath(os.path.join(static_folder_str, str(path)))
-    if not normalized_path.startswith(static_folder_str):
-        return "Forbidden", 403
-    if path != "" and os.path.exists(normalized_path):
-        if path.endswith(".mp4"):
-            return send_file(normalized_path, mimetype="video/mp4")
-        return send_from_directory(static_folder_str, path)
-    else:
-        return send_from_directory(static_folder_str, "index.html")
-
-
 @app.route("/robots.txt")
 def robots():
     """Serve robots.txt file"""
@@ -345,6 +329,22 @@ def optimize_api():
         return create_error_response(
             "An internal error has occurred. Please try again later.", status_code=500
         )
+
+
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve(path):
+    """Serve static files or fallback to index.html for SPA routing."""
+    static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
+    normalized_path = os.path.normpath(os.path.join(static_folder_str, str(path)))
+    if not normalized_path.startswith(static_folder_str):
+        return "Forbidden", 403
+    if path != "" and os.path.exists(normalized_path):
+        if path.endswith(".mp4"):
+            return send_file(normalized_path, mimetype="video/mp4")
+        return send_from_directory(static_folder_str, path)
+    else:
+        return send_from_directory(static_folder_str, "index.html")
 
 
 if __name__ == "__main__":
