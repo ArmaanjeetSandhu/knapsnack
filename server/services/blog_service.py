@@ -15,7 +15,7 @@ except Exception as e:
 
 def normalize_contentful_data(data):
     """
-    Recursively converts Contentful SDK objects (Entries, Assets, datetimes)
+    Recursively converts Contentful SDK objects (Entries, Assets, Links, datetimes)
     into JSON-serializable dictionaries and strings.
     """
     if isinstance(data, list):
@@ -24,12 +24,21 @@ def normalize_contentful_data(data):
     if isinstance(data, dict):
         return {k: normalize_contentful_data(v) for k, v in data.items()}
 
-    if hasattr(data, "sys") and hasattr(data, "fields"):
-        fields = data.fields()
-        return {
-            "sys": normalize_contentful_data(data.sys),
-            "fields": normalize_contentful_data(fields),
-        }
+    if hasattr(data, "sys"):
+        serialized = {"sys": normalize_contentful_data(data.sys)}
+
+        if hasattr(data, "fields"):
+            try:
+                if callable(data.fields):
+                    fields_data = data.fields()
+                else:
+                    fields_data = data.fields
+
+                serialized["fields"] = normalize_contentful_data(fields_data)
+            except Exception:
+                pass
+
+        return serialized
 
     if isinstance(data, datetime):
         return data.isoformat()
@@ -84,15 +93,20 @@ def get_post_by_slug(slug):
 
         entry = entries[0]
 
-        normalized_content = normalize_contentful_data(entry.fields().get("content"))
-        normalized_date = normalize_contentful_data(entry.sys.get("created_at"))
+        raw_fields = entry.fields() if callable(entry.fields) else entry.fields
 
         return {
             "id": entry.id,
-            "title": entry.fields().get("title"),
-            "slug": entry.fields().get("slug"),
-            "content": normalized_content,
-            "published_date": normalized_date,
+            "title": raw_fields.get("title") if isinstance(raw_fields, dict) else None,
+            "slug": raw_fields.get("slug") if isinstance(raw_fields, dict) else None,
+            "content": (
+                raw_fields.get("content") if isinstance(raw_fields, dict) else None
+            ),
+            "published_date": (
+                normalize_contentful_data(entry.sys.get("created_at"))
+                if hasattr(entry.sys, "get")
+                else None
+            ),
         }
     except Exception as e:
         print(f"Error fetching post '{slug}' from Contentful: {e}")
