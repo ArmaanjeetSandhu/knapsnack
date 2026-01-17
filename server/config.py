@@ -112,7 +112,7 @@ CONTENT_SECURITY_POLICY = (
     "default-src 'self'; "
     "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
     "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
-    "img-src 'self' data:; "
+    "img-src 'self' data: https://*.ctfassets.net; "
     "font-src 'self'; "
     "connect-src 'self' https://api.nal.usda.gov; "
     "media-src 'self'; "
