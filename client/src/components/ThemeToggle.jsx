@@ -18,7 +18,7 @@ const ThemeToggle = () => {
       }
     } else {
       const isSystemDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
+        "(prefers-color-scheme: dark)",
       ).matches;
       setIsDark(isSystemDark);
       if (isSystemDark) {

@@ -9,7 +9,6 @@ import {
   Upload,
 } from "lucide-react";
 import Papa from "papaparse";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -25,7 +24,7 @@ import api from "../services/api";
 
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(
-    () => localStorage.getItem("usda_api_key") || ""
+    () => localStorage.getItem("usda_api_key") || "",
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -83,7 +82,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const processCSVData = (results) => {
     if (results.errors.length > 0) {
       setSearchError(
-        "Error parsing CSV file. Please ensure the file format is correct."
+        "Error parsing CSV file. Please ensure the file format is correct.",
       );
       return null;
     }
@@ -135,7 +134,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       return importedFoods;
     } catch {
       setSearchError(
-        "Invalid CSV format. Please use a CSV file exported from this application."
+        "Invalid CSV format. Please use a CSV file exported from this application.",
       );
       return null;
     }
@@ -435,12 +434,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       </Card>
     </motion.div>
   );
-};
-
-FoodSearch.propTypes = {
-  onFoodSelect: PropTypes.func.isRequired,
-  onFoodsImport: PropTypes.func.isRequired,
-  selectedFoodIds: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default FoodSearch;

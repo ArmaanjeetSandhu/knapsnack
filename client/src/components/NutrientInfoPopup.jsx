@@ -1,5 +1,4 @@
 import { Check, CircleAlert, Info } from "lucide-react";
-import PropTypes from "prop-types";
 import {
   Dialog,
   DialogContent,
@@ -340,15 +339,6 @@ const NutrientInfoPopup = ({ isOpen, onClose, nutrient, rda, ul, unit }) => {
       </DialogContent>
     </Dialog>
   );
-};
-
-NutrientInfoPopup.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  nutrient: PropTypes.string.isRequired,
-  rda: PropTypes.number,
-  ul: PropTypes.number,
-  unit: PropTypes.string.isRequired,
 };
 
 export default NutrientInfoPopup;

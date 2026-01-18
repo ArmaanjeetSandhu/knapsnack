@@ -60,7 +60,7 @@ const handleExportCSV = (results, selectedFoods = []) => {
           acc[key] = (value * totalServing) / 100;
           return acc;
         },
-        {}
+        {},
       );
       return {
         name: foodName,
@@ -98,7 +98,7 @@ const handleExportCSV = (results, selectedFoods = []) => {
     totalServingSize,
     totalServings,
     totalGrams.toFixed(1),
-    results.total_cost_sum.toFixed(2)
+    results.total_cost_sum.toFixed(2),
   );
 
   headers.slice(5).forEach((header) => {

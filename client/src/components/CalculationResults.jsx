@@ -12,7 +12,6 @@ import {
   Target,
   X,
 } from "lucide-react";
-import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
 import { Alert, AlertDescription } from "./ui/alert";
@@ -642,27 +641,6 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
       </motion.div>
     </motion.div>
   );
-};
-
-CalculationResults.propTypes = {
-  calculationData: PropTypes.shape({
-    bmr: PropTypes.number.isRequired,
-    tdee: PropTypes.number.isRequired,
-    daily_caloric_intake: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-    carbohydrate: PropTypes.number.isRequired,
-    fats: PropTypes.number.isRequired,
-    fibre: PropTypes.number.isRequired,
-    saturated_fats: PropTypes.number.isRequired,
-    lower_bounds: PropTypes.object,
-    upper_bounds: PropTypes.object,
-  }).isRequired,
-  userInfo: PropTypes.shape({
-    age: PropTypes.number.isRequired,
-    gender: PropTypes.string.isRequired,
-  }).isRequired,
-  onProceed: PropTypes.func.isRequired,
-  onRecalculate: PropTypes.func.isRequired,
 };
 
 export default CalculationResults;

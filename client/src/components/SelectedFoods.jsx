@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Calculator, Download, ListCheck, Trash2 } from "lucide-react";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -557,27 +556,6 @@ const SelectedFoods = ({
       </Dialog>
     </>
   );
-};
-
-SelectedFoods.propTypes = {
-  foods: PropTypes.arrayOf(
-    PropTypes.shape({
-      fdcId: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      servingSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      nutrients: PropTypes.object.isRequired,
-      integerServings: PropTypes.bool,
-    }),
-  ).isRequired,
-  onFoodsUpdate: PropTypes.func.isRequired,
-  nutrientGoals: PropTypes.object.isRequired,
-  userInfo: PropTypes.shape({
-    age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    gender: PropTypes.string.isRequired,
-    smokingStatus: PropTypes.string.isRequired,
-  }).isRequired,
-  onOptimizationResults: PropTypes.func.isRequired,
 };
 
 export default SelectedFoods;

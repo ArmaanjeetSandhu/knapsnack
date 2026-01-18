@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import {
@@ -214,24 +213,4 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
       )}
     </>
   );
-};
-NutrientTable.propTypes = {
-  nutrients: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      unit: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  lowerBounds: PropTypes.objectOf(PropTypes.number).isRequired,
-  upperBounds: PropTypes.objectOf(PropTypes.number).isRequired,
-};
-NutrientCards.propTypes = {
-  nutrients: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      unit: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  lowerBounds: PropTypes.objectOf(PropTypes.number).isRequired,
-  upperBounds: PropTypes.objectOf(PropTypes.number).isRequired,
 };

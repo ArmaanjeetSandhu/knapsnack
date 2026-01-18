@@ -8,7 +8,6 @@ import {
   Sliders,
   Utensils,
 } from "lucide-react";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -117,16 +116,7 @@ const SortableNutrientTable = ({ nutrients, formatValue }) => {
     </Table>
   );
 };
-SortableNutrientTable.propTypes = {
-  nutrients: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      value: PropTypes.number,
-      unit: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  formatValue: PropTypes.func.isRequired,
-};
+
 const OptimizationResults = ({ results, selectedFoods }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
   const [portionsSortConfig, setPortionsSortConfig] = useState({
@@ -425,7 +415,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                         <p className="text-2xl font-bold mt-2">{percentage}%</p>
                       </CardContent>
                     </Card>
-                  )
+                  ),
                 )}
               </div>
             </div>
@@ -609,24 +599,5 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     </div>
   );
 };
-OptimizationResults.propTypes = {
-  results: PropTypes.shape({
-    food_items: PropTypes.arrayOf(PropTypes.string).isRequired,
-    servings: PropTypes.arrayOf(PropTypes.number).isRequired,
-    total_cost: PropTypes.arrayOf(PropTypes.number).isRequired,
-    total_cost_sum: PropTypes.number.isRequired,
-    nutrient_totals: PropTypes.object.isRequired,
-    overflow_by_nutrient: PropTypes.object,
-    total_overflow: PropTypes.number,
-  }).isRequired,
-  selectedFoods: PropTypes.arrayOf(
-    PropTypes.shape({
-      fdcId: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      servingSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      nutrients: PropTypes.object.isRequired,
-    })
-  ).isRequired,
-};
+
 export default OptimizationResults;

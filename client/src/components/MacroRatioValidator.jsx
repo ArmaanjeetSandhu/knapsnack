@@ -1,5 +1,4 @@
 import { AlertTriangle, CheckCircle, Info } from "lucide-react";
-import PropTypes from "prop-types";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Card, CardContent } from "../components/ui/card";
@@ -11,14 +10,14 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
       carbohydrate: { min: 40, max: 65 },
       fats: { min: 20, max: 35 },
     }),
-    []
+    [],
   );
   const [macros, setMacros] = useState(
     initialMacros || {
       protein: 30,
       carbohydrate: 40,
       fats: 30,
-    }
+    },
   );
   const total = Object.values(macros).reduce((sum, value) => sum + value, 0);
   const getAMDRViolations = useCallback(() => {
@@ -53,7 +52,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
         [macroType]: newValue,
       }));
     },
-    [amdrRanges]
+    [amdrRanges],
   );
   const macroColors = useMemo(
     () => ({
@@ -115,7 +114,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
         },
       },
     }),
-    []
+    [],
   );
   const getAlertMessages = useCallback(() => {
     const messages = [];
@@ -164,7 +163,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
       ${currentColors.invalid} 100%
     )`;
     },
-    [amdrRanges, macros, macroColors]
+    [amdrRanges, macros, macroColors],
   );
   return (
     <Card className="w-full mb-6">
@@ -259,9 +258,5 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     </Card>
   );
 };
-MacroRatioValidator.propTypes = {
-  onValidRatios: PropTypes.func.isRequired,
-  initialMacros: PropTypes.object,
-  autoFocus: PropTypes.bool,
-};
+
 export default MacroRatioValidator;

@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
-import PropTypes from "prop-types";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -55,7 +54,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ step: currentStep, data: formData })
+      JSON.stringify({ step: currentStep, data: formData }),
     );
   }, [currentStep, formData]);
 
@@ -67,7 +66,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
     (ratios) => {
       handleInputChange("macroRatios", ratios);
     },
-    [handleInputChange]
+    [handleInputChange],
   );
 
   const steps = useMemo(
@@ -248,7 +247,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         },
       },
     ],
-    [formData, handleInputChange, handleMacroRatiosUpdate, showSmokingHelp]
+    [formData, handleInputChange, handleMacroRatiosUpdate, showSmokingHelp],
   );
 
   const validateStep = useCallback(() => {
@@ -270,7 +269,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
           onSubmit(formData);
         } else {
           setError(
-            "Please ensure your macro ratios total 100% and are within the guidelines"
+            "Please ensure your macro ratios total 100% and are within the guidelines",
           );
         }
       } else {
@@ -345,7 +344,5 @@ const PersonalInfoForm = ({ onSubmit }) => {
     </div>
   );
 };
-PersonalInfoForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
+
 export default PersonalInfoForm;

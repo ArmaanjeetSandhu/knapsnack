@@ -1,5 +1,4 @@
 import { ArrowRight } from "lucide-react";
-import PropTypes from "prop-types";
 import { Button } from "./ui/button";
 
 const LandingPage = ({ onGetStarted }) => {
@@ -44,10 +43,6 @@ const LandingPage = ({ onGetStarted }) => {
       </div>
     </div>
   );
-};
-
-LandingPage.propTypes = {
-  onGetStarted: PropTypes.func.isRequired,
 };
 
 export default LandingPage;

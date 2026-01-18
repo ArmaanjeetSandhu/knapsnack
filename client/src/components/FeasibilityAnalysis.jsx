@@ -1,5 +1,4 @@
 import { AlertTriangle, Check, Info, X } from "lucide-react";
-import PropTypes from "prop-types";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
@@ -287,30 +286,5 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
     </Card>
   );
 };
-FeasibilityAnalysis.propTypes = {
-  feasibilityData: PropTypes.shape({
-    analysis: PropTypes.string,
-    isLowerBoundsFeasible: PropTypes.bool.isRequired,
-    isUpperBoundsFeasible: PropTypes.bool.isRequired,
-    isFeasible: PropTypes.bool.isRequired,
-    lowerBoundIssues: PropTypes.arrayOf(
-      PropTypes.shape({
-        nutrient: PropTypes.string.isRequired,
-        required: PropTypes.number.isRequired,
-        achievable: PropTypes.number.isRequired,
-        shortfall: PropTypes.number.isRequired,
-        shortfallPercentage: PropTypes.number.isRequired,
-      })
-    ).isRequired,
-    upperBoundIssues: PropTypes.arrayOf(
-      PropTypes.shape({
-        nutrient: PropTypes.string.isRequired,
-        limit: PropTypes.number.isRequired,
-        minimum: PropTypes.number.isRequired,
-        excess: PropTypes.number.isRequired,
-        excessPercentage: PropTypes.number.isRequired,
-      })
-    ).isRequired,
-  }).isRequired,
-};
+
 export default FeasibilityAnalysis;

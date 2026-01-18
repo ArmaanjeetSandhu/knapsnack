@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ChevronDown } from "lucide-react";
-import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
 import { Button } from "./ui/button";
@@ -276,10 +275,6 @@ const ContentRenderer = ({ content }) => {
   return <div className="whitespace-pre-wrap">{parseText(content)}</div>;
 };
 
-ContentRenderer.propTypes = {
-  content: PropTypes.oneOfType([PropTypes.string, PropTypes.array]).isRequired,
-};
-
 const mainQuestion = faqs[0];
 const otherFaqs = faqs.slice(1);
 
@@ -363,10 +358,6 @@ const AboutPage = ({ onBack }) => {
       </Card>
     </div>
   );
-};
-
-AboutPage.propTypes = {
-  onBack: PropTypes.func.isRequired,
 };
 
 export default AboutPage;

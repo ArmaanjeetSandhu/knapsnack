@@ -1,5 +1,4 @@
 import { Minus, Scale, TrendingDown, TrendingUp } from "lucide-react";
-import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
 const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
   const inputRef = useRef(null);
@@ -172,9 +171,5 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
     </div>
   );
 };
-CalorieTargetSlider.propTypes = {
-  value: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
-  autoFocus: PropTypes.bool,
-};
+
 export default CalorieTargetSlider;
