@@ -186,13 +186,6 @@ const faqs = [
     ],
   },
   {
-    question: 'I got an "Optimization Failed" error. What now?',
-    answer: [
-      "This can happen because the math problem Knap[Snack] solves is NP-hard. As you add more constraints, the difficulty increases exponentially, and the solver may fail to converge on a solution.",
-      "To help the solver, you can try relaxing the constraints: add more variety to your food list, or increase the maximum serving sizes.",
-    ],
-  },
-  {
     question: "Why is it called Knap[Snack]?",
     answer:
       "The name is a play on the classic [[knapsack problem]] in computer science—an optimization challenge that, like meal planning, involves selecting the best combination of items under constraints. Certain variants of the knapsack problem are solvable using linear programming, which is what Knap[Snack] uses, making it a fitting inspiration.",
@@ -275,7 +268,7 @@ const ContentRenderer = ({ content }) => {
             </div>
           ) : (
             React.cloneElement(item, { key: index })
-          )
+          ),
         )}
       </div>
     );

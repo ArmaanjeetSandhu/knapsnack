@@ -10,6 +10,14 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import {
   Table,
@@ -46,6 +54,7 @@ const SelectedFoods = ({
     direction: "ascending",
   });
   const [feasibilityData, setFeasibilityData] = useState(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
 
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
@@ -64,7 +73,7 @@ const SelectedFoods = ({
           return { ...food, [field]: value };
         }
         return food;
-      })
+      }),
     );
     setFeasibilityData(null);
   };
@@ -80,11 +89,11 @@ const SelectedFoods = ({
         !food.servingSize ||
         parseFloat(food.price) <= 0 ||
         parseFloat(food.servingSize) <= 0 ||
-        parseFloat(food.maxServing) <= 0
+        parseFloat(food.maxServing) <= 0,
     );
     if (invalidFoods.length > 0) {
       setError(
-        "Please enter valid price, serving size, and maximum serving size for all foods."
+        "Please enter valid price, serving size, and maximum serving size for all foods.",
       );
       return;
     }
@@ -101,7 +110,7 @@ const SelectedFoods = ({
         requires_integer_servings: !!food.integerServings,
         nutrients: adjustNutrientsForServingSize(
           food.nutrients,
-          parseFloat(food.servingSize)
+          parseFloat(food.servingSize),
         ),
       }));
       const optimizationData = {
@@ -112,8 +121,14 @@ const SelectedFoods = ({
         smokingStatus: userInfo.smokingStatus,
       };
       const result = await api.optimizeDiet(optimizationData);
+
       if (result.success) {
         onOptimizationResults(result.result);
+      } else if (
+        result.feasibilityAnalysis &&
+        result.feasibilityAnalysis.isFeasible
+      ) {
+        setShowErrorDialog(true);
       } else if (result.feasibilityAnalysis) {
         setFeasibilityData(result.feasibilityAnalysis);
       } else {
@@ -176,7 +191,7 @@ const SelectedFoods = ({
     foods.forEach((food) => {
       const adjustedNutrients = adjustNutrientsForServingSize(
         food.nutrients,
-        parseFloat(food.servingSize) || 100
+        parseFloat(food.servingSize) || 100,
       );
       const row = [
         food.integerServings ? "Yes" : "No",
@@ -255,255 +270,292 @@ const SelectedFoods = ({
   }
 
   return (
-    <Card className="mb-6 shadow-lg">
-      <CardHeader className="bg-primary rounded-t-lg">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-white flex items-center gap-2">
-            <ListCheck className="w-5 h-5" />
-            Selected Foods
-          </CardTitle>
-          {foods.length > 0 && (
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleClearAll}
-                className="flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-                Clear All
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleExportSelectedFoods}
-                className="flex items-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Export Foods CSV
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <AnimatePresence mode="wait">
-          {foods.length > 0 ? (
-            <motion.div
-              key="foods-list"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader
-                    style={{ position: "sticky", top: 0, zIndex: 10 }}
-                  >
-                    <TableRow>
-                      <TableHead className="w-[100px] text-center">
-                        Discrete Servings
-                      </TableHead>
-                      <TableHead
-                        onClick={() => handleSort("food")}
-                        className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
-                      >
-                        Food Item{getSortIcon("food")}
-                      </TableHead>
-                      <TableHead
-                        onClick={() => handleSort("price")}
-                        className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
-                      >
-                        Price{getSortIcon("price")}
-                      </TableHead>
-                      <TableHead
-                        onClick={() => handleSort("servingSize")}
-                        className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
-                      >
-                        Serving Size (g){getSortIcon("servingSize")}
-                      </TableHead>
-                      <TableHead
-                        onClick={() => handleSort("maxServing")}
-                        className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
-                      >
-                        Max Serving (g){getSortIcon("maxServing")}
-                      </TableHead>
-                      <TableHead className="w-[100px]">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <AnimatePresence initial={false}>
-                      {sortedFoods.map((food) => (
-                        <MotionTableRow
-                          key={food.fdcId}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 10 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <TableCell>
-                            <div className="flex justify-center items-center h-full pt-2">
-                              <input
-                                type="checkbox"
-                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                checked={!!food.integerServings}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    food.fdcId,
-                                    "integerServings",
-                                    e.target.checked
-                                  )
-                                }
-                                aria-label={`Require discrete servings for ${food.description}`}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {food.description}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <label
-                                htmlFor={`price-${food.fdcId}`}
-                                className="sr-only"
-                              >
-                                Price for {food.description}
-                              </label>
-                              <Input
-                                id={`price-${food.fdcId}`}
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={food.price}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    food.fdcId,
-                                    "price",
-                                    e.target.value
-                                  )
-                                }
-                                className="w-[100px]"
-                                aria-label={`Price for ${food.description}`}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <label
-                                htmlFor={`serving-size-${food.fdcId}`}
-                                className="sr-only"
-                              >
-                                Serving Size in grams for {food.description}
-                              </label>
-                              <Input
-                                id={`serving-size-${food.fdcId}`}
-                                type="number"
-                                step="1"
-                                min="0"
-                                value={food.servingSize}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    food.fdcId,
-                                    "servingSize",
-                                    e.target.value
-                                  )
-                                }
-                                className="w-[100px]"
-                                aria-label={`Serving Size in grams for ${food.description}`}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex flex-col">
-                              <label
-                                htmlFor={`max-serving-${food.fdcId}`}
-                                className="sr-only"
-                              >
-                                Maximum Serving in grams for {food.description}
-                              </label>
-                              <Input
-                                id={`max-serving-${food.fdcId}`}
-                                type="number"
-                                step="1"
-                                min="0"
-                                value={food.maxServing || 500}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    food.fdcId,
-                                    "maxServing",
-                                    e.target.value
-                                  )
-                                }
-                                className="w-[100px]"
-                                placeholder="500"
-                                aria-label={`Maximum Serving in grams for ${food.description}`}
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleRemoveFood(food.fdcId)}
-                              aria-label={`Remove ${food.description} from selected foods`}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              <span className="sr-only">Remove item</span>
-                            </Button>
-                          </TableCell>
-                        </MotionTableRow>
-                      ))}
-                    </AnimatePresence>
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="mt-6">
+    <>
+      <Card className="mb-6 shadow-lg">
+        <CardHeader className="bg-primary rounded-t-lg">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-white flex items-center gap-2">
+              <ListCheck className="w-5 h-5" />
+              Selected Foods
+            </CardTitle>
+            {foods.length > 0 && (
+              <div className="flex gap-2">
                 <Button
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
-                  size="lg"
-                  onClick={handleOptimize}
-                  disabled={loading}
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleClearAll}
+                  className="flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
                 >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      <span className="font-medium">Optimizing...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Calculator className="w-5 h-5" />
-                      <span className="font-medium">Optimize Diet Plan</span>
-                    </div>
-                  )}
+                  <Trash2 className="w-4 h-4" />
+                  Clear All
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleExportSelectedFoods}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Export Foods CSV
                 </Button>
               </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="empty-state"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Alert>
-                <AlertDescription>
-                  No foods selected. Search and add foods to create your diet
-                  plan.
-                </AlertDescription>
-              </Alert>
-            </motion.div>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
-        </AnimatePresence>
-      </CardContent>
-    </Card>
+
+          <AnimatePresence mode="wait">
+            {foods.length > 0 ? (
+              <motion.div
+                key="foods-list"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader
+                      style={{ position: "sticky", top: 0, zIndex: 10 }}
+                    >
+                      <TableRow>
+                        <TableHead className="w-[100px] text-center">
+                          Discrete Servings
+                        </TableHead>
+                        <TableHead
+                          onClick={() => handleSort("food")}
+                          className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
+                        >
+                          Food Item{getSortIcon("food")}
+                        </TableHead>
+                        <TableHead
+                          onClick={() => handleSort("price")}
+                          className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
+                        >
+                          Price{getSortIcon("price")}
+                        </TableHead>
+                        <TableHead
+                          onClick={() => handleSort("servingSize")}
+                          className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
+                        >
+                          Serving Size (g){getSortIcon("servingSize")}
+                        </TableHead>
+                        <TableHead
+                          onClick={() => handleSort("maxServing")}
+                          className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
+                        >
+                          Max Serving (g){getSortIcon("maxServing")}
+                        </TableHead>
+                        <TableHead className="w-[100px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <AnimatePresence initial={false}>
+                        {sortedFoods.map((food) => (
+                          <MotionTableRow
+                            key={food.fdcId}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <TableCell>
+                              <div className="flex justify-center items-center h-full pt-2">
+                                <input
+                                  type="checkbox"
+                                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                  checked={!!food.integerServings}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      food.fdcId,
+                                      "integerServings",
+                                      e.target.checked,
+                                    )
+                                  }
+                                  aria-label={`Require discrete servings for ${food.description}`}
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {food.description}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <label
+                                  htmlFor={`price-${food.fdcId}`}
+                                  className="sr-only"
+                                >
+                                  Price for {food.description}
+                                </label>
+                                <Input
+                                  id={`price-${food.fdcId}`}
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={food.price}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      food.fdcId,
+                                      "price",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="w-[100px]"
+                                  aria-label={`Price for ${food.description}`}
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <label
+                                  htmlFor={`serving-size-${food.fdcId}`}
+                                  className="sr-only"
+                                >
+                                  Serving Size in grams for {food.description}
+                                </label>
+                                <Input
+                                  id={`serving-size-${food.fdcId}`}
+                                  type="number"
+                                  step="1"
+                                  min="0"
+                                  value={food.servingSize}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      food.fdcId,
+                                      "servingSize",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="w-[100px]"
+                                  aria-label={`Serving Size in grams for ${food.description}`}
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col">
+                                <label
+                                  htmlFor={`max-serving-${food.fdcId}`}
+                                  className="sr-only"
+                                >
+                                  Maximum Serving in grams for{" "}
+                                  {food.description}
+                                </label>
+                                <Input
+                                  id={`max-serving-${food.fdcId}`}
+                                  type="number"
+                                  step="1"
+                                  min="0"
+                                  value={food.maxServing || 500}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      food.fdcId,
+                                      "maxServing",
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="w-[100px]"
+                                  placeholder="500"
+                                  aria-label={`Maximum Serving in grams for ${food.description}`}
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleRemoveFood(food.fdcId)}
+                                aria-label={`Remove ${food.description} from selected foods`}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                <span className="sr-only">Remove item</span>
+                              </Button>
+                            </TableCell>
+                          </MotionTableRow>
+                        ))}
+                      </AnimatePresence>
+                    </TableBody>
+                  </Table>
+                </div>
+                <div className="mt-6">
+                  <Button
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+                    size="lg"
+                    onClick={handleOptimize}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        <span className="font-medium">Optimizing...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Calculator className="w-5 h-5" />
+                        <span className="font-medium">Optimize Diet Plan</span>
+                      </div>
+                    )}
+                  </Button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty-state"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Alert>
+                  <AlertDescription>
+                    No foods selected. Search and add foods to create your diet
+                    plan.
+                  </AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+
+      <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive flex items-center gap-2">
+              Oops!
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              Knap[Snack] couldn&apos;t create a meal plan with your current
+              selections. The foods you&apos;ve chosen do have the nutrients you
+              need, but we&apos;re having trouble combining them in a way that
+              hits all your targets perfectly.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <h4 className="font-semibold mb-2">
+              Here&apos;s what usually helps:
+            </h4>
+            <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+              <li>Adding more variety to your food list</li>
+              <li>
+                Increasing max serving sizes if you&apos;ve set them too low
+              </li>
+              <li>
+                Reviewing any custom bounds to ensure the ranges aren&apos;t too
+                narrow
+              </li>
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowErrorDialog(false)}>Try Again</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
@@ -516,7 +568,7 @@ SelectedFoods.propTypes = {
       servingSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
       nutrients: PropTypes.object.isRequired,
       integerServings: PropTypes.bool,
-    })
+    }),
   ).isRequired,
   onFoodsUpdate: PropTypes.func.isRequired,
   nutrientGoals: PropTypes.object.isRequired,
