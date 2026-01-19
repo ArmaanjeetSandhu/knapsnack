@@ -1,7 +1,22 @@
 import { ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 import { Button } from "./ui/button";
 
 const LandingPage = ({ onGetStarted }) => {
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        onGetStarted();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onGetStarted]);
+
   return (
     <div
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
