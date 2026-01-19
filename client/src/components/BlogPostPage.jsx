@@ -1,10 +1,8 @@
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, MARKS } from "@contentful/rich-text-types";
-import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import api from "../services/api";
-import { Button } from "./ui/button";
 
 const renderOptions = {
   renderMark: {
@@ -92,8 +90,6 @@ const BlogPostPage = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -109,14 +105,6 @@ const BlogPostPage = () => {
     fetchPost();
   }, [slug]);
 
-  const handleBackToBlog = () => {
-    if (location.state?.from === "blog") {
-      navigate(-1);
-    } else {
-      navigate("/blog");
-    }
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -131,9 +119,6 @@ const BlogPostPage = () => {
 
   return (
     <article className="max-w-3xl mx-auto py-8 px-4">
-      <Button onClick={handleBackToBlog} variant="outline" className="mb-6">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Blog
-      </Button>
       <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
         {post.title}
       </h1>

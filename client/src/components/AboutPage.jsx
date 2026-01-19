@@ -1,8 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
-import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 
 const faqs = [
@@ -278,7 +277,7 @@ const ContentRenderer = ({ content }) => {
 const mainQuestion = faqs[0];
 const otherFaqs = faqs.slice(1);
 
-const AboutPage = ({ onBack }) => {
+const AboutPage = () => {
   const [openItemIndex, setOpenItemIndex] = useState(null);
   const faqRefs = useRef([]);
 
@@ -295,10 +294,6 @@ const AboutPage = ({ onBack }) => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <Button onClick={onBack} variant="outline" className="mb-4">
-        <ArrowLeft className="w-5 h-5 mr-2" />
-        Back to App
-      </Button>
       <Card>
         <CardContent className="p-6">
           <div className="pb-4 border-b">

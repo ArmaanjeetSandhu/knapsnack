@@ -1,15 +1,12 @@
-import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../services/api";
-import { Button } from "./ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 const BlogPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -38,9 +35,6 @@ const BlogPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Button onClick={() => navigate(-1)} variant="outline" className="mb-6">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back
-      </Button>
       <h1 className="text-4xl font-bold mb-8 text-center">
         The Knap[Snack] Blog
       </h1>
