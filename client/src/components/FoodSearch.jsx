@@ -20,6 +20,7 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
+import { processCSVData } from "../lib/csvParser";
 import api from "../services/api";
 
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
@@ -79,67 +80,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     }, 2000);
   };
 
-  const processCSVData = (results) => {
-    if (results.errors.length > 0) {
-      setSearchError(
-        "Error parsing CSV file. Please ensure the file format is correct.",
-      );
-      return null;
-    }
-    try {
-      const importedFoods = results.data.map((row, index) => {
-        const servingSize = row["Serving Size (g)"] || 100;
-        const normalizedNutrients = {
-          "Vitamin A (µg)": (row["Vitamin A (µg)"] * 100) / servingSize,
-          "Vitamin C (mg)": (row["Vitamin C (mg)"] * 100) / servingSize,
-          "Vitamin E (mg)": (row["Vitamin E (mg)"] * 100) / servingSize,
-          "Vitamin K (µg)": (row["Vitamin K (µg)"] * 100) / servingSize,
-          "Thiamin (mg)": (row["Thiamin (mg)"] * 100) / servingSize,
-          "Riboflavin (mg)": (row["Riboflavin (mg)"] * 100) / servingSize,
-          "Niacin (mg)": (row["Niacin (mg)"] * 100) / servingSize,
-          "Vitamin B6 (mg)": (row["Vitamin B6 (mg)"] * 100) / servingSize,
-          "Folate (µg)": (row["Folate (µg)"] * 100) / servingSize,
-          "Calcium (mg)": (row["Calcium (mg)"] * 100) / servingSize,
-          carbohydrate: (row["Carbohydrate (g)"] * 100) / servingSize,
-          "Choline (mg)": (row["Choline (mg)"] * 100) / servingSize,
-          protein: (row["Protein (g)"] * 100) / servingSize,
-          fats: (row["Fats (g)"] * 100) / servingSize,
-          saturated_fats: (row["Saturated Fats (g)"] * 100) / servingSize,
-          fibre: (row["Fibre (g)"] * 100) / servingSize,
-          "Iron (mg)": (row["Iron (mg)"] * 100) / servingSize,
-          "Magnesium (mg)": (row["Magnesium (mg)"] * 100) / servingSize,
-          "Manganese (mg)": (row["Manganese (mg)"] * 100) / servingSize,
-          "Phosphorus (mg)": (row["Phosphorus (mg)"] * 100) / servingSize,
-          "Selenium (µg)": (row["Selenium (µg)"] * 100) / servingSize,
-          "Zinc (mg)": (row["Zinc (mg)"] * 100) / servingSize,
-          "Potassium (mg)": (row["Potassium (mg)"] * 100) / servingSize,
-          "Sodium (mg)": (row["Sodium (mg)"] * 100) / servingSize,
-          "Pantothenic Acid (mg)":
-            (row["Pantothenic Acid (mg)"] * 100) / servingSize,
-          "Water (mL)": (row["Water (mL)"] * 100) / servingSize,
-        };
-
-        return {
-          fdcId: row["FDC ID"]
-            ? row["FDC ID"].toString()
-            : `imported-${Date.now()}-${index}`,
-          description: row["Food Item"],
-          price: row["Price"],
-          servingSize: row["Serving Size (g)"],
-          maxServing: row["Max Serving (g)"],
-          integerServings: row["Discrete Servings"] === "Yes",
-          nutrients: normalizedNutrients,
-        };
-      });
-      return importedFoods;
-    } catch {
-      setSearchError(
-        "Invalid CSV format. Please use a CSV file exported from this application.",
-      );
-      return null;
-    }
-  };
-
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -148,10 +88,12 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const importedFoods = processCSVData(results);
-        if (importedFoods) {
-          onFoodsImport(importedFoods);
+        const result = processCSVData(results);
+        if (result.success) {
+          onFoodsImport(result.data);
           setSearchError(null);
+        } else {
+          setSearchError(result.error);
         }
       },
       error: (error) => {
@@ -175,10 +117,12 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const importedFoods = processCSVData(results);
-          if (importedFoods) {
-            onFoodsImport(importedFoods);
+          const result = processCSVData(results);
+          if (result.success) {
+            onFoodsImport(result.data);
             setSearchError(null);
+          } else {
+            setSearchError(result.error);
           }
         },
         error: (error) => {
