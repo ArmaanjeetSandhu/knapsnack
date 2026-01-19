@@ -1,83 +1,72 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { useFormWizard } from "../hooks/useFormWizard";
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
 
-const STORAGE_KEY = "knapsnack_form_state";
-
 const PersonalInfoForm = ({ onSubmit }) => {
-  const [currentStep, setCurrentStep] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved).step : 0;
-    } catch {
-      return 0;
-    }
-  });
-  const [formData, setFormData] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved
-        ? JSON.parse(saved).data
-        : {
-            gender: "m",
-            age: "",
-            weight: "",
-            height: "",
-            activity: 1.2,
-            percentage: 100,
-            macroRatios: null,
-            smokingStatus: "no",
-          };
-    } catch {
-      return {
-        gender: "m",
-        age: "",
-        weight: "",
-        height: "",
-        activity: 1.2,
-        percentage: 100,
-        macroRatios: null,
-        smokingStatus: "no",
-      };
-    }
-  });
-  const [error, setError] = useState(null);
-
   const [showSmokingHelp, setShowSmokingHelp] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ step: currentStep, data: formData }),
-    );
-  }, [currentStep, formData]);
-
-  const handleInputChange = useCallback((field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setError(null);
-  }, []);
-  const handleMacroRatiosUpdate = useCallback(
-    (ratios) => {
-      handleInputChange("macroRatios", ratios);
+  const stepConfigs = [
+    { title: "First, what's your gender?" },
+    {
+      title: "How old are you?",
+      validate: (value) => {
+        const age = parseInt(value);
+        if (!value || age < 19 || age > 100)
+          return "Age must be between 19 and 100";
+        return null;
+      },
     },
-    [handleInputChange],
-  );
+    {
+      title: "What's your weight in kilograms?",
+      validate: (value) => {
+        const weight = parseInt(value);
+        if (!value || weight < 30 || weight > 200)
+          return "Weight must be between 30 and 200 kg";
+        return null;
+      },
+    },
+    {
+      title: "And your height in centimeters?",
+      validate: (value) => {
+        const height = parseInt(value);
+        if (!value || height < 135 || height > 200)
+          return "Height must be between 135 and 200 cm";
+        return null;
+      },
+    },
+    { title: "How active are you on a daily basis?" },
+    { title: "Do you smoke?" },
+    { title: "What's your caloric goal?" },
+    {
+      title: "Finally, let's set your macro ratios",
+      validate: (value) => {
+        if (!value) return "Please set valid macro ratios that total 100%";
+        return null;
+      },
+    },
+  ];
 
-  const steps = useMemo(
-    () => [
-      {
-        title: (
-          <div className="flex items-center gap-2">
-            First, what&apos;s your gender?
-          </div>
-        ),
-        component: (
+  const {
+    currentStep,
+    formData,
+    error,
+    handleNext,
+    handlePrevious,
+    handleInputChange,
+    handleMacroRatiosUpdate,
+  } = useFormWizard(stepConfigs, onSubmit);
+
+  const currentStepUI = useMemo(() => {
+    switch (currentStep) {
+      case 0:
+        return (
           <div className="flex gap-2">
             <Button
               type="button"
@@ -96,11 +85,9 @@ const PersonalInfoForm = ({ onSubmit }) => {
               Female
             </Button>
           </div>
-        ),
-      },
-      {
-        title: "How old are you?",
-        component: (
+        );
+      case 1:
+        return (
           <Input
             type="number"
             autoFocus
@@ -109,18 +96,9 @@ const PersonalInfoForm = ({ onSubmit }) => {
             placeholder="Enter your age"
             className="text-lg"
           />
-        ),
-        validate: (value) => {
-          const age = parseInt(value);
-          if (!value || age < 19 || age > 100) {
-            return "Age must be between 19 and 100";
-          }
-          return null;
-        },
-      },
-      {
-        title: "What's your weight in kilograms?",
-        component: (
+        );
+      case 2:
+        return (
           <Input
             type="number"
             autoFocus
@@ -129,18 +107,9 @@ const PersonalInfoForm = ({ onSubmit }) => {
             placeholder="Enter your weight (kg)"
             className="text-lg"
           />
-        ),
-        validate: (value) => {
-          const weight = parseInt(value);
-          if (!value || weight < 30 || weight > 200) {
-            return "Weight must be between 30 and 200 kg";
-          }
-          return null;
-        },
-      },
-      {
-        title: "And your height in centimeters?",
-        component: (
+        );
+      case 3:
+        return (
           <Input
             type="number"
             autoFocus
@@ -149,57 +118,17 @@ const PersonalInfoForm = ({ onSubmit }) => {
             placeholder="Enter your height (cm)"
             className="text-lg"
           />
-        ),
-        validate: (value) => {
-          const height = parseInt(value);
-          if (!value || height < 135 || height > 200) {
-            return "Height must be between 135 and 200 cm";
-          }
-          return null;
-        },
-      },
-      {
-        title: "How active are you on a daily basis?",
-        component: (
+        );
+      case 4:
+        return (
           <ActivitySlider
             value={formData.activity}
             onChange={(value) => handleInputChange("activity", value)}
             autoFocus={true}
           />
-        ),
-      },
-      {
-        title: (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              Do you smoke?
-              <button
-                type="button"
-                className="cursor-help"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowSmokingHelp((prev) => !prev);
-                }}
-              >
-                <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
-              </button>
-            </div>
-            <AnimatePresence>
-              {showSmokingHelp && (
-                <motion.p
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="text-base font-normal text-muted-foreground"
-                >
-                  Knap[Snack] adjusts your vitamin C requirements to account for
-                  the increased oxidative stress associated with smoking.
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        ),
-        component: (
+        );
+      case 5:
+        return (
           <div className="flex gap-2">
             <Button
               type="button"
@@ -218,70 +147,64 @@ const PersonalInfoForm = ({ onSubmit }) => {
               Yes
             </Button>
           </div>
-        ),
-      },
-      {
-        title: "What's your caloric goal?",
-        component: (
+        );
+      case 6:
+        return (
           <CalorieTargetSlider
             value={formData.percentage}
             onChange={(value) => handleInputChange("percentage", value)}
             autoFocus={true}
           />
-        ),
-      },
-      {
-        title: "Finally, let's set your macro ratios",
-        component: (
+        );
+      case 7:
+        return (
           <MacroRatioValidator
             initialMacros={formData.macroRatios}
             onValidRatios={handleMacroRatiosUpdate}
             autoFocus={true}
           />
-        ),
-        validate: (value) => {
-          if (!value) {
-            return "Please set valid macro ratios that total 100%";
-          }
-          return null;
-        },
-      },
-    ],
-    [formData, handleInputChange, handleMacroRatiosUpdate, showSmokingHelp],
-  );
+        );
+      default:
+        return null;
+    }
+  }, [currentStep, formData, handleInputChange, handleMacroRatiosUpdate]);
 
-  const validateStep = useCallback(() => {
-    const currentStepData = steps[currentStep];
-    const currentValue = formData[Object.keys(formData)[currentStep]];
-    if (currentStepData.validate) {
-      const validationError = currentStepData.validate(currentValue);
-      if (validationError) {
-        setError(validationError);
-        return false;
-      }
+  const renderTitle = () => {
+    if (currentStep === 5) {
+      return (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            Do you smoke?
+            <button
+              type="button"
+              className="cursor-help"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowSmokingHelp((prev) => !prev);
+              }}
+            >
+              <HelpCircle className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors" />
+            </button>
+          </div>
+          <AnimatePresence>
+            {showSmokingHelp && (
+              <motion.p
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="text-base font-normal text-muted-foreground"
+              >
+                Knap[Snack] adjusts your vitamin C requirements to account for
+                the increased oxidative stress associated with smoking.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+      );
     }
-    return true;
-  }, [currentStep, formData, steps]);
-  const handleNext = useCallback(() => {
-    if (validateStep()) {
-      if (currentStep === steps.length - 1) {
-        if (formData.macroRatios) {
-          onSubmit(formData);
-        } else {
-          setError(
-            "Please ensure your macro ratios total 100% and are within the guidelines",
-          );
-        }
-      } else {
-        setCurrentStep((prev) => prev + 1);
-        setError(null);
-      }
-    }
-  }, [currentStep, formData, onSubmit, steps.length, validateStep]);
-  const handlePrevious = useCallback(() => {
-    setCurrentStep((prev) => prev - 1);
-    setError(null);
-  }, []);
+    return stepConfigs[currentStep].title;
+  };
+
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -294,13 +217,16 @@ const PersonalInfoForm = ({ onSubmit }) => {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [handleNext]);
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
         <div className="h-2 bg-gray-200 rounded-full">
           <div
             className="h-full bg-primary rounded-full transition-all duration-500"
-            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+            style={{
+              width: `${((currentStep + 1) / stepConfigs.length) * 100}%`,
+            }}
           />
         </div>
       </div>
@@ -314,10 +240,8 @@ const PersonalInfoForm = ({ onSubmit }) => {
             transition={{ duration: 0.3 }}
             className="flex-1"
           >
-            <h2 className="text-2xl font-semibold mb-6">
-              {steps[currentStep].title}
-            </h2>
-            <div className="mb-8">{steps[currentStep].component}</div>
+            <h2 className="text-2xl font-semibold mb-6">{renderTitle()}</h2>
+            <div className="mb-8">{currentStepUI}</div>
             {error && (
               <Alert variant="destructive" className="mb-6">
                 <AlertDescription>{error}</AlertDescription>
@@ -336,7 +260,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             Previous
           </Button>
           <Button onClick={handleNext} className="flex items-center gap-2">
-            {currentStep === steps.length - 1 ? "Submit" : "Next"}
+            {currentStep === stepConfigs.length - 1 ? "Submit" : "Next"}
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>

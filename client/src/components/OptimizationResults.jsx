@@ -32,12 +32,15 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
+import { formatValue, getNonZeroItems, sortItems } from "../lib/resultsHelpers";
 import handleExportCSV from "./ExportHandler";
+
 const SortableNutrientTable = ({ nutrients, formatValue }) => {
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
+
   const handleSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -45,39 +48,14 @@ const SortableNutrientTable = ({ nutrients, formatValue }) => {
     }
     setSortConfig({ key, direction });
   };
-  const getSortedNutrients = () => {
-    const sortableNutrients = [...nutrients];
-    if (sortConfig.key) {
-      sortableNutrients.sort((a, b) => {
-        let aValue, bValue;
-        if (sortConfig.key === "nutrient") {
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-        } else if (sortConfig.key === "amount") {
-          aValue = a.value || 0;
-          bValue = b.value || 0;
-        } else if (sortConfig.key === "unit") {
-          aValue = a.unit.toLowerCase();
-          bValue = b.unit.toLowerCase();
-        }
-        if (aValue < bValue) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableNutrients;
-  };
+
   const getSortIcon = (key) => {
-    if (sortConfig.key !== key) {
-      return null;
-    }
+    if (sortConfig.key !== key) return null;
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
-  const sortedNutrients = getSortedNutrients();
+
+  const sortedNutrients = sortItems(nutrients, sortConfig, "nutrients");
+
   return (
     <Table>
       <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
@@ -123,24 +101,9 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     key: null,
     direction: "ascending",
   });
-  const nonZeroItems = results.food_items
-    .map((foodName, index) => {
-      const servings = results.servings[index];
-      if (servings <= 0) return null;
-      const food = selectedFoods.find((f) => f.description === foodName);
-      if (!food) return null;
-      const servingSize = parseFloat(food.servingSize) || 100;
-      const totalServing = servings * servingSize;
-      const cost = results.total_cost[index];
-      return {
-        food: foodName,
-        servings,
-        servingSize,
-        totalServing,
-        cost,
-      };
-    })
-    .filter((item) => item !== null);
+
+  const nonZeroItems = getNonZeroItems(results, selectedFoods);
+
   const handlePortionsSort = (key) => {
     let direction = "ascending";
     if (
@@ -151,55 +114,22 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     }
     setPortionsSortConfig({ key, direction });
   };
-  const getSortedPortions = () => {
-    const sortableItems = [...nonZeroItems];
-    if (portionsSortConfig.key) {
-      sortableItems.sort((a, b) => {
-        let aValue, bValue;
-        if (portionsSortConfig.key === "food") {
-          aValue = a.food.toLowerCase();
-          bValue = b.food.toLowerCase();
-        } else if (portionsSortConfig.key === "servingSize") {
-          aValue = a.servingSize || 0;
-          bValue = b.servingSize || 0;
-        } else if (portionsSortConfig.key === "servings") {
-          aValue = a.servings || 0;
-          bValue = b.servings || 0;
-        } else if (portionsSortConfig.key === "totalServing") {
-          aValue = a.totalServing || 0;
-          bValue = b.totalServing || 0;
-        } else if (portionsSortConfig.key === "cost") {
-          aValue = a.cost || 0;
-          bValue = b.cost || 0;
-        }
-        if (aValue < bValue) {
-          return portionsSortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return portionsSortConfig.direction === "ascending" ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  };
+
   const getSortIcon = (key) => {
-    if (portionsSortConfig.key !== key) {
-      return null;
-    }
+    if (portionsSortConfig.key !== key) return null;
     return portionsSortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
-  const sortedPortionItems = getSortedPortions();
+
+  const sortedPortionItems = sortItems(
+    nonZeroItems,
+    portionsSortConfig,
+    "portions",
+  );
+
   const totalDailyCost = results.total_cost_sum;
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
-  const formatValue = (value) => {
-    return typeof value === "number"
-      ? value.toLocaleString("en-US", {
-          maximumFractionDigits: 1,
-        })
-      : value;
-  };
+
   const macronutrients = [
     { name: "Protein", value: results.nutrient_totals.protein, unit: "g" },
     {
@@ -215,6 +145,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "g",
     },
   ];
+
   const vitamins = [
     {
       name: "Vitamin A",
@@ -320,12 +251,15 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       unit: "mL",
     },
   ];
+
   const handleExportClick = () => {
     handleExportCSV(results, selectedFoods);
   };
+
   const renderNutrientTable = (nutrients) => (
     <SortableNutrientTable nutrients={nutrients} formatValue={formatValue} />
   );
+
   const renderNutrientCards = (nutrients) => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {nutrients.map((nutrient, index) => (
@@ -342,6 +276,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
       ))}
     </div>
   );
+
   return (
     <div className="space-y-6">
       <Card>

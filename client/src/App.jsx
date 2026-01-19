@@ -6,7 +6,7 @@ import {
   Newspaper,
   RefreshCw,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Link,
   Route,
@@ -32,187 +32,18 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "./components/ui/navigation-menu";
+import { useAppState } from "./hooks/useAppState";
 import api from "./services/api";
-
-const STORAGE_KEYS = {
-  SELECTED_FOODS: "knapsnack_selected_foods",
-  NUTRIENT_GOALS: "knapsnack_nutrient_goals",
-  USER_INFO: "knapsnack_user_info",
-  OPTIMIZATION_RESULTS: "knapsnack_optimization_results",
-  SNAPSHOT_FOODS: "knapsnack_snapshot_foods",
-  SHOW_CALCULATION_RESULTS: "knapsnack_show_calculation_results",
-  ADJUSTED_LOWER_BOUNDS: "knapsnack_adjusted_lower_bounds",
-  ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
-  USE_CUSTOM_BOUNDS: "knapsnack_use_custom_bounds",
-  FORM_STATE: "knapsnack_form_state",
-  HAS_VISITED_FOOD_SELECTION: "knapsnack_has_visited_food_selection",
-};
 
 const isDuplicateFood = (newFood, existingFoods) => {
   return existingFoods.some((food) => food.fdcId === newFood.fdcId);
 };
 
 function App() {
-  const [showLanding, setShowLanding] = useState(true);
-  const [nutrientGoals, setNutrientGoals] = useState(null);
-  const [selectedFoods, setSelectedFoods] = useState([]);
-  const [optimizationResults, setOptimizationResults] = useState(null);
-  const [snapshotFoods, setSnapshotFoods] = useState([]);
-  const [storedResults, setStoredResults] = useState(null);
-  const [showCalculationResults, setShowCalculationResults] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+  const { state, actions, STORAGE_KEYS } = useAppState();
   const [error, setError] = useState(null);
-  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(null);
-  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(null);
-  const [useCustomBounds, setUseCustomBounds] = useState(false);
-  const [hasVisitedFoodSelection, setHasVisitedFoodSelection] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    try {
-      const storedFoods = localStorage.getItem(STORAGE_KEYS.SELECTED_FOODS);
-      const storedGoals = localStorage.getItem(STORAGE_KEYS.NUTRIENT_GOALS);
-      const storedUserInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
-      const previousResults = localStorage.getItem(
-        STORAGE_KEYS.OPTIMIZATION_RESULTS,
-      );
-      const storedSnapshot = localStorage.getItem(STORAGE_KEYS.SNAPSHOT_FOODS);
-      const storedLowerBounds = localStorage.getItem(
-        STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS,
-      );
-      const storedUpperBounds = localStorage.getItem(
-        STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS,
-      );
-      const storedUseCustomBounds = localStorage.getItem(
-        STORAGE_KEYS.USE_CUSTOM_BOUNDS,
-      );
-      const storedVisitedFoodSelection = localStorage.getItem(
-        STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION,
-      );
-
-      if (storedFoods) {
-        setSelectedFoods(JSON.parse(storedFoods));
-      }
-      if (storedGoals) {
-        setNutrientGoals(JSON.parse(storedGoals));
-        setShowLanding(false);
-      }
-      if (storedUserInfo) {
-        setUserInfo(JSON.parse(storedUserInfo));
-      }
-      if (previousResults) {
-        const parsedResults = JSON.parse(previousResults);
-        setStoredResults(parsedResults);
-        setOptimizationResults(parsedResults);
-      }
-      if (storedSnapshot) {
-        setSnapshotFoods(JSON.parse(storedSnapshot));
-      }
-      if (storedLowerBounds) {
-        setAdjustedLowerBounds(JSON.parse(storedLowerBounds));
-      }
-      if (storedUpperBounds) {
-        setAdjustedUpperBounds(JSON.parse(storedUpperBounds));
-      }
-      if (storedUseCustomBounds) {
-        setUseCustomBounds(JSON.parse(storedUseCustomBounds));
-      }
-      if (storedVisitedFoodSelection) {
-        setHasVisitedFoodSelection(JSON.parse(storedVisitedFoodSelection));
-      }
-
-      const showCalcResults = localStorage.getItem(
-        STORAGE_KEYS.SHOW_CALCULATION_RESULTS,
-      );
-      if (showCalcResults === "true" && storedGoals) {
-        setShowCalculationResults(true);
-      }
-    } catch (err) {
-      console.error("Error loading data from localStorage:", err);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectedFoods.length > 0) {
-      localStorage.setItem(
-        STORAGE_KEYS.SELECTED_FOODS,
-        JSON.stringify(selectedFoods),
-      );
-    }
-  }, [selectedFoods]);
-
-  useEffect(() => {
-    if (nutrientGoals) {
-      localStorage.setItem(
-        STORAGE_KEYS.NUTRIENT_GOALS,
-        JSON.stringify(nutrientGoals),
-      );
-    }
-  }, [nutrientGoals]);
-
-  useEffect(() => {
-    if (userInfo) {
-      localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(userInfo));
-    }
-  }, [userInfo]);
-
-  useEffect(() => {
-    if (optimizationResults) {
-      localStorage.setItem(
-        STORAGE_KEYS.OPTIMIZATION_RESULTS,
-        JSON.stringify(optimizationResults),
-      );
-      setStoredResults(optimizationResults);
-    }
-  }, [optimizationResults]);
-
-  useEffect(() => {
-    if (snapshotFoods.length > 0) {
-      localStorage.setItem(
-        STORAGE_KEYS.SNAPSHOT_FOODS,
-        JSON.stringify(snapshotFoods),
-      );
-    }
-  }, [snapshotFoods]);
-
-  useEffect(() => {
-    if (adjustedLowerBounds) {
-      localStorage.setItem(
-        STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS,
-        JSON.stringify(adjustedLowerBounds),
-      );
-    }
-  }, [adjustedLowerBounds]);
-
-  useEffect(() => {
-    if (adjustedUpperBounds) {
-      localStorage.setItem(
-        STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS,
-        JSON.stringify(adjustedUpperBounds),
-      );
-    }
-  }, [adjustedUpperBounds]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEYS.USE_CUSTOM_BOUNDS,
-      JSON.stringify(useCustomBounds),
-    );
-  }, [useCustomBounds]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION,
-      JSON.stringify(hasVisitedFoodSelection),
-    );
-  }, [hasVisitedFoodSelection]);
-
-  useEffect(() => {
-    if (nutrientGoals && !showCalculationResults && !optimizationResults) {
-      setHasVisitedFoodSelection(true);
-    }
-  }, [nutrientGoals, showCalculationResults, optimizationResults]);
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -229,59 +60,49 @@ function App() {
         smokingStatus: formData.smokingStatus,
       };
       const result = await api.calculateNutrition(calculationData);
-      setNutrientGoals(result);
-      setUserInfo({
+      actions.setNutrientGoals(result);
+      actions.setUserInfo({
         age: parseInt(formData.age),
         gender: formData.gender,
         smokingStatus: formData.smokingStatus,
       });
-      setShowCalculationResults(true);
+      actions.setShowCalculationResults(true);
       setError(null);
-      setAdjustedLowerBounds(null);
-      setAdjustedUpperBounds(null);
-      setUseCustomBounds(false);
+      actions.setAdjustedLowerBounds(null);
+      actions.setAdjustedUpperBounds(null);
+      actions.setUseCustomBounds(false);
     } catch (error) {
       setError("Error calculating nutrition: " + error.message);
     }
   };
 
   const handleReset = () => {
-    setNutrientGoals(null);
-    setSelectedFoods([]);
-    setOptimizationResults(null);
-    setStoredResults(null);
-    setSnapshotFoods([]);
-    setUserInfo(null);
+    actions.clearStorage();
+    actions.setNutrientGoals(null);
+    actions.setSelectedFoods([]);
+    actions.setOptimizationResults(null);
+    actions.setStoredResults(null);
+    actions.setSnapshotFoods([]);
+    actions.setUserInfo(null);
+    actions.setShowLanding(true);
+    actions.setShowCalculationResults(false);
+    actions.setAdjustedLowerBounds(null);
+    actions.setAdjustedUpperBounds(null);
+    actions.setUseCustomBounds(false);
+    actions.setHasVisitedFoodSelection(false);
     setError(null);
-    setShowLanding(true);
-    setShowCalculationResults(false);
-    setAdjustedLowerBounds(null);
-    setAdjustedUpperBounds(null);
-    setUseCustomBounds(false);
-    setHasVisitedFoodSelection(false);
-    localStorage.removeItem(STORAGE_KEYS.SELECTED_FOODS);
-    localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
-    localStorage.removeItem(STORAGE_KEYS.USER_INFO);
-    localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
-    localStorage.removeItem(STORAGE_KEYS.SNAPSHOT_FOODS);
-    localStorage.removeItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
-    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
-    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
-    localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
-    localStorage.removeItem(STORAGE_KEYS.FORM_STATE);
-    localStorage.removeItem(STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION);
     navigate("/");
   };
 
   const handleRecalculate = () => {
-    setNutrientGoals(null);
-    setOptimizationResults(null);
-    setStoredResults(null);
-    setSnapshotFoods([]);
-    setShowCalculationResults(false);
-    setAdjustedLowerBounds(null);
-    setAdjustedUpperBounds(null);
-    setUseCustomBounds(false);
+    actions.setNutrientGoals(null);
+    actions.setOptimizationResults(null);
+    actions.setStoredResults(null);
+    actions.setSnapshotFoods([]);
+    actions.setShowCalculationResults(false);
+    actions.setAdjustedLowerBounds(null);
+    actions.setAdjustedUpperBounds(null);
+    actions.setUseCustomBounds(false);
 
     localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
     localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
@@ -294,16 +115,16 @@ function App() {
   };
 
   const handleOptimizationSuccess = (result) => {
-    setOptimizationResults(result);
-    setSnapshotFoods(selectedFoods);
+    actions.setOptimizationResults(result);
+    actions.setSnapshotFoods(state.selectedFoods);
   };
 
   const handleFoodSelect = (food) => {
-    if (isDuplicateFood(food, selectedFoods)) {
+    if (isDuplicateFood(food, state.selectedFoods)) {
       setError(`"${food.description}" is already in your food list.`);
       return;
     }
-    setSelectedFoods((prevFoods) => [
+    actions.setSelectedFoods((prevFoods) => [
       ...prevFoods,
       {
         ...food,
@@ -312,13 +133,13 @@ function App() {
         maxServing: 500,
       },
     ]);
-    setOptimizationResults(null);
+    actions.setOptimizationResults(null);
     setError(null);
   };
 
   const handleFoodsImport = (importedFoods) => {
     const uniqueNewFoods = importedFoods.filter(
-      (newFood) => !isDuplicateFood(newFood, selectedFoods),
+      (newFood) => !isDuplicateFood(newFood, state.selectedFoods),
     );
     const duplicates = importedFoods.length - uniqueNewFoods.length;
     if (duplicates > 0) {
@@ -329,39 +150,57 @@ function App() {
       setError(null);
     }
     if (uniqueNewFoods.length > 0) {
-      setSelectedFoods((prevFoods) => [...prevFoods, ...uniqueNewFoods]);
-      setOptimizationResults(null);
+      actions.setSelectedFoods((prevFoods) => [
+        ...prevFoods,
+        ...uniqueNewFoods,
+      ]);
+      actions.setOptimizationResults(null);
     }
   };
 
   const handleViewPreviousResults = () => {
-    if (storedResults) {
-      setOptimizationResults(storedResults);
+    if (state.storedResults) {
+      actions.setOptimizationResults(state.storedResults);
     }
   };
 
   const handleHideResults = () => {
-    setOptimizationResults(null);
+    actions.setOptimizationResults(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleViewCalculationResults = () => {
-    setShowCalculationResults(true);
+    actions.setShowCalculationResults(true);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "true");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleHideCalculationResults = (boundData) => {
     if (boundData) {
-      setUseCustomBounds(boundData.useCustomBounds);
+      actions.setUseCustomBounds(boundData.useCustomBounds);
       if (boundData.useCustomBounds) {
-        setAdjustedLowerBounds(boundData.adjustedLowerBounds);
-        setAdjustedUpperBounds(boundData.adjustedUpperBounds);
+        actions.setAdjustedLowerBounds(boundData.adjustedLowerBounds);
+        actions.setAdjustedUpperBounds(boundData.adjustedUpperBounds);
       }
     }
-    setShowCalculationResults(false);
+    actions.setShowCalculationResults(false);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
   };
+
+  const {
+    showLanding,
+    nutrientGoals,
+    selectedFoods,
+    optimizationResults,
+    snapshotFoods,
+    storedResults,
+    showCalculationResults,
+    userInfo,
+    adjustedLowerBounds,
+    adjustedUpperBounds,
+    useCustomBounds,
+    hasVisitedFoodSelection,
+  } = state;
 
   const mainPlanner = (
     <>
@@ -448,7 +287,7 @@ function App() {
               />
               <SelectedFoods
                 foods={selectedFoods}
-                onFoodsUpdate={setSelectedFoods}
+                onFoodsUpdate={actions.setSelectedFoods}
                 nutrientGoals={
                   useCustomBounds
                     ? {
@@ -527,7 +366,7 @@ function App() {
   );
 
   if (showLanding && location.pathname === "/") {
-    return <LandingPage onGetStarted={() => setShowLanding(false)} />;
+    return <LandingPage onGetStarted={() => actions.setShowLanding(false)} />;
   }
 
   return (
