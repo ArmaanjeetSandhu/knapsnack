@@ -36,6 +36,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   const [useCustomBounds, setUseCustomBounds] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
+  const [editingTarget, setEditingTarget] = useState(null);
+  const [tempValue, setTempValue] = useState("");
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -89,10 +92,83 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     setValidationErrors(errors);
   };
 
+  const startEditing = (target, currentValue) => {
+    setEditingTarget(target);
+    setTempValue(currentValue);
+  };
+
+  const cancelEditing = () => {
+    setEditingTarget(null);
+    setTempValue("");
+    const errors = { ...validationErrors };
+    if (editingTarget === "Fibre") delete errors["Fibre (g)"];
+    if (editingTarget === "Saturated Fats") delete errors["Saturated Fats (g)"];
+    if (editingTarget === "Water") delete errors["Water (mL)"];
+    setValidationErrors(errors);
+  };
+
+  const validateInput = (target, value, key) => {
+    const val = parseFloat(value);
+    let error = null;
+
+    if (isNaN(val) || val < 0 || value === "") {
+      error = "Must be a positive number";
+    } else {
+      if (target === "Fibre" && val > calculationData.carbohydrate) {
+        error = `Cannot exceed Carbohydrates (${formatValue(
+          calculationData.carbohydrate,
+        )}g)`;
+      } else if (
+        target === "Saturated Fats" &&
+        val > calculationData.saturated_fats
+      ) {
+        error = `Cannot exceed calculated target (${formatValue(
+          calculationData.saturated_fats,
+        )}g)`;
+      }
+    }
+
+    setValidationErrors((prev) => {
+      const newErrors = { ...prev };
+      if (error) {
+        newErrors[key] = error;
+      } else {
+        delete newErrors[key];
+      }
+      return newErrors;
+    });
+
+    return !error;
+  };
+
+  const handleInputChange = (e, target, key) => {
+    const newVal = e.target.value;
+    setTempValue(newVal);
+    validateInput(target, newVal, key);
+  };
+
+  const saveTarget = (target, key, boundType) => {
+    const isValid = validateInput(target, tempValue, key);
+
+    if (!isValid) return;
+
+    const val = parseFloat(tempValue);
+
+    if (boundType === "lower") {
+      setAdjustedLowerBounds((prev) => ({ ...prev, [key]: val }));
+    } else {
+      setAdjustedUpperBounds((prev) => ({ ...prev, [key]: val }));
+    }
+
+    setUseCustomBounds(true);
+    setEditingTarget(null);
+  };
+
   const resetBounds = () => {
     setAdjustedLowerBounds({ ...calculationData.lower_bounds });
     setAdjustedUpperBounds({ ...calculationData.upper_bounds });
     setValidationErrors({});
+    setEditingTarget(null);
   };
 
   const handleSave = () => {
@@ -355,29 +431,163 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
               Macronutrient Targets
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {macroNutrients.map((macro, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.05 + 0.3,
-                    ease: "easeOut",
-                  }}
-                  className="p-4 rounded-lg border bg-card text-card-foreground"
-                >
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {macro.label}
-                  </p>
-                  <p className="text-2xl font-bold">
-                    {macro.label === "Fibre" && "≥ "}
-                    {macro.label === "Saturated Fats" && "≤ "}
-                    {formatValue(macro.value)}
-                    {macro.unit}
-                  </p>
-                </motion.div>
-              ))}
+              {macroNutrients.map((macro, index) => {
+                const isEditable =
+                  macro.label === "Fibre" || macro.label === "Saturated Fats";
+                const isEditing = editingTarget === macro.label;
+
+                let boundKey = null;
+                let boundType = null;
+                let currentValue = macro.value;
+
+                if (isEditable) {
+                  boundKey =
+                    macro.label === "Fibre"
+                      ? "Fibre (g)"
+                      : "Saturated Fats (g)";
+                  boundType = macro.label === "Fibre" ? "lower" : "upper";
+                  const bounds =
+                    boundType === "lower"
+                      ? adjustedLowerBounds
+                      : adjustedUpperBounds;
+
+                  if (useCustomBounds && bounds[boundKey] != null) {
+                    currentValue = bounds[boundKey];
+                  }
+                }
+
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: index * 0.05 + 0.3,
+                      ease: "easeOut",
+                    }}
+                    className="p-4 rounded-lg border bg-card text-card-foreground relative group"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground mb-1">
+                          {macro.label}
+                        </p>
+                        <AnimatePresence mode="wait">
+                          {isEditing ? (
+                            <motion.div
+                              key="editing"
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                            >
+                              <div className="flex items-center gap-2 text-2xl font-bold">
+                                {macro.label === "Fibre" && "≥"}
+                                {macro.label === "Saturated Fats" && "≤"}
+                                <Input
+                                  type="number"
+                                  value={tempValue}
+                                  onChange={(e) =>
+                                    handleInputChange(e, macro.label, boundKey)
+                                  }
+                                  onKeyDown={(e) =>
+                                    e.key === "Enter" &&
+                                    saveTarget(macro.label, boundKey, boundType)
+                                  }
+                                  className={`h-9 w-24 text-base ${
+                                    validationErrors[boundKey]
+                                      ? "border-red-500 focus-visible:ring-red-500"
+                                      : ""
+                                  }`}
+                                  autoFocus
+                                  step="1"
+                                />
+                                <span className="text-xl font-normal text-muted-foreground">
+                                  {macro.unit}
+                                </span>
+                              </div>
+                              {validationErrors[boundKey] && (
+                                <motion.p
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  className="text-xs text-red-500 mt-1 font-medium"
+                                >
+                                  {validationErrors[boundKey]}
+                                </motion.p>
+                              )}
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="display"
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                            >
+                              <p className="text-2xl font-bold">
+                                {macro.label === "Fibre" && "≥ "}
+                                {macro.label === "Saturated Fats" && "≤ "}
+                                {formatValue(currentValue)}
+                                {macro.unit}
+                              </p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      {isEditable && (
+                        <div className="flex gap-2 ml-2">
+                          <AnimatePresence mode="wait">
+                            {isEditing ? (
+                              <motion.div
+                                key="actions"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                className="flex gap-1"
+                              >
+                                <Button
+                                  size="icon"
+                                  className="h-6 w-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                  onClick={() =>
+                                    saveTarget(macro.label, boundKey, boundType)
+                                  }
+                                >
+                                  <Check className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  className="h-6 w-6 bg-red-500 hover:bg-red-600 text-white"
+                                  onClick={cancelEditing}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="edit"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() =>
+                                    startEditing(macro.label, currentValue)
+                                  }
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
           <motion.div
@@ -391,24 +601,139 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
               Hydration Target
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  duration: 0.3,
-                  delay: 0.35,
-                  ease: "easeOut",
-                }}
-                className="p-4 rounded-lg border bg-card text-card-foreground"
-              >
-                <p className="text-sm font-medium text-muted-foreground">
-                  Water
-                </p>
-                <p className="text-2xl font-bold">
-                  ≥ {formatValue(calculationData.lower_bounds?.["Water (mL)"])}
-                  mL
-                </p>
-              </motion.div>
+              {(() => {
+                const waterKey = "Water (mL)";
+                const isEditing = editingTarget === "Water";
+                const currentValue =
+                  useCustomBounds && adjustedLowerBounds[waterKey] != null
+                    ? adjustedLowerBounds[waterKey]
+                    : calculationData.lower_bounds?.[waterKey] || 0;
+
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: 0.35,
+                      ease: "easeOut",
+                    }}
+                    className="p-4 rounded-lg border bg-card text-card-foreground relative group"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-muted-foreground mb-1">
+                          Water
+                        </p>
+                        <AnimatePresence mode="wait">
+                          {isEditing ? (
+                            <motion.div
+                              key="editing-water"
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                            >
+                              <div className="flex items-center gap-2 text-2xl font-bold">
+                                ≥
+                                <Input
+                                  type="number"
+                                  value={tempValue}
+                                  onChange={(e) =>
+                                    handleInputChange(e, "Water", waterKey)
+                                  }
+                                  onKeyDown={(e) =>
+                                    e.key === "Enter" &&
+                                    saveTarget("Water", waterKey, "lower")
+                                  }
+                                  className={`h-9 w-24 text-base ${
+                                    validationErrors[waterKey]
+                                      ? "border-red-500 focus-visible:ring-red-500"
+                                      : ""
+                                  }`}
+                                  autoFocus
+                                  step="50"
+                                />
+                                <span className="text-xl font-normal text-muted-foreground">
+                                  mL
+                                </span>
+                              </div>
+                              {validationErrors[waterKey] && (
+                                <motion.p
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  className="text-xs text-red-500 mt-1 font-medium"
+                                >
+                                  {validationErrors[waterKey]}
+                                </motion.p>
+                              )}
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="display-water"
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                            >
+                              <p className="text-2xl font-bold">
+                                ≥ {formatValue(currentValue)} mL
+                              </p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+
+                      <div className="flex gap-2 ml-2">
+                        <AnimatePresence mode="wait">
+                          {isEditing ? (
+                            <motion.div
+                              key="actions-water"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              className="flex gap-1"
+                            >
+                              <Button
+                                size="icon"
+                                className="h-6 w-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                onClick={() =>
+                                  saveTarget("Water", waterKey, "lower")
+                                }
+                              >
+                                <Check className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                className="h-6 w-6 bg-red-500 hover:bg-red-600 text-white"
+                                onClick={cancelEditing}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="edit-water"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                            >
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() =>
+                                  startEditing("Water", currentValue)
+                                }
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })()}
             </div>
           </motion.div>
           <motion.div
