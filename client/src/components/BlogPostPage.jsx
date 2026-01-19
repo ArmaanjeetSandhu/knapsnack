@@ -117,6 +117,14 @@ const BlogPostPage = () => {
     }
   };
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   if (loading) return <div>Loading post...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!post) return <div>Post not found.</div>;
@@ -129,9 +137,9 @@ const BlogPostPage = () => {
       <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
         {post.title}
       </h1>
-      <p className="text-muted-foreground mb-8 text-lg">
-        Published on {new Date(post.published_date).toLocaleDateString()}
-      </p>
+      <div className="text-muted-foreground mb-8 text-lg">
+        <p>{formatDate(post.published_date)}</p>
+      </div>
       <div className="prose dark:prose-invert max-w-none">
         {documentToReactComponents(post.content, renderOptions)}
       </div>

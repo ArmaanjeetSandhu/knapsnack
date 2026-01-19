@@ -37,6 +37,10 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     setAdjustedLowerBounds({ ...calculationData.lower_bounds });
     setAdjustedUpperBounds({ ...calculationData.upper_bounds });
   }, [calculationData]);

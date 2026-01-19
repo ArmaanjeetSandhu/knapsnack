@@ -3,13 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { Button } from "./ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 const BlogPage = () => {
   const [posts, setPosts] = useState([]);
@@ -34,12 +28,22 @@ const BlogPage = () => {
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <Button onClick={() => navigate(-1)} variant="outline" className="mb-6">
         <ArrowLeft className="w-4 h-4 mr-2" /> Back
       </Button>
-      <h1 className="text-4xl font-bold mb-8 text-center">Knap[Snack] Blog</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">
+        The Knap[Snack] Blog
+      </h1>
       <div className="space-y-6">
         {posts.length > 0 ? (
           posts.map((post) => (
@@ -49,17 +53,22 @@ const BlogPage = () => {
               state={{ from: "blog" }}
               className="block hover:no-underline"
             >
-              <Card className="hover:border-primary transition-colors">
-                <CardHeader>
-                  <CardTitle>{post.title}</CardTitle>
+              <Card className="hover:border-primary transition-colors overflow-hidden">
+                {post.thumbnail && (
+                  <div className="w-full h-60 overflow-hidden">
+                    <img
+                      src={post.thumbnail}
+                      alt={post.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <CardHeader className="p-4">
+                  <CardTitle className="text-3xl">{post.title}</CardTitle>
                   <CardDescription>
-                    Published on{" "}
-                    {new Date(post.published_date).toLocaleDateString()}
+                    {formatDate(post.published_date)}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p>{post.summary}</p>
-                </CardContent>
               </Card>
             </Link>
           ))

@@ -1,5 +1,6 @@
 import contentful
 from datetime import datetime
+import re
 from server.config import (
     CONTENTFUL_ACCESS_TOKEN,
     CONTENTFUL_CONTENT_TYPE_ID,
@@ -18,23 +19,17 @@ def normalize_contentful_data(data):
     Recursively converts Contentful SDK objects (Entries, Assets, Links, datetimes)
     into JSON-serializable dictionaries and strings.
     """
-    # 1. Handle List
     if isinstance(data, list):
         return [normalize_contentful_data(item) for item in data]
 
-    # 2. Handle Dict
     if isinstance(data, dict):
         return {k: normalize_contentful_data(v) for k, v in data.items()}
 
-    # 3. Handle Contentful Objects (Entries, Assets, Links)
-    # All Contentful SDK resources have a 'sys' attribute.
     if hasattr(data, "sys"):
         serialized = {"sys": normalize_contentful_data(data.sys)}
 
-        # Check if 'fields' attribute exists (method or property)
         if hasattr(data, "fields"):
             try:
-                # In the Python SDK, .fields() is usually a method
                 if callable(data.fields):
                     fields_data = data.fields()
                 else:
@@ -46,12 +41,53 @@ def normalize_contentful_data(data):
 
         return serialized
 
-    # 4. Handle Datetime
     if isinstance(data, datetime):
         return data.isoformat()
 
-    # 5. Return basic types (str, int, float, bool, None) as-is
     return data
+
+
+def extract_first_image(content):
+    """
+    Traverses content (Rich Text or Markdown string) to find the first image URL.
+    """
+    if not content:
+        return None
+
+    if isinstance(content, str):
+        match = re.search(r"!\[.*?\]\((.*?)\)", content)
+        if match:
+            url = match.group(1)
+            if url.startswith("//"):
+                return f"https:{url}"
+            return url
+        return None
+
+    if isinstance(content, dict):
+        if content.get("nodeType") == "embedded-asset-block":
+            try:
+                target = content.get("data", {}).get("target", {})
+
+                if isinstance(target, dict):
+                    fields = target.get("fields", {})
+                    file_data = fields.get("file", {})
+                    url = file_data.get("url")
+
+                    if url:
+                        if url.startswith("//"):
+                            return f"https:{url}"
+                        return url
+            except (AttributeError, KeyError, TypeError):
+                pass
+
+        content_list = content.get("content", [])
+        if isinstance(content_list, list):
+            for node in content_list:
+                url = extract_first_image(node)
+                if url:
+                    return url
+
+    return None
 
 
 def get_all_posts():
@@ -66,18 +102,32 @@ def get_all_posts():
                 "order": "-sys.createdAt",
             }
         )
-        return [
-            {
-                "id": entry.id,
-                "title": entry.fields().get("title"),
-                "slug": entry.fields().get("slug"),
-                "summary": entry.fields().get("summary"),
-                "published_date": normalize_contentful_data(
-                    entry.sys.get("created_at")
-                ),
-            }
-            for entry in entries
-        ]
+
+        posts = []
+        for entry in entries:
+            fields = entry.fields() if callable(entry.fields) else entry.fields
+
+            if not isinstance(fields, dict):
+                continue
+
+            raw_content = fields.get("content")
+            normalized_content = normalize_contentful_data(raw_content)
+            thumbnail_url = extract_first_image(normalized_content)
+
+            posts.append(
+                {
+                    "id": entry.id,
+                    "title": fields.get("title"),
+                    "slug": fields.get("slug"),
+                    "summary": fields.get("summary"),
+                    "thumbnail": thumbnail_url,
+                    "published_date": normalize_contentful_data(
+                        entry.sys.get("created_at")
+                    ),
+                }
+            )
+
+        return posts
     except Exception as e:
         print(f"Error fetching posts from Contentful: {e}")
         return None
