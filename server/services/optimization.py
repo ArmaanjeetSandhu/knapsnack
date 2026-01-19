@@ -109,6 +109,13 @@ def analyze_lower_bound_feasibility(
                 }
             )
 
+    macro_display_names = {
+        "protein": "Protein (g)",
+        "carbohydrate": "Carbohydrates (g)",
+        "fats": "Fats (g)",
+        "fibre": "Fibre (g)",
+    }
+
     for nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
         if nutrient in nutrient_goals:
             min_value = nutrient_goals[nutrient]
@@ -125,7 +132,7 @@ def analyze_lower_bound_feasibility(
                 )
                 lower_bound_issues.append(
                     {
-                        "nutrient": nutrient,
+                        "nutrient": macro_display_names.get(nutrient, nutrient),
                         "required": min_value,
                         "achievable": max_possible,
                         "shortfall": shortfall,
@@ -156,7 +163,7 @@ def analyze_upper_bound_feasibility(
     upper_bound_issues = []
     checked_nutrients = set()
 
-    def check_limit(nutrient_name, limit_value, is_sat_fat=False):
+    def check_limit(nutrient_name, limit_value, display_name_override=None):
         try:
             limit_value = float(limit_value)
             if np.isnan(limit_value):
@@ -173,13 +180,15 @@ def analyze_upper_bound_feasibility(
                     (excess / limit_value) * 100 if limit_value > 0 else 0
                 )
 
-                display_name = (
-                    f"{nutrient_name} ({food.get('description', 'Unknown Food')})"
+                name_to_show = (
+                    display_name_override if display_name_override else nutrient_name
                 )
+                food_name = food.get("description", "Unknown Food Item")
 
                 upper_bound_issues.append(
                     {
-                        "nutrient": display_name,
+                        "nutrient": name_to_show,
+                        "foodItem": food_name,
                         "limit": limit_value,
                         "minimum": val,
                         "excess": excess,
@@ -192,7 +201,11 @@ def analyze_upper_bound_feasibility(
         checked_nutrients.add(nutrient)
 
     if "saturated_fats" in nutrient_goals and "saturated_fats" not in checked_nutrients:
-        check_limit("saturated_fats", nutrient_goals["saturated_fats"], is_sat_fat=True)
+        check_limit(
+            "saturated_fats",
+            nutrient_goals["saturated_fats"],
+            display_name_override="Saturated Fats (g)",
+        )
 
     return upper_bound_issues
 

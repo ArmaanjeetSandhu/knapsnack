@@ -204,6 +204,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
             <TableHeader>
               <TableRow>
                 <TableHead>Nutrient</TableHead>
+                <TableHead>Food Item</TableHead>
                 <TableHead>Maximum Allowed</TableHead>
                 <TableHead>Minimum Possible</TableHead>
                 <TableHead>Excess</TableHead>
@@ -215,6 +216,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
                   <TableCell className="font-medium">
                     {issue.nutrient}
                   </TableCell>
+                  <TableCell>{issue.foodItem}</TableCell>
                   <TableCell>{formatValue(issue.limit)}</TableCell>
                   <TableCell>{formatValue(issue.minimum)}</TableCell>
                   <TableCell className="text-red-500">
