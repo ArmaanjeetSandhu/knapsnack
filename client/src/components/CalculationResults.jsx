@@ -36,8 +36,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   const [useCustomBounds, setUseCustomBounds] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
-  const [editingTarget, setEditingTarget] = useState(null);
-  const [tempValue, setTempValue] = useState("");
+  const [editingValues, setEditingValues] = useState({});
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -93,18 +92,26 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   };
 
   const startEditing = (target, currentValue) => {
-    setEditingTarget(target);
-    setTempValue(currentValue);
+    setEditingValues((prev) => ({ ...prev, [target]: currentValue }));
   };
 
-  const cancelEditing = () => {
-    setEditingTarget(null);
-    setTempValue("");
-    const errors = { ...validationErrors };
-    if (editingTarget === "Fibre") delete errors["Fibre (g)"];
-    if (editingTarget === "Saturated Fats") delete errors["Saturated Fats (g)"];
-    if (editingTarget === "Water") delete errors["Water (mL)"];
-    setValidationErrors(errors);
+  const cancelEditing = (target) => {
+    setEditingValues((prev) => {
+      const next = { ...prev };
+      delete next[target];
+      return next;
+    });
+
+    setValidationErrors((prev) => {
+      const next = { ...prev };
+      const keyMap = {
+        Fibre: "Fibre (g)",
+        "Saturated Fats": "Saturated Fats (g)",
+        Water: "Water (mL)",
+      };
+      if (keyMap[target]) delete next[keyMap[target]];
+      return next;
+    });
   };
 
   const validateInput = (target, value, key) => {
@@ -143,16 +150,17 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
 
   const handleInputChange = (e, target, key) => {
     const newVal = e.target.value;
-    setTempValue(newVal);
+    setEditingValues((prev) => ({ ...prev, [target]: newVal }));
     validateInput(target, newVal, key);
   };
 
   const saveTarget = (target, key, boundType) => {
-    const isValid = validateInput(target, tempValue, key);
+    const valString = editingValues[target];
+    const isValid = validateInput(target, valString, key);
 
     if (!isValid) return;
 
-    const val = parseFloat(tempValue);
+    const val = parseFloat(valString);
 
     if (boundType === "lower") {
       setAdjustedLowerBounds((prev) => ({ ...prev, [key]: val }));
@@ -161,14 +169,18 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
     }
 
     setUseCustomBounds(true);
-    setEditingTarget(null);
+    setEditingValues((prev) => {
+      const next = { ...prev };
+      delete next[target];
+      return next;
+    });
   };
 
   const resetBounds = () => {
     setAdjustedLowerBounds({ ...calculationData.lower_bounds });
     setAdjustedUpperBounds({ ...calculationData.upper_bounds });
     setValidationErrors({});
-    setEditingTarget(null);
+    setEditingValues({});
   };
 
   const handleSave = () => {
@@ -179,7 +191,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   };
 
   const handleCancel = () => {
-    resetBounds();
+    setAdjustedLowerBounds({ ...calculationData.lower_bounds });
+    setAdjustedUpperBounds({ ...calculationData.upper_bounds });
+    setValidationErrors({});
     setUseCustomBounds(false);
     setCustomizingBounds(false);
   };
@@ -434,7 +448,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
               {macroNutrients.map((macro, index) => {
                 const isEditable =
                   macro.label === "Fibre" || macro.label === "Saturated Fats";
-                const isEditing = editingTarget === macro.label;
+                const isEditing = editingValues[macro.label] !== undefined;
 
                 let boundKey = null;
                 let boundType = null;
@@ -486,7 +500,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 {macro.label === "Saturated Fats" && "≤"}
                                 <Input
                                   type="number"
-                                  value={tempValue}
+                                  value={editingValues[macro.label] ?? ""}
                                   onChange={(e) =>
                                     handleInputChange(e, macro.label, boundKey)
                                   }
@@ -557,7 +571,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 <Button
                                   size="icon"
                                   className="h-6 w-6 bg-red-500 hover:bg-red-600 text-white"
-                                  onClick={cancelEditing}
+                                  onClick={() => cancelEditing(macro.label)}
                                 >
                                   <X className="w-4 h-4" />
                                 </Button>
@@ -603,7 +617,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {(() => {
                 const waterKey = "Water (mL)";
-                const isEditing = editingTarget === "Water";
+                const isEditing = editingValues["Water"] !== undefined;
                 const currentValue =
                   useCustomBounds && adjustedLowerBounds[waterKey] != null
                     ? adjustedLowerBounds[waterKey]
@@ -637,7 +651,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 ≥
                                 <Input
                                   type="number"
-                                  value={tempValue}
+                                  value={editingValues["Water"] ?? ""}
                                   onChange={(e) =>
                                     handleInputChange(e, "Water", waterKey)
                                   }
@@ -704,7 +718,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                               <Button
                                 size="icon"
                                 className="h-6 w-6 bg-red-500 hover:bg-red-600 text-white"
-                                onClick={cancelEditing}
+                                onClick={() => cancelEditing("Water")}
                               >
                                 <X className="w-4 h-4" />
                               </Button>
