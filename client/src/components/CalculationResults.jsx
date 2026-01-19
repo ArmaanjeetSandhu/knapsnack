@@ -185,16 +185,24 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
   const renderNutrientTable = (nutrients) => (
     <NutrientTable
       nutrients={nutrients}
-      lowerBounds={calculationData.lower_bounds}
-      upperBounds={calculationData.upper_bounds}
+      lowerBounds={
+        useCustomBounds ? adjustedLowerBounds : calculationData.lower_bounds
+      }
+      upperBounds={
+        useCustomBounds ? adjustedUpperBounds : calculationData.upper_bounds
+      }
     />
   );
 
   const renderNutrientCards = (nutrients) => (
     <NutrientCards
       nutrients={nutrients}
-      lowerBounds={calculationData.lower_bounds}
-      upperBounds={calculationData.upper_bounds}
+      lowerBounds={
+        useCustomBounds ? adjustedLowerBounds : calculationData.lower_bounds
+      }
+      upperBounds={
+        useCustomBounds ? adjustedUpperBounds : calculationData.upper_bounds
+      }
     />
   );
 
