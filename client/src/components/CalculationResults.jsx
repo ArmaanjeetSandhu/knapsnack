@@ -8,7 +8,9 @@ import {
   Droplets,
   Edit,
   Flame,
+  LayoutGrid,
   RotateCcw,
+  Table as TableIcon,
   Target,
   X,
 } from "lucide-react";
@@ -341,16 +343,21 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground mb-1">
+                        <p
+                          className={`text-sm font-medium text-muted-foreground ${
+                            isEditing ? "mb-3" : "mb-1"
+                          }`}
+                        >
                           {macro.label}
                         </p>
                         <AnimatePresence mode="wait">
                           {isEditing ? (
                             <motion.div
                               key="editing"
-                              initial={{ opacity: 0, y: 10 }}
+                              initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
+                              exit={{ opacity: 0, y: 20 }}
+                              transition={{ duration: 0.4 }}
                             >
                               <div className="flex items-center gap-2 text-2xl font-bold">
                                 {macro.label === "Fibre" && "≥"}
@@ -365,15 +372,18 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                       boundKey,
                                     )
                                   }
-                                  onKeyDown={(e) =>
-                                    e.key === "Enter" &&
-                                    actions.saveTarget(
-                                      macro.label,
-                                      boundKey,
-                                      boundType,
-                                    )
-                                  }
-                                  className={`h-9 w-24 text-base ${
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      actions.saveTarget(
+                                        macro.label,
+                                        boundKey,
+                                        boundType,
+                                      );
+                                    } else if (e.key === "Escape") {
+                                      actions.cancelEditing(macro.label);
+                                    }
+                                  }}
+                                  className={`w-[100px] ${
                                     validationErrors[boundKey]
                                       ? "border-red-500 focus-visible:ring-red-500"
                                       : ""
@@ -381,7 +391,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                   autoFocus
                                   step="1"
                                 />
-                                <span className="text-xl font-normal text-muted-foreground">
+                                <span className="text-xl font-bold">
                                   {macro.unit}
                                 </span>
                               </div>
@@ -398,9 +408,10 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                           ) : (
                             <motion.div
                               key="display"
-                              initial={{ opacity: 0, y: 10 }}
+                              initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
+                              exit={{ opacity: 0, y: 20 }}
+                              transition={{ duration: 0.4 }}
                             >
                               <p className="text-2xl font-bold">
                                 {macro.label === "Fibre" && "≥ "}
@@ -425,8 +436,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 className="flex gap-1"
                               >
                                 <Button
+                                  variant="default"
                                   size="icon"
-                                  className="h-6 w-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                  className="h-6 w-6"
                                   onClick={() =>
                                     actions.saveTarget(
                                       macro.label,
@@ -438,8 +450,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                   <Check className="w-4 h-4" />
                                 </Button>
                                 <Button
+                                  variant="destructive"
                                   size="icon"
-                                  className="h-6 w-6 bg-red-500 hover:bg-red-600 text-white"
+                                  className="h-6 w-6"
                                   onClick={() =>
                                     actions.cancelEditing(macro.label)
                                   }
@@ -510,16 +523,21 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-muted-foreground mb-1">
+                        <p
+                          className={`text-sm font-medium text-muted-foreground ${
+                            isEditing ? "mb-3" : "mb-1"
+                          }`}
+                        >
                           Water
                         </p>
                         <AnimatePresence mode="wait">
                           {isEditing ? (
                             <motion.div
                               key="editing-water"
-                              initial={{ opacity: 0, y: 10 }}
+                              initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
+                              exit={{ opacity: 0, y: 20 }}
+                              transition={{ duration: 0.4 }}
                             >
                               <div className="flex items-center gap-2 text-2xl font-bold">
                                 ≥
@@ -533,15 +551,18 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                       waterKey,
                                     )
                                   }
-                                  onKeyDown={(e) =>
-                                    e.key === "Enter" &&
-                                    actions.saveTarget(
-                                      "Water",
-                                      waterKey,
-                                      "lower",
-                                    )
-                                  }
-                                  className={`h-9 w-24 text-base ${
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      actions.saveTarget(
+                                        "Water",
+                                        waterKey,
+                                        "lower",
+                                      );
+                                    } else if (e.key === "Escape") {
+                                      actions.cancelEditing("Water");
+                                    }
+                                  }}
+                                  className={`w-[100px] ${
                                     validationErrors[waterKey]
                                       ? "border-red-500 focus-visible:ring-red-500"
                                       : ""
@@ -549,9 +570,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                   autoFocus
                                   step="50"
                                 />
-                                <span className="text-xl font-normal text-muted-foreground">
-                                  mL
-                                </span>
+                                <span className="text-xl font-bold">mL</span>
                               </div>
                               {validationErrors[waterKey] && (
                                 <motion.p
@@ -566,9 +585,10 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                           ) : (
                             <motion.div
                               key="display-water"
-                              initial={{ opacity: 0, y: 10 }}
+                              initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
+                              exit={{ opacity: 0, y: 20 }}
+                              transition={{ duration: 0.4 }}
                             >
                               <p className="text-2xl font-bold">
                                 ≥ {formatValue(currentValue)} mL
@@ -589,8 +609,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                               className="flex gap-1"
                             >
                               <Button
+                                variant="default"
                                 size="icon"
-                                className="h-6 w-6 bg-blue-500 hover:bg-blue-600 text-white"
+                                className="h-6 w-6"
                                 onClick={() =>
                                   actions.saveTarget("Water", waterKey, "lower")
                                 }
@@ -598,8 +619,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 <Check className="w-4 h-4" />
                               </Button>
                               <Button
+                                variant="destructive"
                                 size="icon"
-                                className="h-6 w-6 bg-red-500 hover:bg-red-600 text-white"
+                                className="h-6 w-6"
                                 onClick={() => actions.cancelEditing("Water")}
                               >
                                 <X className="w-4 h-4" />
@@ -656,34 +678,30 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                       transition={{ duration: 0.3 }}
                     >
                       <Button
-                        variant={
-                          nutrientDisplayMode === "cards"
-                            ? "default"
-                            : "outline"
-                        }
+                        variant="outline"
                         size="sm"
-                        onClick={() => setNutrientDisplayMode("cards")}
-                      >
-                        Cards
-                      </Button>
-                      <Button
-                        variant={
-                          nutrientDisplayMode === "table"
-                            ? "default"
-                            : "outline"
+                        onClick={() =>
+                          setNutrientDisplayMode((prev) =>
+                            prev === "table" ? "cards" : "table",
+                          )
                         }
-                        size="sm"
-                        onClick={() => setNutrientDisplayMode("table")}
                       >
-                        Table
+                        {nutrientDisplayMode === "table" ? (
+                          <>
+                            <LayoutGrid className="w-4 h-4" />
+                          </>
+                        ) : (
+                          <>
+                            <TableIcon className="w-4 h-4" />
+                          </>
+                        )}
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => actions.setCustomizingBounds(true)}
                       >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Customize
+                        <Edit className="w-4 h-4" />
                       </Button>
                     </motion.div>
                   </AnimatePresence>
@@ -712,16 +730,14 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                         onClick={actions.handleSave}
                         disabled={Object.keys(validationErrors).length > 0}
                       >
-                        <Check className="w-4 h-4 mr-2" />
-                        Save
+                        <Check className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="destructive"
                         size="sm"
                         onClick={actions.handleCancel}
                       >
-                        <X className="w-4 h-4 mr-2" />
-                        Cancel
+                        <X className="w-4 h-4" />
                       </Button>
                     </motion.div>
                   </AnimatePresence>
