@@ -83,6 +83,9 @@ def analyze_lower_bound_feasibility(
     lower_bound_issues = []
 
     for nutrient, min_value in lower_bounds.items():
+        if nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
+            continue
+
         try:
             min_value = float(min_value)
             if np.isnan(min_value):
@@ -197,7 +200,11 @@ def analyze_upper_bound_feasibility(
                 )
 
     for nutrient, max_value in upper_bounds.items():
-        check_limit(nutrient, max_value)
+        display_name = None
+        if nutrient == "saturated_fats":
+            display_name = "Saturated Fats (g)"
+
+        check_limit(nutrient, max_value, display_name_override=display_name)
         checked_nutrients.add(nutrient)
 
     if "saturated_fats" in nutrient_goals and "saturated_fats" not in checked_nutrients:

@@ -276,6 +276,12 @@ def optimize_api():
                 nutrient_goals["upper_bounds"],
                 smoking_status,
             )
+
+            if "fibre" in lower_bounds:
+                nutrient_goals["fibre"] = lower_bounds["fibre"]
+            if "saturated_fats" in upper_bounds:
+                nutrient_goals["saturated_fats"] = upper_bounds["saturated_fats"]
+
             app.logger.info("Using custom nutrient bounds from request")
         else:
             if smoking_status == "yes":

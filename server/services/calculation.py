@@ -146,15 +146,19 @@ def adjust_nutrient_bounds(
     Returns:
         Tuple of (adjusted_lower_bounds, adjusted_upper_bounds)
     """
+    key_map = {"Fibre (g)": "fibre", "Saturated Fats (g)": "saturated_fats"}
+
     if custom_lower_bounds:
         for k, v in custom_lower_bounds.items():
-            if k in lower_bounds:
-                lower_bounds[k] = v
+            target_key = key_map.get(k, k)
+            if target_key in lower_bounds or target_key in key_map.values():
+                lower_bounds[target_key] = v
 
     if custom_upper_bounds:
         for k, v in custom_upper_bounds.items():
-            if k in upper_bounds:
-                upper_bounds[k] = v
+            target_key = key_map.get(k, k)
+            if target_key in upper_bounds or target_key in key_map.values():
+                upper_bounds[target_key] = v
 
     if smoking_status == "yes":
         vitamin_c_key = "Vitamin C (mg)"
