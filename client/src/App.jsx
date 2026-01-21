@@ -18,6 +18,7 @@ import AboutPage from "./components/AboutPage";
 import BlogPage from "./components/BlogPage";
 import BlogPostPage from "./components/BlogPostPage";
 import CalculationResults from "./components/CalculationResults";
+import ErrorPage from "./components/ErrorPage";
 import FoodSearch from "./components/FoodSearch";
 import GitHubIcon from "./components/GitHubIcon";
 import LandingPage from "./components/LandingPage";
@@ -437,7 +438,8 @@ function App() {
           />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/*" element={mainPlanner} />
+          <Route path="/" element={mainPlanner} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
     </div>

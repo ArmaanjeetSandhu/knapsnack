@@ -255,13 +255,13 @@ const NutrientInfoPopup = ({ isOpen, onClose, nutrient, rda, ul, unit }) => {
         <DialogHeader>
           <div className="flex items-start justify-between">
             <div>
-              <DialogTitle className="text-2xl flex items-center gap-2">
+              <DialogTitle className="text-2xl text-left">
                 {nutrientName}
-                <span className="text-sm text-muted-foreground">
-                  {info.category}
-                </span>
               </DialogTitle>
-              <DialogDescription className="mt-2">
+              <span className="block mt-1 text-sm font-medium text-muted-foreground leading-tight text-left">
+                {info.category}
+              </span>
+              <DialogDescription className="mt-2 text-left">
                 {info.description}
               </DialogDescription>
             </div>
