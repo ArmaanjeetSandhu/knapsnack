@@ -43,6 +43,7 @@ const NUTRIENT_INFO = {
     category: "Mineral",
   },
   Thiamin: {
+    displayName: "Thiamin (Vitamin B₁)",
     description: "Essential for energy metabolism and nerve function",
     sources: ["Fortified cereals", "Pork (lean)", "Whole grains", "Legumes"],
     deficiencySymptoms: [
@@ -57,6 +58,7 @@ const NUTRIENT_INFO = {
     category: "Water-soluble vitamin",
   },
   Riboflavin: {
+    displayName: "Riboflavin (Vitamin B₂)",
     description: "Critical for energy production and cellular function",
     sources: ["Beef liver", "Fortified cereals", "Oats", "Yogurt"],
     deficiencySymptoms: [
@@ -68,6 +70,7 @@ const NUTRIENT_INFO = {
     category: "Water-soluble vitamin",
   },
   Niacin: {
+    displayName: "Niacin (Vitamin B₃)",
     description: "Vital for DNA repair and metabolism of fats/sugars",
     sources: ["Beef liver", "Chicken breast", "Marinara sauce", "Turkey"],
     deficiencySymptoms: ["Rough skin rash", "Diarrhoea", "Dementia"],
@@ -75,6 +78,7 @@ const NUTRIENT_INFO = {
     category: "Water-soluble vitamin",
   },
   "Pantothenic Acid": {
+    displayName: "Pantothenic Acid (Vitamin B₅)",
     description: "Required for fatty acid synthesis and energy metabolism",
     sources: [
       "Beef liver",
@@ -93,7 +97,7 @@ const NUTRIENT_INFO = {
     ],
     category: "Water-soluble vitamin",
   },
-  "Vitamin B6": {
+  "Vitamin B₆": {
     description: "Governs protein metabolism and neurotransmitter synthesis",
     sources: ["Chickpeas", "Beef liver", "Tuna", "Salmon"],
     deficiencySymptoms: [
@@ -109,6 +113,7 @@ const NUTRIENT_INFO = {
     category: "Water-soluble vitamin",
   },
   Folate: {
+    displayName: "Folate (Vitamin B₉)",
     description: "Crucial for DNA synthesis and cell division",
     sources: ["Beef liver", "Spinach", "Black-eyed peas", "Fortified cereals"],
     deficiencySymptoms: [
@@ -117,7 +122,7 @@ const NUTRIENT_INFO = {
       "Gastrointestinal issues",
     ],
     toxicitySymptoms: [
-      "Masks Vitamin B12 deficiency",
+      "Masks Vitamin B₁₂ deficiency",
       "Potential immune suppression",
     ],
     category: "Water-soluble vitamin",
@@ -256,7 +261,7 @@ const NutrientInfoPopup = ({ isOpen, onClose, nutrient, rda, ul, unit }) => {
           <div className="flex items-start justify-between">
             <div>
               <DialogTitle className="text-2xl text-left">
-                {nutrientName}
+                {info?.displayName || nutrientName}
               </DialogTitle>
               <span className="block mt-1 text-sm font-medium text-muted-foreground leading-tight text-left">
                 {info.category}

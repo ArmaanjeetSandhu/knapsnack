@@ -12,8 +12,10 @@ import {
   TableRow,
 } from "./ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+
 const FeasibilityAnalysis = ({ feasibilityData }) => {
   const [activeTab, setActiveTab] = useState("overview");
+
   if (!feasibilityData || !feasibilityData.analysis) {
     return (
       <Alert variant="destructive">
@@ -26,6 +28,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
       </Alert>
     );
   }
+
   const {
     isLowerBoundsFeasible,
     isUpperBoundsFeasible,
@@ -33,6 +36,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
     lowerBoundIssues,
     upperBoundIssues,
   } = feasibilityData;
+
   const formatValue = (value) => {
     return typeof value === "number"
       ? value.toLocaleString("en-US", {
@@ -40,6 +44,18 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
         })
       : value;
   };
+
+  const formatNutrientName = (name) => {
+    const replacements = {
+      "Thiamin (mg)": "Thiamin (Vitamin B₁) (mg)",
+      "Riboflavin (mg)": "Riboflavin (Vitamin B₂) (mg)",
+      "Niacin (mg)": "Niacin (Vitamin B₃) (mg)",
+      "Pantothenic Acid (mg)": "Pantothenic Acid (Vitamin B₅) (mg)",
+      "Folate (µg)": "Folate (Vitamin B₉) (µg)",
+    };
+    return replacements[name] || name;
+  };
+
   const renderOverview = () => (
     <div className="space-y-6">
       <Alert variant={isFeasible ? "success" : "destructive"}>
@@ -83,7 +99,9 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               <div className="mt-2">
                 <p className="text-xs text-red-500">
                   Problem nutrients:{" "}
-                  {lowerBoundIssues.map((issue) => issue.nutrient).join(", ")}
+                  {lowerBoundIssues
+                    .map((issue) => formatNutrientName(issue.nutrient))
+                    .join(", ")}
                 </p>
               </div>
             )}
@@ -114,7 +132,9 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               <div className="mt-2">
                 <p className="text-xs text-red-500">
                   Problem nutrients:{" "}
-                  {upperBoundIssues.map((issue) => issue.nutrient).join(", ")}
+                  {upperBoundIssues
+                    .map((issue) => formatNutrientName(issue.nutrient))
+                    .join(", ")}
                 </p>
               </div>
             )}
@@ -123,6 +143,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
       </div>
     </div>
   );
+
   const renderLowerBoundIssues = () => (
     <div className="space-y-6">
       {lowerBoundIssues.length === 0 ? (
@@ -156,7 +177,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               {lowerBoundIssues.map((issue, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">
-                    {issue.nutrient}
+                    {formatNutrientName(issue.nutrient)}
                   </TableCell>
                   <TableCell>{formatValue(issue.required)}</TableCell>
                   <TableCell>{formatValue(issue.achievable)}</TableCell>
@@ -180,6 +201,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
       )}
     </div>
   );
+
   const renderUpperBoundIssues = () => (
     <div className="space-y-6">
       {upperBoundIssues.length === 0 ? (
@@ -214,7 +236,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               {upperBoundIssues.map((issue, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium">
-                    {issue.nutrient}
+                    {formatNutrientName(issue.nutrient)}
                   </TableCell>
                   <TableCell>{issue.foodItem}</TableCell>
                   <TableCell>{formatValue(issue.limit)}</TableCell>
@@ -239,6 +261,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
       )}
     </div>
   );
+
   return (
     <Card className="mb-6 shadow-lg">
       <CardHeader className="bg-primary rounded-t-lg">
