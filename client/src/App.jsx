@@ -232,6 +232,11 @@ function App() {
             userInfo={userInfo}
             onProceed={handleHideCalculationResults}
             onRecalculate={handleRecalculate}
+            savedBounds={{
+              useCustomBounds,
+              adjustedLowerBounds,
+              adjustedUpperBounds,
+            }}
           />
         </div>
       ) : (

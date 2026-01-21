@@ -1,17 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export function useNutrientBounds(calculationData) {
+export function useNutrientBounds(calculationData, savedBounds) {
   const [customizingBounds, setCustomizingBounds] = useState(false);
-  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState({});
-  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState({});
-  const [useCustomBounds, setUseCustomBounds] = useState(false);
+
+  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(() => {
+    if (savedBounds?.useCustomBounds) {
+      return { ...savedBounds.adjustedLowerBounds };
+    }
+    return calculationData ? { ...calculationData.lower_bounds } : {};
+  });
+
+  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(() => {
+    if (savedBounds?.useCustomBounds) {
+      return { ...savedBounds.adjustedUpperBounds };
+    }
+    return calculationData ? { ...calculationData.upper_bounds } : {};
+  });
+
+  const [useCustomBounds, setUseCustomBounds] = useState(() => {
+    return !!savedBounds?.useCustomBounds;
+  });
+
   const [validationErrors, setValidationErrors] = useState({});
   const [editingValues, setEditingValues] = useState({});
 
+  const prevCalculationData = useRef(calculationData);
+
   useEffect(() => {
-    if (calculationData) {
+    if (calculationData && calculationData !== prevCalculationData.current) {
       setAdjustedLowerBounds({ ...calculationData.lower_bounds });
       setAdjustedUpperBounds({ ...calculationData.upper_bounds });
+      setUseCustomBounds(false);
+      prevCalculationData.current = calculationData;
     }
   }, [calculationData]);
 
@@ -62,12 +82,16 @@ export function useNutrientBounds(calculationData) {
         v?.toLocaleString("en-US", { maximumFractionDigits: 1 });
 
       if (target === "Fibre" && val > calculationData.carbohydrate) {
-        error = `Cannot exceed Carbohydrates (${formatValue(calculationData.carbohydrate)}g)`;
+        error = `Cannot exceed Carbohydrates (${formatValue(
+          calculationData.carbohydrate,
+        )}g)`;
       } else if (
         target === "Saturated Fats" &&
         val > calculationData.saturated_fats
       ) {
-        error = `Cannot exceed calculated target (${formatValue(calculationData.saturated_fats)}g)`;
+        error = `Cannot exceed calculated target (${formatValue(
+          calculationData.saturated_fats,
+        )}g)`;
       }
     }
 
@@ -111,6 +135,31 @@ export function useNutrientBounds(calculationData) {
     const newVal = e.target.value;
     setEditingValues((prev) => ({ ...prev, [target]: newVal }));
     validateInput(target, newVal, key);
+  };
+
+  const resetToSystemDefault = (target) => {
+    let defaultValue;
+    if (target === "Fibre") {
+      defaultValue = calculationData.fibre;
+    } else if (target === "Saturated Fats") {
+      defaultValue = calculationData.saturated_fats;
+    } else if (target === "Water") {
+      defaultValue = calculationData.lower_bounds?.["Water (mL)"] || 0;
+    }
+
+    if (defaultValue !== undefined) {
+      setEditingValues((prev) => ({ ...prev, [target]: defaultValue }));
+
+      const keyMap = {
+        Fibre: "Fibre (g)",
+        "Saturated Fats": "Saturated Fats (g)",
+        Water: "Water (mL)",
+      };
+
+      if (keyMap[target]) {
+        validateInput(target, defaultValue, keyMap[target]);
+      }
+    }
   };
 
   const saveTarget = (target, key, boundType) => {
@@ -171,6 +220,7 @@ export function useNutrientBounds(calculationData) {
       startEditing,
       cancelEditing,
       handleInputChange,
+      resetToSystemDefault,
       saveTarget,
       resetBounds,
       handleSave,

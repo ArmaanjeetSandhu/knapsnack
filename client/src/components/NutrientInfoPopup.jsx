@@ -142,7 +142,7 @@ const NUTRIENT_INFO = {
       "Muscle weakness",
       "Weakened immune system",
     ],
-    toxicitySymptoms: ["Increased bleeding risk", "Hemorrhagic stroke risk"],
+    toxicitySymptoms: ["Increased bleeding risk", "Haemorrhagic stroke risk"],
     category: "Fat-soluble vitamin",
   },
   "Vitamin K": {
@@ -211,7 +211,7 @@ const NUTRIENT_INFO = {
     category: "Mineral",
   },
   Iron: {
-    description: "Essential for oxygen transport (hemoglobin) and energy",
+    description: "Essential for oxygen transport (haemoglobin) and energy",
     sources: ["Fortified cereals", "Oysters", "White beans", "Beef liver"],
     deficiencySymptoms: [
       "Microcytic anaemia",

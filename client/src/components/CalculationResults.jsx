@@ -32,10 +32,15 @@ import {
 } from "./ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
+const CalculationResults = ({
+  calculationData,
+  onProceed,
+  onRecalculate,
+  savedBounds,
+}) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
 
-  const { state, actions } = useNutrientBounds(calculationData);
+  const { state, actions } = useNutrientBounds(calculationData, savedBounds);
   const {
     customizingBounds,
     adjustedLowerBounds,
@@ -436,9 +441,19 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 className="flex gap-1"
                               >
                                 <Button
-                                  variant="default"
+                                  variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6"
+                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                  onClick={() =>
+                                    actions.resetToSystemDefault(macro.label)
+                                  }
+                                >
+                                  <RotateCcw className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
                                   onClick={() =>
                                     actions.saveTarget(
                                       macro.label,
@@ -450,9 +465,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                   <Check className="w-4 h-4" />
                                 </Button>
                                 <Button
-                                  variant="destructive"
+                                  variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6"
+                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
                                   onClick={() =>
                                     actions.cancelEditing(macro.label)
                                   }
@@ -609,9 +624,19 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                               className="flex gap-1"
                             >
                               <Button
-                                variant="default"
+                                variant="ghost"
                                 size="icon"
-                                className="h-6 w-6"
+                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                onClick={() =>
+                                  actions.resetToSystemDefault("Water")
+                                }
+                              >
+                                <RotateCcw className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
                                 onClick={() =>
                                   actions.saveTarget("Water", waterKey, "lower")
                                 }
@@ -619,9 +644,9 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                                 <Check className="w-4 h-4" />
                               </Button>
                               <Button
-                                variant="destructive"
+                                variant="ghost"
                                 size="icon"
-                                className="h-6 w-6"
+                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
                                 onClick={() => actions.cancelEditing("Water")}
                               >
                                 <X className="w-4 h-4" />
@@ -721,8 +746,7 @@ const CalculationResults = ({ calculationData, onProceed, onRecalculate }) => {
                         size="sm"
                         onClick={actions.resetBounds}
                       >
-                        <RotateCcw className="w-4 h-4 mr-2" />
-                        Reset
+                        <RotateCcw className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="default"
