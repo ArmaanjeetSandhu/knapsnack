@@ -12,14 +12,20 @@ import NutrientInfoPopup from "./NutrientInfoPopup";
 const BlinkingDot = () => (
   <div className="w-2 h-2 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
 );
+
 export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
+
+  const getNutrientKey = (nutrient) => {
+    return nutrient.key || `${nutrient.name} (${nutrient.unit})`;
+  };
+
   const handleRowClick = (nutrient) => {
-    const key = `${nutrient.name} (${nutrient.unit})`;
+    const key = getNutrientKey(nutrient);
     setSelectedNutrient({
       name: nutrient.name,
       rda: lowerBounds[key],
@@ -27,6 +33,7 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
       unit: nutrient.unit,
     });
   };
+
   const handleSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -34,13 +41,14 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
     }
     setSortConfig({ key, direction });
   };
+
   const getSortedNutrients = () => {
     const sortableNutrients = [...nutrients];
     if (sortConfig.key) {
       sortableNutrients.sort((a, b) => {
         let aValue, bValue;
-        const keyA = `${a.name} (${a.unit})`;
-        const keyB = `${b.name} (${b.unit})`;
+        const keyA = getNutrientKey(a);
+        const keyB = getNutrientKey(b);
         if (sortConfig.key === "nutrient") {
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
@@ -65,13 +73,16 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
     }
     return sortableNutrients;
   };
+
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) {
       return null;
     }
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
+
   const sortedNutrients = getSortedNutrients();
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -106,7 +117,7 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
           </TableHeader>
           <TableBody>
             {sortedNutrients.map((nutrient, index) => {
-              const key = `${nutrient.name} (${nutrient.unit})`;
+              const key = getNutrientKey(nutrient);
               return (
                 <TableRow
                   key={index}
@@ -145,10 +156,16 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
     </>
   );
 };
+
 export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
+
+  const getNutrientKey = (nutrient) => {
+    return nutrient.key || `${nutrient.name} (${nutrient.unit})`;
+  };
+
   const handleCardClick = (nutrient) => {
-    const key = `${nutrient.name} (${nutrient.unit})`;
+    const key = getNutrientKey(nutrient);
     setSelectedNutrient({
       name: nutrient.name,
       rda: lowerBounds[key],
@@ -156,11 +173,12 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
       unit: nutrient.unit,
     });
   };
+
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {nutrients.map((nutrient, index) => {
-          const key = `${nutrient.name} (${nutrient.unit})`;
+          const key = getNutrientKey(nutrient);
           return (
             <Card
               key={index}

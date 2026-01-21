@@ -382,7 +382,7 @@ function App() {
           <div className="flex justify-between items-center">
             <button
               onClick={handleReset}
-              className="text-xl font-bold hover:text-gray-300 transition-colors"
+              className="text-xl font-bold hover:text-gray-300 transition-colors text-left"
             >
               Knap[Snack]: The Meal Planner
             </button>

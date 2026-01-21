@@ -103,9 +103,9 @@ const faqs = [
       "Most whole foods contain minimal amounts of vitamin D. Including vitamin D as a constraint can prevent the system from converging on any solution at all, even for those without any dietary reservations. More importantly, food sources are not the primary way humans should obtain vitamin D. Sun exposure remains the most effective method, with fortified foods and supplements being the next best options.",
 
       <h4 key="vitamin-b12" className="font-semibold mt-2">
-        Vitamin B12
+        Vitamin B₁₂
       </h4>,
-      "Similar to vitamin D, vitamin B12 is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans, and often vegetarians, from receiving any meal plan. If you follow a vegan diet, prioritize B12-fortified foods and supplements. If you a follow a vegetarian diet, eggs and dairy can help, though they still contain less B12 than meat.",
+      "Similar to vitamin D, vitamin B₁₂ is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans, and often vegetarians, from receiving any meal plan. If you follow a vegan diet, prioritize B₁₂-fortified foods and supplements. If you a follow a vegetarian diet, eggs and dairy can help, though they still contain less B₁₂ than meat.",
 
       <h3 key="deficiency-rare" className="text-xl font-semibold mt-4">
         Rare Deficiencies in the General Population
@@ -117,7 +117,7 @@ const faqs = [
       "Copper deficiency is rare because the body uses robust homeostatic mechanisms to regulate absorption and excretion, while drawing from skeletal and muscular reserves as needed.",
 
       <h4 key="biotin" className="font-semibold mt-2">
-        Biotin
+        Biotin (Vitamin B₇)
       </h4>,
       "Biotin deficiency is uncommon due to its wide availability across many food groups, contributions from intestinal microbiota, and efficient renal and enzymatic recycling.",
 

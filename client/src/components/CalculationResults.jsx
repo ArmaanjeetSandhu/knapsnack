@@ -106,12 +106,16 @@ const CalculationResults = ({
     { name: "Vitamin C", key: "Vitamin C (mg)", unit: "mg" },
     { name: "Vitamin E", key: "Vitamin E (mg)", unit: "mg" },
     { name: "Vitamin K", key: "Vitamin K (µg)", unit: "µg" },
-    { name: "Thiamin", key: "Thiamin (mg)", unit: "mg" },
-    { name: "Riboflavin", key: "Riboflavin (mg)", unit: "mg" },
-    { name: "Niacin", key: "Niacin (mg)", unit: "mg" },
-    { name: "Vitamin B6", key: "Vitamin B6 (mg)", unit: "mg" },
-    { name: "Folate", key: "Folate (µg)", unit: "µg" },
-    { name: "Pantothenic Acid", key: "Pantothenic Acid (mg)", unit: "mg" },
+    { name: "Thiamin (Vitamin B₁)", key: "Thiamin (mg)", unit: "mg" },
+    { name: "Riboflavin (Vitamin B₂)", key: "Riboflavin (mg)", unit: "mg" },
+    { name: "Niacin (Vitamin B₃)", key: "Niacin (mg)", unit: "mg" },
+    { name: "Vitamin B₆", key: "Vitamin B6 (mg)", unit: "mg" },
+    { name: "Folate (Vitamin B₉)", key: "Folate (µg)", unit: "µg" },
+    {
+      name: "Pantothenic Acid (Vitamin B₅)",
+      key: "Pantothenic Acid (mg)",
+      unit: "mg",
+    },
   ];
 
   const minerals = [
