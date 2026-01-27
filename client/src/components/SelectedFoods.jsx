@@ -50,6 +50,7 @@ const SelectedFoods = ({
   });
   const [feasibilityData, setFeasibilityData] = useState(null);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [showInputErrorDialog, setShowInputErrorDialog] = useState(false);
 
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
@@ -78,20 +79,21 @@ const SelectedFoods = ({
       setError("Please select at least one food item.");
       return;
     }
+
     const invalidFoods = foods.filter(
       (food) =>
-        !food.price ||
+        food.price === "" ||
+        parseFloat(food.price) < 0 ||
         !food.servingSize ||
-        parseFloat(food.price) <= 0 ||
         parseFloat(food.servingSize) <= 0 ||
         parseFloat(food.maxServing) <= 0,
     );
+
     if (invalidFoods.length > 0) {
-      setError(
-        "Please enter valid price, serving size, and maximum serving size for all foods.",
-      );
+      setShowInputErrorDialog(true);
       return;
     }
+
     setLoading(true);
     setError(null);
     setFeasibilityData(null);
@@ -461,6 +463,35 @@ const SelectedFoods = ({
           </div>
           <DialogFooter>
             <Button onClick={() => setShowErrorDialog(false)}>Try Again</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showInputErrorDialog}
+        onOpenChange={setShowInputErrorDialog}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive flex items-center gap-2">
+              Not so fast!
+            </DialogTitle>
+            <DialogDescription className="pt-2">
+              We found some issues with the food details you entered.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <h4 className="font-semibold mb-2">Please verify the following:</h4>
+            <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
+              <li>&apos;Price&apos; is filled in and not negative</li>
+              <li>
+                &apos;Serving Size (g)&apos; is filled in and greater than 0
+              </li>
+              <li>&apos;Max Serving&apos; is greater than 0</li>
+            </ul>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowInputErrorDialog(false)}>OK</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

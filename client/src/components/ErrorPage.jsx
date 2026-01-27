@@ -17,7 +17,8 @@ const ErrorPage = () => {
         404 - Page Not Found
       </h1>
       <p className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-md">
-        Oops! The page you are looking for doesn&apos;t exist or has been moved.
+        Uh-oh! The page you are looking for doesn&apos;t exist or has been
+        moved.
       </p>
 
       <Link to="/">
