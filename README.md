@@ -39,4 +39,4 @@ graph TD
     993["Food Data Service<br>Python/Requests"] -->|Fetches food data from| 995["USDA FoodData Central API<br>External Service"]
 ```
 
-Visualize the repo structure [here](https://mango-dune-07a8b7110.1.azurestaticapps.net/?repo=ArmaanjeetSandhu%2Fgoal-ith).
+Visualize the repo structure [here](https://mango-dune-07a8b7110.1.azurestaticapps.net/?repo=ArmaanjeetSandhu%2Fknapsnack).

@@ -45,12 +45,16 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="w-10 h-10 rounded-full"
+      className={`w-10 h-10 rounded-full hover:bg-transparent transition-colors ${
+        isDark
+          ? "text-yellow-500 hover:text-yellow-200"
+          : "text-white hover:text-gray-300"
+      }`}
     >
       {isDark ? (
-        <Sun className="h-5 w-5 text-yellow-500 transition-all" />
+        <Sun className="h-5 w-5 transition-all" />
       ) : (
-        <Moon className="h-5 w-5 text-white-900 transition-all" />
+        <Moon className="h-5 w-5 transition-all" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

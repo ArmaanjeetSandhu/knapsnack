@@ -429,7 +429,7 @@ function App() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-white hover:text-gray-300"
+                      className="text-white hover:text-gray-300 hover:bg-transparent"
                     >
                       <Info className="h-5 w-5" />
                     </Button>
@@ -440,7 +440,7 @@ function App() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-white hover:text-gray-300"
+                      className="text-white hover:text-gray-300 hover:bg-transparent"
                     >
                       <Newspaper className="h-5 w-5" />
                     </Button>
