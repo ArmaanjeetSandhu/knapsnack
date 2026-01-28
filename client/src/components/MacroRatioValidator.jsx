@@ -1,7 +1,8 @@
-import { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Card, CardContent } from "../components/ui/card";
+
 const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
   const firstInputRef = useRef(null);
   const amdrRanges = useMemo(
@@ -19,7 +20,9 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
       fats: 30,
     },
   );
+
   const total = Object.values(macros).reduce((sum, value) => sum + value, 0);
+
   const getAMDRViolations = useCallback(() => {
     const violations = [];
     Object.entries(macros).forEach(([macro, value]) => {
@@ -32,17 +35,20 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     });
     return violations;
   }, [macros, amdrRanges]);
+
   useEffect(() => {
     const violations = getAMDRViolations();
     const validTotal = total === 100;
     const isValid = violations.length === 0 && validTotal;
     onValidRatios(isValid ? macros : null);
   }, [macros, total, onValidRatios, getAMDRViolations]);
+
   useEffect(() => {
     if (autoFocus && firstInputRef.current) {
       firstInputRef.current.focus();
     }
   }, [autoFocus]);
+
   const handleMacroChange = useCallback(
     (macroType, newValue) => {
       const range = amdrRanges[macroType];
@@ -54,6 +60,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     },
     [amdrRanges],
   );
+
   const macroColors = useMemo(
     () => ({
       protein: {
@@ -116,6 +123,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     }),
     [],
   );
+
   const getAlertMessages = useCallback(() => {
     const messages = [];
     const difference = Math.abs(100 - total);
@@ -145,6 +153,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     }
     return messages;
   }, [total, getAMDRViolations]);
+
   const getSliderBackground = useCallback(
     (macro) => {
       const range = amdrRanges[macro];
@@ -165,73 +174,21 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     },
     [amdrRanges, macros, macroColors],
   );
+
   return (
     <Card className="w-full mb-6">
-      <CardContent className="space-y-6 p-6">
-        {getAlertMessages().map((alert, index) => (
-          <Alert
-            key={index}
-            variant={alert.type === "success" ? "default" : "warning"}
-            className={
-              alert.type === "success"
-                ? "bg-success/10 dark:bg-success/20 border-success/50"
-                : undefined
-            }
-          >
-            {alert.type === "success" ? (
-              <CheckCircle className="h-4 w-4 text-success" />
-            ) : (
-              <AlertTriangle className="h-4 w-4" />
-            )}
-            <AlertDescription>{alert.message}</AlertDescription>
-          </Alert>
-        ))}
-        <Alert
-          variant="default"
-          className="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800"
-        >
-          <Info className="h-4 w-4 text-blue-500 dark:text-blue-400" />
-          <AlertDescription>
-            AMDR Guidelines:
-            <div className="grid grid-cols-3 gap-2 mt-2 text-sm text-foreground">
-              <div>
-                Protein: {amdrRanges.protein.min}-{amdrRanges.protein.max}%
-              </div>
-              <div>
-                Carbs: {amdrRanges.carbohydrate.min}-
-                {amdrRanges.carbohydrate.max}%
-              </div>
-              <div>
-                Fat: {amdrRanges.fats.min}-{amdrRanges.fats.max}%
-              </div>
-            </div>
-          </AlertDescription>
-        </Alert>
+      <CardContent className="space-y-8 p-6">
         {Object.entries(macros).map(([macro, value], index) => (
-          <div key={macro} className="space-y-2">
+          <div key={macro} className="space-y-3">
             <div className="flex justify-between">
               <label className="text-sm font-medium capitalize text-foreground">
                 {macro}
               </label>
-              <span className="text-sm text-muted-foreground">{value}%</span>
+              <span className="text-sm font-bold text-foreground">
+                {value}%
+              </span>
             </div>
-            <div className="relative">
-              <div className="absolute -top-2 left-0 right-0 flex justify-between text-xs text-muted-foreground">
-                <span>0%</span>
-                <span
-                  style={{ left: `${amdrRanges[macro].min}%` }}
-                  className="absolute transform -translate-x-1/2"
-                >
-                  min
-                </span>
-                <span
-                  style={{ left: `${amdrRanges[macro].max}%` }}
-                  className="absolute transform -translate-x-1/2"
-                >
-                  max
-                </span>
-                <span>100%</span>
-              </div>
+            <div className="relative pb-6">
               <input
                 ref={index === 0 ? firstInputRef : null}
                 type="range"
@@ -240,11 +197,27 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
                 step="5"
                 value={value}
                 onChange={(e) => handleMacroChange(macro, e.target.value)}
-                className="w-full mt-4 h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-700 dark:to-gray-700"
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-700 dark:to-gray-700"
                 style={{
                   background: getSliderBackground(macro),
                 }}
               />
+              <div className="absolute top-7 left-0 right-0 flex justify-between text-xs text-muted-foreground pt-1">
+                <span>0%</span>
+                <span
+                  style={{ left: `${amdrRanges[macro].min}%` }}
+                  className="absolute transform -translate-x-1/2"
+                >
+                  {amdrRanges[macro].min}%
+                </span>
+                <span
+                  style={{ left: `${amdrRanges[macro].max}%` }}
+                  className="absolute transform -translate-x-1/2"
+                >
+                  {amdrRanges[macro].max}%
+                </span>
+                <span>100%</span>
+              </div>
             </div>
             <div
               className={`h-2 rounded-full transition-all duration-200 ${macroColors[macro].bg}`}
@@ -254,6 +227,27 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
             />
           </div>
         ))}
+
+        <div className="space-y-2">
+          {getAlertMessages().map((alert, index) => (
+            <Alert
+              key={index}
+              variant={alert.type === "success" ? "default" : "warning"}
+              className={
+                alert.type === "success"
+                  ? "bg-success/10 dark:bg-success/20 border-success/50"
+                  : undefined
+              }
+            >
+              {alert.type === "success" ? (
+                <CheckCircle className="h-4 w-4 text-success" />
+              ) : (
+                <AlertTriangle className="h-4 w-4" />
+              )}
+              <AlertDescription>{alert.message}</AlertDescription>
+            </Alert>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

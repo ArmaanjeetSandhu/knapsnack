@@ -18,6 +18,7 @@ import {
 import AboutPage from "./components/AboutPage";
 import BlogPage from "./components/BlogPage";
 import BlogPostPage from "./components/BlogPostPage";
+import CalculationInputEditor from "./components/CalculationInputEditor";
 import CalculationResults from "./components/CalculationResults";
 import ErrorPage from "./components/ErrorPage";
 import FoodSearch from "./components/FoodSearch";
@@ -28,6 +29,7 @@ import SelectedFoods from "./components/SelectedFoods";
 import ThemeToggle from "./components/ThemeToggle";
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { Button } from "./components/ui/button";
+import { Dialog, DialogContent } from "./components/ui/dialog";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -43,6 +45,7 @@ const isDuplicateFood = (newFood, existingFoods) => {
 function App() {
   const { state, actions, STORAGE_KEYS } = useAppState();
   const [error, setError] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -63,9 +66,10 @@ function App() {
       const result = await api.calculateNutrition(calculationData);
       actions.setNutrientGoals(result);
       actions.setUserInfo({
+        ...formData,
         age: parseInt(formData.age),
-        gender: formData.gender,
-        smokingStatus: formData.smokingStatus,
+        weight: parseFloat(formData.weight),
+        height: parseFloat(formData.height),
       });
       actions.setShowCalculationResults(true);
       setError(null);
@@ -95,24 +99,38 @@ function App() {
     navigate("/");
   };
 
-  const handleRecalculate = () => {
-    actions.setNutrientGoals(null);
-    actions.setOptimizationResults(null);
-    actions.setStoredResults(null);
-    actions.setSnapshotFoods([]);
-    actions.setShowCalculationResults(false);
-    actions.setAdjustedLowerBounds(null);
-    actions.setAdjustedUpperBounds(null);
-    actions.setUseCustomBounds(false);
+  const handleProfileUpdate = async (updatedData) => {
+    try {
+      const calculationData = {
+        gender: updatedData.gender,
+        age: updatedData.age,
+        weight: updatedData.weight,
+        height: updatedData.height,
+        activity: updatedData.activity,
+        percentage: updatedData.percentage,
+        protein: updatedData.macroRatios.protein,
+        carbohydrate: updatedData.macroRatios.carbohydrate,
+        fats: updatedData.macroRatios.fats,
+        smokingStatus: updatedData.smokingStatus,
+      };
 
-    localStorage.removeItem(STORAGE_KEYS.NUTRIENT_GOALS);
-    localStorage.removeItem(STORAGE_KEYS.OPTIMIZATION_RESULTS);
-    localStorage.removeItem(STORAGE_KEYS.SNAPSHOT_FOODS);
-    localStorage.removeItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
-    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS);
-    localStorage.removeItem(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS);
-    localStorage.removeItem(STORAGE_KEYS.USE_CUSTOM_BOUNDS);
-    localStorage.removeItem(STORAGE_KEYS.FORM_STATE);
+      const result = await api.calculateNutrition(calculationData);
+      actions.setNutrientGoals(result);
+      actions.setUserInfo({
+        ...updatedData,
+        age: parseInt(updatedData.age),
+        weight: parseFloat(updatedData.weight),
+        height: parseFloat(updatedData.height),
+      });
+      setError(null);
+      setIsEditModalOpen(false);
+
+      actions.setAdjustedLowerBounds(null);
+      actions.setAdjustedUpperBounds(null);
+      actions.setUseCustomBounds(false);
+    } catch (error) {
+      setError("Error recalculating nutrition: " + error.message);
+    }
   };
 
   const handleOptimizationSuccess = (result) => {
@@ -210,6 +228,17 @@ function App() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          <CalculationInputEditor
+            initialData={userInfo}
+            onSave={handleProfileUpdate}
+            onCancel={() => setIsEditModalOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
       {!nutrientGoals ? (
         <div className="max-w-4xl mx-auto">
           <PersonalInfoForm onSubmit={handleFormSubmit} />
@@ -232,7 +261,7 @@ function App() {
             calculationData={nutrientGoals}
             userInfo={userInfo}
             onProceed={handleHideCalculationResults}
-            onRecalculate={handleRecalculate}
+            onRecalculate={() => setIsEditModalOpen(true)}
             savedBounds={{
               useCustomBounds,
               adjustedLowerBounds,
