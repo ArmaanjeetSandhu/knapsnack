@@ -57,7 +57,7 @@ export const processCSVData = (results) => {
           ? row["FDC ID"].toString()
           : `imported-${Date.now()}-${index}`,
         description: row["Food Item"],
-        price: row["Price"],
+        price: row["Price Per Serving"],
         servingSize: row["Serving Size (g)"],
         maxServing: row["Max Serving (g)"],
         integerServings: row["Discrete Servings"] === "Yes",

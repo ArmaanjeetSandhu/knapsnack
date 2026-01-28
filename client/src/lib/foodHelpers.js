@@ -33,7 +33,7 @@ export const exportSelectedFoodsToCSV = (foods) => {
   const headers = [
     "Discrete Servings",
     "Food Item",
-    "Price",
+    "Price Per Serving",
     "Serving Size (g)",
     "Max Serving (g)",
     "Water (mL)",

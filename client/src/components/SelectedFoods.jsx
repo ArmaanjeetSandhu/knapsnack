@@ -249,7 +249,7 @@ const SelectedFoods = ({
                           onClick={() => handleSort("price")}
                           className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                         >
-                          Price{getSortIcon("price")}
+                          Price Per Serving{getSortIcon("price")}
                         </TableHead>
                         <TableHead
                           onClick={() => handleSort("servingSize")}
@@ -302,7 +302,7 @@ const SelectedFoods = ({
                                   htmlFor={`price-${food.fdcId}`}
                                   className="sr-only"
                                 >
-                                  Price for {food.description}
+                                  Price Per Serving for {food.description}
                                 </label>
                                 <Input
                                   id={`price-${food.fdcId}`}
@@ -318,7 +318,7 @@ const SelectedFoods = ({
                                     )
                                   }
                                   className="w-[100px]"
-                                  aria-label={`Price for ${food.description}`}
+                                  aria-label={`Price Per Serving for ${food.description}`}
                                 />
                               </div>
                             </TableCell>
@@ -483,7 +483,9 @@ const SelectedFoods = ({
           <div className="py-4">
             <h4 className="font-semibold mb-2">Please verify the following:</h4>
             <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
-              <li>&apos;Price&apos; is filled in and not negative</li>
+              <li>
+                &apos;Price Per Serving&apos; is filled in and not negative
+              </li>
               <li>
                 &apos;Serving Size (g)&apos; is filled in and greater than 0
               </li>

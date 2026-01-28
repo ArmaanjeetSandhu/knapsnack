@@ -1,3 +1,4 @@
+import { GithubLogoIcon } from "@phosphor-icons/react";
 import {
   ArrowLeft,
   Calculator,
@@ -20,7 +21,6 @@ import BlogPostPage from "./components/BlogPostPage";
 import CalculationResults from "./components/CalculationResults";
 import ErrorPage from "./components/ErrorPage";
 import FoodSearch from "./components/FoodSearch";
-import GitHubIcon from "./components/GitHubIcon";
 import LandingPage from "./components/LandingPage";
 import OptimizationResults from "./components/OptimizationResults";
 import PersonalInfoForm from "./components/PersonalInfoForm";
@@ -418,7 +418,7 @@ function App() {
                     className="text-white hover:text-gray-300 px-3 py-2 inline-flex items-center gap-2"
                     aria-label="View project on GitHub"
                   >
-                    <GitHubIcon size={20} />
+                    <GithubLogoIcon size={20} weight="bold" />
                     <span className="sr-only">GitHub</span>
                   </a>
                 </NavigationMenuItem>
