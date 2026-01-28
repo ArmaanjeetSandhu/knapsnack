@@ -241,7 +241,10 @@ function App() {
           <CalculationInputEditor
             initialData={userInfo}
             onSave={handleProfileUpdate}
-            onCancel={() => setIsEditModalOpen(false)}
+            onCancel={() => {
+              setIsEditModalOpen(false);
+              window.scrollTo(0, 0);
+            }}
           />
         </DialogContent>
       </Dialog>

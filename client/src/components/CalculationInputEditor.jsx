@@ -94,14 +94,16 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
       <div className="flex items-center space-x-2 w-full md:w-[210px] shrink-0">
-        <Heart className="w-5 h-5 text-gray-500" />
-        <h3 className="text-sm font-medium text-gray-900">Activity Level</h3>
+        <Heart className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          Activity Level
+        </h3>
       </div>
       <div className="flex-1 flex items-center gap-4 w-full">
         <div className="flex-1 relative group">
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
+          <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
             <div
-              className="h-full bg-gray-600 transition-all duration-300 rounded-full"
+              className="h-full bg-gray-600 dark:bg-gray-400 transition-all duration-300 rounded-full"
               style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }}
             />
           </div>
@@ -116,7 +118,7 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
             className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
           />
         </div>
-        <span className="text-sm font-medium text-gray-900 w-[80px] shrink-0 text-right whitespace-nowrap">
+        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-[80px] shrink-0 text-right whitespace-nowrap">
           {value.toFixed(1)}
         </span>
       </div>
@@ -147,16 +149,16 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
       <div className="flex items-center space-x-2 w-full md:w-[210px] shrink-0">
-        <Scale className="w-5 h-5 text-gray-500" />
-        <h3 className="text-sm font-medium text-gray-900">
+        <Scale className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
           Target Caloric Intake
         </h3>
       </div>
       <div className="flex-1 flex items-center gap-4 w-full">
         <div className="flex-1 relative group">
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
+          <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
             <div
-              className="h-full bg-gray-600 transition-all duration-300 rounded-full"
+              className="h-full bg-gray-600 dark:bg-gray-400 transition-all duration-300 rounded-full"
               style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }}
             />
           </div>
@@ -171,7 +173,7 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
             className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
           />
         </div>
-        <span className="text-sm font-medium text-gray-900 w-[80px] shrink-0 text-right whitespace-nowrap">
+        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-[80px] shrink-0 text-right whitespace-nowrap">
           {value}%
         </span>
       </div>
@@ -291,275 +293,278 @@ export default function CalculationInputEditor({
   };
 
   return (
-    <div className="py-2 px-1 select-none">
-      <div className="space-y-6 bg-white rounded-lg p-2">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
+    <div className="space-y-6 select-none p-4">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <div
+            onClick={() => setGender("male")}
+            className="relative w-full h-12 bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex cursor-pointer select-none"
+          >
             <div
-              onClick={() => setGender("male")}
-              className="relative w-full h-12 bg-gray-100 rounded-full p-1 flex cursor-pointer select-none"
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-gray-600 rounded-full shadow-sm transition-all duration-300 ${
+                gender === "male" ? "left-1" : "left-[50%]"
+              }`}
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setGender("male");
+              }}
+              className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
+                gender === "male"
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
             >
-              <div
-                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-full shadow-sm transition-all duration-300 ${
-                  gender === "male" ? "left-1" : "left-[50%]"
-                }`}
+              <GenderMaleIcon
+                weight={gender === "male" ? "bold" : "regular"}
+                className="w-5 h-5"
               />
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setGender("male");
-                }}
-                className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
-                  gender === "male"
-                    ? "text-blue-600"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <GenderMaleIcon
-                  weight={gender === "male" ? "bold" : "regular"}
-                  className="w-5 h-5"
-                />
-                <span className="font-medium">Male</span>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setGender("female");
-                }}
-                className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
-                  gender === "female"
-                    ? "text-pink-600"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <GenderFemaleIcon
-                  weight={gender === "female" ? "bold" : "regular"}
-                  className="w-5 h-5"
-                />
-                <span className="font-medium">Female</span>
-              </button>
-            </div>
+              <span className="font-medium">Male</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setGender("female");
+              }}
+              className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
+                gender === "female"
+                  ? "text-pink-600 dark:text-pink-400"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
+            >
+              <GenderFemaleIcon
+                weight={gender === "female" ? "bold" : "regular"}
+                className="w-5 h-5"
+              />
+              <span className="font-medium">Female</span>
+            </button>
           </div>
+        </div>
 
-          <div className="flex-1">
+        <div className="flex-1">
+          <div
+            onClick={() => setSmoker(false)}
+            className="relative w-full h-12 bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex cursor-pointer select-none"
+          >
             <div
-              onClick={() => setSmoker(false)}
-              className="relative w-full h-12 bg-gray-100 rounded-full p-1 flex cursor-pointer select-none"
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-gray-600 rounded-full shadow-sm transition-all duration-300 ${
+                !smoker ? "left-1" : "left-[50%]"
+              }`}
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSmoker(false);
+              }}
+              className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
+                !smoker
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
             >
+              <CigaretteOff className="w-5 h-5" />
+              <span className="font-medium">No</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setSmoker(true);
+              }}
+              className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
+                smoker
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              }`}
+            >
+              <Cigarette className="w-5 h-5" />
+              <span className="font-medium">Yes</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+        <div className="flex items-center space-x-2 w-[210px] shrink-0">
+          <Calendar className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            Age
+          </h3>
+        </div>
+        <div className="flex-1 flex items-center gap-4">
+          <div className="flex-1 relative group">
+            <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
               <div
-                className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-full shadow-sm transition-all duration-300 ${
-                  !smoker ? "left-1" : "left-[50%]"
-                }`}
+                className="h-full bg-gray-600 dark:bg-gray-400 transition-all duration-300 rounded-full"
+                style={{ width: `${((age - 19) / (100 - 19)) * 100}%` }}
               />
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSmoker(false);
-                }}
-                className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
-                  !smoker
-                    ? "text-green-600"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <CigaretteOff className="w-5 h-5" />
-                <span className="font-medium">No</span>
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSmoker(true);
-                }}
-                className={`flex-1 z-10 flex items-center justify-center gap-2 transition-colors duration-300 rounded-full ${
-                  smoker ? "text-red-600" : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <Cigarette className="w-5 h-5" />
-                <span className="font-medium">Yes</span>
-              </button>
             </div>
+            <input
+              type="range"
+              min={19}
+              max={100}
+              step={1}
+              value={age}
+              onChange={(e) => setAge(+e.target.value)}
+              className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
+            />
           </div>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-[80px] shrink-0 text-right whitespace-nowrap">
+            {age} years
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+        <div className="flex items-center space-x-2 w-[210px] shrink-0">
+          <Weight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            Weight
+          </h3>
+        </div>
+        <div className="flex-1 flex items-center gap-4">
+          <div className="flex-1 relative group">
+            <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
+              <div
+                className="h-full bg-gray-600 dark:bg-gray-400 transition-all duration-300 rounded-full"
+                style={{ width: `${((weight - 30) / (200 - 30)) * 100}%` }}
+              />
+            </div>
+            <input
+              type="range"
+              min={30}
+              max={200}
+              step={1}
+              value={weight}
+              onChange={(e) => setWeight(+e.target.value)}
+              className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
+            />
+          </div>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-[80px] shrink-0 text-right whitespace-nowrap">
+            {weight} kg
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+        <div className="flex items-center space-x-2 w-[210px] shrink-0">
+          <Ruler className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            Height
+          </h3>
+        </div>
+        <div className="flex-1 flex items-center gap-4">
+          <div className="flex-1 relative group">
+            <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
+              <div
+                className="h-full bg-gray-600 dark:bg-gray-400 transition-all duration-300 rounded-full"
+                style={{ width: `${((height - 135) / (200 - 135)) * 100}%` }}
+              />
+            </div>
+            <input
+              type="range"
+              min={135}
+              max={200}
+              step={1}
+              value={height}
+              onChange={(e) => setHeight(+e.target.value)}
+              className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
+            />
+          </div>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 w-[80px] shrink-0 text-right whitespace-nowrap">
+            {height} cm
+          </span>
+        </div>
+      </div>
+
+      <ActivitySlider value={activity} onChange={setActivity} />
+
+      <CalorieTargetSlider value={calorieTarget} onChange={setCalorieTarget} />
+
+      <div className="space-y-3">
+        <div className="flex items-center space-x-2">
+          <Utensils className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            Macronutrient Distribution
+          </h3>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
-          <div className="flex items-center space-x-2 w-[210px] shrink-0">
-            <Calendar className="w-5 h-5 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">Age</h3>
-          </div>
-          <div className="flex-1 flex items-center gap-4">
-            <div className="flex-1 relative group">
-              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
-                <div
-                  className="h-full bg-gray-600 transition-all duration-300 rounded-full"
-                  style={{ width: `${((age - 19) / (100 - 19)) * 100}%` }}
-                />
-              </div>
-              <input
-                type="range"
-                min={19}
-                max={100}
-                step={1}
-                value={age}
-                onChange={(e) => setAge(+e.target.value)}
-                className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
-              />
-            </div>
-            <span className="text-sm font-medium text-gray-900 w-[80px] shrink-0 text-right whitespace-nowrap">
-              {age} years
+        <div
+          ref={trackRef}
+          className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner select-none"
+        >
+          <div
+            className="absolute h-full bg-pink-500 rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
+            style={{ width: `${protein}%` }}
+          >
+            <span className="text-white font-bold text-xs select-none whitespace-nowrap">
+              P : {protein}%
             </span>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
-          <div className="flex items-center space-x-2 w-[210px] shrink-0">
-            <Weight className="w-5 h-5 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">Weight</h3>
-          </div>
-          <div className="flex-1 flex items-center gap-4">
-            <div className="flex-1 relative group">
-              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
-                <div
-                  className="h-full bg-gray-600 transition-all duration-300 rounded-full"
-                  style={{ width: `${((weight - 30) / (200 - 30)) * 100}%` }}
-                />
-              </div>
-              <input
-                type="range"
-                min={30}
-                max={200}
-                step={1}
-                value={weight}
-                onChange={(e) => setWeight(+e.target.value)}
-                className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
-              />
-            </div>
-            <span className="text-sm font-medium text-gray-900 w-[80px] shrink-0 text-right whitespace-nowrap">
-              {weight} kg
-            </span>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
-          <div className="flex items-center space-x-2 w-[210px] shrink-0">
-            <Ruler className="w-5 h-5 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">Height</h3>
-          </div>
-          <div className="flex-1 flex items-center gap-4">
-            <div className="flex-1 relative group">
-              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
-                <div
-                  className="h-full bg-gray-600 transition-all duration-300 rounded-full"
-                  style={{ width: `${((height - 135) / (200 - 135)) * 100}%` }}
-                />
-              </div>
-              <input
-                type="range"
-                min={135}
-                max={200}
-                step={1}
-                value={height}
-                onChange={(e) => setHeight(+e.target.value)}
-                className="absolute inset-0 w-full h-3 opacity-0 cursor-pointer"
-              />
-            </div>
-            <span className="text-sm font-medium text-gray-900 w-[80px] shrink-0 text-right whitespace-nowrap">
-              {height} cm
-            </span>
-          </div>
-        </div>
-
-        <ActivitySlider value={activity} onChange={setActivity} />
-
-        <CalorieTargetSlider
-          value={calorieTarget}
-          onChange={setCalorieTarget}
-        />
-
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <Utensils className="w-5 h-5 text-gray-500" />
-            <h3 className="text-sm font-medium text-gray-900">
-              Macronutrient Distribution
-            </h3>
           </div>
 
           <div
-            ref={trackRef}
-            className="relative h-14 bg-gray-200 rounded-full cursor-pointer shadow-inner select-none"
+            className="absolute h-full bg-indigo-500 transition-all duration-100 flex items-center justify-center overflow-hidden"
+            style={{
+              left: `${protein}%`,
+              width: `${carbs}%`,
+            }}
           >
-            <div
-              className="absolute h-full bg-pink-500 rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
-              style={{ width: `${protein}%` }}
-            >
-              <span className="text-white font-bold text-xs select-none whitespace-nowrap">
-                P : {protein}%
-              </span>
-            </div>
+            <span className="text-white font-bold text-xs select-none whitespace-nowrap">
+              C : {carbs}%
+            </span>
+          </div>
 
-            <div
-              className="absolute h-full bg-indigo-500 transition-all duration-100 flex items-center justify-center overflow-hidden"
-              style={{
-                left: `${protein}%`,
-                width: `${carbs}%`,
-              }}
-            >
-              <span className="text-white font-bold text-xs select-none whitespace-nowrap">
-                C : {carbs}%
-              </span>
-            </div>
+          <div
+            className="absolute h-full bg-yellow-500 rounded-r-full transition-all duration-100 flex items-center justify-center overflow-hidden"
+            style={{
+              left: `${protein + carbs}%`,
+              width: `${fat}%`,
+            }}
+          >
+            <span className="text-white font-bold text-xs select-none whitespace-nowrap">
+              F : {fat}%
+            </span>
+          </div>
 
-            <div
-              className="absolute h-full bg-yellow-500 rounded-r-full transition-all duration-100 flex items-center justify-center overflow-hidden"
-              style={{
-                left: `${protein + carbs}%`,
-                width: `${fat}%`,
-              }}
-            >
-              <span className="text-white font-bold text-xs select-none whitespace-nowrap">
-                F : {fat}%
-              </span>
-            </div>
+          <div
+            className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 select-none flex items-center justify-center outline-none group"
+            style={{ left: `calc(${protein}% - 16px)` }}
+            onPointerDown={(e) => startDrag("PROTEIN_CARB", e)}
+            tabIndex={0}
+            role="slider"
+            aria-label="Protein to Carbohydrate Ratio"
+            aria-valuemin={AMDR.protein.min}
+            aria-valuemax={AMDR.protein.max}
+            aria-valuenow={protein}
+            onKeyDown={(e) => handleKeyDown(e, "PROTEIN_CARB")}
+          >
+            <div className="w-1.5 h-12 bg-white dark:bg-gray-100 ring-2 ring-blue-500 rounded-full opacity-0 group-focus:opacity-100 shadow-xl transition-all" />
+          </div>
 
-            <div
-              className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 select-none flex items-center justify-center outline-none group"
-              style={{ left: `calc(${protein}% - 16px)` }}
-              onPointerDown={(e) => startDrag("PROTEIN_CARB", e)}
-              tabIndex={0}
-              role="slider"
-              aria-label="Protein to Carbohydrate Ratio"
-              aria-valuemin={AMDR.protein.min}
-              aria-valuemax={AMDR.protein.max}
-              aria-valuenow={protein}
-              onKeyDown={(e) => handleKeyDown(e, "PROTEIN_CARB")}
-            >
-              <div className="w-1.5 h-12 bg-white ring-2 ring-blue-500 rounded-full opacity-0 group-focus:opacity-100 shadow-xl transition-all" />
-            </div>
-
-            <div
-              className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 select-none flex items-center justify-center outline-none group"
-              style={{
-                left: `calc(${protein + carbs}% - 16px)`,
-              }}
-              onPointerDown={(e) => startDrag("CARB_FAT", e)}
-              tabIndex={0}
-              role="slider"
-              aria-label="Carbohydrate to Fat Ratio"
-              aria-valuemin={AMDR.carbs.min}
-              aria-valuemax={AMDR.carbs.max}
-              aria-valuenow={protein + carbs}
-              onKeyDown={(e) => handleKeyDown(e, "CARB_FAT")}
-            >
-              <div className="w-1.5 h-12 bg-white ring-2 ring-blue-500 rounded-full opacity-0 group-focus:opacity-100 shadow-xl transition-all" />
-            </div>
+          <div
+            className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 select-none flex items-center justify-center outline-none group"
+            style={{
+              left: `calc(${protein + carbs}% - 16px)`,
+            }}
+            onPointerDown={(e) => startDrag("CARB_FAT", e)}
+            tabIndex={0}
+            role="slider"
+            aria-label="Carbohydrate to Fat Ratio"
+            aria-valuemin={AMDR.carbs.min}
+            aria-valuemax={AMDR.carbs.max}
+            aria-valuenow={protein + carbs}
+            onKeyDown={(e) => handleKeyDown(e, "CARB_FAT")}
+          >
+            <div className="w-1.5 h-12 bg-white dark:bg-gray-100 ring-2 ring-blue-500 rounded-full opacity-0 group-focus:opacity-100 shadow-xl transition-all" />
           </div>
         </div>
+      </div>
 
-        <div className="flex justify-end gap-3 mt-6">
-          <Button variant="outline" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>Confirm</Button>
-        </div>
+      <div className="flex justify-end gap-3 mt-6">
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave}>Confirm</Button>
       </div>
     </div>
   );
