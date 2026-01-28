@@ -92,12 +92,12 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
   }, [isAnimating]);
   const progress = ((value - 1.2) / (2.4 - 1.2)) * 100;
   return (
-    <div className="flex items-center gap-6">
-      <div className="flex items-center space-x-2 w-[210px] shrink-0">
+    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+      <div className="flex items-center space-x-2 w-full md:w-[210px] shrink-0">
         <Heart className="w-5 h-5 text-gray-500" />
         <h3 className="text-sm font-medium text-gray-900">Activity Level</h3>
       </div>
-      <div className="flex-1 flex items-center gap-4">
+      <div className="flex-1 flex items-center gap-4 w-full">
         <div className="flex-1 relative group">
           <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
             <div
@@ -145,14 +145,14 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
   }, [isAnimating]);
   const progress = ((value - 75) / (125 - 75)) * 100;
   return (
-    <div className="flex items-center gap-6">
-      <div className="flex items-center space-x-2 w-[210px] shrink-0">
+    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+      <div className="flex items-center space-x-2 w-full md:w-[210px] shrink-0">
         <Scale className="w-5 h-5 text-gray-500" />
         <h3 className="text-sm font-medium text-gray-900">
           Target Caloric Intake
         </h3>
       </div>
-      <div className="flex-1 flex items-center gap-4">
+      <div className="flex-1 flex items-center gap-4 w-full">
         <div className="flex-1 relative group">
           <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
             <div
@@ -293,7 +293,7 @@ export default function CalculationInputEditor({
   return (
     <div className="py-2 px-1 select-none">
       <div className="space-y-6 bg-white rounded-lg p-2">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div
               onClick={() => setGender("male")}
@@ -381,7 +381,7 @@ export default function CalculationInputEditor({
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
           <div className="flex items-center space-x-2 w-[210px] shrink-0">
             <Calendar className="w-5 h-5 text-gray-500" />
             <h3 className="text-sm font-medium text-gray-900">Age</h3>
@@ -410,7 +410,7 @@ export default function CalculationInputEditor({
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
           <div className="flex items-center space-x-2 w-[210px] shrink-0">
             <Weight className="w-5 h-5 text-gray-500" />
             <h3 className="text-sm font-medium text-gray-900">Weight</h3>
@@ -439,7 +439,7 @@ export default function CalculationInputEditor({
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
           <div className="flex items-center space-x-2 w-[210px] shrink-0">
             <Ruler className="w-5 h-5 text-gray-500" />
             <h3 className="text-sm font-medium text-gray-900">Height</h3>
