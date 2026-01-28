@@ -124,6 +124,7 @@ function App() {
       });
       setError(null);
       setIsEditModalOpen(false);
+      window.scrollTo(0, 0);
 
       actions.setAdjustedLowerBounds(null);
       actions.setAdjustedUpperBounds(null);
@@ -229,7 +230,13 @@ function App() {
         </Alert>
       )}
 
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+      <Dialog
+        open={isEditModalOpen}
+        onOpenChange={(open) => {
+          setIsEditModalOpen(open);
+          if (!open) window.scrollTo(0, 0);
+        }}
+      >
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <CalculationInputEditor
             initialData={userInfo}

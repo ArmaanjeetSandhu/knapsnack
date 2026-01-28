@@ -291,7 +291,7 @@ export default function CalculationInputEditor({
   };
 
   return (
-    <div className="py-2 px-1">
+    <div className="py-2 px-1 select-none">
       <div className="space-y-6 bg-white rounded-lg p-2">
         <div className="flex gap-4">
           <div className="flex-1">
