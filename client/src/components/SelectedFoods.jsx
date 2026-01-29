@@ -207,7 +207,6 @@ const SelectedFoods = ({
                   className="flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Export Foods CSV
                 </Button>
               </div>
             )}

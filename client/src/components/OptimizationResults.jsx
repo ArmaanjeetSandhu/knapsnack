@@ -234,7 +234,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6">
+          <div className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               <Card>
                 <CardContent className="pt-6">
@@ -245,7 +245,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                       </div>
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">
-                          Total Daily Cost
+                          Total Cost
                         </p>
                         <p className="text-2xl font-bold">
                           {totalDailyCost.toFixed(2)}
@@ -307,7 +307,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <Utensils className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-                  Recommended Daily Portions
+                  Recommended Portions
                 </h3>
                 <Button
                   variant="outline"
@@ -316,7 +316,6 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                   className="flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Export Plan
                 </Button>
               </div>
               <div className="rounded-md border">
