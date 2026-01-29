@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, Info, X } from "lucide-react";
+import { AlertTriangle, Check, Info, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
@@ -269,7 +269,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
       </CardHeader>
       <CardContent className="p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-1 h-auto md:grid-cols-3">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="lower" disabled={lowerBoundIssues.length === 0}>
               Minimum Requirements
@@ -304,7 +304,8 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
             className="w-full"
             onClick={() => window.location.reload()}
           >
-            Modify Food Selection
+            <RefreshCw className="w-5 h-5 mr-2" />
+            Modify Foods
           </Button>
         </div>
       </CardContent>
