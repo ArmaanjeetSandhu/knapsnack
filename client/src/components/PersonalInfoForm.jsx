@@ -208,9 +208,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
-        if (e.target.tagName.toLowerCase() === "input") {
-          e.preventDefault();
-        }
+        if (e.target.tagName.toLowerCase() === "input") e.preventDefault();
         handleNext();
       }
     };

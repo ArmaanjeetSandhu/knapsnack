@@ -50,7 +50,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     if (!apiKey.trim()) {
-      setApiKeyError("Please enter your USDA API key first");
+      setApiKeyError("Please enter your API key first");
       return;
     }
     setLoading(true);
@@ -108,9 +108,8 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     setSearchError(null);
     try {
       const response = await fetch("/sample.csv");
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`Failed to fetch sample diet (${response.status})`);
-      }
       const csvText = await response.text();
       Papa.parse(csvText, {
         header: true,
@@ -186,7 +185,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Key className="w-4 h-4" />
-                  USDA API Key
+                  FoodData Central API Key
                 </label>
                 <p className="text-sm text-muted-foreground">
                   Get your free API key from{" "}
@@ -206,7 +205,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                   type="text"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="Enter your USDA API key"
+                  placeholder="Enter your API key"
                   className="flex-1"
                 />
               </div>
@@ -231,23 +230,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                   disabled={loading || !apiKey}
                   className="flex-1"
                 />
-                <Button
-                  type="submit"
-                  disabled={loading || !apiKey}
-                  className="min-w-[100px]"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      <span>Searching</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Search className="w-4 h-4" />
-                      <span>Search</span>
-                    </div>
-                  )}
-                </Button>
               </div>
             </form>
             <div className="flex gap-2">
@@ -297,7 +279,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <h6 className="text-sm font-semibold mb-3">Search Results</h6>
+                {/* <h6 className="text-sm font-semibold mb-3">Search Results</h6> */}
                 <ScrollArea className="h-[400px] rounded-md border">
                   <div className="divide-y">
                     <AnimatePresence initial={false}>
@@ -333,12 +315,10 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                                 {added ? (
                                   <>
                                     <Check className="w-4 h-4 mr-1" />
-                                    Added
                                   </>
                                 ) : (
                                   <>
                                     <Plus className="w-4 h-4 mr-1" />
-                                    Add
                                   </>
                                 )}
                               </Button>

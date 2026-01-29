@@ -47,9 +47,8 @@ export const NutrientTable = ({
 
   const handleSort = (key) => {
     let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+    if (sortConfig.key === key && sortConfig.direction === "ascending")
       direction = "descending";
-    }
     setSortConfig({ key, direction });
   };
 
@@ -76,12 +75,10 @@ export const NutrientTable = ({
           aValue = a.unit.toLowerCase();
           bValue = b.unit.toLowerCase();
         }
-        if (aValue < bValue) {
+        if (aValue < bValue)
           return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (aValue > bValue) {
+        if (aValue > bValue)
           return sortConfig.direction === "ascending" ? 1 : -1;
-        }
         return 0;
       });
     }
@@ -89,9 +86,7 @@ export const NutrientTable = ({
   };
 
   const getSortIcon = (key) => {
-    if (sortConfig.key !== key) {
-      return null;
-    }
+    if (sortConfig.key !== key) return null;
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
 

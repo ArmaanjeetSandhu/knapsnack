@@ -309,7 +309,7 @@ const CalculationResults = ({
             transition={{ duration: 0.4, delay: 0.2 }}
           >
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Beef className="w-5 h-5 text-green-500 dark:text-green-400" />
+              <Beef className="w-5 h-5 text-red-700 dark:text-red-600" />
               Macronutrient Targets
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -333,9 +333,8 @@ const CalculationResults = ({
                       ? adjustedLowerBounds
                       : adjustedUpperBounds;
 
-                  if (useCustomBounds && bounds[boundKey] != null) {
+                  if (useCustomBounds && bounds[boundKey] != null)
                     currentValue = bounds[boundKey];
-                  }
                 }
 
                 return (

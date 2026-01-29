@@ -44,9 +44,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
   }, [macros, total, onValidRatios, getAMDRViolations]);
 
   useEffect(() => {
-    if (autoFocus && firstInputRef.current) {
-      firstInputRef.current.focus();
-    }
+    if (autoFocus && firstInputRef.current) firstInputRef.current.focus();
   }, [autoFocus]);
 
   const handleMacroChange = useCallback(

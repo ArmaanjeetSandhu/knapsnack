@@ -5,9 +5,7 @@ import { Button } from "./ui/button";
 const LandingPage = ({ onGetStarted }) => {
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "Enter") {
-        onGetStarted();
-      }
+      if (event.key === "Enter") onGetStarted();
     };
 
     window.addEventListener("keydown", handleKeyDown);

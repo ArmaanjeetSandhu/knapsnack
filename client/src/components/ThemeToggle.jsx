@@ -21,9 +21,7 @@ const ThemeToggle = () => {
         "(prefers-color-scheme: dark)",
       ).matches;
       setIsDark(isSystemDark);
-      if (isSystemDark) {
-        document.documentElement.classList.add("dark");
-      }
+      if (isSystemDark) document.documentElement.classList.add("dark");
     }
   }, []);
 

@@ -179,9 +179,8 @@ function App() {
   };
 
   const handleViewPreviousResults = () => {
-    if (state.storedResults) {
+    if (state.storedResults)
       actions.setOptimizationResults(state.storedResults);
-    }
   };
 
   const handleHideResults = () => {
@@ -419,9 +418,8 @@ function App() {
     </>
   );
 
-  if (showLanding && location.pathname === "/") {
+  if (showLanding && location.pathname === "/")
     return <LandingPage onGetStarted={() => actions.setShowLanding(false)} />;
-  }
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -222,9 +222,8 @@ const ContentRenderer = ({ content }) => {
           </div>
         );
       }
-      if (part.startsWith("$") && part.endsWith("$")) {
+      if (part.startsWith("$") && part.endsWith("$"))
         return <InlineMath key={index} math={part.slice(1, -1)} />;
-      }
       if (part.startsWith("[[") && part.endsWith("]]")) {
         const linkText = part.slice(2, -2);
         return (

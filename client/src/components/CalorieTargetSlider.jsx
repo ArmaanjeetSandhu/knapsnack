@@ -61,9 +61,7 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
     setIsAnimating(true);
   };
   useEffect(() => {
-    if (autoFocus && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (autoFocus && inputRef.current) inputRef.current.focus();
   }, [autoFocus]);
   useEffect(() => {
     if (isAnimating) {

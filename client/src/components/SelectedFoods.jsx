@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Calculator, Download, ListCheck, Trash2 } from "lucide-react";
+import { Download, ListCheck, ListX, Trash2, WandSparkles } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -65,9 +65,7 @@ const SelectedFoods = ({
   const handleInputChange = (fdcId, field, value) => {
     onFoodsUpdate(
       foods.map((food) => {
-        if (food.fdcId === fdcId) {
-          return { ...food, [field]: value };
-        }
+        if (food.fdcId === fdcId) return { ...food, [field]: value };
         return food;
       }),
     );
@@ -131,9 +129,8 @@ const SelectedFoods = ({
 
   const handleSort = (key) => {
     let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+    if (sortConfig.key === key && sortConfig.direction === "ascending")
       direction = "descending";
-    }
     setSortConfig({ key, direction });
   };
 
@@ -155,12 +152,10 @@ const SelectedFoods = ({
           aValue = parseFloat(a.maxServing) || 0;
           bValue = parseFloat(b.maxServing) || 0;
         }
-        if (aValue < bValue) {
+        if (aValue < bValue)
           return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (aValue > bValue) {
+        if (aValue > bValue)
           return sortConfig.direction === "ascending" ? 1 : -1;
-        }
         return 0;
       });
     }
@@ -168,17 +163,14 @@ const SelectedFoods = ({
   };
 
   const getSortIcon = (key) => {
-    if (sortConfig.key !== key) {
-      return null;
-    }
+    if (sortConfig.key !== key) return null;
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
 
   const sortedFoods = getSortedFoods();
 
-  if (feasibilityData) {
+  if (feasibilityData)
     return <FeasibilityAnalysis feasibilityData={feasibilityData} />;
-  }
 
   return (
     <>
@@ -197,7 +189,7 @@ const SelectedFoods = ({
                   onClick={handleClearAll}
                   className="flex items-center gap-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <ListX className="w-4 h-4" />
                   Clear All
                 </Button>
                 <Button
@@ -406,7 +398,7 @@ const SelectedFoods = ({
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <Calculator className="w-5 h-5" />
+                        <WandSparkles className="w-5 h-5" />
                         <span className="font-medium">Optimize Diet Plan</span>
                       </div>
                     )}
