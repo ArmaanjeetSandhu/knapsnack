@@ -113,31 +113,37 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
     {
       name: "Thiamin (Vitamin B₁)",
       value: results.nutrient_totals["Thiamin (mg)"],
+      key: "Thiamin (mg)",
       unit: "mg",
     },
     {
       name: "Riboflavin (Vitamin B₂)",
       value: results.nutrient_totals["Riboflavin (mg)"],
+      key: "Riboflavin (mg)",
       unit: "mg",
     },
     {
       name: "Niacin (Vitamin B₃)",
       value: results.nutrient_totals["Niacin (mg)"],
+      key: "Niacin (mg)",
       unit: "mg",
     },
     {
       name: "Vitamin B₆",
       value: results.nutrient_totals["Vitamin B6 (mg)"],
+      key: "Vitamin B6 (mg)",
       unit: "mg",
     },
     {
       name: "Folate (Vitamin B₉)",
       value: results.nutrient_totals["Folate (µg)"],
+      key: "Folate (µg)",
       unit: "µg",
     },
     {
       name: "Pantothenic Acid (Vitamin B₅)",
       value: results.nutrient_totals["Pantothenic Acid (mg)"],
+      key: "Pantothenic Acid (mg)",
       unit: "mg",
     },
   ];
