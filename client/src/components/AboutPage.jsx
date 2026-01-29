@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
 import { Card, CardContent } from "./ui/card";
@@ -233,9 +233,10 @@ const ContentRenderer = ({ content }) => {
             key={index}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary underline"
+            className="inline-flex items-center gap-1 text-primary underline"
           >
             {linkText}
+            <ExternalLink className="w-3 h-3" />
           </a>
         );
       }
@@ -246,9 +247,10 @@ const ContentRenderer = ({ content }) => {
             key={index}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary underline"
+            className="inline-flex items-center gap-1 text-primary underline"
           >
             {part}
+            <ExternalLink className="w-3 h-3" />
           </a>
         );
       }
@@ -293,7 +295,7 @@ const AboutPage = () => {
   }, [openItemIndex]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="w-full mx-auto p-4">
       <Card>
         <CardContent className="p-6">
           <div className="pb-4 border-b">

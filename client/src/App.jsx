@@ -222,6 +222,14 @@ function App() {
     hasVisitedFoodSelection,
   } = state;
 
+  const effectiveNutrientGoals = useCustomBounds
+    ? {
+        ...nutrientGoals,
+        lower_bounds: adjustedLowerBounds || nutrientGoals.lower_bounds,
+        upper_bounds: adjustedUpperBounds || nutrientGoals.upper_bounds,
+      }
+    : nutrientGoals;
+
   const mainPlanner = (
     <>
       {error && (
@@ -254,7 +262,7 @@ function App() {
           <PersonalInfoForm onSubmit={handleFormSubmit} />
         </div>
       ) : showCalculationResults ? (
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full mx-auto">
           {hasVisitedFoodSelection && (
             <div className="mb-4">
               <Button
@@ -392,6 +400,7 @@ function App() {
               <OptimizationResults
                 results={optimizationResults}
                 selectedFoods={snapshotFoods}
+                nutrientGoals={effectiveNutrientGoals}
               />
               <div className="mt-6">
                 <Button

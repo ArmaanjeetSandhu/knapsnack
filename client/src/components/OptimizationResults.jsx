@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
   Beaker,
@@ -5,7 +6,9 @@ import {
   Currency,
   Download,
   Droplets,
+  LayoutGrid,
   Sliders,
+  Table as TableIcon,
   Utensils,
 } from "lucide-react";
 import { useState } from "react";
@@ -17,7 +20,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { ScrollArea } from "../components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -34,68 +36,9 @@ import {
 } from "../components/ui/tabs";
 import { formatValue, getNonZeroItems, sortItems } from "../lib/resultsHelpers";
 import handleExportCSV from "./ExportHandler";
+import { NutrientCards, NutrientTable } from "./NutrientDisplay";
 
-const SortableNutrientTable = ({ nutrients, formatValue }) => {
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: "ascending",
-  });
-
-  const handleSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending") {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === "ascending" ? " ↑" : " ↓";
-  };
-
-  const sortedNutrients = sortItems(nutrients, sortConfig, "nutrients");
-
-  return (
-    <Table>
-      <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
-        <TableRow>
-          <TableHead
-            onClick={() => handleSort("nutrient")}
-            className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
-          >
-            Nutrient{getSortIcon("nutrient")}
-          </TableHead>
-          <TableHead
-            onClick={() => handleSort("amount")}
-            className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
-          >
-            Amount{getSortIcon("amount")}
-          </TableHead>
-          <TableHead
-            onClick={() => handleSort("unit")}
-            className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select"
-          >
-            Unit{getSortIcon("unit")}
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {sortedNutrients.map((nutrient, index) => (
-          <TableRow key={index}>
-            <TableCell className="font-medium">{nutrient.name}</TableCell>
-            <TableCell className="text-right">
-              {formatValue(nutrient.value)}
-            </TableCell>
-            <TableCell className="text-right">{nutrient.unit}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-};
-
-const OptimizationResults = ({ results, selectedFoods }) => {
+const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
   const [portionsSortConfig, setPortionsSortConfig] = useState({
     key: null,
@@ -252,15 +195,14 @@ const OptimizationResults = ({ results, selectedFoods }) => {
     },
   ];
 
+  const lowerBounds = nutrientGoals?.lower_bounds || {};
+  const upperBounds = nutrientGoals?.upper_bounds || {};
+
   const handleExportClick = () => {
     handleExportCSV(results, selectedFoods);
   };
 
-  const renderNutrientTable = (nutrients) => (
-    <SortableNutrientTable nutrients={nutrients} formatValue={formatValue} />
-  );
-
-  const renderNutrientCards = (nutrients) => (
+  const renderSimpleNutrientCards = (nutrients) => (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {nutrients.map((nutrient, index) => (
         <Card key={index}>
@@ -280,19 +222,10 @@ const OptimizationResults = ({ results, selectedFoods }) => {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader className="space-y-0 pb-2">
           <CardTitle className="text-2xl font-bold">
             Optimized Diet Plan
           </CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExportClick}
-            className="flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Export Plan
-          </Button>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
@@ -365,10 +298,21 @@ const OptimizationResults = ({ results, selectedFoods }) => {
               </Alert>
             )}
             <div>
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Utensils className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-                Recommended Daily Portions
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Utensils className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                  Recommended Daily Portions
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExportClick}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Export Plan
+                </Button>
+              </div>
               <div className="rounded-md border">
                 <Table>
                   <TableHeader
@@ -464,7 +408,7 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                 <Droplets className="w-5 h-5 text-blue-500 dark:text-blue-400" />
                 Hydration
               </h3>
-              {renderNutrientCards(hydration)}
+              {renderSimpleNutrientCards(hydration)}
             </div>
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -474,22 +418,19 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                 </h3>
                 <div className="flex items-center gap-2">
                   <Button
-                    variant={
-                      nutrientDisplayMode === "cards" ? "default" : "outline"
-                    }
+                    variant="outline"
                     size="sm"
-                    onClick={() => setNutrientDisplayMode("cards")}
-                  >
-                    Cards
-                  </Button>
-                  <Button
-                    variant={
-                      nutrientDisplayMode === "table" ? "default" : "outline"
+                    onClick={() =>
+                      setNutrientDisplayMode((prev) =>
+                        prev === "table" ? "cards" : "table",
+                      )
                     }
-                    size="sm"
-                    onClick={() => setNutrientDisplayMode("table")}
                   >
-                    Table
+                    {nutrientDisplayMode === "table" ? (
+                      <LayoutGrid className="w-4 h-4" />
+                    ) : (
+                      <TableIcon className="w-4 h-4" />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -506,25 +447,91 @@ const OptimizationResults = ({ results, selectedFoods }) => {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="vitamins">
-                  <ScrollArea className="h-[400px] relative">
-                    {nutrientDisplayMode === "table"
-                      ? renderNutrientTable(vitamins)
-                      : renderNutrientCards(vitamins)}
-                  </ScrollArea>
+                  <div className="h-[400px] overflow-y-auto relative">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={nutrientDisplayMode}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {nutrientDisplayMode === "table" ? (
+                          <NutrientTable
+                            nutrients={vitamins}
+                            lowerBounds={lowerBounds}
+                            upperBounds={upperBounds}
+                            showBoundsInLayout={false}
+                          />
+                        ) : (
+                          <NutrientCards
+                            nutrients={vitamins}
+                            lowerBounds={lowerBounds}
+                            upperBounds={upperBounds}
+                            showBoundsInLayout={false}
+                          />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </TabsContent>
                 <TabsContent value="minerals">
-                  <ScrollArea className="h-[400px] relative">
-                    {nutrientDisplayMode === "table"
-                      ? renderNutrientTable(minerals)
-                      : renderNutrientCards(minerals)}
-                  </ScrollArea>
+                  <div className="h-[400px] overflow-y-auto relative">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={nutrientDisplayMode}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {nutrientDisplayMode === "table" ? (
+                          <NutrientTable
+                            nutrients={minerals}
+                            lowerBounds={lowerBounds}
+                            upperBounds={upperBounds}
+                            showBoundsInLayout={false}
+                          />
+                        ) : (
+                          <NutrientCards
+                            nutrients={minerals}
+                            lowerBounds={lowerBounds}
+                            upperBounds={upperBounds}
+                            showBoundsInLayout={false}
+                          />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </TabsContent>
                 <TabsContent value="others">
-                  <ScrollArea className="h-[400px] relative">
-                    {nutrientDisplayMode === "table"
-                      ? renderNutrientTable(others)
-                      : renderNutrientCards(others)}
-                  </ScrollArea>
+                  <div className="h-[400px] overflow-y-auto relative">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={nutrientDisplayMode}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {nutrientDisplayMode === "table" ? (
+                          <NutrientTable
+                            nutrients={others}
+                            lowerBounds={lowerBounds}
+                            upperBounds={upperBounds}
+                            showBoundsInLayout={false}
+                          />
+                        ) : (
+                          <NutrientCards
+                            nutrients={others}
+                            lowerBounds={lowerBounds}
+                            upperBounds={upperBounds}
+                            showBoundsInLayout={false}
+                          />
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>

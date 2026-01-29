@@ -8,18 +8,27 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import { formatValue } from "../lib/resultsHelpers";
 import NutrientInfoPopup from "./NutrientInfoPopup";
 
 const BlinkingDot = () => (
   <div className="w-2 h-2 shrink-0 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
 );
 
-export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
+export const NutrientTable = ({
+  nutrients,
+  lowerBounds,
+  upperBounds,
+  showBoundsInLayout = true,
+}) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
+
+  const showAmount = nutrients.some((n) => n.value !== undefined);
+  const showBounds = (lowerBounds || upperBounds) && showBoundsInLayout;
 
   const getNutrientKey = (nutrient) => {
     return nutrient.key || `${nutrient.name} (${nutrient.unit})`;
@@ -29,9 +38,10 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
     const key = getNutrientKey(nutrient);
     setSelectedNutrient({
       name: nutrient.name,
-      rda: lowerBounds[key],
-      ul: upperBounds[key],
+      rda: lowerBounds ? lowerBounds[key] : undefined,
+      ul: upperBounds ? upperBounds[key] : undefined,
       unit: nutrient.unit,
+      amount: nutrient.value,
     });
   };
 
@@ -53,12 +63,15 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
         if (sortConfig.key === "nutrient") {
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
+        } else if (sortConfig.key === "amount") {
+          aValue = a.value || 0;
+          bValue = b.value || 0;
         } else if (sortConfig.key === "rda") {
-          aValue = lowerBounds[keyA] || 0;
-          bValue = lowerBounds[keyB] || 0;
+          aValue = (lowerBounds && lowerBounds[keyA]) || 0;
+          bValue = (lowerBounds && lowerBounds[keyB]) || 0;
         } else if (sortConfig.key === "ul") {
-          aValue = upperBounds[keyA] || 0;
-          bValue = upperBounds[keyB] || 0;
+          aValue = (upperBounds && upperBounds[keyA]) || 0;
+          bValue = (upperBounds && upperBounds[keyB]) || 0;
         } else if (sortConfig.key === "unit") {
           aValue = a.unit.toLowerCase();
           bValue = b.unit.toLowerCase();
@@ -96,18 +109,30 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
               >
                 Nutrient{getSortIcon("nutrient")}
               </TableHead>
-              <TableHead
-                onClick={() => handleSort("rda")}
-                className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
-              >
-                RDA{getSortIcon("rda")}
-              </TableHead>
-              <TableHead
-                onClick={() => handleSort("ul")}
-                className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
-              >
-                UL{getSortIcon("ul")}
-              </TableHead>
+              {showAmount && (
+                <TableHead
+                  onClick={() => handleSort("amount")}
+                  className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
+                >
+                  Amount{getSortIcon("amount")}
+                </TableHead>
+              )}
+              {showBounds && (
+                <>
+                  <TableHead
+                    onClick={() => handleSort("rda")}
+                    className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
+                  >
+                    RDA{getSortIcon("rda")}
+                  </TableHead>
+                  <TableHead
+                    onClick={() => handleSort("ul")}
+                    className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
+                  >
+                    UL{getSortIcon("ul")}
+                  </TableHead>
+                </>
+              )}
               <TableHead
                 onClick={() => handleSort("unit")}
                 className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
@@ -131,12 +156,21 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
                       <span>{nutrient.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {lowerBounds[key]?.toLocaleString() ?? "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {upperBounds[key]?.toLocaleString() ?? "N/A"}
-                  </TableCell>
+                  {showAmount && (
+                    <TableCell className="text-right">
+                      {formatValue(nutrient.value)}
+                    </TableCell>
+                  )}
+                  {showBounds && (
+                    <>
+                      <TableCell className="text-right">
+                        {lowerBounds[key]?.toLocaleString() ?? "N/A"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {upperBounds[key]?.toLocaleString() ?? "N/A"}
+                      </TableCell>
+                    </>
+                  )}
                   <TableCell className="text-right">{nutrient.unit}</TableCell>
                 </TableRow>
               );
@@ -152,32 +186,42 @@ export const NutrientTable = ({ nutrients, lowerBounds, upperBounds }) => {
           rda={selectedNutrient.rda}
           ul={selectedNutrient.ul}
           unit={selectedNutrient.unit}
+          amount={selectedNutrient.amount}
         />
       )}
     </>
   );
 };
 
-export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
+export const NutrientCards = ({
+  nutrients,
+  lowerBounds,
+  upperBounds,
+  showBoundsInLayout = true,
+}) => {
   const [selectedNutrient, setSelectedNutrient] = useState(null);
 
   const getNutrientKey = (nutrient) => {
     return nutrient.key || `${nutrient.name} (${nutrient.unit})`;
   };
 
+  const showAmount = nutrients.some((n) => n.value !== undefined);
+  const showBounds = (lowerBounds || upperBounds) && showBoundsInLayout;
+
   const handleCardClick = (nutrient) => {
     const key = getNutrientKey(nutrient);
     setSelectedNutrient({
       name: nutrient.name,
-      rda: lowerBounds[key],
-      ul: upperBounds[key],
+      rda: lowerBounds ? lowerBounds[key] : undefined,
+      ul: upperBounds ? upperBounds[key] : undefined,
       unit: nutrient.unit,
+      amount: nutrient.value,
     });
   };
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-3">
         {nutrients.map((nutrient, index) => {
           const key = getNutrientKey(nutrient);
           return (
@@ -194,26 +238,38 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
                   </h4>
                 </div>
                 <div className="space-y-1 mt-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm">RDA:</span>
-                    <span className="font-medium">
-                      {lowerBounds[key] != null
-                        ? `${lowerBounds[key].toLocaleString()} ${
-                            nutrient.unit
-                          }`
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm">UL:</span>
-                    <span className="font-medium">
-                      {upperBounds[key] != null
-                        ? `${upperBounds[key].toLocaleString()} ${
-                            nutrient.unit
-                          }`
-                        : "N/A"}
-                    </span>
-                  </div>
+                  {showAmount && (
+                    <div className="flex justify-between">
+                      <span className="text-sm">Amount:</span>
+                      <span className="font-medium">
+                        {formatValue(nutrient.value)} {nutrient.unit}
+                      </span>
+                    </div>
+                  )}
+                  {showBounds && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-sm">RDA:</span>
+                        <span className="font-medium">
+                          {lowerBounds && lowerBounds[key] != null
+                            ? `${lowerBounds[key].toLocaleString()} ${
+                                nutrient.unit
+                              }`
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">UL:</span>
+                        <span className="font-medium">
+                          {upperBounds && upperBounds[key] != null
+                            ? `${upperBounds[key].toLocaleString()} ${
+                                nutrient.unit
+                              }`
+                            : "N/A"}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -228,6 +284,7 @@ export const NutrientCards = ({ nutrients, lowerBounds, upperBounds }) => {
           rda={selectedNutrient.rda}
           ul={selectedNutrient.ul}
           unit={selectedNutrient.unit}
+          amount={selectedNutrient.amount}
         />
       )}
     </>
