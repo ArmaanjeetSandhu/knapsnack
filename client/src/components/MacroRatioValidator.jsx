@@ -5,6 +5,34 @@ import { Card, CardContent } from "../components/ui/card";
 
 const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
   const firstInputRef = useRef(null);
+
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains("dark"),
+  );
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "class") {
+          updateTheme();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const amdrRanges = useMemo(
     () => ({
       protein: { min: 10, max: 40 },
@@ -13,6 +41,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     }),
     [],
   );
+
   const [macros, setMacros] = useState(
     initialMacros || {
       protein: 30,
@@ -157,8 +186,9 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
       const range = amdrRanges[macro];
       const value = macros[macro];
       const colors = macroColors[macro].slider;
-      const isDark = document.documentElement.classList.contains("dark");
+
       const currentColors = isDark ? colors.dark : colors.light;
+
       return `linear-gradient(to right,
       ${currentColors.invalid} 0%,
       ${currentColors.invalid} ${range.min}%,
@@ -170,7 +200,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
       ${currentColors.invalid} 100%
     )`;
     },
-    [amdrRanges, macros, macroColors],
+    [amdrRanges, macros, macroColors, isDark],
   );
 
   return (
