@@ -60,7 +60,7 @@ const ThemeToggle = () => {
           ? "text-yellow-500 hover:text-yellow-200"
           : "text-white hover:text-gray-300"
       }`}
-      title="Ctrl (or Cmd) + \"
+      title="Ctrl (or ⌘) + \"
     >
       {isDark ? (
         <Sun className="h-5 w-5 transition-all" />

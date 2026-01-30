@@ -40,7 +40,7 @@ const NUTRIENT_INFO = {
       "Constipation",
       "Interference with other minerals",
     ],
-    category: "Mineral",
+    category: "Macromineral",
   },
   Thiamin: {
     displayName: "Thiamin (Vitamin B₁)",
@@ -173,21 +173,21 @@ const NUTRIENT_INFO = {
       "Fluid retention",
       "Kidney stones",
     ],
-    category: "Mineral",
+    category: "Macromineral",
   },
   Magnesium: {
     description: "Cofactor for over 300 enzyme systems and muscle function",
     sources: ["Pumpkin seeds", "Chia seeds", "Almonds", "Spinach"],
     deficiencySymptoms: ["Muscle tremors/cramps", "Arrhythmias", "Fatigue"],
     toxicitySymptoms: ["Diarrhoea", "Muscle weakness", "Cardiac arrest"],
-    category: "Mineral",
+    category: "Macromineral",
   },
   Phosphorus: {
     description: "Structural component of bones, DNA, and ATP",
     sources: ["Yogurt", "Milk", "Salmon", "Scallops"],
     deficiencySymptoms: ["Muscle weakness", "Bone pain", "Confusion"],
     toxicitySymptoms: ["Calcium deposits in tissues", "Bone damage"],
-    category: "Mineral",
+    category: "Macromineral",
   },
   Potassium: {
     description: "Maintains nerve transmission and muscle contraction",
@@ -198,7 +198,7 @@ const NUTRIENT_INFO = {
       "Heart arrhythmias",
     ],
     toxicitySymptoms: ["Cardiac arrest", "Heart palpitations"],
-    category: "Mineral",
+    category: "Macromineral",
   },
   Manganese: {
     description: "Antioxidant defense and bone formation",
@@ -213,7 +213,7 @@ const NUTRIENT_INFO = {
       "Muscle rigidity",
       "Neurological instability",
     ],
-    category: "Mineral",
+    category: "Trace mineral",
   },
   Iron: {
     description: "Essential for oxygen transport (haemoglobin) and energy",
@@ -224,14 +224,14 @@ const NUTRIENT_INFO = {
       "Pale skin/Weakness",
     ],
     toxicitySymptoms: ["Vomiting", "Organ failure", "Liver cirrhosis"],
-    category: "Mineral",
+    category: "Trace mineral",
   },
   Zinc: {
     description: "Critical for immune function, DNA synthesis, and healing",
     sources: ["Oysters", "Beef", "Blue crab", "Pumpkin seeds"],
     deficiencySymptoms: ["Stunted growth", "Hair loss", "Loss of taste"],
     toxicitySymptoms: ["Copper deficiency", "Lowered immune function"],
-    category: "Mineral",
+    category: "Trace mineral",
   },
   Selenium: {
     description: "Antioxidant defense and thyroid hormone activation",
@@ -246,7 +246,7 @@ const NUTRIENT_INFO = {
       "Garlic breath",
       "Nervous system abnormalities",
     ],
-    category: "Mineral",
+    category: "Trace mineral",
   },
 };
 
