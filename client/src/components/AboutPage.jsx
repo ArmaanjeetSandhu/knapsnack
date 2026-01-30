@@ -278,9 +278,30 @@ const ContentRenderer = ({ content }) => {
 const mainQuestion = faqs[0];
 const otherFaqs = faqs.slice(1);
 
+const createSlug = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/[[\]]/g, "")
+    .replace(/([a-z0-9])['"]([a-z0-9])/g, "$1$2")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+};
+
 const AboutPage = () => {
   const [openItemIndex, setOpenItemIndex] = useState(null);
   const faqRefs = useRef([]);
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const index = otherFaqs.findIndex(
+        (faq) => createSlug(faq.question) === hash,
+      );
+      if (index !== -1) {
+        setOpenItemIndex(index);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (openItemIndex !== null && faqRefs.current[openItemIndex]) {
@@ -292,6 +313,22 @@ const AboutPage = () => {
       }, 400);
     }
   }, [openItemIndex]);
+
+  const handleToggle = (index) => {
+    const isOpening = openItemIndex !== index;
+    setOpenItemIndex(isOpening ? index : null);
+
+    if (isOpening) {
+      const slug = createSlug(otherFaqs[index].question);
+      window.history.replaceState(null, null, `#${slug}`);
+    } else {
+      window.history.replaceState(
+        null,
+        null,
+        window.location.pathname + window.location.search,
+      );
+    }
+  };
 
   return (
     <div className="w-full mx-auto p-4">
@@ -311,9 +348,7 @@ const AboutPage = () => {
                 className="border-b last:border-b-0 scroll-mt-5"
               >
                 <button
-                  onClick={() =>
-                    setOpenItemIndex(openItemIndex === index ? null : index)
-                  }
+                  onClick={() => handleToggle(index)}
                   className="flex w-full items-center justify-between py-4 text-left font-medium hover:underline focus:outline-none"
                 >
                   <span className="text-lg">{faq.question}</span>
