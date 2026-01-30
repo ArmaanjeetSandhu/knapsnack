@@ -309,7 +309,7 @@ const CalculationResults = ({
             transition={{ duration: 0.4, delay: 0.2 }}
           >
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Beef className="w-5 h-5 text-red-700 dark:text-red-600" />
+              <Beef className="w-5 h-5 text-pink-500 dark:text-pink-400" />
               Macronutrient Targets
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

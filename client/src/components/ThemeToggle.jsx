@@ -1,5 +1,5 @@
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 const ThemeToggle = () => {
@@ -25,7 +25,7 @@ const ThemeToggle = () => {
     }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
 
@@ -36,7 +36,19 @@ const ThemeToggle = () => {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("knapsnack_theme", "light");
     }
-  };
+  }, [isDark]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "\\") {
+        event.preventDefault();
+        toggleTheme();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggleTheme]);
 
   return (
     <Button
@@ -48,6 +60,7 @@ const ThemeToggle = () => {
           ? "text-yellow-500 hover:text-yellow-200"
           : "text-white hover:text-gray-300"
       }`}
+      title="Ctrl (or Cmd) + \"
     >
       {isDark ? (
         <Sun className="h-5 w-5 transition-all" />

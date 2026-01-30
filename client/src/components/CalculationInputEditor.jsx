@@ -490,7 +490,7 @@ export default function CalculationInputEditor({
           className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner select-none"
         >
           <div
-            className="absolute h-full bg-pink-500 rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
+            className="absolute h-full bg-[#5A7ACD] dark:bg-[#234C6A] rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{ width: `${protein}%` }}
           >
             <span className="text-white font-bold text-xs select-none whitespace-nowrap">
@@ -499,7 +499,7 @@ export default function CalculationInputEditor({
           </div>
 
           <div
-            className="absolute h-full bg-indigo-500 transition-all duration-100 flex items-center justify-center overflow-hidden"
+            className="absolute h-full bg-[#FEB05D] dark:bg-[#456882] transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{
               left: `${protein}%`,
               width: `${carbs}%`,
@@ -511,13 +511,13 @@ export default function CalculationInputEditor({
           </div>
 
           <div
-            className="absolute h-full bg-yellow-500 rounded-r-full transition-all duration-100 flex items-center justify-center overflow-hidden"
+            className="absolute h-full bg-[#F5F2F2] dark:bg-[#D2C1B6] rounded-r-full transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{
               left: `${protein + carbs}%`,
               width: `${fat}%`,
             }}
           >
-            <span className="text-white font-bold text-xs select-none whitespace-nowrap">
+            <span className="text-gray-900 font-bold text-xs select-none whitespace-nowrap">
               F : {fat}%
             </span>
           </div>
