@@ -32,7 +32,7 @@ const LandingPage = ({ onGetStarted }) => {
         poster="/background-fallback.png"
         className="absolute w-full h-full object-cover"
         style={{
-          filter: "brightness(50%)",
+          filter: "brightness(55%)",
           minWidth: "100%",
           minHeight: "100%",
         }}
@@ -41,8 +41,10 @@ const LandingPage = ({ onGetStarted }) => {
         Your browser does not support the video tag.
       </video>
       <div className="relative z-10 text-center text-white px-4">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6">Knap[Snack]</h1>
-        <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 select-none">
+          Knap[Snack]
+        </h1>
+        <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto select-none">
           The Cost-Optimized Meal Planner
         </p>
         <Button

@@ -297,9 +297,7 @@ const AboutPage = () => {
       const index = otherFaqs.findIndex(
         (faq) => createSlug(faq.question) === hash,
       );
-      if (index !== -1) {
-        setOpenItemIndex(index);
-      }
+      if (index !== -1) setOpenItemIndex(index);
     }
   }, []);
 
