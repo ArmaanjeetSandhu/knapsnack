@@ -320,8 +320,9 @@ def solve_optimization_problem(
 
             prob += pulp.lpSum([values[j] * x[j] for j in range(num_foods)]) >= goal
 
-            prob += pulp.lpSum([values[j] * x[j] for j in range(num_foods)]) <= int(
-                goal * overflow_factor
+            prob += (
+                pulp.lpSum([values[j] * x[j] for j in range(num_foods)])
+                <= goal * overflow_factor
             )
 
     if "saturated_fats" in nutrient_goals:

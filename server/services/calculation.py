@@ -8,7 +8,7 @@ import pandas as pd
 
 from server.data.nutrient_data import get_nutrient_bounds
 from server.utils.nutrient_utils import (
-    calculate_bmr_mifflin_st_jeor,
+    calculate_bmr,
     calculate_macros,
     calculate_tdee,
 )
@@ -90,9 +90,9 @@ def calculate_nutrition_requirements(
     Returns:
         Dictionary with nutritional requirements
     """
-    bmr = calculate_bmr_mifflin_st_jeor(gender, weight, height, age)
+    bmr = calculate_bmr(gender, weight, height, age)
     tdee = calculate_tdee(bmr, activity_multiplier)
-    daily_caloric_intake = int(percentage * tdee)
+    daily_caloric_intake = percentage * tdee
 
     protein, carbohydrate, fats, fibre, saturated_fats = calculate_macros(
         daily_caloric_intake, pratio, cratio, fratio
