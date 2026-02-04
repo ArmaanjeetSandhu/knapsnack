@@ -7,6 +7,7 @@ import {
   Plus,
   Search,
   Upload,
+  X,
 } from "lucide-react";
 import Papa from "papaparse";
 import { useState } from "react";
@@ -121,6 +122,11 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     } finally {
       setSampleLoading(false);
     }
+  };
+
+  const handleCloseResults = () => {
+    setSearchResults([]);
+    setHasSearched(false);
   };
 
   const isAdded = (foodId) => {
@@ -261,14 +267,23 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
           <AnimatePresence>
             {searchResults.length > 0 && (
               <motion.div
-                className="search-results"
+                className="search-results border rounded-md overflow-hidden"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                {/* <h6 className="text-sm font-semibold mb-3">Search Results</h6> */}
-                <ScrollArea className="h-[400px] rounded-md border">
+                <div className="flex items-center justify-between bg-muted/50 px-4 py-2 border-b">
+                  <h6 className="text-sm font-semibold">Search Results</h6>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleCloseResults}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <ScrollArea className="h-[400px]">
                   <div className="divide-y">
                     <AnimatePresence initial={false}>
                       {searchResults.map((food, index) => {
@@ -302,11 +317,11 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                               >
                                 {added ? (
                                   <>
-                                    <Check className="w-4 h-4 mr-1" />
+                                    <Check className="w-4 h-4" />
                                   </>
                                 ) : (
                                   <>
-                                    <Plus className="w-4 h-4 mr-1" />
+                                    <Plus className="w-4 h-4" />
                                   </>
                                 )}
                               </Button>
