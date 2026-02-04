@@ -211,7 +211,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <Utensils className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-                  Recommended Portions
+                  Daily Portions
                 </h3>
                 <Button
                   variant="outline"

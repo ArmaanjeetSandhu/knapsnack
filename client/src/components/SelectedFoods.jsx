@@ -84,8 +84,10 @@ const SelectedFoods = ({
         parseFloat(food.price) < 0 ||
         !food.servingSize ||
         parseFloat(food.servingSize) <= 0 ||
-        parseFloat(food.maxServing) <= 0 ||
-        parseFloat(food.maxServing) < parseFloat(food.servingSize),
+        (food.maxServing !== "" &&
+          (isNaN(parseFloat(food.maxServing)) ||
+            parseFloat(food.maxServing) <= 0 ||
+            parseFloat(food.maxServing) < parseFloat(food.servingSize))),
     );
 
     if (invalidFoods.length > 0) {
@@ -360,7 +362,6 @@ const SelectedFoods = ({
                                     )
                                   }
                                   className="w-[100px]"
-                                  placeholder="500"
                                   aria-label={`Maximum Serving in grams for ${food.description}`}
                                 />
                               </div>

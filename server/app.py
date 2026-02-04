@@ -18,7 +18,7 @@ from server.config import (
     API_ENDPOINT,
     CACHE_CONTROL_SETTINGS,
     CONTENT_SECURITY_POLICY,
-    DEFAULT_MAX_SERVING,
+    UNLIMITED_MAX_SERVING,
     DEFAULT_PORT,
     HEIGHT_MAX,
     HEIGHT_MIN,
@@ -243,7 +243,6 @@ def optimize_api():
         age = int(data["age"])
         gender = data["gender"]
         smoking_status = data.get("smokingStatus", "no")
-        default_max_serving = data.get("max_serving_size", DEFAULT_MAX_SERVING)
 
         if age < AGE_MIN or age > AGE_MAX:
             return create_error_response(f"Age must be between {AGE_MIN} and {AGE_MAX}")
@@ -252,12 +251,20 @@ def optimize_api():
             return create_error_response("No foods selected")
 
         costs = np.array([food["price"] for food in selected_foods_data])
-        max_servings = np.array(
-            [
-                food.get("maxServing", default_max_serving) / food["servingSize"]
-                for food in selected_foods_data
-            ]
-        )
+
+        max_servings_list = []
+        for food in selected_foods_data:
+            serving_size = float(food["servingSize"])
+            max_val = food.get("maxServing")
+
+            if max_val is None or max_val == "" or float(max_val) == 0:
+                limit = UNLIMITED_MAX_SERVING
+            else:
+                limit = float(max_val)
+
+            max_servings_list.append(limit / serving_size)
+
+        max_servings = np.array(max_servings_list)
 
         has_custom_bounds = False
         lower_bounds, upper_bounds = get_nutrient_bounds(age, gender)

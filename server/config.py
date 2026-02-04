@@ -10,7 +10,7 @@ load_dotenv()
 
 DEFAULT_PORT = 5000
 API_ENDPOINT = "https://api.nal.usda.gov/fdc/v1/foods/search"
-DEFAULT_MAX_SERVING = 500
+UNLIMITED_MAX_SERVING = 500000
 
 AGE_MIN = 19
 AGE_MAX = 100
