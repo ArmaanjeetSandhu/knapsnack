@@ -9,6 +9,10 @@ import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
 
+const preventInvalidChars = (e) => {
+  if ([".", "+", "-", "e", "E"].includes(e.key)) e.preventDefault();
+};
+
 const PersonalInfoForm = ({ onSubmit }) => {
   const [showSmokingHelp, setShowSmokingHelp] = useState(false);
 
@@ -92,6 +96,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             type="number"
             autoFocus
             value={formData.age}
+            onKeyDown={preventInvalidChars}
             onChange={(e) => handleInputChange("age", e.target.value)}
             placeholder="Enter your age"
             className="text-lg"
@@ -103,6 +108,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             type="number"
             autoFocus
             value={formData.weight}
+            onKeyDown={preventInvalidChars}
             onChange={(e) => handleInputChange("weight", e.target.value)}
             placeholder="Enter your weight (kg)"
             className="text-lg"
@@ -114,6 +120,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             type="number"
             autoFocus
             value={formData.height}
+            onKeyDown={preventInvalidChars}
             onChange={(e) => handleInputChange("height", e.target.value)}
             placeholder="Enter your height (cm)"
             className="text-lg"

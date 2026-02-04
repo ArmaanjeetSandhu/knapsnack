@@ -68,8 +68,8 @@ function App() {
       actions.setUserInfo({
         ...formData,
         age: parseInt(formData.age),
-        weight: parseFloat(formData.weight),
-        height: parseFloat(formData.height),
+        weight: parseInt(formData.weight),
+        height: parseInt(formData.height),
       });
       actions.setShowCalculationResults(true);
       setError(null);
@@ -119,8 +119,8 @@ function App() {
       actions.setUserInfo({
         ...updatedData,
         age: parseInt(updatedData.age),
-        weight: parseFloat(updatedData.weight),
-        height: parseFloat(updatedData.height),
+        weight: parseInt(updatedData.weight),
+        height: parseInt(updatedData.height),
       });
       setError(null);
       setIsEditModalOpen(false);

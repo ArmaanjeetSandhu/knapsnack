@@ -20,7 +20,6 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
 import { processCSVData } from "../lib/csvParser";
 import api from "../services/api";
 
@@ -283,7 +282,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
-                <ScrollArea className="h-[400px]">
+                <div className="h-[400px] overflow-y-auto">
                   <div className="divide-y">
                     <AnimatePresence initial={false}>
                       {searchResults.map((food, index) => {
@@ -331,8 +330,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                       })}
                     </AnimatePresence>
                   </div>
-                  <ScrollBar />
-                </ScrollArea>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
