@@ -36,6 +36,26 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
   const [hasSearched, setHasSearched] = useState(false);
 
+  const handleParseComplete = (results) => {
+    const result = processCSVData(results);
+    if (result.success) {
+      onFoodsImport(result.data);
+      setSearchError(null);
+    } else {
+      setSearchError(result.error);
+    }
+  };
+
+  const createParseConfig = (errorPrefix) => ({
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    complete: handleParseComplete,
+    error: (error) => {
+      setSearchError(`${errorPrefix}: ${error.message}`);
+    },
+  });
+
   const handleApiKeySubmit = (e) => {
     e.preventDefault();
     if (!apiKey.trim()) {
@@ -83,23 +103,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    Papa.parse(file, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const result = processCSVData(results);
-        if (result.success) {
-          onFoodsImport(result.data);
-          setSearchError(null);
-        } else {
-          setSearchError(result.error);
-        }
-      },
-      error: (error) => {
-        setSearchError(`Error reading file: ${error.message}`);
-      },
-    });
+    Papa.parse(file, createParseConfig("Error reading file"));
     event.target.value = "";
   };
 
@@ -111,23 +115,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       if (!response.ok)
         throw new Error(`Failed to fetch sample diet (${response.status})`);
       const csvText = await response.text();
-      Papa.parse(csvText, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          const result = processCSVData(results);
-          if (result.success) {
-            onFoodsImport(result.data);
-            setSearchError(null);
-          } else {
-            setSearchError(result.error);
-          }
-        },
-        error: (error) => {
-          setSearchError(`Error processing sample diet: ${error.message}`);
-        },
-      });
+      Papa.parse(csvText, createParseConfig("Error processing sample diet"));
     } catch (error) {
       setSearchError(`Error loading sample diet: ${error.message}`);
     } finally {
