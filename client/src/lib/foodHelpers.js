@@ -1,3 +1,5 @@
+import { NUTRIENT_HEADERS, getNutrientKey } from "./csvConstants";
+
 export const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   const adjustedNutrients = {};
   for (const [nutrient, value] of Object.entries(nutrients)) {
@@ -36,52 +38,8 @@ export const exportSelectedFoodsToCSV = (foods) => {
     "Price Per Serving",
     "Serving Size (g)",
     "Max Serving (g)",
-    "Water (mL)",
-    "Carbohydrate (g)",
-    "Fibre (g)",
-    "Fats (g)",
-    "Saturated Fats (g)",
-    "Protein (g)",
-    "Thiamin (Vitamin B1) (mg)",
-    "Riboflavin (Vitamin B2) (mg)",
-    "Niacin (Vitamin B3) (mg)",
-    "Pantothenic Acid (Vitamin B5) (mg)",
-    "Vitamin B6 (mg)",
-    "Choline (mg)",
-    "Folate (Vitamin B9) (mcg)",
-    "Vitamin A (mcg)",
-    "Vitamin C (mg)",
-    "Vitamin E (mg)",
-    "Vitamin K (mcg)",
-    "Calcium (mg)",
-    "Iron (mg)",
-    "Magnesium (mg)",
-    "Manganese (mg)",
-    "Phosphorus (mg)",
-    "Potassium (mg)",
-    "Selenium (mcg)",
-    "Sodium (mg)",
-    "Zinc (mg)",
+    ...NUTRIENT_HEADERS,
   ];
-
-  const getNutrientKey = (header) => {
-    const mapping = {
-      "Carbohydrate (g)": "carbohydrate",
-      "Fibre (g)": "fibre",
-      "Fats (g)": "fats",
-      "Saturated Fats (g)": "saturated_fats",
-      "Protein (g)": "protein",
-      "Thiamin (Vitamin B1) (mg)": "Thiamin (mg)",
-      "Riboflavin (Vitamin B2) (mg)": "Riboflavin (mg)",
-      "Niacin (Vitamin B3) (mg)": "Niacin (mg)",
-      "Pantothenic Acid (Vitamin B5) (mg)": "Pantothenic Acid (mg)",
-      "Folate (Vitamin B9) (mcg)": "Folate (µg)",
-      "Vitamin A (mcg)": "Vitamin A (µg)",
-      "Vitamin K (mcg)": "Vitamin K (µg)",
-      "Selenium (mcg)": "Selenium (µg)",
-    };
-    return mapping[header] || header;
-  };
 
   let csvContent = headers.join(",") + "\n";
   foods.forEach((food) => {

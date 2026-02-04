@@ -34,6 +34,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
+import {
+  HYDRATION_CONFIG,
+  MINERALS_CONFIG,
+  OTHERS_CONFIG,
+  VITAMINS_CONFIG,
+} from "../config/nutrientData";
 import { formatValue, getNonZeroItems, sortItems } from "../lib/resultsHelpers";
 import handleExportCSV from "./ExportHandler";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
@@ -73,6 +79,12 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
 
+  const mapNutrientData = (config) =>
+    config.map((nutrient) => ({
+      ...nutrient,
+      value: results.nutrient_totals[nutrient.key],
+    }));
+
   const macronutrients = [
     { name: "Protein", value: results.nutrient_totals.protein, unit: "g" },
     {
@@ -89,117 +101,10 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
     },
   ];
 
-  const vitamins = [
-    {
-      name: "Vitamin A",
-      value: results.nutrient_totals["Vitamin A (µg)"],
-      unit: "µg",
-    },
-    {
-      name: "Vitamin C",
-      value: results.nutrient_totals["Vitamin C (mg)"],
-      unit: "mg",
-    },
-    {
-      name: "Vitamin E",
-      value: results.nutrient_totals["Vitamin E (mg)"],
-      unit: "mg",
-    },
-    {
-      name: "Vitamin K",
-      value: results.nutrient_totals["Vitamin K (µg)"],
-      unit: "µg",
-    },
-    {
-      name: "Thiamin (Vitamin B₁)",
-      value: results.nutrient_totals["Thiamin (mg)"],
-      key: "Thiamin (mg)",
-      unit: "mg",
-    },
-    {
-      name: "Riboflavin (Vitamin B₂)",
-      value: results.nutrient_totals["Riboflavin (mg)"],
-      key: "Riboflavin (mg)",
-      unit: "mg",
-    },
-    {
-      name: "Niacin (Vitamin B₃)",
-      value: results.nutrient_totals["Niacin (mg)"],
-      key: "Niacin (mg)",
-      unit: "mg",
-    },
-    {
-      name: "Vitamin B₆",
-      value: results.nutrient_totals["Vitamin B6 (mg)"],
-      key: "Vitamin B6 (mg)",
-      unit: "mg",
-    },
-    {
-      name: "Folate (Vitamin B₉)",
-      value: results.nutrient_totals["Folate (µg)"],
-      key: "Folate (µg)",
-      unit: "µg",
-    },
-    {
-      name: "Pantothenic Acid (Vitamin B₅)",
-      value: results.nutrient_totals["Pantothenic Acid (mg)"],
-      key: "Pantothenic Acid (mg)",
-      unit: "mg",
-    },
-  ];
-  const minerals = [
-    {
-      name: "Calcium",
-      value: results.nutrient_totals["Calcium (mg)"],
-      unit: "mg",
-    },
-    { name: "Iron", value: results.nutrient_totals["Iron (mg)"], unit: "mg" },
-    {
-      name: "Magnesium",
-      value: results.nutrient_totals["Magnesium (mg)"],
-      unit: "mg",
-    },
-    {
-      name: "Manganese",
-      value: results.nutrient_totals["Manganese (mg)"],
-      unit: "mg",
-    },
-    {
-      name: "Phosphorus",
-      value: results.nutrient_totals["Phosphorus (mg)"],
-      unit: "mg",
-    },
-    {
-      name: "Selenium",
-      value: results.nutrient_totals["Selenium (µg)"],
-      unit: "µg",
-    },
-    { name: "Zinc", value: results.nutrient_totals["Zinc (mg)"], unit: "mg" },
-    {
-      name: "Potassium",
-      value: results.nutrient_totals["Potassium (mg)"],
-      unit: "mg",
-    },
-    {
-      name: "Sodium",
-      value: results.nutrient_totals["Sodium (mg)"],
-      unit: "mg",
-    },
-  ];
-  const others = [
-    {
-      name: "Choline",
-      value: results.nutrient_totals["Choline (mg)"],
-      unit: "mg",
-    },
-  ];
-  const hydration = [
-    {
-      name: "Water",
-      value: results.nutrient_totals["Water (mL)"],
-      unit: "mL",
-    },
-  ];
+  const vitamins = mapNutrientData(VITAMINS_CONFIG);
+  const minerals = mapNutrientData(MINERALS_CONFIG);
+  const others = mapNutrientData(OTHERS_CONFIG);
+  const hydration = mapNutrientData(HYDRATION_CONFIG);
 
   const lowerBounds = nutrientGoals?.lower_bounds || {};
   const upperBounds = nutrientGoals?.upper_bounds || {};

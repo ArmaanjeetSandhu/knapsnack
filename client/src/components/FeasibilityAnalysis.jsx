@@ -1,5 +1,6 @@
 import { AlertTriangle, Check, Info, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
+import { formatValue } from "../lib/resultsHelpers";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -36,14 +37,6 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
     lowerBoundIssues,
     upperBoundIssues,
   } = feasibilityData;
-
-  const formatValue = (value) => {
-    return typeof value === "number"
-      ? value.toLocaleString("en-US", {
-          maximumFractionDigits: 1,
-        })
-      : value;
-  };
 
   const formatNutrientName = (name) => {
     const replacements = {
