@@ -74,9 +74,8 @@ export function useAppState() {
       const showCalcResults = localStorage.getItem(
         STORAGE_KEYS.SHOW_CALCULATION_RESULTS,
       );
-      if (showCalcResults === "true" && storedGoals) {
+      if (showCalcResults === "true" && storedGoals)
         setShowCalculationResults(true);
-      }
     } catch (err) {
       console.error("Error loading data from localStorage:", err);
     }
@@ -152,9 +151,8 @@ export function useAppState() {
   }, [hasVisitedFoodSelection]);
 
   useEffect(() => {
-    if (nutrientGoals && !showCalculationResults && !optimizationResults) {
+    if (nutrientGoals && !showCalculationResults && !optimizationResults)
       setHasVisitedFoodSelection(true);
-    }
   }, [nutrientGoals, showCalculationResults, optimizationResults]);
 
   const clearStorage = () => {

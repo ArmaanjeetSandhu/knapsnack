@@ -104,18 +104,15 @@ const SelectedFoods = ({
 
       const result = await api.optimizeDiet(optimizationData);
 
-      if (result.success) {
-        onOptimizationResults(result.result);
-      } else if (
+      if (result.success) onOptimizationResults(result.result);
+      else if (
         result.feasibilityAnalysis &&
         result.feasibilityAnalysis.isFeasible
-      ) {
+      )
         setShowErrorDialog(true);
-      } else if (result.feasibilityAnalysis) {
+      else if (result.feasibilityAnalysis)
         setFeasibilityData(result.feasibilityAnalysis);
-      } else {
-        setError(result.message || "Optimization failed");
-      }
+      else setError(result.message || "Optimization failed");
     } catch (err) {
       setError(err.message || "An error occurred during optimization");
     } finally {

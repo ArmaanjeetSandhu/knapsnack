@@ -16,11 +16,8 @@ const ThemeToggle = () => {
     if (storedTheme) {
       const isDarkStored = storedTheme === "dark";
       setIsDark(isDarkStored);
-      if (isDarkStored) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+      if (isDarkStored) document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
     } else {
       const isSystemDark = window.matchMedia(
         "(prefers-color-scheme: dark)",

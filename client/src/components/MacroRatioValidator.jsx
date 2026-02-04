@@ -19,9 +19,7 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
 
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.attributeName === "class") {
-          updateTheme();
-        }
+        if (mutation.attributeName === "class") updateTheme();
       });
     });
 
@@ -56,11 +54,10 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     const violations = [];
     Object.entries(macros).forEach(([macro, value]) => {
       const range = amdrRanges[macro];
-      if (value < range.min) {
+      if (value < range.min)
         violations.push(`${macro} is below minimum (${range.min}%)`);
-      } else if (value > range.max) {
+      else if (value > range.max)
         violations.push(`${macro} exceeds maximum (${range.max}%)`);
-      }
     });
     return violations;
   }, [macros, amdrRanges]);
@@ -154,30 +151,28 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
   const getAlertMessages = useCallback(() => {
     const messages = [];
     const difference = Math.abs(100 - total);
-    if (total === 100) {
+    if (total === 100)
       messages.push({
         type: "success",
         message:
           "Perfect! Your macros total 100% and are within AMDR guidelines",
       });
-    } else if (total < 100) {
+    else if (total < 100)
       messages.push({
         type: "warning",
         message: `Your macros total ${total}%. Please add ${difference}% to reach 100%`,
       });
-    } else {
+    else
       messages.push({
         type: "warning",
         message: `Your macros total ${total}%. Please reduce by ${difference}% to reach 100%`,
       });
-    }
     const violations = getAMDRViolations();
-    if (violations.length > 0) {
+    if (violations.length > 0)
       messages.push({
         type: "error",
         message: `AMDR violations detected: ${violations.join(", ")}`,
       });
-    }
     return messages;
   }, [total, getAMDRViolations]);
 

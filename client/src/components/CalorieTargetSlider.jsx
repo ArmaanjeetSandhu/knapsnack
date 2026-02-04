@@ -47,13 +47,9 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
     return colorMap[baseColor];
   };
   const getCurrentCategory = (val) => {
-    if (val < 100) {
-      return categories[0];
-    } else if (val === 100) {
-      return categories[1];
-    } else {
-      return categories[2];
-    }
+    if (val < 100) return categories[0];
+    else if (val === 100) return categories[1];
+    else return categories[2];
   };
   const handleChange = (e) => {
     const newValue = parseFloat(e.target.value);

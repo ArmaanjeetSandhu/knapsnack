@@ -58,9 +58,8 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
     if (
       portionsSortConfig.key === key &&
       portionsSortConfig.direction === "ascending"
-    ) {
+    )
       direction = "descending";
-    }
     setPortionsSortConfig({ key, direction });
   };
 

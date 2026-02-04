@@ -47,13 +47,12 @@ const api = {
     const result = await response.json();
 
     if (!response.ok || !result.success) {
-      if (result.feasibilityAnalysis) {
+      if (result.feasibilityAnalysis)
         return {
           success: false,
           message: result.message || "Optimization failed",
           feasibilityAnalysis: result.feasibilityAnalysis,
         };
-      }
 
       throw new Error(result.error || result.message || "Optimization failed");
     }
@@ -63,9 +62,7 @@ const api = {
 
   async getBlogPosts() {
     const response = await fetch(`${config.apiUrl}/posts`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch blog posts");
-    }
+    if (!response.ok) throw new Error("Failed to fetch blog posts");
     return response.json();
   },
 

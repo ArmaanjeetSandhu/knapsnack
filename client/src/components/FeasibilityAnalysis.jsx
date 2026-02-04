@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 const FeasibilityAnalysis = ({ feasibilityData }) => {
   const [activeTab, setActiveTab] = useState("overview");
 
-  if (!feasibilityData || !feasibilityData.analysis) {
+  if (!feasibilityData || !feasibilityData.analysis)
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
@@ -28,7 +28,6 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
         </AlertDescription>
       </Alert>
     );
-  }
 
   const {
     isLowerBoundsFeasible,

@@ -162,13 +162,11 @@ function App() {
       (newFood) => !isDuplicateFood(newFood, state.selectedFoods),
     );
     const duplicates = importedFoods.length - uniqueNewFoods.length;
-    if (duplicates > 0) {
+    if (duplicates > 0)
       setError(
         `${duplicates} duplicate food item(s) were skipped during import.`,
       );
-    } else {
-      setError(null);
-    }
+    else setError(null);
     if (uniqueNewFoods.length > 0) {
       actions.setSelectedFoods((prevFoods) => [
         ...prevFoods,

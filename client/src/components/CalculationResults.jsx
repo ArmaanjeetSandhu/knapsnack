@@ -359,15 +359,14 @@ const CalculationResults = ({
                                     )
                                   }
                                   onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
+                                    if (e.key === "Enter")
                                       actions.saveTarget(
                                         macro.label,
                                         boundKey,
                                         boundType,
                                       );
-                                    } else if (e.key === "Escape") {
+                                    else if (e.key === "Escape")
                                       actions.cancelEditing(macro.label);
-                                    }
                                   }}
                                   className={`w-[100px] ${
                                     validationErrors[boundKey]
@@ -548,15 +547,14 @@ const CalculationResults = ({
                                     )
                                   }
                                   onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
+                                    if (e.key === "Enter")
                                       actions.saveTarget(
                                         "Water",
                                         waterKey,
                                         "lower",
                                       );
-                                    } else if (e.key === "Escape") {
+                                    else if (e.key === "Escape")
                                       actions.cancelEditing("Water");
-                                    }
                                   }}
                                   className={`w-[100px] ${
                                     validationErrors[waterKey]

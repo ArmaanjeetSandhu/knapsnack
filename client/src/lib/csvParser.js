@@ -1,46 +1,45 @@
 export const processCSVData = (results) => {
-  if (results.errors.length > 0) {
+  if (results.errors.length > 0)
     return {
       success: false,
       error:
         "Error parsing CSV file. Please ensure the file format is correct.",
     };
-  }
 
   try {
     const importedFoods = results.data.map((row, index) => {
       const servingSize = row["Serving Size (g)"] || 100;
       const normalizedNutrients = {
         "Vitamin A (µg)":
-          ((row["Vitamin A (mcg)"] || row["Vitamin A (µg)"]) * 100) /
+          ((row["Vitamin A (mcg)"] ?? row["Vitamin A (µg)"]) * 100) /
           servingSize,
         "Vitamin C (mg)": (row["Vitamin C (mg)"] * 100) / servingSize,
         "Vitamin E (mg)": (row["Vitamin E (mg)"] * 100) / servingSize,
         "Vitamin K (µg)":
-          ((row["Vitamin K (mcg)"] || row["Vitamin K (µg)"]) * 100) /
+          ((row["Vitamin K (mcg)"] ?? row["Vitamin K (µg)"]) * 100) /
           servingSize,
         "Thiamin (mg)":
-          ((row["Thiamin (Vitamin B1) (mg)"] ||
-            row["Thiamin (Vitamin B₁) (mg)"] ||
+          ((row["Thiamin (Vitamin B1) (mg)"] ??
+            row["Thiamin (Vitamin B₁) (mg)"] ??
             row["Thiamin (mg)"]) *
             100) /
           servingSize,
         "Riboflavin (mg)":
-          ((row["Riboflavin (Vitamin B2) (mg)"] ||
-            row["Riboflavin (Vitamin B₂) (mg)"] ||
+          ((row["Riboflavin (Vitamin B2) (mg)"] ??
+            row["Riboflavin (Vitamin B₂) (mg)"] ??
             row["Riboflavin (mg)"]) *
             100) /
           servingSize,
         "Niacin (mg)":
-          ((row["Niacin (Vitamin B3) (mg)"] ||
-            row["Niacin (Vitamin B₃) (mg)"] ||
+          ((row["Niacin (Vitamin B3) (mg)"] ??
+            row["Niacin (Vitamin B₃) (mg)"] ??
             row["Niacin (mg)"]) *
             100) /
           servingSize,
         "Vitamin B6 (mg)": (row["Vitamin B6 (mg)"] * 100) / servingSize,
         "Folate (µg)":
-          ((row["Folate (Vitamin B9) (mcg)"] ||
-            row["Folate (Vitamin B₉) (µg)"] ||
+          ((row["Folate (Vitamin B9) (mcg)"] ??
+            row["Folate (Vitamin B₉) (µg)"] ??
             row["Folate (µg)"]) *
             100) /
           servingSize,
@@ -56,13 +55,13 @@ export const processCSVData = (results) => {
         "Manganese (mg)": (row["Manganese (mg)"] * 100) / servingSize,
         "Phosphorus (mg)": (row["Phosphorus (mg)"] * 100) / servingSize,
         "Selenium (µg)":
-          ((row["Selenium (mcg)"] || row["Selenium (µg)"]) * 100) / servingSize,
+          ((row["Selenium (mcg)"] ?? row["Selenium (µg)"]) * 100) / servingSize,
         "Zinc (mg)": (row["Zinc (mg)"] * 100) / servingSize,
         "Potassium (mg)": (row["Potassium (mg)"] * 100) / servingSize,
         "Sodium (mg)": (row["Sodium (mg)"] * 100) / servingSize,
         "Pantothenic Acid (mg)":
-          ((row["Pantothenic Acid (Vitamin B5) (mg)"] ||
-            row["Pantothenic Acid (Vitamin B₅) (mg)"] ||
+          ((row["Pantothenic Acid (Vitamin B5) (mg)"] ??
+            row["Pantothenic Acid (Vitamin B₅) (mg)"] ??
             row["Pantothenic Acid (mg)"]) *
             100) /
           servingSize,

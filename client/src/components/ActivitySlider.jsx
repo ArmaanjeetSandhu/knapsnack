@@ -88,17 +88,11 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
     return colorMap[baseColor];
   };
   const getCurrentCategory = (val) => {
-    if (val < 1.4) {
-      return categories[0];
-    } else if (val < 1.6) {
-      return categories[1];
-    } else if (val < 1.8) {
-      return categories[2];
-    } else if (val < 2.0) {
-      return categories[3];
-    } else {
-      return categories[4];
-    }
+    if (val < 1.4) return categories[0];
+    else if (val < 1.6) return categories[1];
+    else if (val < 1.8) return categories[2];
+    else if (val < 2.0) return categories[3];
+    else return categories[4];
   };
   const handleChange = (e) => {
     const newValue = parseFloat(e.target.value);

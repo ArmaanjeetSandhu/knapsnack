@@ -55,12 +55,8 @@ export const sortItems = (items, config, type = "portions") => {
       }
     }
 
-    if (aValue < bValue) {
-      return config.direction === "ascending" ? -1 : 1;
-    }
-    if (aValue > bValue) {
-      return config.direction === "ascending" ? 1 : -1;
-    }
+    if (aValue < bValue) return config.direction === "ascending" ? -1 : 1;
+    if (aValue > bValue) return config.direction === "ascending" ? 1 : -1;
     return 0;
   });
 };
