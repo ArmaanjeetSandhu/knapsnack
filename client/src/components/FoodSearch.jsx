@@ -89,7 +89,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   };
 
   const handleFoodAdd = (food) => {
-    onFoodSelect(food);
+    onFoodSelect({ ...food, maxServing: 500 });
     setRecentlyAdded((prev) => new Set([...prev, food.fdcId]));
     setTimeout(() => {
       setRecentlyAdded((prev) => {

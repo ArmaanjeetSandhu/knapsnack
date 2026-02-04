@@ -84,7 +84,8 @@ const SelectedFoods = ({
         parseFloat(food.price) < 0 ||
         !food.servingSize ||
         parseFloat(food.servingSize) <= 0 ||
-        parseFloat(food.maxServing) <= 0,
+        parseFloat(food.maxServing) <= 0 ||
+        parseFloat(food.maxServing) < parseFloat(food.servingSize),
     );
 
     if (invalidFoods.length > 0) {
@@ -350,7 +351,7 @@ const SelectedFoods = ({
                                   type="number"
                                   step="1"
                                   min="0"
-                                  value={food.maxServing || 500}
+                                  value={food.maxServing}
                                   onChange={(e) =>
                                     handleInputChange(
                                       food.fdcId,
@@ -472,12 +473,24 @@ const SelectedFoods = ({
             <h4 className="font-semibold mb-2">Please verify the following:</h4>
             <ul className="list-disc pl-5 space-y-2 text-sm text-muted-foreground">
               <li>
-                &apos;Price Per Serving&apos; is filled in and not negative
+                <span className="font-medium text-muted-foreground">
+                  Price Per Serving
+                </span>{" "}
+                is specified and not negative
               </li>
               <li>
-                &apos;Serving Size (g)&apos; is filled in and greater than 0
+                <span className="font-medium text-muted-foreground">
+                  Serving Size
+                </span>{" "}
+                is specified and greater than 0
               </li>
-              <li>&apos;Max Serving&apos; is greater than 0</li>
+              <li>
+                <span className="font-medium text-muted-foreground">
+                  Max Serving
+                </span>
+                , if specified, is greater than 0 and not less than the serving
+                size
+              </li>
             </ul>
           </div>
           <DialogFooter>
