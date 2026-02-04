@@ -77,6 +77,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
               variant={formData.gender === "m" ? "default" : "outline"}
               className="flex-1"
               onClick={() => handleInputChange("gender", "m")}
+              autoFocus={formData.gender === "m"}
             >
               Male
             </Button>
@@ -85,6 +86,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
               variant={formData.gender === "f" ? "default" : "outline"}
               className="flex-1"
               onClick={() => handleInputChange("gender", "f")}
+              autoFocus={formData.gender === "f"}
             >
               Female
             </Button>
@@ -214,14 +216,49 @@ const PersonalInfoForm = ({ onSubmit }) => {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
+      if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault();
+        if (currentStep > 0) handlePrevious();
+        return;
+      }
+
       if (e.key === "Enter" && !e.shiftKey) {
-        if (e.target.tagName.toLowerCase() === "input") e.preventDefault();
-        handleNext();
+        const activeElement = document.activeElement;
+        const tagName = activeElement.tagName.toLowerCase();
+
+        const isSelectedButton = () => {
+          if (tagName !== "button") return false;
+          const text = activeElement.textContent?.trim();
+
+          if (currentStep === 0)
+            return (
+              (text === "Male" && formData.gender === "m") ||
+              (text === "Female" && formData.gender === "f")
+            );
+
+          if (currentStep === 5)
+            return (
+              (text === "Yes" && formData.smokingStatus === "yes") ||
+              (text === "No" && formData.smokingStatus === "no")
+            );
+
+          return false;
+        };
+
+        if (tagName === "input") {
+          e.preventDefault();
+          handleNext();
+        } else if (tagName === "button") {
+          if (isSelectedButton()) {
+            e.preventDefault();
+            handleNext();
+          }
+        } else handleNext();
       }
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [handleNext]);
+  }, [handleNext, handlePrevious, currentStep, formData]);
 
   return (
     <div className="max-w-2xl mx-auto">
