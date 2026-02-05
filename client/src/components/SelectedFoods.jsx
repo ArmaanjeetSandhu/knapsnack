@@ -35,6 +35,13 @@ import FeasibilityAnalysis from "./FeasibilityAnalysis";
 
 const MotionTableRow = motion.create(TableRow);
 
+const preventInvalidIntegerChars = (e) => {
+  if ([".", "+", "-", "e", "E"].includes(e.key)) e.preventDefault();
+};
+const preventInvalidFloatChars = (e) => {
+  if (["+", "-", "e", "E"].includes(e.key)) e.preventDefault();
+};
+
 const SelectedFoods = ({
   foods,
   onFoodsUpdate,
@@ -301,6 +308,7 @@ const SelectedFoods = ({
                                   step="0.01"
                                   min="0"
                                   value={food.price}
+                                  onKeyDown={preventInvalidFloatChars}
                                   onChange={(e) =>
                                     handleInputChange(
                                       food.fdcId,
@@ -327,6 +335,7 @@ const SelectedFoods = ({
                                   step="1"
                                   min="0"
                                   value={food.servingSize}
+                                  onKeyDown={preventInvalidIntegerChars}
                                   onChange={(e) =>
                                     handleInputChange(
                                       food.fdcId,
@@ -354,6 +363,7 @@ const SelectedFoods = ({
                                   step="1"
                                   min="0"
                                   value={food.maxServing}
+                                  onKeyDown={preventInvalidIntegerChars}
                                   onChange={(e) =>
                                     handleInputChange(
                                       food.fdcId,
