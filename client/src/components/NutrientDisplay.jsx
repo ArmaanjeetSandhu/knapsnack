@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { formatValue } from "../lib/resultsHelpers";
 import NutrientInfoPopup from "./NutrientInfoPopup";
 
 const BlinkingDot = () => (
@@ -153,7 +152,7 @@ export const NutrientTable = ({
                   </TableCell>
                   {showAmount && (
                     <TableCell className="text-right">
-                      {formatValue(nutrient.value)}
+                      {nutrient.value}
                     </TableCell>
                   )}
                   {showBounds && (
@@ -237,7 +236,7 @@ export const NutrientCards = ({
                     <div className="flex justify-between">
                       <span className="text-sm">Amount:</span>
                       <span className="font-medium">
-                        {formatValue(nutrient.value)} {nutrient.unit}
+                        {nutrient.value} {nutrient.unit}
                       </span>
                     </div>
                   )}

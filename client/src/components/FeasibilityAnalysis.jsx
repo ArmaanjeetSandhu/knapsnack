@@ -1,6 +1,5 @@
 import { AlertTriangle, Check, Info, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
-import { formatValue } from "../lib/resultsHelpers";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -171,10 +170,10 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
                   <TableCell className="font-medium">
                     {formatNutrientName(issue.nutrient)}
                   </TableCell>
-                  <TableCell>{formatValue(issue.required)}</TableCell>
-                  <TableCell>{formatValue(issue.achievable)}</TableCell>
+                  <TableCell>{issue.required}</TableCell>
+                  <TableCell>{issue.achievable}</TableCell>
                   <TableCell className="text-red-500">
-                    {formatValue(issue.shortfall)} (
+                    {issue.shortfall} (
                     {issue.shortfallPercentage.toFixed(1)}%)
                   </TableCell>
                 </TableRow>
@@ -231,10 +230,10 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
                     {formatNutrientName(issue.nutrient)}
                   </TableCell>
                   <TableCell>{issue.foodItem}</TableCell>
-                  <TableCell>{formatValue(issue.limit)}</TableCell>
-                  <TableCell>{formatValue(issue.minimum)}</TableCell>
+                  <TableCell>{issue.limit}</TableCell>
+                  <TableCell>{issue.minimum}</TableCell>
                   <TableCell className="text-red-500">
-                    {formatValue(issue.excess)} (
+                    {issue.excess} (
                     {issue.excessPercentage.toFixed(1)}%)
                   </TableCell>
                 </TableRow>

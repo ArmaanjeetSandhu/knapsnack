@@ -21,7 +21,6 @@ import {
   VITAMINS_CONFIG,
 } from "../config/nutrientData";
 import { useNutrientBounds } from "../hooks/useNutrientBounds";
-import { formatValue } from "../lib/resultsHelpers";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
@@ -77,19 +76,19 @@ const CalculationResults = ({
     {
       icon: Flame,
       label: "Basal Metabolic Rate (BMR)",
-      value: `${formatValue(calculationData.bmr)} kcal/day`,
+      value: `${calculationData.bmr} kcal/day`,
       color: "text-orange-500 dark:text-orange-400",
     },
     {
       icon: Activity,
       label: "Total Daily Energy Expenditure (TDEE)",
-      value: `${formatValue(calculationData.tdee)} kcal/day`,
+      value: `${calculationData.tdee} kcal/day`,
       color: "text-blue-500 dark:text-blue-400",
     },
     {
       icon: Target,
       label: "Daily Caloric Target",
-      value: `${formatValue(calculationData.daily_caloric_intake)} kcal/day`,
+      value: `${calculationData.daily_caloric_intake} kcal/day`,
       color: "text-green-500 dark:text-green-400",
     },
   ];
@@ -401,7 +400,7 @@ const CalculationResults = ({
                               <p className="text-2xl font-bold">
                                 {macro.label === "Fibre" && "≥ "}
                                 {macro.label === "Saturated Fats" && "≤ "}
-                                {formatValue(currentValue)}
+                                {currentValue}
                                 {macro.unit}
                               </p>
                             </motion.div>
@@ -585,7 +584,7 @@ const CalculationResults = ({
                               transition={{ duration: 0.4 }}
                             >
                               <p className="text-2xl font-bold">
-                                ≥ {formatValue(currentValue)} mL
+                                ≥ {currentValue} mL
                               </p>
                             </motion.div>
                           )}

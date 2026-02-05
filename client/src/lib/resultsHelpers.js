@@ -60,11 +60,3 @@ export const sortItems = (items, config, type = "portions") => {
     return 0;
   });
 };
-
-export const formatValue = (value) => {
-  return typeof value === "number"
-    ? value.toLocaleString("en-US", {
-        maximumFractionDigits: 1,
-      })
-    : value;
-};

@@ -42,15 +42,15 @@ const handleExportCSV = (results, selectedFoods = []) => {
   foodData.forEach((food) => {
     const row = [
       `"${food.name}"`,
-      food.servingSize.toFixed(1),
-      food.servings.toFixed(1),
-      food.totalServing.toFixed(1),
-      food.cost.toFixed(2),
+      food.servingSize,
+      food.servings,
+      food.totalServing,
+      food.cost,
     ];
 
     headers.slice(5).forEach((header) => {
       const key = getNutrientKey(header);
-      row.push(food.nutrients[key]?.toFixed(2) || "0");
+      row.push(food.nutrients[key] || "0");
     });
 
     csvContent += row.join(",") + "\n";
@@ -60,17 +60,18 @@ const handleExportCSV = (results, selectedFoods = []) => {
   const totalServingSize = "";
   const totalServings = "";
   const totalGrams = foodData.reduce((sum, food) => sum + food.totalServing, 0);
+
   totals.push(
     totalServingSize,
     totalServings,
-    totalGrams.toFixed(1),
-    results.total_cost_sum.toFixed(2),
+    totalGrams,
+    results.total_cost_sum,
   );
 
   headers.slice(5).forEach((header) => {
     const key = getNutrientKey(header);
     const nutrientTotal = results.nutrient_totals[key] || 0;
-    totals.push(nutrientTotal.toFixed(2));
+    totals.push(nutrientTotal);
   });
 
   csvContent += totals.join(",") + "\n";

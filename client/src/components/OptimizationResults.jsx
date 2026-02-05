@@ -40,7 +40,7 @@ import {
   OTHERS_CONFIG,
   VITAMINS_CONFIG,
 } from "../config/nutrientData";
-import { formatValue, getNonZeroItems, sortItems } from "../lib/resultsHelpers";
+import { getNonZeroItems, sortItems } from "../lib/resultsHelpers";
 import handleExportCSV from "./ExportHandler";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
 
@@ -121,7 +121,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
               {nutrient.name}
             </h4>
             <p className="text-2xl font-bold mt-2">
-              {formatValue(nutrient.value)} {nutrient.unit}
+              {nutrient.value} {nutrient.unit}
             </p>
           </CardContent>
         </Card>
@@ -151,9 +151,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                         <p className="text-sm font-medium text-muted-foreground">
                           Total Cost
                         </p>
-                        <p className="text-2xl font-bold">
-                          {totalDailyCost.toFixed(2)}
-                        </p>
+                        <p className="text-2xl font-bold">{totalDailyCost}</p>
                       </div>
                     </div>
                   </div>
@@ -269,22 +267,22 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                           {item.food}
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.servingSize.toFixed(1)}
+                          {item.servingSize}
                         </TableCell>
                         <TableCell className="text-center text-muted-foreground text-sm opacity-70">
                           ×
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.servings.toFixed(1)}
+                          {item.servings}
                         </TableCell>
                         <TableCell className="text-center text-muted-foreground text-sm opacity-70">
                           =
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.totalServing.toFixed(1)}
+                          {item.totalServing}
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.cost.toFixed(2)}
+                          {item.cost}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -305,7 +303,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                         {macro.name}
                       </h4>
                       <p className="text-2xl font-bold mt-2">
-                        {formatValue(macro.value)} {macro.unit}
+                        {macro.value} {macro.unit}
                       </p>
                     </CardContent>
                   </Card>
