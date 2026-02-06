@@ -16,7 +16,7 @@ from server.config import (
 )
 
 
-def calculate_bmr(gender: str, weight: int, height: int, age: int) -> float:
+def calculate_bmr(gender: str, weight: int, height: int, age: int) -> int:
     """
     Calculate Basal Metabolic Rate using the Mifflin-St Jeor equation.
 
@@ -30,12 +30,12 @@ def calculate_bmr(gender: str, weight: int, height: int, age: int) -> float:
         BMR in calories per day
     """
     if gender.lower() == "m":
-        return 10 * weight + 6.25 * height - 5 * age + 5
+        return round(10 * weight + 6.25 * height - 5 * age + 5)
     else:
-        return 10 * weight + 6.25 * height - 5 * age - 161
+        return round(10 * weight + 6.25 * height - 5 * age - 161)
 
 
-def calculate_tdee(bmr: float, activity_multiplier: float) -> float:
+def calculate_tdee(bmr: int, activity_multiplier: float) -> int:
     """
     Calculate Total Daily Energy Expenditure based on BMR and activity level.
 
@@ -46,12 +46,12 @@ def calculate_tdee(bmr: float, activity_multiplier: float) -> float:
     Returns:
         TDEE in calories per day
     """
-    return bmr * activity_multiplier
+    return round(bmr * activity_multiplier)
 
 
 def calculate_macros(
-    daily_caloric_intake: float, pratio: float, cratio: float, fratio: float
-) -> Tuple[float, float, float, float, float]:
+    daily_caloric_intake: int, pratio: float, cratio: float, fratio: float
+) -> Tuple[int, int, int, int, int]:
     """
     Calculate macronutrient targets based on caloric intake and desired ratios.
 
@@ -64,11 +64,13 @@ def calculate_macros(
     Returns:
         Tuple of (protein, carbohydrate, fats, fibre, saturated_fats) in grams
     """
-    protein = pratio * daily_caloric_intake / PROTEIN_CALORIES_PER_GRAM
-    carbohydrate = cratio * daily_caloric_intake / CARB_CALORIES_PER_GRAM
-    fats = fratio * daily_caloric_intake / FAT_CALORIES_PER_GRAM
-    fibre = FIBER_RATIO * daily_caloric_intake
-    saturated_fats = SATURATED_FAT_RATIO * daily_caloric_intake / FAT_CALORIES_PER_GRAM
+    protein = round(pratio * daily_caloric_intake / PROTEIN_CALORIES_PER_GRAM)
+    carbohydrate = round(cratio * daily_caloric_intake / CARB_CALORIES_PER_GRAM)
+    fats = round(fratio * daily_caloric_intake / FAT_CALORIES_PER_GRAM)
+    fibre = round(FIBER_RATIO * daily_caloric_intake)
+    saturated_fats = round(
+        SATURATED_FAT_RATIO * daily_caloric_intake / FAT_CALORIES_PER_GRAM
+    )
 
     return protein, carbohydrate, fats, fibre, saturated_fats
 

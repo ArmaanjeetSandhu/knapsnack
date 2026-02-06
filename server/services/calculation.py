@@ -92,7 +92,7 @@ def calculate_nutrition_requirements(
     """
     bmr = calculate_bmr(gender, weight, height, age)
     tdee = calculate_tdee(bmr, activity_multiplier)
-    daily_caloric_intake = percentage * tdee
+    daily_caloric_intake = round(percentage * tdee)
 
     protein, carbohydrate, fats, fibre, saturated_fats = calculate_macros(
         daily_caloric_intake, pratio, cratio, fratio
