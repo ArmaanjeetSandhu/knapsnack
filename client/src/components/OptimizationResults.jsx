@@ -40,7 +40,12 @@ import {
   OTHERS_CONFIG,
   VITAMINS_CONFIG,
 } from "../config/nutrientData";
-import { getNonZeroItems, sortItems } from "../lib/resultsHelpers";
+import {
+  bankersRound,
+  calculateConsistentResults,
+  formatValue,
+  sortItems,
+} from "../lib/resultsHelpers";
 import handleExportCSV from "./ExportHandler";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
 
@@ -51,7 +56,10 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
     direction: "ascending",
   });
 
-  const nonZeroItems = getNonZeroItems(results, selectedFoods);
+  const { items: nonZeroItems, totals } = calculateConsistentResults(
+    results,
+    selectedFoods,
+  );
 
   const handlePortionsSort = (key) => {
     let direction = "ascending";
@@ -74,36 +82,49 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
     "portions",
   );
 
-  const totalDailyCost = results.total_cost_sum;
+  const totalDailyCost = totals.cost;
   const overflowByNutrient = results.overflow_by_nutrient || {};
   const totalOverflow = results.total_overflow || 0;
 
-  const mapNutrientData = (config) =>
+  const mapNutrientData = (config, decimals) =>
     config.map((nutrient) => ({
       ...nutrient,
-      value: results.nutrient_totals[nutrient.key],
+      value: bankersRound(totals.nutrients[nutrient.key] || 0, decimals),
     }));
 
   const macronutrients = [
-    { name: "Protein", value: results.nutrient_totals.protein, unit: "g" },
     {
-      name: "Carbohydrates",
-      value: results.nutrient_totals.carbohydrate,
+      name: "Protein",
+      value: bankersRound(totals.nutrients.protein || 0, 0),
       unit: "g",
     },
-    { name: "Fats", value: results.nutrient_totals.fats, unit: "g" },
-    { name: "Fibre", value: results.nutrient_totals.fibre, unit: "g" },
+    {
+      name: "Carbohydrates",
+      value: bankersRound(totals.nutrients.carbohydrate || 0, 0),
+      unit: "g",
+    },
+    {
+      name: "Fats",
+      value: bankersRound(totals.nutrients.fats || 0, 0),
+      unit: "g",
+    },
+    {
+      name: "Fibre",
+      value: bankersRound(totals.nutrients.fibre || 0, 0),
+      unit: "g",
+    },
     {
       name: "Saturated Fats",
-      value: results.nutrient_totals["saturated_fats"],
+      value: bankersRound(totals.nutrients["saturated_fats"] || 0, 0),
       unit: "g",
     },
   ];
 
-  const vitamins = mapNutrientData(VITAMINS_CONFIG);
-  const minerals = mapNutrientData(MINERALS_CONFIG);
-  const others = mapNutrientData(OTHERS_CONFIG);
-  const hydration = mapNutrientData(HYDRATION_CONFIG);
+  const vitamins = mapNutrientData(VITAMINS_CONFIG, 1);
+  const minerals = mapNutrientData(MINERALS_CONFIG, 1);
+  const others = mapNutrientData(OTHERS_CONFIG, 1);
+
+  const hydration = mapNutrientData(HYDRATION_CONFIG, 0);
 
   const lowerBounds = nutrientGoals?.lower_bounds || {};
   const upperBounds = nutrientGoals?.upper_bounds || {};
@@ -151,7 +172,9 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                         <p className="text-sm font-medium text-muted-foreground">
                           Total Cost
                         </p>
-                        <p className="text-2xl font-bold">{totalDailyCost}</p>
+                        <p className="text-2xl font-bold">
+                          {bankersRound(totalDailyCost, 2).toFixed(2)}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -279,10 +302,10 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                           =
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.totalServing}
+                          {item.totalServing.toFixed(1)}
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.cost}
+                          {item.cost.toFixed(2)}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -303,7 +326,10 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
                         {macro.name}
                       </h4>
                       <p className="text-2xl font-bold mt-2">
-                        {macro.value} {macro.unit}
+                        {formatValue(macro.value).toLocaleString("en-US", {
+                          maximumFractionDigits: 1,
+                        })}{" "}
+                        {macro.unit}
                       </p>
                     </CardContent>
                   </Card>

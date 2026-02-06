@@ -76,7 +76,7 @@ const faqs = [
     ],
   },
   {
-    question: "How do you determine my nutritional requirements?",
+    question: "How are my nutritional requirements determined?",
     answer: [
       <h4 key="macros" className="font-semibold mt-2">
         Macronutrients
@@ -89,7 +89,14 @@ const faqs = [
     ],
   },
   {
-    question: "There are some nutrients that I don't see here. Why is that?",
+    question:
+      "Why are there differences between my nutritional targets and the actual results?",
+    answer: [
+      "You may notice small discrepancies between your targets and the actual nutrients provided by a Knap[Snack] plan. This is because the serving quantities used to calculate the plan's nutritional profile are rounded to reasonable, practical values. The resulting discrepancies are negligible and will not meaningfully impact the quality of your diet.",
+    ],
+  },
+  {
+    question: "Why are some nutrients not included?",
     answer: [
       "Some nutrients have been deliberately excluded for two broad reasons:",
 

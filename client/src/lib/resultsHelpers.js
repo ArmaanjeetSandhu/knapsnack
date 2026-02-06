@@ -1,3 +1,58 @@
+export const bankersRound = (num, decimalPlaces = 0) => {
+  const m = Math.pow(10, decimalPlaces);
+  const n = +(decimalPlaces ? num * m : num).toFixed(8);
+  const i = Math.floor(n);
+  const f = n - i;
+  const e = 1e-8;
+  const r =
+    f > 0.5 - e && f < 0.5 + e ? (i % 2 === 0 ? i : i + 1) : Math.round(n);
+  return decimalPlaces ? r / m : r;
+};
+
+export const calculateConsistentResults = (results, selectedFoods) => {
+  const totals = {
+    cost: 0,
+    nutrients: {},
+  };
+
+  const items = results.food_items
+    .map((foodName, index) => {
+      const rawServings = results.servings[index];
+
+      const roundedServings = bankersRound(rawServings, 1);
+      if (roundedServings <= 0) return null;
+
+      const food = selectedFoods.find((f) => f.description === foodName);
+      if (!food) return null;
+
+      const servingSize = parseFloat(food.servingSize) || 100;
+      const totalServing = roundedServings * servingSize;
+      const price = parseFloat(food.price) || 0;
+      const cost = roundedServings * price;
+      totals.cost += cost;
+
+      const itemNutrients = {};
+      Object.entries(food.nutrients).forEach(([key, value]) => {
+        const nutrientValue = (value * totalServing) / 100;
+        itemNutrients[key] = nutrientValue;
+
+        totals.nutrients[key] = (totals.nutrients[key] || 0) + nutrientValue;
+      });
+
+      return {
+        food: foodName,
+        servings: roundedServings,
+        servingSize,
+        totalServing,
+        cost,
+        nutrients: itemNutrients,
+      };
+    })
+    .filter((item) => item !== null);
+
+  return { items, totals };
+};
+
 export const getNonZeroItems = (results, selectedFoods) => {
   return results.food_items
     .map((foodName, index) => {
@@ -59,4 +114,8 @@ export const sortItems = (items, config, type = "portions") => {
     if (aValue > bValue) return config.direction === "ascending" ? 1 : -1;
     return 0;
   });
+};
+
+export const formatValue = (value) => {
+  return value;
 };

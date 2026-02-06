@@ -1,6 +1,9 @@
 import { NUTRIENT_HEADERS, getNutrientKey } from "../lib/csvConstants";
+import { calculateConsistentResults } from "../lib/resultsHelpers";
 
 const handleExportCSV = (results, selectedFoods = []) => {
+  const { items, totals } = calculateConsistentResults(results, selectedFoods);
+
   const headers = [
     "Food Item",
     "Serving Size (g)",
@@ -11,70 +14,43 @@ const handleExportCSV = (results, selectedFoods = []) => {
   ];
 
   let csvContent = headers.join(",") + "\n";
-  const foodData = results.food_items
-    .map((foodName, index) => {
-      const servings = results.servings[index];
-      if (servings <= 0) return null;
-      const food = selectedFoods.find((f) => f.description === foodName);
-      if (!food) return null;
 
-      const servingSize = parseFloat(food.servingSize) || 100;
-      const totalServing = servings * servingSize;
-      const cost = results.total_cost[index];
-      const nutrients = Object.entries(food.nutrients).reduce(
-        (acc, [key, value]) => {
-          acc[key] = (value * totalServing) / 100;
-          return acc;
-        },
-        {},
-      );
-      return {
-        name: foodName,
-        servingSize,
-        servings,
-        totalServing,
-        cost,
-        nutrients,
-      };
-    })
-    .filter((item) => item !== null);
-
-  foodData.forEach((food) => {
+  items.forEach((food) => {
     const row = [
-      `"${food.name}"`,
+      `"${food.food}"`,
       food.servingSize,
       food.servings,
       food.totalServing,
-      food.cost,
+      food.cost.toFixed(2),
     ];
 
     headers.slice(5).forEach((header) => {
       const key = getNutrientKey(header);
-      row.push(food.nutrients[key] || "0");
+      row.push(food.nutrients[key]?.toFixed(2) || "0.00");
     });
 
     csvContent += row.join(",") + "\n";
   });
 
-  const totals = ["Total"];
+  const footerTotals = ["Total"];
   const totalServingSize = "";
   const totalServings = "";
-  const totalGrams = foodData.reduce((sum, food) => sum + food.totalServing, 0);
+  const totalGrams = items.reduce((sum, food) => sum + food.totalServing, 0);
 
-  totals.push(
+  footerTotals.push(
     totalServingSize,
     totalServings,
-    totalGrams,
-    results.total_cost_sum,
+    totalGrams.toFixed(1),
+    totals.cost.toFixed(2),
   );
 
   headers.slice(5).forEach((header) => {
     const key = getNutrientKey(header);
-    const nutrientTotal = results.nutrient_totals[key] || 0;
-    totals.push(nutrientTotal);
+    const nutrientTotal = totals.nutrients[key] || 0;
+    footerTotals.push(nutrientTotal.toFixed(2));
   });
 
-  csvContent += totals.join(",") + "\n";
+  csvContent += footerTotals.join(",") + "\n";
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
