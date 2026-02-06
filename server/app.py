@@ -1,5 +1,5 @@
 """
-Main Flask application for diet optimization service.
+Main Flask application for diet optimisation service.
 """
 
 import logging
@@ -34,7 +34,7 @@ from server.services.calculation import (
     validate_input_parameters,
 )
 from server.services.food_service import search_foods
-from server.services.optimization import analyze_feasibility, optimize_diet
+from server.services.optimisation import analyse_feasibility, optimise_diet
 from server.utils.response_utils import create_error_response
 
 logging.basicConfig(
@@ -226,12 +226,12 @@ def calculate_api():
         )
 
 
-@app.route("/api/optimize", methods=["POST"])
-def optimize_api():
-    """Optimize diet based on selected foods and nutrient goals."""
+@app.route("/api/optimise", methods=["POST"])
+def optimise_api():
+    """Optimise diet based on selected foods and nutrient goals."""
     try:
         data = request.json
-        app.logger.debug("Received optimization request")
+        app.logger.debug("Received optimisation request")
 
         if data is None:
             return create_error_response(
@@ -299,7 +299,7 @@ def optimize_api():
 
         max_servings_list = [float(x) for x in max_servings]
 
-        feasibility_analysis = analyze_feasibility(
+        feasibility_analysis = analyse_feasibility(
             selected_foods_data,
             max_servings_list,
             lower_bounds,
@@ -311,12 +311,12 @@ def optimize_api():
             return jsonify(
                 {
                     "success": False,
-                    "message": "Diet optimization is not feasible with the selected foods and nutrient goals.",
+                    "message": "Diet optimisation is not feasible with the selected foods and nutrient goals.",
                     "feasibilityAnalysis": feasibility_analysis,
                 }
             )
 
-        result = optimize_diet(
+        result = optimise_diet(
             selected_foods_data,
             costs,
             max_servings_list,
@@ -332,13 +332,13 @@ def optimize_api():
         return jsonify(
             {
                 "success": False,
-                "message": "Optimization failed! No feasible solution found even with maximum allowed nutrient flexibility.",
+                "message": "Optimisation failed! No feasible solution found even with maximum allowed nutrient flexibility.",
                 "feasibilityAnalysis": feasibility_analysis,
             }
         )
 
     except Exception as e:
-        app.logger.error(f"Error occurred during optimization: {str(e)}", exc_info=True)
+        app.logger.error(f"Error occurred during optimisation: {str(e)}", exc_info=True)
         return create_error_response(
             "An internal error has occurred. Please try again later.", status_code=500
         )
@@ -349,12 +349,12 @@ def optimize_api():
 def serve(path):
     """Serve static files or fallback to index.html for SPA routing."""
     static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
-    normalized_path = os.path.normpath(os.path.join(static_folder_str, str(path)))
-    if not normalized_path.startswith(static_folder_str):
+    normalised_path = os.path.normpath(os.path.join(static_folder_str, str(path)))
+    if not normalised_path.startswith(static_folder_str):
         return "Forbidden", 403
-    if path != "" and os.path.exists(normalized_path):
+    if path != "" and os.path.exists(normalised_path):
         if path.endswith(".mp4"):
-            return send_file(normalized_path, mimetype="video/mp4")
+            return send_file(normalised_path, mimetype="video/mp4")
         return send_from_directory(static_folder_str, path)
     else:
         return send_from_directory(static_folder_str, "index.html")

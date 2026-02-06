@@ -9,7 +9,7 @@ export const processCSVData = (results) => {
   try {
     const importedFoods = results.data.map((row, index) => {
       const servingSize = row["Serving Size (g)"] || 100;
-      const normalizedNutrients = {
+      const normalisedNutrients = {
         "Vitamin A (µg)":
           ((row["Vitamin A (mcg)"] ?? row["Vitamin A (µg)"]) * 100) /
           servingSize,
@@ -77,7 +77,7 @@ export const processCSVData = (results) => {
         servingSize: row["Serving Size (g)"],
         maxServing: row["Max Serving (g)"],
         integerServings: row["Discrete Servings"] === "Yes",
-        nutrients: normalizedNutrients,
+        nutrients: normalisedNutrients,
       };
     });
     return { success: true, data: importedFoods };

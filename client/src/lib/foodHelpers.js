@@ -8,7 +8,7 @@ export const adjustNutrientsForServingSize = (nutrients, servingSize) => {
   return adjustedNutrients;
 };
 
-export const prepareOptimizationPayload = (foods, nutrientGoals, userInfo) => {
+export const prepareOptimisationPayload = (foods, nutrientGoals, userInfo) => {
   const foodsData = foods.map((food) => ({
     fdcId: food.fdcId,
     description: food.description,

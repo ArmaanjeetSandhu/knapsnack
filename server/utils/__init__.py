@@ -1,3 +1,3 @@
 """
-Utility modules for the diet optimization service.
+Utility modules for the diet optimisation service.
 """

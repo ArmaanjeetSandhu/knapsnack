@@ -101,7 +101,7 @@ def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
     return result
 
 
-def standardize_nutrient_bounds(
+def standardise_nutrient_bounds(
     lower_bounds: Union[pd.Series, Dict[str, float]],
     upper_bounds: Union[pd.Series, Dict[str, float]],
 ) -> Tuple[Dict[str, float], Dict[str, float]]:

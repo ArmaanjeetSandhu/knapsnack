@@ -20,9 +20,9 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Optimization Failed</AlertTitle>
-        <AlertDescription>
-          Diet optimization failed but no feasibility analysis was returned.
+        <AlertTitle>Optimisation Failed</AlertTitle>
+        <AlertDescription className="text-foreground">
+          Diet optimisation failed but no feasibility analysis was returned.
           Please try again with different foods or nutrient bounds.
         </AlertDescription>
       </Alert>
@@ -58,7 +58,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
         <AlertTitle>
           {isFeasible ? "Diet plan is feasible" : "Diet plan is not feasible"}
         </AlertTitle>
-        <AlertDescription>
+        <AlertDescription className="text-foreground">
           {isFeasible
             ? "All nutrient requirements can be met with your selected foods."
             : "Some nutrient requirements cannot be met with your selected foods. Review the details below."}
@@ -75,7 +75,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               {isLowerBoundsFeasible ? (
                 <Check className="h-5 w-5 text-green-500 mr-2" />
               ) : (
-                <X className="h-5 w-5 text-red-500 mr-2" />
+                <X className="h-5 w-5 mr-2" />
               )}
               Minimum Nutrient Requirements
             </CardTitle>
@@ -88,7 +88,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
             </p>
             {!isLowerBoundsFeasible && (
               <div className="mt-2">
-                <p className="text-xs text-red-500">
+                <p className="text-xs">
                   Problem nutrients:{" "}
                   {lowerBoundIssues
                     .map((issue) => formatNutrientName(issue.nutrient))
@@ -108,7 +108,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               {isUpperBoundsFeasible ? (
                 <Check className="h-5 w-5 text-green-500 mr-2" />
               ) : (
-                <X className="h-5 w-5 text-red-500 mr-2" />
+                <X className="h-5 w-5 mr-2" />
               )}
               Maximum Nutrient Limits
             </CardTitle>
@@ -121,7 +121,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
             </p>
             {!isUpperBoundsFeasible && (
               <div className="mt-2">
-                <p className="text-xs text-red-500">
+                <p className="text-xs">
                   Problem nutrients:{" "}
                   {upperBoundIssues
                     .map((issue) => formatNutrientName(issue.nutrient))
@@ -150,7 +150,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Minimum nutrient requirements not met</AlertTitle>
-            <AlertDescription>
+            <AlertDescription className="text-foreground">
               Even at maximum servings, your selected foods cannot provide
               enough of these nutrients.
             </AlertDescription>
@@ -172,21 +172,16 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
                   </TableCell>
                   <TableCell>{issue.required}</TableCell>
                   <TableCell>{issue.achievable}</TableCell>
-                  <TableCell className="text-red-500">
-                    {issue.shortfall} (
-                    {issue.shortfallPercentage.toFixed(1)}%)
+                  <TableCell>
+                    {issue.shortfall} ({issue.shortfallPercentage.toFixed(1)}%)
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
           <div className="mt-6">
-            <Alert>
-              <AlertDescription>
-                Consider adding foods that are rich in the nutrients listed
-                above to meet your nutritional requirements.
-              </AlertDescription>
-            </Alert>
+            Consider adding foods that are rich in the nutrients listed above to
+            meet your nutritional requirements.
           </div>
         </>
       )}
@@ -208,7 +203,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Maximum nutrient limits exceeded</AlertTitle>
-            <AlertDescription>
+            <AlertDescription className="text-foreground">
               Even at minimum servings, your selected foods provide too much of
               these nutrients.
             </AlertDescription>
@@ -232,21 +227,16 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
                   <TableCell>{issue.foodItem}</TableCell>
                   <TableCell>{issue.limit}</TableCell>
                   <TableCell>{issue.minimum}</TableCell>
-                  <TableCell className="text-red-500">
-                    {issue.excess} (
-                    {issue.excessPercentage.toFixed(1)}%)
+                  <TableCell>
+                    {issue.excess} ({issue.excessPercentage.toFixed(1)}%)
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
           <div className="mt-6">
-            <Alert>
-              <AlertDescription>
-                Consider removing or reducing the quantity of foods high in the
-                nutrients listed above to stay within recommended limits.
-              </AlertDescription>
-            </Alert>
+            Consider removing or reducing the quantity of foods high in the
+            nutrients listed above to stay within recommended limits.
           </div>
         </>
       )}

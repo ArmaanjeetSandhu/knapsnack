@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useNutrientBounds(calculationData, savedBounds) {
-  const [customizingBounds, setCustomizingBounds] = useState(false);
+  const [customisingBounds, setCustomisingBounds] = useState(false);
 
   const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(() => {
     if (savedBounds?.useCustomBounds)
@@ -179,7 +179,7 @@ export function useNutrientBounds(calculationData, savedBounds) {
   const handleSave = () => {
     if (Object.keys(validationErrors).length === 0) {
       setUseCustomBounds(true);
-      setCustomizingBounds(false);
+      setCustomisingBounds(false);
     }
   };
 
@@ -188,12 +188,12 @@ export function useNutrientBounds(calculationData, savedBounds) {
     setAdjustedUpperBounds({ ...calculationData.upper_bounds });
     setValidationErrors({});
     setUseCustomBounds(false);
-    setCustomizingBounds(false);
+    setCustomisingBounds(false);
   };
 
   return {
     state: {
-      customizingBounds,
+      customisingBounds,
       adjustedLowerBounds,
       adjustedUpperBounds,
       useCustomBounds,
@@ -201,7 +201,7 @@ export function useNutrientBounds(calculationData, savedBounds) {
       editingValues,
     },
     actions: {
-      setCustomizingBounds,
+      setCustomisingBounds,
       handleBoundChange,
       startEditing,
       cancelEditing,

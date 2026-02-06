@@ -9,32 +9,32 @@ const faqs = [
     question: "What is Knap[Snack]?",
     answer: [
       "Knap[Snack] is a cost-aware meal planning application that solves a problem most nutrition apps ignore: creating the cheapest possible diet that still meets all your nutritional needs.",
-      "You provide your personal stats (age, height, weight, etc.) and your fitness goal. Then you input a list of foods available to you—whatever's in your kitchen or locally accessible—along with their prices. Knap[Snack] then uses mathematical optimization to calculate the exact combination and quantities of those foods that will meet all your macro and micronutrient targets at the lowest possible cost.",
-      "The result is a personalized, goal-specific meal plan that hits your nutritional requirements without wasting money.",
+      "You provide your personal stats (age, height, weight, etc.) and your fitness goal. Then you input a list of foods available to you—whatever's in your kitchen or locally accessible—along with their prices. Knap[Snack] then uses mathematical optimisation to calculate the exact combination and quantities of those foods that will meet all your macro and micronutrient targets at the lowest possible cost.",
+      "The result is a personalised, goal-specific meal plan that hits your nutritional requirements without wasting money.",
     ],
   },
   {
     question: "What about MyFitnessPal?",
     answer: [
       "Apps like MyFitnessPal, Cronometer, and MacroFactor are meal trackers, not planners. When you use them to plan your meals, you follow a reactive approach: logging what you've already eaten, observing patterns over time, and then manually adjusting future meals based on past entries. This can create a time-consuming cycle of trial and error. Moreover, these tracking apps don't account for cost. Even if you manage to create a nutritionally perfect plan, there's no guarantee it's the most economical option available to you.",
-      "Knap[Snack], on the other hand, is proactive and cost-optimized from the start.",
+      "Knap[Snack], on the other hand, is proactive and cost-optimised from the start.",
       "The most effective approach combines both tools: Knap[Snack] to plan your meals, and your preferred tracker to monitor your adherence to that plan.",
     ],
   },
   {
     question: "How does Knap[Snack] work?",
     answer: [
-      "Under the hood, Knap[Snack] uses an optimization algorithm called mixed-integer linear programming (MILP). Here's the math:",
+      "Under the hood, Knap[Snack] uses an optimisation algorithm called mixed-integer linear programming (MILP). Here's the math:",
       <h3 key="objective-header" className="text-xl font-semibold mt-4">
         Objective
       </h3>,
-      "The objective is to minimize the total cost of the diet:",
-      "$$\n\\text{Minimize } \\sum_{i=1}^{n} c_i x_i\n$$",
+      "The objective is to minimise the total cost of the diet:",
+      "$$\n\\text{Minimise } \\sum_{i=1}^{n} c_i x_i\n$$",
       "where:\n\t• $n$ is the number of available food items\n\t• $c_i$ is the cost per serving of food item $i$\n\t• $x_i$ is the number of servings of food item $i$",
       <h3 key="constraints-header" className="text-xl font-semibold mt-4">
         Constraints
       </h3>,
-      "The optimization is subject to the following constraints:",
+      "The optimisation is subject to the following constraints:",
       <h4 key="micronutrients-header" className="font-semibold mt-2">
         Micronutrients
       </h4>,
@@ -57,15 +57,15 @@ const faqs = [
       "$$\n\\sum_{i=1}^{n} a_{i,fb} x_i \\geq \\frac{14 \\times C}{1000}\n$$",
       "And saturated fats have been capped at 10% of your daily caloric goal:",
       "$$\n\\sum_{i=1}^{n} a_{i,sf} x_i \\leq \\frac{0.10 \\times C}{w_f}\n$$",
-      "Unlike micronutrients, macronutrients don't have well-defined toxicity thresholds, so they typically don't require strict upper limits. However, without any upper bounds, the optimizer might converge on solutions where macronutrient values are significantly higher than their intended targets, disrupting your desired macronutrient ratios and resulting in excessive overall intake. At the same time, enforcing zero deviation from each macronutrient target may make it impossible for the optimizer to find a feasible solution. To balance these competing needs, Knap[Snack] allows controlled deviations above your macronutrient targets:",
+      "Unlike micronutrients, macronutrients don't have well-defined toxicity thresholds, so they typically don't require strict upper limits. However, without any upper bounds, the optimiser might converge on solutions where macronutrient values are significantly higher than their intended targets, disrupting your desired macronutrient ratios and resulting in excessive overall intake. At the same time, enforcing zero deviation from each macronutrient target may make it impossible for the optimiser to find a feasible solution. To balance these competing needs, Knap[Snack] allows controlled deviations above your macronutrient targets:",
       "$$\n\\sum_{i=1}^{n} a_{i,p} x_i \\leq \\frac{C \\times r_p}{w_p} \\times (1 + \\delta_p)$$",
       "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\leq \\frac{C \\times r_c}{w_c} \\times (1 + \\delta_c)$$",
       "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\leq \\frac{C \\times r_f}{w_f} \\times (1 + \\delta_f)$$",
       "where $\\delta_p, \\delta_c,$ and $\\delta_f$ represent allowable deviation percentages (ranging from 0% to 10%) for protein, carbohydrates, and fats respectively.",
-      "This creates a dual-objective optimization problem:",
-      "\t• minimizing the total cost of the diet, and",
-      "\t• minimizing deviations from your target macronutrient values.",
-      "Knap[Snack] solves this using a systematic grid search approach that explores combinations of allowable deviations, prioritizing solutions that stay closest to your nutritional targets while still finding feasible, cost-effective meal plans.",
+      "This creates a dual-objective optimisation problem:",
+      "\t• minimising the total cost of the diet, and",
+      "\t• minimising deviations from your target macronutrient values.",
+      "Knap[Snack] solves this using a systematic grid search approach that explores combinations of allowable deviations, prioritising solutions that stay closest to your nutritional targets while still finding feasible, cost-effective meal plans.",
       <h4 key="servings-header" className="font-semibold mt-2">
         Servings
       </h4>,
@@ -81,7 +81,7 @@ const faqs = [
       <h4 key="macros" className="font-semibold mt-2">
         Macronutrients
       </h4>,
-      "Knap[Snack] uses the Mifflin-St. Jeor equation to calculate your BMR (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your TDEE (Total Daily Energy Expenditure) is calculated, which is the actual number of calories you burn in a typical day. Depending on your fitness goals, you choose a target intake between 75% and 125% of your TDEE. This becomes your daily caloric goal. Finally, you customize how you distribute those calories across fats, carbohydrates, and protein.",
+      "Knap[Snack] uses the Mifflin-St. Jeor equation to calculate your BMR (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your TDEE (Total Daily Energy Expenditure) is calculated, which is the actual number of calories you burn in a typical day. Depending on your fitness goals, you choose a target intake between 75% and 125% of your TDEE. This becomes your daily caloric goal. Finally, you customise how you distribute those calories across fats, carbohydrates, and protein.",
       <h4 key="micros" className="font-semibold mt-2">
         Micronutrients
       </h4>,
@@ -112,7 +112,7 @@ const faqs = [
       <h4 key="vitamin-b12" className="font-semibold mt-2">
         Vitamin B₁₂
       </h4>,
-      "Similar to vitamin D, vitamin B₁₂ is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans, and often vegetarians, from receiving any meal plan. If you follow a vegan diet, prioritize B₁₂-fortified foods and supplements. If you a follow a vegetarian diet, eggs and dairy can help, though they still contain less B₁₂ than meat.",
+      "Similar to vitamin D, vitamin B₁₂ is nearly impossible to obtain in adequate amounts from plant foods alone. Including it would prevent vegans, and often vegetarians, from receiving any meal plan. If you follow a vegan diet, prioritise B₁₂-fortified foods and supplements. If you a follow a vegetarian diet, eggs and dairy can help, though they still contain less B₁₂ than meat.",
 
       <h3 key="deficiency-rare" className="text-xl font-semibold mt-4">
         Rare Deficiencies in the General Population
@@ -157,7 +157,7 @@ const faqs = [
       <h4 key="trans-fats" className="font-semibold mt-2">
         Trans Fat
       </h4>,
-      "The World Health Organization (WHO) recommends limiting trans fat intake to less than 1% of total daily energy intake. By prioritizing whole food choices over highly processed ones, a diet planned using Knap[Snack] will naturally keep trans fat intake well below this threshold.",
+      "The World Health Organization (WHO) recommends limiting trans fat intake to less than 1% of total daily energy intake. By prioritising whole food choices over highly processed ones, a diet planned using Knap[Snack] will naturally keep trans fat intake well below this threshold.",
       <h4 key="cholesterol" className="font-semibold mt-2">
         Cholesterol
       </h4>,
@@ -172,11 +172,11 @@ const faqs = [
   {
     question: "I take supplements. Can I include those here?",
     answer: [
-      "One of Knap[Snack]'s goals is to reduce supplement dependence by optimizing whole food choices, but the flexibility is there if needed. To include supplements, you need to import a CSV file containing their nutritional profiles. Ensure the file format matches the CSVs exported from the app's selected foods section.",
+      "One of Knap[Snack]'s goals is to reduce supplement dependence by optimising whole food choices, but the flexibility is there if needed. To include supplements, you need to import a CSV file containing their nutritional profiles. Ensure the file format matches the CSVs exported from the app's selected foods section.",
       <h4 key="discrete-supps" className="font-semibold mt-2">
         Discrete Supplements (e.g., pills, capsules)
       </h4>,
-      "For items taken in whole units, tick the corresponding boxes in the 'Discrete Servings' column. This ensures the optimizer only recommends whole numbers (e.g., 2 pills, not 1.5). Set the 'Serving Size (g)' to 1 so that one unit equals one pill. In the 'Max Serving (g)' column, enter the maximum number of pills you are comfortable consuming daily.",
+      "For items taken in whole units, tick the corresponding boxes in the 'Discrete Servings' column. This ensures the optimiser only recommends whole numbers (e.g., 2 pills, not 1.5). Set the 'Serving Size (g)' to 1 so that one unit equals one pill. In the 'Max Serving (g)' column, enter the maximum number of pills you are comfortable consuming daily.",
       <h4 key="continuous-supps" className="font-semibold mt-2">
         Continuous Supplements (e.g., powders, liquids)
       </h4>,
@@ -193,7 +193,7 @@ const faqs = [
   {
     question: "Why is it called Knap[Snack]?",
     answer:
-      "The name is a play on the classic [[knapsack problem]] in computer science—an optimization challenge that, like meal planning, involves selecting the best combination of items under constraints. Certain variants of the knapsack problem are solvable using linear programming, which is what Knap[Snack] uses, making it a fitting inspiration.",
+      "The name is a play on the classic [[knapsack problem]] in computer science—an optimisation challenge that, like meal planning, involves selecting the best combination of items under constraints. Certain variants of the knapsack problem are solvable using linear programming, which is what Knap[Snack] uses, making it a fitting inspiration.",
   },
   {
     question: "Where can I learn more?",

@@ -1,5 +1,5 @@
 """
-Diet optimization services.
+Diet optimisation services.
 """
 
 from itertools import product
@@ -10,10 +10,10 @@ import pandas as pd
 import pulp
 
 from server.config import NUTRIENT_MAP
-from server.utils.nutrient_utils import standardize_nutrient_bounds
+from server.utils.nutrient_utils import standardise_nutrient_bounds
 
 
-def analyze_feasibility(
+def analyse_feasibility(
     selected_foods: List[Dict[str, Any]],
     max_servings: List[float],
     lower_bounds: Union[pd.Series, Dict[str, float]],
@@ -21,7 +21,7 @@ def analyze_feasibility(
     nutrient_goals: Dict[str, Any],
 ) -> Dict[str, Any]:
     """
-    Analyze whether the selected foods can meet nutrient requirements.
+    Analyse whether the selected foods can meet nutrient requirements.
 
     Args:
         selected_foods: List of food dictionaries with nutrients
@@ -33,15 +33,15 @@ def analyze_feasibility(
     Returns:
         Dictionary with feasibility analysis results
     """
-    lower_bounds_dict, upper_bounds_dict = standardize_nutrient_bounds(
+    lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
         lower_bounds, upper_bounds
     )
 
-    lower_bound_issues = analyze_lower_bound_feasibility(
+    lower_bound_issues = analyse_lower_bound_feasibility(
         selected_foods, max_servings, lower_bounds_dict, nutrient_goals
     )
 
-    upper_bound_issues = analyze_upper_bound_feasibility(
+    upper_bound_issues = analyse_upper_bound_feasibility(
         selected_foods, upper_bounds_dict, nutrient_goals
     )
 
@@ -62,14 +62,14 @@ def analyze_feasibility(
     }
 
 
-def analyze_lower_bound_feasibility(
+def analyse_lower_bound_feasibility(
     selected_foods: List[Dict[str, Any]],
     max_servings: List[float],
     lower_bounds: Dict[str, float],
     nutrient_goals: Dict[str, Any],
 ) -> List[Dict[str, Any]]:
     """
-    Analyze lower bound feasibility for nutrients.
+    Analyse lower bound feasibility for nutrients.
 
     Args:
         selected_foods: List of food dictionaries with nutrients
@@ -146,13 +146,13 @@ def analyze_lower_bound_feasibility(
     return lower_bound_issues
 
 
-def analyze_upper_bound_feasibility(
+def analyse_upper_bound_feasibility(
     selected_foods: List[Dict[str, Any]],
     upper_bounds: Dict[str, float],
     nutrient_goals: Dict[str, Any],
 ) -> List[Dict[str, Any]]:
     """
-    Analyze upper bound feasibility for nutrients.
+    Analyse upper bound feasibility for nutrients.
     Flags any single food item that exceeds a limit on its own at 1 serving.
 
     Args:
@@ -217,7 +217,7 @@ def analyze_upper_bound_feasibility(
     return upper_bound_issues
 
 
-def optimize_diet(
+def optimise_diet(
     selected_foods: List[Dict[str, Any]],
     costs: np.ndarray,
     max_servings: List[float],
@@ -237,7 +237,7 @@ def optimize_diet(
         upper_bounds: Upper bounds for nutrients
 
     Returns:
-        Optimization result or None if no feasible solution
+        Optimisation result or None if no feasible solution
     """
     overflow_percentages = list(range(0, 11))
     nutrients = ["protein", "carbohydrate", "fats"]
@@ -246,7 +246,7 @@ def optimize_diet(
     sorted_combinations = sorted(all_combinations, key=sum)
 
     for combo in sorted_combinations:
-        result = solve_optimization_problem(
+        result = solve_optimisation_problem(
             selected_foods,
             costs,
             max_servings,
@@ -262,7 +262,7 @@ def optimize_diet(
     return None
 
 
-def solve_optimization_problem(
+def solve_optimisation_problem(
     selected_foods: List[Dict[str, Any]],
     costs: np.ndarray,
     max_servings: List[float],
@@ -272,7 +272,7 @@ def solve_optimization_problem(
     overflow_percentages: Tuple[int, ...],
 ) -> Optional[Dict[str, Any]]:
     """
-    Solve the diet optimization problem with the given parameters.
+    Solve the diet optimisation problem with the given parameters.
 
     Args:
         selected_foods: List of food dictionaries
@@ -284,16 +284,16 @@ def solve_optimization_problem(
         overflow_percentages: Overflow percentages for (protein, carbs, fats)
 
     Returns:
-        Result dictionary if optimization succeeds, None otherwise
+        Result dictionary if optimisation succeeds, None otherwise
     """
-    lower_bounds_dict, upper_bounds_dict = standardize_nutrient_bounds(
+    lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
         lower_bounds, upper_bounds
     )
 
     nutrients = ["protein", "carbohydrate", "fats"]
     num_foods = len(selected_foods)
 
-    prob = pulp.LpProblem("Diet_Optimization", pulp.LpMinimize)
+    prob = pulp.LpProblem("Diet_Optimisation", pulp.LpMinimize)
 
     x = []
     for i in range(num_foods):
@@ -352,14 +352,14 @@ def solve_optimization_problem(
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
 
     if prob.status == pulp.LpStatusOptimal:
-        return format_optimization_result(
+        return format_optimisation_result(
             selected_foods, x, costs, nutrients, overflow_percentages
         )
 
     return None
 
 
-def format_optimization_result(
+def format_optimisation_result(
     selected_foods: List[Dict[str, Any]],
     x: List[pulp.LpVariable],
     costs: np.ndarray,
@@ -367,7 +367,7 @@ def format_optimization_result(
     overflow_percentages: Tuple[int, ...],
 ) -> Dict[str, Any]:
     """
-    Format the optimization result for API response.
+    Format the optimisation result for API response.
     """
     num_foods = len(selected_foods)
     servings = np.array([x[i].value() for i in range(num_foods)])

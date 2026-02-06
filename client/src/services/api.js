@@ -35,8 +35,8 @@ const api = {
     return response.json();
   },
 
-  async optimizeDiet(data) {
-    const response = await fetch(`${config.apiUrl}/optimize`, {
+  async optimiseDiet(data) {
+    const response = await fetch(`${config.apiUrl}/optimise`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,11 +50,11 @@ const api = {
       if (result.feasibilityAnalysis)
         return {
           success: false,
-          message: result.message || "Optimization failed",
+          message: result.message || "Optimisation failed",
           feasibilityAnalysis: result.feasibilityAnalysis,
         };
 
-      throw new Error(result.error || result.message || "Optimization failed");
+      throw new Error(result.error || result.message || "Optimisation failed");
     }
 
     return result;

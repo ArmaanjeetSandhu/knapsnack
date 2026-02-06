@@ -45,7 +45,7 @@ const LandingPage = ({ onGetStarted }) => {
           Knap[Snack]
         </h1>
         <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto select-none">
-          The Cost-Optimized Meal Planner
+          The Cost-Optimised Meal Planner
         </p>
         <Button
           size="lg"

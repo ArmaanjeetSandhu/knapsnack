@@ -12,14 +12,14 @@ import {
   Utensils,
 } from "lucide-react";
 import { useState } from "react";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Button } from "../components/ui/button";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Button } from "./ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "./ui/card";
 import {
   Table,
   TableBody,
@@ -27,13 +27,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
+} from "./ui/table";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../components/ui/tabs";
+} from "./ui/tabs";
 import {
   HYDRATION_CONFIG,
   MINERALS_CONFIG,
@@ -49,7 +49,7 @@ import {
 import handleExportCSV from "./ExportHandler";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
 
-const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
+const OptimisationResults = ({ results, selectedFoods, nutrientGoals }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
   const [portionsSortConfig, setPortionsSortConfig] = useState({
     key: null,
@@ -155,7 +155,7 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
       <Card>
         <CardHeader className="space-y-0 pb-2">
           <CardTitle className="text-2xl font-bold mb-2">
-            Optimized Diet Plan
+            Optimised Diet Plan
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -475,4 +475,4 @@ const OptimizationResults = ({ results, selectedFoods, nutrientGoals }) => {
   );
 };
 
-export default OptimizationResults;
+export default OptimisationResults;

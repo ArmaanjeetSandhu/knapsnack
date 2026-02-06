@@ -11,22 +11,22 @@ try:
     client = contentful.Client(CONTENTFUL_SPACE_ID, CONTENTFUL_ACCESS_TOKEN)
 except Exception as e:
     client = None
-    print(f"Failed to initialize Contentful client: {e}")
+    print(f"Failed to initialise Contentful client: {e}")
 
 
-def normalize_contentful_data(data):
+def normalise_contentful_data(data):
     """
     Recursively converts Contentful SDK objects (Entries, Assets, Links, datetimes)
-    into JSON-serializable dictionaries and strings.
+    into JSON-serialisable dictionaries and strings.
     """
     if isinstance(data, list):
-        return [normalize_contentful_data(item) for item in data]
+        return [normalise_contentful_data(item) for item in data]
 
     if isinstance(data, dict):
-        return {k: normalize_contentful_data(v) for k, v in data.items()}
+        return {k: normalise_contentful_data(v) for k, v in data.items()}
 
     if hasattr(data, "sys"):
-        serialized = {"sys": normalize_contentful_data(data.sys)}
+        serialised = {"sys": normalise_contentful_data(data.sys)}
 
         if hasattr(data, "fields"):
             try:
@@ -35,11 +35,11 @@ def normalize_contentful_data(data):
                 else:
                     fields_data = data.fields
 
-                serialized["fields"] = normalize_contentful_data(fields_data)
+                serialised["fields"] = normalise_contentful_data(fields_data)
             except Exception:
                 pass
 
-        return serialized
+        return serialised
 
     if isinstance(data, datetime):
         return data.isoformat()
@@ -93,7 +93,7 @@ def extract_first_image(content):
 def get_all_posts():
     """Fetches all blog post entries from Contentful."""
     if not client:
-        print("Error: Contentful client not initialized.")
+        print("Error: Contentful client not initialised.")
         return None
     try:
         entries = client.entries(
@@ -111,8 +111,8 @@ def get_all_posts():
                 continue
 
             raw_content = fields.get("content")
-            normalized_content = normalize_contentful_data(raw_content)
-            thumbnail_url = extract_first_image(normalized_content)
+            normalised_content = normalise_contentful_data(raw_content)
+            thumbnail_url = extract_first_image(normalised_content)
 
             posts.append(
                 {
@@ -121,7 +121,7 @@ def get_all_posts():
                     "slug": fields.get("slug"),
                     "summary": fields.get("summary"),
                     "thumbnail": thumbnail_url,
-                    "published_date": normalize_contentful_data(
+                    "published_date": normalise_contentful_data(
                         entry.sys.get("created_at")
                     ),
                 }
@@ -136,7 +136,7 @@ def get_all_posts():
 def get_post_by_slug(slug):
     """Fetches a single blog post entry by its slug from Contentful."""
     if not client:
-        print("Error: Contentful client not initialized.")
+        print("Error: Contentful client not initialised.")
         return None
     try:
         entries = client.entries(
@@ -157,11 +157,11 @@ def get_post_by_slug(slug):
             "id": entry.id,
             "title": raw_fields.get("title") if isinstance(raw_fields, dict) else None,
             "slug": raw_fields.get("slug") if isinstance(raw_fields, dict) else None,
-            "content": normalize_contentful_data(
+            "content": normalise_contentful_data(
                 raw_fields.get("content") if isinstance(raw_fields, dict) else None
             ),
             "published_date": (
-                normalize_contentful_data(entry.sys.get("created_at"))
+                normalise_contentful_data(entry.sys.get("created_at"))
                 if hasattr(entry.sys, "get")
                 else None
             ),

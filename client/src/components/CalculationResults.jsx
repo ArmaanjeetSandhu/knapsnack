@@ -46,7 +46,7 @@ const CalculationResults = ({
 
   const { state, actions } = useNutrientBounds(calculationData, savedBounds);
   const {
-    customizingBounds,
+    customisingBounds,
     adjustedLowerBounds,
     adjustedUpperBounds,
     useCustomBounds,
@@ -670,7 +670,7 @@ const CalculationResults = ({
                 Micronutrient Targets
               </h3>
               <div className="flex items-center gap-2">
-                {!customizingBounds && (
+                {!customisingBounds && (
                   <AnimatePresence mode="wait">
                     <motion.div
                       key="normal-controls"
@@ -702,17 +702,17 @@ const CalculationResults = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => actions.setCustomizingBounds(true)}
+                        onClick={() => actions.setCustomisingBounds(true)}
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
                     </motion.div>
                   </AnimatePresence>
                 )}
-                {customizingBounds && (
+                {customisingBounds && (
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key="customize-controls"
+                      key="customise-controls"
                       className="flex items-center gap-2"
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -747,9 +747,9 @@ const CalculationResults = ({
               </div>
             </div>
             <AnimatePresence mode="wait">
-              {customizingBounds ? (
+              {customisingBounds ? (
                 <motion.div
-                  key="customizing-bounds"
+                  key="customising-bounds"
                   className="space-y-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

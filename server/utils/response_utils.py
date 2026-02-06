@@ -12,7 +12,7 @@ def create_error_response(
     message: str, details: Optional[List[str]] = None, status_code: int = 400
 ) -> Tuple[Response, int]:
     """
-    Create a standardized error response.
+    Create a standardised error response.
 
     Args:
         message: Main error message

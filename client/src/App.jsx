@@ -23,7 +23,7 @@ import CalculationResults from "./components/CalculationResults";
 import ErrorPage from "./components/ErrorPage";
 import FoodSearch from "./components/FoodSearch";
 import LandingPage from "./components/LandingPage";
-import OptimizationResults from "./components/OptimizationResults";
+import OptimisationResults from "./components/OptimisationResults";
 import PersonalInfoForm from "./components/PersonalInfoForm";
 import SelectedFoods from "./components/SelectedFoods";
 import ThemeToggle from "./components/ThemeToggle";
@@ -85,7 +85,7 @@ function App() {
     actions.clearStorage();
     actions.setNutrientGoals(null);
     actions.setSelectedFoods([]);
-    actions.setOptimizationResults(null);
+    actions.setOptimisationResults(null);
     actions.setStoredResults(null);
     actions.setSnapshotFoods([]);
     actions.setUserInfo(null);
@@ -134,8 +134,8 @@ function App() {
     }
   };
 
-  const handleOptimizationSuccess = (result) => {
-    actions.setOptimizationResults(result);
+  const handleOptimisationSuccess = (result) => {
+    actions.setOptimisationResults(result);
     actions.setSnapshotFoods(state.selectedFoods);
   };
 
@@ -153,7 +153,7 @@ function App() {
         maxServing: 500,
       },
     ]);
-    actions.setOptimizationResults(null);
+    actions.setOptimisationResults(null);
     setError(null);
   };
 
@@ -172,17 +172,17 @@ function App() {
         ...prevFoods,
         ...uniqueNewFoods,
       ]);
-      actions.setOptimizationResults(null);
+      actions.setOptimisationResults(null);
     }
   };
 
   const handleViewPreviousResults = () => {
     if (state.storedResults)
-      actions.setOptimizationResults(state.storedResults);
+      actions.setOptimisationResults(state.storedResults);
   };
 
   const handleHideResults = () => {
-    actions.setOptimizationResults(null);
+    actions.setOptimisationResults(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -208,7 +208,7 @@ function App() {
     showLanding,
     nutrientGoals,
     selectedFoods,
-    optimizationResults,
+    optimisationResults,
     snapshotFoods,
     storedResults,
     showCalculationResults,
@@ -286,7 +286,7 @@ function App() {
         </div>
       ) : (
         <>
-          {!optimizationResults && !showCalculationResults && (
+          {!optimisationResults && !showCalculationResults && (
             <div
               className={`mb-4 grid grid-cols-1 ${
                 storedResults ? "md:grid-cols-2" : ""
@@ -299,7 +299,7 @@ function App() {
                   className="w-full"
                 >
                   <Eye className="w-5 h-5 mr-2" />
-                  View Previous Optimization Results
+                  View Previous Optimisation Results
                 </Button>
               )}
               {nutrientGoals && (
@@ -315,7 +315,7 @@ function App() {
             </div>
           )}
 
-          {optimizationResults && (
+          {optimisationResults && (
             <div className="mb-4">
               <Button
                 onClick={handleHideResults}
@@ -328,7 +328,7 @@ function App() {
             </div>
           )}
 
-          {!optimizationResults && (
+          {!optimisationResults && (
             <>
               <FoodSearch
                 onFoodSelect={handleFoodSelect}
@@ -350,12 +350,12 @@ function App() {
                     : nutrientGoals
                 }
                 userInfo={userInfo}
-                onOptimizationResults={handleOptimizationSuccess}
+                onOptimisationResults={handleOptimisationSuccess}
               />
               {useCustomBounds && (
                 <Alert className="mt-4">
                   <AlertDescription>
-                    Using custom nutrient bounds for optimization. Visit
+                    Using custom nutrient bounds for optimisation. Visit
                     &quot;View Nutrition Requirements&quot; to adjust them.
                   </AlertDescription>
                 </Alert>
@@ -374,7 +374,7 @@ function App() {
                       className="w-full"
                     >
                       <Eye className="w-5 h-5 mr-2" />
-                      View Previous Optimization Results
+                      View Previous Optimisation Results
                     </Button>
                   )}
                   {nutrientGoals && (
@@ -392,10 +392,10 @@ function App() {
             </>
           )}
 
-          {optimizationResults && (
+          {optimisationResults && (
             <>
-              <OptimizationResults
-                results={optimizationResults}
+              <OptimisationResults
+                results={optimisationResults}
                 selectedFoods={snapshotFoods}
                 nutrientGoals={effectiveNutrientGoals}
               />

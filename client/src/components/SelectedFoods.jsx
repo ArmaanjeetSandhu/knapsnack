@@ -28,7 +28,7 @@ import {
 } from "../components/ui/table";
 import {
   exportSelectedFoodsToCSV,
-  prepareOptimizationPayload,
+  prepareOptimisationPayload,
 } from "../lib/foodHelpers";
 import api from "../services/api";
 import FeasibilityAnalysis from "./FeasibilityAnalysis";
@@ -47,7 +47,7 @@ const SelectedFoods = ({
   onFoodsUpdate,
   nutrientGoals,
   userInfo,
-  onOptimizationResults,
+  onOptimisationResults,
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -79,7 +79,7 @@ const SelectedFoods = ({
     setFeasibilityData(null);
   };
 
-  const handleOptimize = async () => {
+  const handleOptimise = async () => {
     if (!foods.length) {
       setError("Please select at least one food item.");
       return;
@@ -106,15 +106,15 @@ const SelectedFoods = ({
     setError(null);
     setFeasibilityData(null);
     try {
-      const optimizationData = prepareOptimizationPayload(
+      const optimisationData = prepareOptimisationPayload(
         foods,
         nutrientGoals,
         userInfo,
       );
 
-      const result = await api.optimizeDiet(optimizationData);
+      const result = await api.optimiseDiet(optimisationData);
 
-      if (result.success) onOptimizationResults(result.result);
+      if (result.success) onOptimisationResults(result.result);
       else if (
         result.feasibilityAnalysis &&
         result.feasibilityAnalysis.isFeasible
@@ -122,9 +122,9 @@ const SelectedFoods = ({
         setShowErrorDialog(true);
       else if (result.feasibilityAnalysis)
         setFeasibilityData(result.feasibilityAnalysis);
-      else setError(result.message || "Optimization failed");
+      else setError(result.message || "Optimisation failed");
     } catch (err) {
-      setError(err.message || "An error occurred during optimization");
+      setError(err.message || "An error occurred during optimisation");
     } finally {
       setLoading(false);
     }
@@ -397,18 +397,18 @@ const SelectedFoods = ({
                   <Button
                     className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
                     size="lg"
-                    onClick={handleOptimize}
+                    onClick={handleOptimise}
                     disabled={loading}
                   >
                     {loading ? (
                       <div className="flex items-center gap-2">
                         <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        <span className="font-medium">Optimizing...</span>
+                        <span className="font-medium">Optimising...</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
                         <WandSparkles className="w-5 h-5" />
-                        <span className="font-medium">Optimize Diet Plan</span>
+                        <span className="font-medium">Optimise Diet Plan</span>
                       </div>
                     )}
                   </Button>
@@ -436,10 +436,10 @@ const SelectedFoods = ({
       <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-destructive flex items-center gap-2">
+            <DialogTitle className="text-destructive flex items-center gap-2 mt-2">
               Oops!
             </DialogTitle>
-            <DialogDescription className="pt-2">
+            <DialogDescription className="pt-2 text-left">
               Knap[Snack] couldn&apos;t create a meal plan with your current
               selections. The foods you&apos;ve chosen do have the nutrients you
               need, but we&apos;re having trouble combining them in a way that
@@ -473,10 +473,10 @@ const SelectedFoods = ({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-destructive flex items-center gap-2">
+            <DialogTitle className="text-destructive flex items-center gap-2 mt-2">
               Not so fast!
             </DialogTitle>
-            <DialogDescription className="pt-2">
+            <DialogDescription className="pt-2 text-left">
               We found some issues with the food details you entered.
             </DialogDescription>
           </DialogHeader>

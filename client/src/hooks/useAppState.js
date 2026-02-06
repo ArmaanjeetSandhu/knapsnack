@@ -4,7 +4,7 @@ const STORAGE_KEYS = {
   SELECTED_FOODS: "knapsnack_selected_foods",
   NUTRIENT_GOALS: "knapsnack_nutrient_goals",
   USER_INFO: "knapsnack_user_info",
-  OPTIMIZATION_RESULTS: "knapsnack_optimization_results",
+  OPTIMIZATION_RESULTS: "knapsnack_optimisation_results",
   SNAPSHOT_FOODS: "knapsnack_snapshot_foods",
   SHOW_CALCULATION_RESULTS: "knapsnack_show_calculation_results",
   ADJUSTED_LOWER_BOUNDS: "knapsnack_adjusted_lower_bounds",
@@ -18,7 +18,7 @@ export function useAppState() {
   const [showLanding, setShowLanding] = useState(true);
   const [nutrientGoals, setNutrientGoals] = useState(null);
   const [selectedFoods, setSelectedFoods] = useState([]);
-  const [optimizationResults, setOptimizationResults] = useState(null);
+  const [optimisationResults, setOptimisationResults] = useState(null);
   const [snapshotFoods, setSnapshotFoods] = useState([]);
   const [storedResults, setStoredResults] = useState(null);
   const [showCalculationResults, setShowCalculationResults] = useState(false);
@@ -59,7 +59,7 @@ export function useAppState() {
       if (previousResults) {
         const parsedResults = JSON.parse(previousResults);
         setStoredResults(parsedResults);
-        setOptimizationResults(parsedResults);
+        setOptimisationResults(parsedResults);
       }
       if (storedSnapshot) setSnapshotFoods(JSON.parse(storedSnapshot));
       if (storedLowerBounds)
@@ -103,14 +103,14 @@ export function useAppState() {
   }, [userInfo]);
 
   useEffect(() => {
-    if (optimizationResults) {
+    if (optimisationResults) {
       localStorage.setItem(
         STORAGE_KEYS.OPTIMIZATION_RESULTS,
-        JSON.stringify(optimizationResults),
+        JSON.stringify(optimisationResults),
       );
-      setStoredResults(optimizationResults);
+      setStoredResults(optimisationResults);
     }
-  }, [optimizationResults]);
+  }, [optimisationResults]);
 
   useEffect(() => {
     if (snapshotFoods.length > 0)
@@ -151,9 +151,9 @@ export function useAppState() {
   }, [hasVisitedFoodSelection]);
 
   useEffect(() => {
-    if (nutrientGoals && !showCalculationResults && !optimizationResults)
+    if (nutrientGoals && !showCalculationResults && !optimisationResults)
       setHasVisitedFoodSelection(true);
-  }, [nutrientGoals, showCalculationResults, optimizationResults]);
+  }, [nutrientGoals, showCalculationResults, optimisationResults]);
 
   const clearStorage = () => {
     Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
@@ -164,7 +164,7 @@ export function useAppState() {
       showLanding,
       nutrientGoals,
       selectedFoods,
-      optimizationResults,
+      optimisationResults,
       snapshotFoods,
       storedResults,
       showCalculationResults,
@@ -178,7 +178,7 @@ export function useAppState() {
       setShowLanding,
       setNutrientGoals,
       setSelectedFoods,
-      setOptimizationResults,
+      setOptimisationResults,
       setSnapshotFoods,
       setStoredResults,
       setShowCalculationResults,

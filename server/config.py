@@ -1,5 +1,5 @@
 """
-Configuration settings and constants for the diet optimization service.
+Configuration settings and constants for the diet optimisation service.
 """
 
 import os
