@@ -13,6 +13,23 @@ const preventInvalidChars = (e) => {
   if ([".", "+", "-", "e", "E"].includes(e.key)) e.preventDefault();
 };
 
+const SelectionGroup = ({ options, value, onChange }) => (
+  <div className="flex gap-2">
+    {options.map((option) => (
+      <Button
+        key={option.value}
+        type="button"
+        variant={value === option.value ? "default" : "outline"}
+        className="flex-1"
+        onClick={() => onChange(option.value)}
+        autoFocus={value === option.value}
+      >
+        {option.label}
+      </Button>
+    ))}
+  </div>
+);
+
 const PersonalInfoForm = ({ onSubmit }) => {
   const [showSmokingHelp, setShowSmokingHelp] = useState(false);
 
@@ -71,26 +88,14 @@ const PersonalInfoForm = ({ onSubmit }) => {
     switch (currentStep) {
       case 0:
         return (
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant={formData.gender === "m" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => handleInputChange("gender", "m")}
-              autoFocus={formData.gender === "m"}
-            >
-              Male
-            </Button>
-            <Button
-              type="button"
-              variant={formData.gender === "f" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => handleInputChange("gender", "f")}
-              autoFocus={formData.gender === "f"}
-            >
-              Female
-            </Button>
-          </div>
+          <SelectionGroup
+            options={[
+              { label: "Male", value: "m" },
+              { label: "Female", value: "f" },
+            ]}
+            value={formData.gender}
+            onChange={(val) => handleInputChange("gender", val)}
+          />
         );
       case 1:
         return (
@@ -138,24 +143,14 @@ const PersonalInfoForm = ({ onSubmit }) => {
         );
       case 5:
         return (
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant={formData.smokingStatus === "no" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => handleInputChange("smokingStatus", "no")}
-            >
-              No
-            </Button>
-            <Button
-              type="button"
-              variant={formData.smokingStatus === "yes" ? "default" : "outline"}
-              className="flex-1"
-              onClick={() => handleInputChange("smokingStatus", "yes")}
-            >
-              Yes
-            </Button>
-          </div>
+          <SelectionGroup
+            options={[
+              { label: "No", value: "no" },
+              { label: "Yes", value: "yes" },
+            ]}
+            value={formData.smokingStatus}
+            onChange={(val) => handleInputChange("smokingStatus", val)}
+          />
         );
       case 6:
         return (
@@ -226,6 +221,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
         const activeElement = document.activeElement;
         const tagName = activeElement.tagName.toLowerCase();
 
+        // Restored original specific logic
         const isSelectedButton = () => {
           if (tagName !== "button") return false;
           const text = activeElement.textContent?.trim();

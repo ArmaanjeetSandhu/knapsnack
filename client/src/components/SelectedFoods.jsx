@@ -462,7 +462,7 @@ const SelectedFoods = ({
             </ul>
           </div>
           <DialogFooter>
-            <Button onClick={() => setShowErrorDialog(false)}>Try Again</Button>
+            <Button onClick={() => setShowErrorDialog(false)}>OK</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
