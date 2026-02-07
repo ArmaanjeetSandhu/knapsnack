@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import { useNutrientDisplay } from "../hooks/useNutrientDisplay";
 import NutrientInfoPopup from "./NutrientInfoPopup";
 
 const BlinkingDot = () => (
@@ -20,29 +21,23 @@ export const NutrientTable = ({
   upperBounds,
   showBoundsInLayout = true,
 }) => {
-  const [selectedNutrient, setSelectedNutrient] = useState(null);
+  const {
+    selectedNutrient,
+    showAmount,
+    showBounds,
+    handleNutrientClick,
+    closePopup,
+  } = useNutrientDisplay(
+    nutrients,
+    lowerBounds,
+    upperBounds,
+    showBoundsInLayout,
+  );
+
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
   });
-
-  const showAmount = nutrients.some((n) => n.value !== undefined);
-  const showBounds = (lowerBounds || upperBounds) && showBoundsInLayout;
-
-  const getNutrientKey = (nutrient) => {
-    return nutrient.key || `${nutrient.name} (${nutrient.unit})`;
-  };
-
-  const handleRowClick = (nutrient) => {
-    const key = getNutrientKey(nutrient);
-    setSelectedNutrient({
-      name: nutrient.name,
-      rda: lowerBounds ? lowerBounds[key] : undefined,
-      ul: upperBounds ? upperBounds[key] : undefined,
-      unit: nutrient.unit,
-      amount: nutrient.value,
-    });
-  };
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -56,8 +51,9 @@ export const NutrientTable = ({
     if (sortConfig.key) {
       sortableNutrients.sort((a, b) => {
         let aValue, bValue;
-        const keyA = getNutrientKey(a);
-        const keyB = getNutrientKey(b);
+        const keyA = a.key;
+        const keyB = b.key;
+
         if (sortConfig.key === "nutrient") {
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
@@ -137,12 +133,12 @@ export const NutrientTable = ({
           </TableHeader>
           <TableBody>
             {sortedNutrients.map((nutrient, index) => {
-              const key = getNutrientKey(nutrient);
+              const key = nutrient.key;
               return (
                 <TableRow
                   key={index}
                   className="cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => handleRowClick(nutrient)}
+                  onClick={() => handleNutrientClick(nutrient)}
                 >
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
@@ -175,7 +171,7 @@ export const NutrientTable = ({
       {selectedNutrient && (
         <NutrientInfoPopup
           isOpen={true}
-          onClose={() => setSelectedNutrient(null)}
+          onClose={closePopup}
           nutrient={selectedNutrient.name}
           rda={selectedNutrient.rda}
           ul={selectedNutrient.ul}
@@ -193,36 +189,29 @@ export const NutrientCards = ({
   upperBounds,
   showBoundsInLayout = true,
 }) => {
-  const [selectedNutrient, setSelectedNutrient] = useState(null);
-
-  const getNutrientKey = (nutrient) => {
-    return nutrient.key || `${nutrient.name} (${nutrient.unit})`;
-  };
-
-  const showAmount = nutrients.some((n) => n.value !== undefined);
-  const showBounds = (lowerBounds || upperBounds) && showBoundsInLayout;
-
-  const handleCardClick = (nutrient) => {
-    const key = getNutrientKey(nutrient);
-    setSelectedNutrient({
-      name: nutrient.name,
-      rda: lowerBounds ? lowerBounds[key] : undefined,
-      ul: upperBounds ? upperBounds[key] : undefined,
-      unit: nutrient.unit,
-      amount: nutrient.value,
-    });
-  };
+  const {
+    selectedNutrient,
+    showAmount,
+    showBounds,
+    handleNutrientClick,
+    closePopup,
+  } = useNutrientDisplay(
+    nutrients,
+    lowerBounds,
+    upperBounds,
+    showBoundsInLayout,
+  );
 
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-3">
         {nutrients.map((nutrient, index) => {
-          const key = getNutrientKey(nutrient);
+          const key = nutrient.key;
           return (
             <Card
               key={index}
               className="cursor-pointer hover:shadow-md transition-all duration-200"
-              onClick={() => handleCardClick(nutrient)}
+              onClick={() => handleNutrientClick(nutrient)}
             >
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-2">
@@ -273,7 +262,7 @@ export const NutrientCards = ({
       {selectedNutrient && (
         <NutrientInfoPopup
           isOpen={true}
-          onClose={() => setSelectedNutrient(null)}
+          onClose={closePopup}
           nutrient={selectedNutrient.name}
           rda={selectedNutrient.rda}
           ul={selectedNutrient.ul}
