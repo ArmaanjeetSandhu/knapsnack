@@ -32,6 +32,7 @@ from server.services.calculation import (
     adjust_nutrient_bounds,
     calculate_nutrition_requirements,
     validate_input_parameters,
+    validate_age,
 )
 from server.services.food_service import search_foods
 from server.services.optimisation import analyse_feasibility, optimise_diet
@@ -116,6 +117,23 @@ Canonical: https://knapsnack-b4b10d2b0910.herokuapp.com/.well-known/security.txt
     )
     response.headers["Content-Type"] = "text/plain"
     return response
+
+
+@app.route("/api/config", methods=["GET"])
+def get_config_api():
+    """API endpoint to fetch configuration constants."""
+    return jsonify(
+        {
+            "limits": {
+                "AGE_MIN": AGE_MIN,
+                "AGE_MAX": AGE_MAX,
+                "WEIGHT_MIN": WEIGHT_MIN,
+                "WEIGHT_MAX": WEIGHT_MAX,
+                "HEIGHT_MIN": HEIGHT_MIN,
+                "HEIGHT_MAX": HEIGHT_MAX,
+            }
+        }
+    )
 
 
 @app.route("/api/posts", methods=["GET"])
@@ -244,8 +262,8 @@ def optimise_api():
         gender = data["gender"]
         smoking_status = data.get("smokingStatus", "no")
 
-        if age < AGE_MIN or age > AGE_MAX:
-            return create_error_response(f"Age must be between {AGE_MIN} and {AGE_MAX}")
+        if error := validate_age(age, AGE_MIN, AGE_MAX):
+            return create_error_response(error)
 
         if not selected_foods_data:
             return create_error_response("No foods selected")

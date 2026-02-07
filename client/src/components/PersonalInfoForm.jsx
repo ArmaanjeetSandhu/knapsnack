@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, HelpCircle, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useFormWizard } from "../hooks/useFormWizard";
+import api from "../services/api";
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
@@ -33,46 +34,75 @@ const SelectionGroup = ({ options, value, onChange }) => (
 const PersonalInfoForm = ({ onSubmit }) => {
   const [showSmokingHelp, setShowSmokingHelp] = useState(false);
 
-  const stepConfigs = [
-    { title: "First, what's your gender?" },
-    {
-      title: "How old are you?",
-      validate: (value) => {
-        const age = parseInt(value);
-        if (!value || age < 19 || age > 100)
-          return "Age must be between 19 and 100";
-        return null;
+  const [limits, setLimits] = useState(null);
+  const [configError, setConfigError] = useState(false);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const configData = await api.getServiceConfig();
+        if (configData && configData.limits) setLimits(configData.limits);
+        else setConfigError(true);
+      } catch (error) {
+        console.error("Failed to load validation limits:", error);
+        setConfigError(true);
+      }
+    };
+    fetchConfig();
+  }, []);
+
+  const stepConfigs = useMemo(() => {
+    if (!limits) return [];
+
+    return [
+      { title: "First, what's your gender?" },
+      {
+        title: "How old are you?",
+        validate: (value) => {
+          const age = parseInt(value);
+          if (!value || age < limits.AGE_MIN || age > limits.AGE_MAX)
+            return `Age must be between ${limits.AGE_MIN} and ${limits.AGE_MAX}`;
+          return null;
+        },
       },
-    },
-    {
-      title: "What's your weight in kilograms?",
-      validate: (value) => {
-        const weight = parseInt(value);
-        if (!value || weight < 30 || weight > 200)
-          return "Weight must be between 30 and 200 kg";
-        return null;
+      {
+        title: "What's your weight in kilograms?",
+        validate: (value) => {
+          const weight = parseInt(value);
+          if (
+            !value ||
+            weight < limits.WEIGHT_MIN ||
+            weight > limits.WEIGHT_MAX
+          )
+            return `Weight must be between ${limits.WEIGHT_MIN} and ${limits.WEIGHT_MAX} kg`;
+          return null;
+        },
       },
-    },
-    {
-      title: "And your height in centimeters?",
-      validate: (value) => {
-        const height = parseInt(value);
-        if (!value || height < 135 || height > 200)
-          return "Height must be between 135 and 200 cm";
-        return null;
+      {
+        title: "And your height in centimeters?",
+        validate: (value) => {
+          const height = parseInt(value);
+          if (
+            !value ||
+            height < limits.HEIGHT_MIN ||
+            height > limits.HEIGHT_MAX
+          )
+            return `Height must be between ${limits.HEIGHT_MIN} and ${limits.HEIGHT_MAX} cm`;
+          return null;
+        },
       },
-    },
-    { title: "How active are you on a daily basis?" },
-    { title: "Do you smoke?" },
-    { title: "What's your caloric goal?" },
-    {
-      title: "Finally, let's set your macro ratios",
-      validate: (value) => {
-        if (!value) return "Please set valid macro ratios that total 100%";
-        return null;
+      { title: "How active are you on a daily basis?" },
+      { title: "Do you smoke?" },
+      { title: "What's your caloric goal?" },
+      {
+        title: "Finally, let's set your macro ratios",
+        validate: (value) => {
+          if (!value) return "Please set valid macro ratios that total 100%";
+          return null;
+        },
       },
-    },
-  ];
+    ];
+  }, [limits]);
 
   const {
     currentStep,
@@ -255,6 +285,25 @@ const PersonalInfoForm = ({ onSubmit }) => {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [handleNext, handlePrevious, currentStep, formData]);
+
+  if (!limits && !configError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading configuration...</p>
+      </div>
+    );
+  }
+
+  if (configError) {
+    return (
+      <Alert variant="destructive" className="max-w-2xl mx-auto mt-8">
+        <AlertDescription>
+          Failed to load application configuration. Please refresh the page.
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto">

@@ -14,6 +14,27 @@ from server.utils.nutrient_utils import (
 )
 
 
+def validate_age(age: int, age_min: int, age_max: int) -> Optional[str]:
+    """Validate age is within bounds."""
+    if age < age_min or age > age_max:
+        return f"Age must be between {age_min} and {age_max}"
+    return None
+
+
+def validate_weight(weight: int, weight_min: int, weight_max: int) -> Optional[str]:
+    """Validate weight is within bounds."""
+    if weight < weight_min or weight > weight_max:
+        return f"Weight must be between {weight_min} and {weight_max} kg"
+    return None
+
+
+def validate_height(height: int, height_min: int, height_max: int) -> Optional[str]:
+    """Validate height is within bounds."""
+    if height < height_min or height > height_max:
+        return f"Height must be between {height_min} and {height_max} cm"
+    return None
+
+
 def validate_input_parameters(
     data: Dict[str, Any],
     age_min: int,
@@ -25,37 +46,21 @@ def validate_input_parameters(
 ) -> Tuple[bool, List[str]]:
     """
     Validate input parameters for diet calculations.
-
-    Args:
-        data: Dictionary with user input
-        age_min: Minimum allowed age
-        age_max: Maximum allowed age
-        weight_min: Minimum allowed weight
-        weight_max: Maximum allowed weight
-        height_min: Minimum allowed height
-        height_max: Maximum allowed height
-
-    Returns:
-        Tuple of (is_valid, error_messages)
     """
     validation_errors = []
 
     age = int(data.get("age", 0))
-    if age < age_min or age > age_max:
-        validation_errors.append(f"Age must be between {age_min} and {age_max}")
+    if error := validate_age(age, age_min, age_max):
+        validation_errors.append(error)
 
     weight = int(data.get("weight", 0))
-    if weight < weight_min or weight > weight_max:
-        validation_errors.append(
-            f"Weight must be between {weight_min} and {weight_max} kg"
-        )
+    if error := validate_weight(weight, weight_min, weight_max):
+        validation_errors.append(error)
 
     if "height" in data:
         height = int(data["height"])
-        if height < height_min or height > height_max:
-            validation_errors.append(
-                f"Height must be between {height_min} and {height_max} cm"
-            )
+        if error := validate_height(height, height_min, height_max):
+            validation_errors.append(error)
 
     return len(validation_errors) == 0, validation_errors
 
@@ -74,21 +79,6 @@ def calculate_nutrition_requirements(
 ) -> Dict[str, Any]:
     """
     Calculate nutritional requirements for a user.
-
-    Args:
-        gender: 'm' for male, 'f' for female
-        weight: Weight in kg
-        height: Height in cm
-        age: Age in years
-        pratio: Protein ratio (0.0-1.0)
-        cratio: Carbohydrate ratio (0.0-1.0)
-        fratio: Fat ratio (0.0-1.0)
-        activity_multiplier: Activity multiplier
-        percentage: Target percentage of TDEE
-        smoking_status: 'yes' or 'no'
-
-    Returns:
-        Dictionary with nutritional requirements
     """
     bmr = calculate_bmr(gender, weight, height, age)
     tdee = calculate_tdee(bmr, activity_multiplier)
@@ -135,16 +125,6 @@ def adjust_nutrient_bounds(
 ) -> Tuple[pd.Series, pd.Series]:
     """
     Adjust nutrient bounds based on custom values and smoking status.
-
-    Args:
-        lower_bounds: Default lower bounds
-        upper_bounds: Default upper bounds
-        custom_lower_bounds: Custom lower bounds (optional)
-        custom_upper_bounds: Custom upper bounds (optional)
-        smoking_status: 'yes' or 'no'
-
-    Returns:
-        Tuple of (adjusted_lower_bounds, adjusted_upper_bounds)
     """
     key_map = {"Fibre (g)": "fibre", "Saturated Fats (g)": "saturated_fats"}
 

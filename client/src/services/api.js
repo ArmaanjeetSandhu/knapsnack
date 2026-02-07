@@ -1,6 +1,15 @@
 import config from "../config";
 
 const api = {
+  async getServiceConfig() {
+    const response = await fetch(`${config.apiUrl}/config`);
+    if (!response.ok) {
+      console.warn("Failed to fetch server config");
+      return null;
+    }
+    return response.json();
+  },
+
   async searchFood(query, apiKey) {
     const response = await fetch(`${config.apiUrl}/search_food`, {
       method: "POST",
