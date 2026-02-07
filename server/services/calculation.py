@@ -51,7 +51,7 @@ def validate_input_parameters(
         )
 
     if "height" in data:
-        height = int(data.get("height", 0))
+        height = int(data["height"])
         if height < height_min or height > height_max:
             validation_errors.append(
                 f"Height must be between {height_min} and {height_max} cm"

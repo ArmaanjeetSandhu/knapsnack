@@ -86,13 +86,6 @@ def analyse_lower_bound_feasibility(
         if nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
             continue
 
-        try:
-            min_value = float(min_value)
-            if np.isnan(min_value):
-                continue
-        except (ValueError, TypeError):
-            continue
-
         max_possible = 0
         for i, food in enumerate(selected_foods):
             val = food["nutrients"].get(nutrient)
@@ -101,7 +94,8 @@ def analyse_lower_bound_feasibility(
 
         if max_possible < min_value:
             shortfall = min_value - max_possible
-            shortfall_percentage = (shortfall / min_value) * 100 if min_value > 0 else 0
+            shortfall_percentage = (shortfall / min_value) * 100
+
             lower_bound_issues.append(
                 {
                     "nutrient": nutrient,
@@ -130,9 +124,8 @@ def analyse_lower_bound_feasibility(
 
             if max_possible < min_value:
                 shortfall = min_value - max_possible
-                shortfall_percentage = (
-                    (shortfall / min_value) * 100 if min_value > 0 else 0
-                )
+                shortfall_percentage = (shortfall / min_value) * 100
+
                 lower_bound_issues.append(
                     {
                         "nutrient": macro_display_names.get(nutrient, nutrient),
@@ -167,12 +160,7 @@ def analyse_upper_bound_feasibility(
     checked_nutrients = set()
 
     def check_limit(nutrient_name, limit_value, display_name_override=None):
-        try:
-            limit_value = float(limit_value)
-            if np.isnan(limit_value):
-                return
-        except (ValueError, TypeError):
-            return
+        # DEAD CODE REMOVED: Limit values are pre-validated by standardise_nutrient_bounds.
 
         for food in selected_foods:
             val = food["nutrients"].get(nutrient_name)
