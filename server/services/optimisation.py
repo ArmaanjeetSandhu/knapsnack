@@ -160,8 +160,6 @@ def analyse_upper_bound_feasibility(
     checked_nutrients = set()
 
     def check_limit(nutrient_name, limit_value, display_name_override=None):
-        # DEAD CODE REMOVED: Limit values are pre-validated by standardise_nutrient_bounds.
-
         for food in selected_foods:
             val = food["nutrients"].get(nutrient_name)
 
