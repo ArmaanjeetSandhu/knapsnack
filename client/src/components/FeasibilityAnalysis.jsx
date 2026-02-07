@@ -1,5 +1,6 @@
 import { AlertTriangle, Check, Info, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
+import { bankersRound } from "../lib/resultsHelpers";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -165,18 +166,25 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lowerBoundIssues.map((issue, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {formatNutrientName(issue.nutrient)}
-                  </TableCell>
-                  <TableCell>{issue.required}</TableCell>
-                  <TableCell>{issue.achievable}</TableCell>
-                  <TableCell>
-                    {issue.shortfall} ({issue.shortfallPercentage.toFixed(1)}%)
-                  </TableCell>
-                </TableRow>
-              ))}
+              {lowerBoundIssues.map((issue, index) => {
+                const required = bankersRound(issue.required, 1);
+                const achievable = bankersRound(issue.achievable, 2);
+                const shortfall = bankersRound(required - achievable, 2);
+                const shortfallPct = bankersRound(issue.shortfallPercentage, 2);
+
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {formatNutrientName(issue.nutrient)}
+                    </TableCell>
+                    <TableCell>{required}</TableCell>
+                    <TableCell>{achievable}</TableCell>
+                    <TableCell>
+                      {shortfall} ({shortfallPct}%)
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           <div className="mt-6">
@@ -204,8 +212,8 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Maximum nutrient limits exceeded</AlertTitle>
             <AlertDescription className="text-foreground">
-              Even at minimum servings, your selected foods provide too much of
-              these nutrients.
+              Even at minimum servings, the following foods exceed upper limits
+              of some nutrients.
             </AlertDescription>
           </Alert>
           <Table>
@@ -219,19 +227,26 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {upperBoundIssues.map((issue, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {formatNutrientName(issue.nutrient)}
-                  </TableCell>
-                  <TableCell>{issue.foodItem}</TableCell>
-                  <TableCell>{issue.limit}</TableCell>
-                  <TableCell>{issue.minimum}</TableCell>
-                  <TableCell>
-                    {issue.excess} ({issue.excessPercentage.toFixed(1)}%)
-                  </TableCell>
-                </TableRow>
-              ))}
+              {upperBoundIssues.map((issue, index) => {
+                const limit = bankersRound(issue.limit, 1);
+                const minimum = bankersRound(issue.minimum, 2);
+                const excess = bankersRound(minimum - limit, 2);
+                const excessPct = bankersRound(issue.excessPercentage, 2);
+
+                return (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">
+                      {formatNutrientName(issue.nutrient)}
+                    </TableCell>
+                    <TableCell>{issue.foodItem}</TableCell>
+                    <TableCell>{limit}</TableCell>
+                    <TableCell>{minimum}</TableCell>
+                    <TableCell>
+                      {excess} ({excessPct}%)
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
           <div className="mt-6">
