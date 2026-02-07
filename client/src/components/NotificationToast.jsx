@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-const NotificationToast = ({ message, onDismiss }) => {
+const NotificationToast = ({ message, onDismiss, type = "info" }) => {
   const [timeLeft, setTimeLeft] = useState(10);
   const [shouldFlash, setShouldFlash] = useState(false);
   const containerRef = useRef(null);
   const DURATION = 10;
   const RADIUS = 14;
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+  const isError = type === "error";
 
   useEffect(() => {
     if (containerRef.current) {
@@ -57,10 +59,18 @@ const NotificationToast = ({ message, onDismiss }) => {
       <motion.div
         animate={shouldFlash ? { opacity: [0, 0.6, 0] } : { opacity: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-0 bg-primary/30 rounded-lg -z-10 blur-md"
+        className={`absolute inset-0 rounded-lg -z-10 blur-md ${
+          isError ? "bg-red-500/30" : "bg-primary/30"
+        }`}
       />
 
-      <div className="bg-white text-black border border-gray-200 dark:bg-zinc-900 dark:text-white dark:border-zinc-800 px-4 py-3 rounded-lg shadow-lg flex items-center justify-between gap-4">
+      <div
+        className={`bg-white text-black border dark:bg-zinc-900 dark:text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between gap-4 ${
+          isError
+            ? "border-red-200 dark:border-red-900"
+            : "border-gray-200 dark:border-zinc-800"
+        }`}
+      >
         <div className="flex-1 text-sm font-medium">{message}</div>
 
         <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center">
@@ -73,6 +83,7 @@ const NotificationToast = ({ message, onDismiss }) => {
               stroke="currentColor"
               strokeOpacity="0.2"
               strokeWidth="3"
+              className={isError ? "text-red-500" : "text-current"}
             />
             <motion.circle
               cx="20"
@@ -85,6 +96,7 @@ const NotificationToast = ({ message, onDismiss }) => {
               initial={{ strokeDashoffset: 0 }}
               animate={{ strokeDashoffset: CIRCUMFERENCE }}
               transition={{ duration: DURATION, ease: "linear" }}
+              className={isError ? "text-red-500" : "text-current"}
             />
           </svg>
           <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold">

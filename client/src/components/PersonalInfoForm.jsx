@@ -9,6 +9,7 @@ import api from "../services/api";
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
+import NotificationToast from "./NotificationToast";
 
 const preventInvalidChars = (e) => {
   if ([".", "+", "-", "e", "E"].includes(e.key)) e.preventDefault();
@@ -108,6 +109,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
     currentStep,
     formData,
     error,
+    setError,
     handleNext,
     handlePrevious,
     handleInputChange,
@@ -251,7 +253,6 @@ const PersonalInfoForm = ({ onSubmit }) => {
         const activeElement = document.activeElement;
         const tagName = activeElement.tagName.toLowerCase();
 
-        // Restored original specific logic
         const isSelectedButton = () => {
           if (tagName !== "button") return false;
           const text = activeElement.textContent?.trim();
@@ -329,11 +330,14 @@ const PersonalInfoForm = ({ onSubmit }) => {
           >
             <h2 className="text-2xl font-semibold mb-6">{renderTitle()}</h2>
             <div className="mb-8">{currentStepUI}</div>
-            {error && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+            <AnimatePresence>
+              {error && (
+                <NotificationToast
+                  message={error}
+                  onDismiss={() => setError(null)}
+                />
+              )}
+            </AnimatePresence>
           </motion.div>
         </AnimatePresence>
         <div className="flex justify-between mt-8">

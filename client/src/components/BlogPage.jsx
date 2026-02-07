@@ -1,3 +1,4 @@
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
@@ -22,7 +23,13 @@ const BlogPage = () => {
     fetchPosts();
   }, []);
 
-  if (loading) return <div>Loading posts...</div>;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading posts...</p>
+      </div>
+    );
   if (error) return <div>Error: {error}</div>;
 
   const formatDate = (dateString) => {

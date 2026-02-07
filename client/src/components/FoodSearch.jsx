@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import Papa from "papaparse";
 import { useState } from "react";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -22,6 +21,7 @@ import {
 import { Input } from "../components/ui/input";
 import { processCSVData } from "../lib/csvParser";
 import api from "../services/api";
+import NotificationToast from "./NotificationToast";
 
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(
@@ -132,11 +132,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     return selectedFoodIds.includes(foodId) || recentlyAdded.has(foodId);
   };
 
-  const errorVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0 },
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -153,19 +148,13 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
         <CardContent className="p-6">
           <AnimatePresence>
             {(searchError || apiKeyError) && (
-              <motion.div
-                variants={errorVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                className="mb-6"
-              >
-                <Alert variant="destructive">
-                  <AlertDescription>
-                    {searchError || apiKeyError}
-                  </AlertDescription>
-                </Alert>
-              </motion.div>
+              <NotificationToast
+                message={searchError || apiKeyError}
+                onDismiss={() => {
+                  setSearchError(null);
+                  setApiKeyError(null);
+                }}
+              />
             )}
           </AnimatePresence>
           <motion.div
@@ -340,19 +329,10 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
               hasSearched &&
               !loading &&
               !searchError && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Alert className="bg-muted">
-                    <AlertDescription>
-                      No foods found matching your search. Try different
-                      keywords.
-                    </AlertDescription>
-                  </Alert>
-                </motion.div>
+                <NotificationToast
+                  message="No foods found matching your search. Try different keywords."
+                  onDismiss={() => setHasSearched(false)}
+                />
               )}
           </AnimatePresence>
         </CardContent>

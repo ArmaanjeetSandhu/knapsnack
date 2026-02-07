@@ -218,13 +218,14 @@ const SelectedFoods = ({
                 onDismiss={onNotificationClear}
               />
             )}
+            {error && (
+              <NotificationToast
+                key="error-toast"
+                message={error}
+                onDismiss={() => setError(null)}
+              />
+            )}
           </AnimatePresence>
-
-          {error && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
 
           <AnimatePresence mode="wait">
             {foods.length > 0 ? (

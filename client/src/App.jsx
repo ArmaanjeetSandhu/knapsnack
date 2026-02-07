@@ -1,4 +1,5 @@
 import { GithubLogoIcon } from "@phosphor-icons/react";
+import { AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Calculator,
@@ -23,6 +24,7 @@ import CalculationResults from "./components/CalculationResults";
 import ErrorPage from "./components/ErrorPage";
 import FoodSearch from "./components/FoodSearch";
 import LandingPage from "./components/LandingPage";
+import NotificationToast from "./components/NotificationToast";
 import OptimisationResults from "./components/OptimisationResults";
 import PersonalInfoForm from "./components/PersonalInfoForm";
 import SelectedFoods from "./components/SelectedFoods";
@@ -237,11 +239,11 @@ function App() {
 
   const mainPlanner = (
     <>
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      <AnimatePresence mode="wait">
+        {error && (
+          <NotificationToast message={error} onDismiss={() => setError(null)} />
+        )}
+      </AnimatePresence>
 
       <Dialog
         open={isEditModalOpen}
