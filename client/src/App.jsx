@@ -39,12 +39,18 @@ import { useAppState } from "./hooks/useAppState";
 import api from "./services/api";
 
 const isDuplicateFood = (newFood, existingFoods) => {
-  return existingFoods.some((food) => food.fdcId === newFood.fdcId);
+  return existingFoods.some((food) => {
+    return (
+      food.description.trim().toLowerCase() ===
+      newFood.description.trim().toLowerCase()
+    );
+  });
 };
 
 function App() {
   const { state, actions, STORAGE_KEYS } = useAppState();
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,7 +83,7 @@ function App() {
       actions.setAdjustedUpperBounds(null);
       actions.setUseCustomBounds(false);
     } catch (error) {
-      setError("Error calculating nutrition: " + error.message);
+      setError(error.message);
     }
   };
 
@@ -96,6 +102,7 @@ function App() {
     actions.setUseCustomBounds(false);
     actions.setHasVisitedFoodSelection(false);
     setError(null);
+    setNotification(null);
     navigate("/");
   };
 
@@ -130,7 +137,7 @@ function App() {
       actions.setAdjustedUpperBounds(null);
       actions.setUseCustomBounds(false);
     } catch (error) {
-      setError("Error recalculating nutrition: " + error.message);
+      setError(error.message);
     }
   };
 
@@ -141,7 +148,7 @@ function App() {
 
   const handleFoodSelect = (food) => {
     if (isDuplicateFood(food, state.selectedFoods)) {
-      setError(`"${food.description}" is already in your food list.`);
+      setNotification(`"${food.description}" is already in your food list.`);
       return;
     }
     actions.setSelectedFoods((prevFoods) => [
@@ -163,10 +170,11 @@ function App() {
     );
     const duplicates = importedFoods.length - uniqueNewFoods.length;
     if (duplicates > 0)
-      setError(
+      setNotification(
         `${duplicates} duplicate food item(s) were skipped during import.`,
       );
-    else setError(null);
+    else setNotification(null);
+
     if (uniqueNewFoods.length > 0) {
       actions.setSelectedFoods((prevFoods) => [
         ...prevFoods,
@@ -351,6 +359,8 @@ function App() {
                 }
                 userInfo={userInfo}
                 onOptimisationResults={handleOptimisationSuccess}
+                notification={notification}
+                onNotificationClear={() => setNotification(null)}
               />
               {useCustomBounds && (
                 <Alert className="mt-4">
