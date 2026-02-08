@@ -30,17 +30,15 @@ import {
   exportSelectedFoodsToCSV,
   prepareOptimisationPayload,
 } from "../lib/foodHelpers";
+import {
+  preventInvalidFloatChars,
+  preventInvalidIntegerChars,
+  validateMaxTwoDecimals,
+} from "../lib/utils";
 import api from "../services/api";
 import NotificationToast from "./NotificationToast";
 
 const MotionTableRow = motion.create(TableRow);
-
-const preventInvalidIntegerChars = (e) => {
-  if ([".", "+", "-", "e", "E"].includes(e.key)) e.preventDefault();
-};
-const preventInvalidFloatChars = (e) => {
-  if (["+", "-", "e", "E"].includes(e.key)) e.preventDefault();
-};
 
 const SelectedFoods = ({
   foods,
@@ -357,13 +355,14 @@ const SelectedFoods = ({
                                   min="0"
                                   value={food.price}
                                   onKeyDown={preventInvalidFloatChars}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      food.fdcId,
-                                      "price",
-                                      e.target.value,
-                                    )
-                                  }
+                                  onChange={(e) => {
+                                    if (validateMaxTwoDecimals(e.target.value))
+                                      handleInputChange(
+                                        food.fdcId,
+                                        "price",
+                                        e.target.value,
+                                      );
+                                  }}
                                   className="w-[100px]"
                                   aria-label={`Price Per Serving for ${food.description}`}
                                 />

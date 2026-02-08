@@ -21,8 +21,12 @@ import {
   VITAMINS_CONFIG,
 } from "../config/nutrientData";
 import { useNutrientBounds } from "../hooks/useNutrientBounds";
+import {
+  preventInvalidFloatChars,
+  preventInvalidIntegerChars,
+  validateMaxTwoDecimals,
+} from "../lib/utils";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
-import { Alert, AlertDescription } from "./ui/alert";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -135,19 +139,6 @@ const CalculationResults = ({
 
   const renderEditableBoundsTable = (nutrients) => (
     <div className="space-y-4">
-      {Object.keys(validationErrors).length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-        >
-          <Alert variant="destructive">
-            <AlertDescription>
-              Please fix the errors before saving your changes.
-            </AlertDescription>
-          </Alert>
-        </motion.div>
-      )}
       <div className="overflow-x-auto">
         <Table>
           <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
@@ -187,13 +178,16 @@ const CalculationResults = ({
                         ? adjustedLowerBounds[nutrient.key]
                         : ""
                     }
-                    onChange={(e) =>
-                      actions.handleBoundChange(
-                        nutrient.key,
-                        "lower",
-                        e.target.value,
-                      )
-                    }
+                    onChange={(e) => {
+                      if (validateMaxTwoDecimals(e.target.value)) {
+                        actions.handleBoundChange(
+                          nutrient.key,
+                          "lower",
+                          e.target.value,
+                        );
+                      }
+                    }}
+                    onKeyDown={preventInvalidFloatChars}
                     className={`w-[100px] ${
                       validationErrors[nutrient.key] ? "border-red-500" : ""
                     }`}
@@ -209,13 +203,16 @@ const CalculationResults = ({
                         ? adjustedUpperBounds[nutrient.key]
                         : ""
                     }
-                    onChange={(e) =>
-                      actions.handleBoundChange(
-                        nutrient.key,
-                        "upper",
-                        e.target.value,
-                      )
-                    }
+                    onChange={(e) => {
+                      if (validateMaxTwoDecimals(e.target.value)) {
+                        actions.handleBoundChange(
+                          nutrient.key,
+                          "upper",
+                          e.target.value,
+                        );
+                      }
+                    }}
+                    onKeyDown={preventInvalidFloatChars}
                     className={`w-[100px] ${
                       validationErrors[nutrient.key] ? "border-red-500" : ""
                     }`}
@@ -225,7 +222,7 @@ const CalculationResults = ({
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="text-xs text-red-500 mt-1"
+                      className="text-xs text-red-500 mt-4"
                     >
                       {validationErrors[nutrient.key]}
                     </motion.p>
@@ -350,14 +347,19 @@ const CalculationResults = ({
                                 <Input
                                   type="number"
                                   value={editingValues[macro.label] ?? ""}
-                                  onChange={(e) =>
-                                    actions.handleInputChange(
-                                      e,
-                                      macro.label,
-                                      boundKey,
-                                    )
-                                  }
+                                  onChange={(e) => {
+                                    if (
+                                      validateMaxTwoDecimals(e.target.value)
+                                    ) {
+                                      actions.handleInputChange(
+                                        e,
+                                        macro.label,
+                                        boundKey,
+                                      );
+                                    }
+                                  }}
                                   onKeyDown={(e) => {
+                                    preventInvalidFloatChars(e);
                                     if (e.key === "Enter")
                                       actions.saveTarget(
                                         macro.label,
@@ -383,7 +385,7 @@ const CalculationResults = ({
                                 <motion.p
                                   initial={{ opacity: 0, height: 0 }}
                                   animate={{ opacity: 1, height: "auto" }}
-                                  className="text-xs text-red-500 mt-1 font-medium"
+                                  className="text-xs text-red-500 mt-4 font-medium"
                                 >
                                   {validationErrors[boundKey]}
                                 </motion.p>
@@ -538,14 +540,19 @@ const CalculationResults = ({
                                 <Input
                                   type="number"
                                   value={editingValues["Water"] ?? ""}
-                                  onChange={(e) =>
-                                    actions.handleInputChange(
-                                      e,
-                                      "Water",
-                                      waterKey,
-                                    )
-                                  }
+                                  onChange={(e) => {
+                                    if (
+                                      validateMaxTwoDecimals(e.target.value)
+                                    ) {
+                                      actions.handleInputChange(
+                                        e,
+                                        "Water",
+                                        waterKey,
+                                      );
+                                    }
+                                  }}
                                   onKeyDown={(e) => {
+                                    preventInvalidIntegerChars(e);
                                     if (e.key === "Enter")
                                       actions.saveTarget(
                                         "Water",
@@ -569,7 +576,7 @@ const CalculationResults = ({
                                 <motion.p
                                   initial={{ opacity: 0, height: 0 }}
                                   animate={{ opacity: 1, height: "auto" }}
-                                  className="text-xs text-red-500 mt-1 font-medium"
+                                  className="text-xs text-red-500 mt-4 font-medium"
                                 >
                                   {validationErrors[waterKey]}
                                 </motion.p>

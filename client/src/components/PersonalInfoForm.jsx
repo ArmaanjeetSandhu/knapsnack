@@ -5,15 +5,12 @@ import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { useFormWizard } from "../hooks/useFormWizard";
+import { preventInvalidIntegerChars } from "../lib/utils";
 import api from "../services/api";
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
 import MacroRatioValidator from "./MacroRatioValidator";
 import NotificationToast from "./NotificationToast";
-
-const preventInvalidChars = (e) => {
-  if ([".", "+", "-", "e", "E"].includes(e.key)) e.preventDefault();
-};
 
 const SelectionGroup = ({ options, value, onChange }) => (
   <div className="flex gap-2">
@@ -135,7 +132,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             type="number"
             autoFocus
             value={formData.age}
-            onKeyDown={preventInvalidChars}
+            onKeyDown={preventInvalidIntegerChars}
             onChange={(e) => handleInputChange("age", e.target.value)}
             placeholder="Enter your age"
             className="text-lg"
@@ -147,7 +144,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             type="number"
             autoFocus
             value={formData.weight}
-            onKeyDown={preventInvalidChars}
+            onKeyDown={preventInvalidIntegerChars}
             onChange={(e) => handleInputChange("weight", e.target.value)}
             placeholder="Enter your weight (kg)"
             className="text-lg"
@@ -159,7 +156,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
             type="number"
             autoFocus
             value={formData.height}
-            onKeyDown={preventInvalidChars}
+            onKeyDown={preventInvalidIntegerChars}
             onChange={(e) => handleInputChange("height", e.target.value)}
             placeholder="Enter your height (cm)"
             className="text-lg"
