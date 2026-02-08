@@ -154,10 +154,14 @@ export const NutrientTable = ({
                   {showBounds && (
                     <>
                       <TableCell className="text-right">
-                        {lowerBounds[key]?.toLocaleString() ?? "N/A"}
+                        {lowerBounds[key] !== "" && lowerBounds[key] != null
+                          ? lowerBounds[key].toLocaleString()
+                          : "N/A"}
                       </TableCell>
                       <TableCell className="text-right">
-                        {upperBounds[key]?.toLocaleString() ?? "N/A"}
+                        {upperBounds[key] !== "" && upperBounds[key] != null
+                          ? upperBounds[key].toLocaleString()
+                          : "N/A"}
                       </TableCell>
                     </>
                   )}
@@ -234,7 +238,9 @@ export const NutrientCards = ({
                       <div className="flex justify-between">
                         <span className="text-sm">RDA:</span>
                         <span className="font-medium">
-                          {lowerBounds && lowerBounds[key] != null
+                          {lowerBounds &&
+                          lowerBounds[key] !== "" &&
+                          lowerBounds[key] != null
                             ? `${lowerBounds[key].toLocaleString()} ${
                                 nutrient.unit
                               }`
@@ -244,7 +250,9 @@ export const NutrientCards = ({
                       <div className="flex justify-between">
                         <span className="text-sm">UL:</span>
                         <span className="font-medium">
-                          {upperBounds && upperBounds[key] != null
+                          {upperBounds &&
+                          upperBounds[key] !== "" &&
+                          upperBounds[key] != null
                             ? `${upperBounds[key].toLocaleString()} ${
                                 nutrient.unit
                               }`

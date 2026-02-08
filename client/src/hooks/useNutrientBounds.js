@@ -24,6 +24,13 @@ export function useNutrientBounds(calculationData, savedBounds) {
 
   const prevCalculationData = useRef(calculationData);
 
+  const boundsSnapshot = useRef({
+    lower: {},
+    upper: {},
+    useCustom: false,
+    errors: {},
+  });
+
   useEffect(() => {
     if (calculationData && calculationData !== prevCalculationData.current) {
       setAdjustedLowerBounds({ ...calculationData.lower_bounds });
@@ -42,21 +49,32 @@ export function useNutrientBounds(calculationData, savedBounds) {
     delete errors[upperKey];
     delete errors[nutrientKey];
 
+    let lower =
+      boundsType === "lower" ? value : adjustedLowerBounds[nutrientKey];
+    let upper =
+      boundsType === "upper" ? value : adjustedUpperBounds[nutrientKey];
+
+    const isEmpty = (val) =>
+      val === "" ||
+      val === undefined ||
+      (typeof val === "number" && isNaN(val));
+
+    const isLowerEmpty = isEmpty(lower);
+    const isUpperEmpty = isEmpty(upper);
+
     let error = null;
 
-    if (!isNaN(value) && value !== "") {
-      if (boundsType === "lower") {
-        const upper = adjustedUpperBounds[nutrientKey];
-        if (upper !== undefined && upper !== "" && value > upper)
-          error = "Lower bound cannot exceed upper bound";
-      } else if (boundsType === "upper") {
-        const lower = adjustedLowerBounds[nutrientKey];
-        if (lower !== undefined && lower !== "" && value < lower)
-          error = "Upper bound cannot be less than lower bound";
+    if (isLowerEmpty && isUpperEmpty) {
+      error = "At least one bound is required";
+      errors[lowerKey] = error;
+      errors[upperKey] = error;
+    } else if (!isLowerEmpty && !isUpperEmpty) {
+      if (lower > upper) {
+        if (boundsType === "lower")
+          errors[lowerKey] = "Lower bound cannot exceed upper bound";
+        else errors[upperKey] = "Upper bound cannot be less than lower bound";
       }
     }
-
-    if (error) errors[`${nutrientKey}-${boundsType}`] = error;
 
     setValidationErrors(errors);
   };
@@ -178,10 +196,31 @@ export function useNutrientBounds(calculationData, savedBounds) {
   };
 
   const resetBounds = () => {
-    setAdjustedLowerBounds({ ...calculationData.lower_bounds });
-    setAdjustedUpperBounds({ ...calculationData.upper_bounds });
-    setValidationErrors({});
-    setEditingValues({});
+    const preservedKeys = ["Fibre (g)", "Saturated Fats (g)", "Water (mL)"];
+
+    setAdjustedLowerBounds((prev) => {
+      const next = { ...calculationData.lower_bounds };
+      preservedKeys.forEach((key) => {
+        if (prev[key] !== undefined) next[key] = prev[key];
+      });
+      return next;
+    });
+
+    setAdjustedUpperBounds((prev) => {
+      const next = { ...calculationData.upper_bounds };
+      preservedKeys.forEach((key) => {
+        if (prev[key] !== undefined) next[key] = prev[key];
+      });
+      return next;
+    });
+
+    setValidationErrors((prev) => {
+      const next = {};
+      Object.keys(prev).forEach((key) => {
+        if (preservedKeys.some((pk) => key.includes(pk))) next[key] = prev[key];
+      });
+      return next;
+    });
   };
 
   const handleSave = () => {
@@ -191,11 +230,22 @@ export function useNutrientBounds(calculationData, savedBounds) {
     }
   };
 
+  const startCustomising = () => {
+    boundsSnapshot.current = {
+      lower: { ...adjustedLowerBounds },
+      upper: { ...adjustedUpperBounds },
+      useCustom: useCustomBounds,
+      errors: { ...validationErrors },
+    };
+    setCustomisingBounds(true);
+  };
+
   const handleCancel = () => {
-    setAdjustedLowerBounds({ ...calculationData.lower_bounds });
-    setAdjustedUpperBounds({ ...calculationData.upper_bounds });
-    setValidationErrors({});
-    setUseCustomBounds(false);
+    setAdjustedLowerBounds(boundsSnapshot.current.lower);
+    setAdjustedUpperBounds(boundsSnapshot.current.upper);
+    setUseCustomBounds(boundsSnapshot.current.useCustom);
+    setValidationErrors(boundsSnapshot.current.errors);
+
     setCustomisingBounds(false);
   };
 
@@ -209,7 +259,10 @@ export function useNutrientBounds(calculationData, savedBounds) {
       editingValues,
     },
     actions: {
-      setCustomisingBounds,
+      setCustomisingBounds: (value) => {
+        if (value) startCustomising();
+        else handleCancel();
+      },
       handleBoundChange,
       startEditing,
       cancelEditing,
