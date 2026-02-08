@@ -22,6 +22,7 @@ import BlogPostPage from "./components/BlogPostPage";
 import CalculationInputEditor from "./components/CalculationInputEditor";
 import CalculationResults from "./components/CalculationResults";
 import ErrorPage from "./components/ErrorPage";
+import FeasibilityAnalysis from "./components/FeasibilityAnalysis";
 import FoodSearch from "./components/FoodSearch";
 import LandingPage from "./components/LandingPage";
 import NotificationToast from "./components/NotificationToast";
@@ -54,6 +55,8 @@ function App() {
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [feasibilityResults, setFeasibilityResults] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -105,6 +108,7 @@ function App() {
     actions.setHasVisitedFoodSelection(false);
     setError(null);
     setNotification(null);
+    setFeasibilityResults(null);
     navigate("/");
   };
 
@@ -146,6 +150,17 @@ function App() {
   const handleOptimisationSuccess = (result) => {
     actions.setOptimisationResults(result);
     actions.setSnapshotFoods(state.selectedFoods);
+    setFeasibilityResults(null);
+  };
+
+  const handleFeasibilityResults = (result) => {
+    setFeasibilityResults(result);
+    window.scrollTo(0, 0);
+  };
+
+  const handleHideFeasibilityResults = () => {
+    setFeasibilityResults(null);
+    window.scrollTo(0, 0);
   };
 
   const handleFoodSelect = (food) => {
@@ -163,6 +178,7 @@ function App() {
       },
     ]);
     actions.setOptimisationResults(null);
+    setFeasibilityResults(null);
     setError(null);
   };
 
@@ -183,6 +199,7 @@ function App() {
         ...uniqueNewFoods,
       ]);
       actions.setOptimisationResults(null);
+      setFeasibilityResults(null);
     }
   };
 
@@ -241,7 +258,11 @@ function App() {
     <>
       <AnimatePresence mode="wait">
         {error && (
-          <NotificationToast message={error} onDismiss={() => setError(null)} />
+          <NotificationToast
+            type="error"
+            message={error}
+            onDismiss={() => setError(null)}
+          />
         )}
       </AnimatePresence>
 
@@ -296,34 +317,36 @@ function App() {
         </div>
       ) : (
         <>
-          {!optimisationResults && !showCalculationResults && (
-            <div
-              className={`mb-4 grid grid-cols-1 ${
-                storedResults ? "md:grid-cols-2" : ""
-              } gap-4`}
-            >
-              {storedResults && (
-                <Button
-                  onClick={handleViewPreviousResults}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <Eye className="w-5 h-5 mr-2" />
-                  View Previous Optimisation Results
-                </Button>
-              )}
-              {nutrientGoals && (
-                <Button
-                  onClick={handleViewCalculationResults}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <Calculator className="w-5 h-5 mr-2" />
-                  View Nutrition Requirements
-                </Button>
-              )}
-            </div>
-          )}
+          {!optimisationResults &&
+            !feasibilityResults &&
+            !showCalculationResults && (
+              <div
+                className={`mb-4 grid grid-cols-1 ${
+                  storedResults ? "md:grid-cols-2" : ""
+                } gap-4`}
+              >
+                {storedResults && (
+                  <Button
+                    onClick={handleViewPreviousResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    View Previous Optimisation Results
+                  </Button>
+                )}
+                {nutrientGoals && (
+                  <Button
+                    onClick={handleViewCalculationResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Calculator className="w-5 h-5 mr-2" />
+                    View Nutrition Requirements
+                  </Button>
+                )}
+              </div>
+            )}
 
           {optimisationResults && (
             <div className="mb-4">
@@ -338,7 +361,7 @@ function App() {
             </div>
           )}
 
-          {!optimisationResults && (
+          {!optimisationResults && !feasibilityResults && (
             <>
               <FoodSearch
                 onFoodSelect={handleFoodSelect}
@@ -361,6 +384,7 @@ function App() {
                 }
                 userInfo={userInfo}
                 onOptimisationResults={handleOptimisationSuccess}
+                onFeasibilityResults={handleFeasibilityResults}
                 notification={notification}
                 onNotificationClear={() => setNotification(null)}
               />
@@ -401,6 +425,67 @@ function App() {
                   )}
                 </div>
               )}
+            </>
+          )}
+
+          {feasibilityResults && (
+            <>
+              <div
+                className={`mb-4 grid grid-cols-1 ${
+                  storedResults ? "md:grid-cols-2" : ""
+                } gap-4`}
+              >
+                {storedResults && (
+                  <Button
+                    onClick={handleViewPreviousResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    View Previous Optimisation Results
+                  </Button>
+                )}
+                {nutrientGoals && (
+                  <Button
+                    onClick={handleViewCalculationResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Calculator className="w-5 h-5 mr-2" />
+                    View Nutrition Requirements
+                  </Button>
+                )}
+              </div>
+              <FeasibilityAnalysis
+                feasibilityData={feasibilityResults}
+                onGoBack={handleHideFeasibilityResults}
+              />
+              <div
+                className={`mt-6 grid grid-cols-1 ${
+                  storedResults ? "md:grid-cols-2" : ""
+                } gap-4`}
+              >
+                {storedResults && (
+                  <Button
+                    onClick={handleViewPreviousResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Eye className="w-5 h-5 mr-2" />
+                    View Previous Optimisation Results
+                  </Button>
+                )}
+                {nutrientGoals && (
+                  <Button
+                    onClick={handleViewCalculationResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Calculator className="w-5 h-5 mr-2" />
+                    View Nutrition Requirements
+                  </Button>
+                )}
+              </div>
             </>
           )}
 

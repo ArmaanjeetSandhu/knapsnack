@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ListCheck, ListX, Trash2, WandSparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
@@ -31,7 +31,6 @@ import {
   prepareOptimisationPayload,
 } from "../lib/foodHelpers";
 import api from "../services/api";
-import FeasibilityAnalysis from "./FeasibilityAnalysis";
 import NotificationToast from "./NotificationToast";
 
 const MotionTableRow = motion.create(TableRow);
@@ -49,6 +48,7 @@ const SelectedFoods = ({
   nutrientGoals,
   userInfo,
   onOptimisationResults,
+  onFeasibilityResults,
   notification,
   onNotificationClear,
 }) => {
@@ -58,18 +58,15 @@ const SelectedFoods = ({
     key: null,
     direction: "ascending",
   });
-  const [feasibilityData, setFeasibilityData] = useState(null);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [showInputErrorDialog, setShowInputErrorDialog] = useState(false);
 
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
-    setFeasibilityData(null);
   };
 
   const handleClearAll = () => {
     onFoodsUpdate([]);
-    setFeasibilityData(null);
   };
 
   const handleInputChange = (fdcId, field, value) => {
@@ -79,7 +76,6 @@ const SelectedFoods = ({
         return food;
       }),
     );
-    setFeasibilityData(null);
   };
 
   const handleOptimise = async () => {
@@ -102,7 +98,6 @@ const SelectedFoods = ({
 
     setLoading(true);
     setError(null);
-    setFeasibilityData(null);
     try {
       const optimisationData = prepareOptimisationPayload(
         foods,
@@ -119,7 +114,7 @@ const SelectedFoods = ({
       )
         setShowErrorDialog(true);
       else if (result.feasibilityAnalysis)
-        setFeasibilityData(result.feasibilityAnalysis);
+        onFeasibilityResults(result.feasibilityAnalysis);
       else setError(result.message);
     } catch (err) {
       setError(err.message || "An error occurred during optimisation");
@@ -174,8 +169,9 @@ const SelectedFoods = ({
 
   const sortedFoods = getSortedFoods();
 
-  if (feasibilityData)
-    return <FeasibilityAnalysis feasibilityData={feasibilityData} />;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
@@ -221,6 +217,7 @@ const SelectedFoods = ({
             {error && (
               <NotificationToast
                 key="error-toast"
+                type="error"
                 message={error}
                 onDismiss={() => setError(null)}
               />

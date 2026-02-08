@@ -14,25 +14,12 @@ import {
 } from "./ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-const FeasibilityAnalysis = ({ feasibilityData }) => {
+const FeasibilityAnalysis = ({ feasibilityData, onGoBack }) => {
   const [activeTab, setActiveTab] = useState("overview");
-
-  if (!feasibilityData || !feasibilityData.analysis)
-    return (
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Optimisation Failed</AlertTitle>
-        <AlertDescription className="text-foreground">
-          Diet optimisation failed but no feasibility analysis was returned.
-          Please try again with different foods or nutrient bounds.
-        </AlertDescription>
-      </Alert>
-    );
 
   const {
     isLowerBoundsFeasible,
     isUpperBoundsFeasible,
-    isFeasible,
     lowerBoundIssues,
     upperBoundIssues,
   } = feasibilityData;
@@ -50,19 +37,12 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
 
   const renderOverview = () => (
     <div className="space-y-6">
-      <Alert variant={isFeasible ? "success" : "destructive"}>
-        {isFeasible ? (
-          <Check className="h-4 w-4" />
-        ) : (
-          <AlertTriangle className="h-4 w-4" />
-        )}
-        <AlertTitle>
-          {isFeasible ? "Diet plan is feasible" : "Diet plan is not feasible"}
-        </AlertTitle>
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Diet plan is not feasible</AlertTitle>
         <AlertDescription className="text-foreground">
-          {isFeasible
-            ? "All nutrient requirements can be met with your selected foods."
-            : "Some nutrient requirements cannot be met with your selected foods. Review the details below."}
+          Some nutrient requirements cannot be met with your selected foods.
+          Review the details below.
         </AlertDescription>
       </Alert>
       <div className="grid gap-4 md:grid-cols-2">
@@ -295,11 +275,7 @@ const FeasibilityAnalysis = ({ feasibilityData }) => {
           </TabsContent>
         </Tabs>
         <div className="mt-6">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => window.location.reload()}
-          >
+          <Button variant="outline" className="w-full" onClick={onGoBack}>
             <RefreshCw className="w-5 h-5 mr-2" />
             Modify Foods
           </Button>

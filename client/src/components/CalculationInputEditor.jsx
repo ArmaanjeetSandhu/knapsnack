@@ -73,21 +73,16 @@ function updateMacros({ mode, intent, protein, carbs }) {
 
 const ActivitySlider = ({ value, onChange, autoFocus }) => {
   const inputRef = useRef(null);
-  const [isAnimating, setIsAnimating] = useState(false);
+
   const handleChange = (e) => {
     const newValue = parseFloat(e.target.value);
     onChange(newValue);
-    setIsAnimating(true);
   };
+
   useEffect(() => {
     if (autoFocus && inputRef.current) inputRef.current.focus();
   }, [autoFocus]);
-  useEffect(() => {
-    if (isAnimating) {
-      const timer = setTimeout(() => setIsAnimating(false), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isAnimating]);
+
   const progress = ((value - 1.2) / (2.4 - 1.2)) * 100;
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
@@ -126,21 +121,16 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
 
 const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
   const inputRef = useRef(null);
-  const [isAnimating, setIsAnimating] = useState(false);
+
   const handleChange = (e) => {
     const newValue = parseFloat(e.target.value);
     onChange(newValue);
-    setIsAnimating(true);
   };
+
   useEffect(() => {
     if (autoFocus && inputRef.current) inputRef.current.focus();
   }, [autoFocus]);
-  useEffect(() => {
-    if (isAnimating) {
-      const timer = setTimeout(() => setIsAnimating(false), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isAnimating]);
+
   const progress = ((value - 75) / (125 - 75)) * 100;
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
