@@ -56,6 +56,7 @@ function App() {
   const [notification, setNotification] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [feasibilityResults, setFeasibilityResults] = useState(null);
+  const [lastAddedIds, setLastAddedIds] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -109,6 +110,7 @@ function App() {
     setError(null);
     setNotification(null);
     setFeasibilityResults(null);
+    setLastAddedIds([]);
     navigate("/");
   };
 
@@ -177,6 +179,7 @@ function App() {
         maxServing: 500,
       },
     ]);
+    setLastAddedIds([food.fdcId]);
     actions.setOptimisationResults(null);
     setFeasibilityResults(null);
     setError(null);
@@ -198,6 +201,7 @@ function App() {
         ...prevFoods,
         ...uniqueNewFoods,
       ]);
+      setLastAddedIds(uniqueNewFoods.map((f) => f.fdcId));
       actions.setOptimisationResults(null);
       setFeasibilityResults(null);
     }
@@ -387,6 +391,7 @@ function App() {
                 onFeasibilityResults={handleFeasibilityResults}
                 notification={notification}
                 onNotificationClear={() => setNotification(null)}
+                lastAddedIds={lastAddedIds}
               />
               {useCustomBounds && (
                 <Alert className="mt-4">

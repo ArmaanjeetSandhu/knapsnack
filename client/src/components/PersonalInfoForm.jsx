@@ -287,14 +287,13 @@ const PersonalInfoForm = ({ onSubmit }) => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [handleNext, handlePrevious, currentStep, formData]);
 
-  if (!limits && !configError) {
+  if (!limits && !configError)
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-muted-foreground">Loading configuration...</p>
       </div>
     );
-  }
 
   if (configError) {
     return (

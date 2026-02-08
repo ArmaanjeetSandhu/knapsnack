@@ -51,6 +51,7 @@ const SelectedFoods = ({
   onFeasibilityResults,
   notification,
   onNotificationClear,
+  lastAddedIds = [],
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -60,6 +61,30 @@ const SelectedFoods = ({
   });
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [showInputErrorDialog, setShowInputErrorDialog] = useState(false);
+  const [flashingFoods, setFlashingFoods] = useState([]);
+
+  useEffect(() => {
+    if (lastAddedIds.length > 0) {
+      const firstNewId = lastAddedIds[0];
+      const element = document.getElementById(`row-${firstNewId}`);
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        const scrollTimeout = setTimeout(() => {
+          setFlashingFoods(lastAddedIds);
+
+          const flashTimeout = setTimeout(() => {
+            setFlashingFoods([]);
+          }, 2000);
+
+          return () => clearTimeout(flashTimeout);
+        }, 1000);
+
+        return () => clearTimeout(scrollTimeout);
+      }
+    }
+  }, [lastAddedIds]);
 
   const handleRemoveFood = (fdcId) => {
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
@@ -275,10 +300,27 @@ const SelectedFoods = ({
                         {sortedFoods.map((food) => (
                           <MotionTableRow
                             key={food.fdcId}
+                            id={`row-${food.fdcId}`}
                             initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            animate={{
+                              opacity: 1,
+                              x: 0,
+                              backgroundColor: flashingFoods.includes(
+                                food.fdcId,
+                              )
+                                ? [
+                                    "rgba(0,0,0,0)",
+                                    "rgba(34, 197, 94, 0.2)",
+                                    "rgba(0,0,0,0)",
+                                  ]
+                                : "rgba(0,0,0,0)",
+                            }}
+                            transition={{
+                              duration: flashingFoods.includes(food.fdcId)
+                                ? 1.5
+                                : 0.2,
+                            }}
                             exit={{ opacity: 0, x: 10 }}
-                            transition={{ duration: 0.2 }}
                           >
                             <TableCell>
                               <div className="flex justify-center items-center h-full pt-2">
