@@ -35,22 +35,29 @@ export function useNutrientBounds(calculationData, savedBounds) {
 
   const validateBounds = (nutrientKey, boundsType, value) => {
     const errors = { ...validationErrors };
+    const lowerKey = `${nutrientKey}-lower`;
+    const upperKey = `${nutrientKey}-upper`;
+
+    delete errors[lowerKey];
+    delete errors[upperKey];
     delete errors[nutrientKey];
-    if (isNaN(value) || value === "")
-      errors[nutrientKey] = "Value must be a number";
-    else if (value < 0) errors[nutrientKey] = "Value cannot be negative";
-    else if (
-      boundsType === "lower" &&
-      adjustedUpperBounds[nutrientKey] !== undefined &&
-      value > adjustedUpperBounds[nutrientKey]
-    )
-      errors[nutrientKey] = "Lower bound cannot exceed upper bound";
-    else if (
-      boundsType === "upper" &&
-      adjustedLowerBounds[nutrientKey] !== undefined &&
-      value < adjustedLowerBounds[nutrientKey]
-    )
-      errors[nutrientKey] = "Upper bound cannot be less than lower bound";
+
+    let error = null;
+
+    if (!isNaN(value) && value !== "") {
+      if (boundsType === "lower") {
+        const upper = adjustedUpperBounds[nutrientKey];
+        if (upper !== undefined && upper !== "" && value > upper)
+          error = "Lower bound cannot exceed upper bound";
+      } else if (boundsType === "upper") {
+        const lower = adjustedLowerBounds[nutrientKey];
+        if (lower !== undefined && lower !== "" && value < lower)
+          error = "Upper bound cannot be less than lower bound";
+      }
+    }
+
+    if (error) errors[`${nutrientKey}-${boundsType}`] = error;
+
     setValidationErrors(errors);
   };
 
@@ -60,10 +67,12 @@ export function useNutrientBounds(calculationData, savedBounds) {
       boundsType === "lower" ? adjustedLowerBounds : adjustedUpperBounds;
     const setBounds =
       boundsType === "lower" ? setAdjustedLowerBounds : setAdjustedUpperBounds;
+
     setBounds({
       ...bounds,
       [nutrientKey]: isNaN(numValue) ? "" : numValue,
     });
+
     validateBounds(nutrientKey, boundsType, numValue);
   };
 
@@ -71,9 +80,8 @@ export function useNutrientBounds(calculationData, savedBounds) {
     const val = parseFloat(value);
     let error = null;
 
-    if (isNaN(val) || val < 0 || value === "") {
-      error = "Must be a positive number";
-    } else {
+    if (isNaN(val) || value === "") error = "Must be a positive number";
+    else {
       const formatValue = (v) =>
         v?.toLocaleString("en-US", { maximumFractionDigits: 1 });
 

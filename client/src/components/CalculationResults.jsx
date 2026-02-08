@@ -149,87 +149,97 @@ const CalculationResults = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {nutrients.map((nutrient, index) => (
-              <motion.tr
-                key={nutrient.key}
-                className={
-                  validationErrors[nutrient.key]
-                    ? "bg-red-50 dark:bg-red-900/20"
-                    : ""
-                }
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.3,
-                  delay: index * 0.03,
-                  ease: "easeOut",
-                }}
-              >
-                <TableCell>
-                  {nutrient.name} ({nutrient.unit})
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={
-                      adjustedLowerBounds[nutrient.key] !== undefined
-                        ? adjustedLowerBounds[nutrient.key]
-                        : ""
-                    }
-                    onChange={(e) => {
-                      if (validateMaxTwoDecimals(e.target.value)) {
-                        actions.handleBoundChange(
-                          nutrient.key,
-                          "lower",
-                          e.target.value,
-                        );
+            {nutrients.map((nutrient, index) => {
+              const lowerError = validationErrors[`${nutrient.key}-lower`];
+              const upperError = validationErrors[`${nutrient.key}-upper`];
+              const hasError = lowerError || upperError;
+
+              return (
+                <motion.tr
+                  key={nutrient.key}
+                  className={hasError ? "bg-red-50 dark:bg-red-900/20" : ""}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: index * 0.03,
+                    ease: "easeOut",
+                  }}
+                >
+                  <TableCell className="align-top">
+                    {nutrient.name} ({nutrient.unit})
+                  </TableCell>
+                  <TableCell className="align-top">
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={
+                        adjustedLowerBounds[nutrient.key] !== undefined
+                          ? adjustedLowerBounds[nutrient.key]
+                          : ""
                       }
-                    }}
-                    onKeyDown={preventInvalidFloatChars}
-                    className={`w-[100px] ${
-                      validationErrors[nutrient.key] ? "border-red-500" : ""
-                    }`}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={
-                      adjustedUpperBounds[nutrient.key] !== undefined
-                        ? adjustedUpperBounds[nutrient.key]
-                        : ""
-                    }
-                    onChange={(e) => {
-                      if (validateMaxTwoDecimals(e.target.value)) {
-                        actions.handleBoundChange(
-                          nutrient.key,
-                          "upper",
-                          e.target.value,
-                        );
+                      onChange={(e) => {
+                        if (validateMaxTwoDecimals(e.target.value))
+                          actions.handleBoundChange(
+                            nutrient.key,
+                            "lower",
+                            e.target.value,
+                          );
+                      }}
+                      onKeyDown={preventInvalidFloatChars}
+                      className={`w-[100px] ${
+                        lowerError ? "border-red-500" : ""
+                      }`}
+                    />
+                    {lowerError && (
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-xs text-red-500 mt-3"
+                      >
+                        {lowerError}
+                      </motion.p>
+                    )}
+                  </TableCell>
+                  <TableCell className="align-top">
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={
+                        adjustedUpperBounds[nutrient.key] !== undefined
+                          ? adjustedUpperBounds[nutrient.key]
+                          : ""
                       }
-                    }}
-                    onKeyDown={preventInvalidFloatChars}
-                    className={`w-[100px] ${
-                      validationErrors[nutrient.key] ? "border-red-500" : ""
-                    }`}
-                  />
-                  {validationErrors[nutrient.key] && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="text-xs text-red-500 mt-4"
-                    >
-                      {validationErrors[nutrient.key]}
-                    </motion.p>
-                  )}
-                </TableCell>
-              </motion.tr>
-            ))}
+                      onChange={(e) => {
+                        if (validateMaxTwoDecimals(e.target.value))
+                          actions.handleBoundChange(
+                            nutrient.key,
+                            "upper",
+                            e.target.value,
+                          );
+                      }}
+                      onKeyDown={preventInvalidFloatChars}
+                      className={`w-[100px] ${
+                        upperError ? "border-red-500" : ""
+                      }`}
+                    />
+                    {upperError && (
+                      <motion.p
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-xs text-red-500 mt-3"
+                      >
+                        {upperError}
+                      </motion.p>
+                    )}
+                  </TableCell>
+                </motion.tr>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
