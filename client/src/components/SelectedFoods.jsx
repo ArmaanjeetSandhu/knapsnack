@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, ListCheck, ListX, Trash2, WandSparkles } from "lucide-react";
+import { Download, ListX, Trash2, WandSparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -213,7 +213,6 @@ const SelectedFoods = ({
         <CardHeader className="bg-primary rounded-t-lg">
           <div className="flex justify-between items-center">
             <CardTitle className="text-white flex items-center gap-2">
-              <ListCheck className="w-5 h-5" />
               Selected Foods
             </CardTitle>
             {foods.length > 0 && (

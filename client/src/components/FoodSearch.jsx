@@ -3,14 +3,13 @@ import {
   Check,
   ExternalLink,
   FastForward,
-  Key,
   Plus,
   Search,
   Upload,
   X,
 } from "lucide-react";
 import Papa from "papaparse";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -35,6 +34,8 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKeyError, setApiKeyError] = useState(null);
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
   const [hasSearched, setHasSearched] = useState(false);
+
+  const searchResultsRef = useRef(null);
 
   const handleParseComplete = (results) => {
     const result = processCSVData(results);
@@ -69,10 +70,6 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
-    if (!apiKey.trim()) {
-      setApiKeyError("Please enter your API key first");
-      return;
-    }
     setLoading(true);
     setSearchError(null);
     try {
@@ -132,6 +129,21 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     return selectedFoodIds.includes(foodId) || recentlyAdded.has(foodId);
   };
 
+  useEffect(() => {
+    if (searchResults.length > 0 && searchResultsRef.current) {
+      setTimeout(() => {
+        const element = searchResultsRef.current;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 45;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }, 100);
+    }
+  }, [searchResults.length]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -141,8 +153,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       <Card className="mb-6 shadow-lg">
         <CardHeader className="bg-primary rounded-t-lg">
           <CardTitle className="text-white flex items-center gap-2">
-            <Search className="w-5 h-5" />
-            Search Foods
+            Add Foods
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -157,105 +168,165 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
               />
             )}
           </AnimatePresence>
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <form onSubmit={handleApiKeySubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <Key className="w-4 h-4" />
-                  FoodData Central API Key
-                </label>
-                <p className="text-sm text-muted-foreground">
-                  Get your free API key from{" "}
-                  <a
-                    href="https://fdc.nal.usda.gov/api-key-signup.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
+
+          <div className="mb-6 pb-4 border-b">
+            <p className="text-sm text-muted-foreground">
+              Choose any of the following options to add foods to your diet
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <div className="border rounded-lg p-4 bg-muted/30 h-full">
+                  <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                      1
+                    </span>
+                    Quick Start
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Try a sample diet to see how it works
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={handleTrySampleDiet}
+                    disabled={sampleLoading}
+                    className="w-full sm:w-auto"
                   >
-                    here
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="Enter your API key"
-                  className="flex-1"
-                />
-              </div>
-            </form>
-          </motion.div>
-          <motion.div
-            className="flex flex-col md:flex-row gap-4 mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <form onSubmit={handleSearch} className="flex-1">
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  placeholder="Search for foods..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setHasSearched(false);
-                  }}
-                  disabled={loading || !apiKey}
-                  className="flex-1"
-                />
-              </div>
-            </form>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => document.getElementById("csv-upload").click()}
-                className="flex items-center gap-2"
+                    {sampleLoading ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        <span>Loading...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <FastForward className="w-4 h-4 mr-2" />
+                        <span>Load Sample Diet</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <Upload className="w-4 h-4" />
-                Import CSV
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={handleTrySampleDiet}
-                disabled={sampleLoading}
-                className="flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {sampleLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    <span>Loading...</span>
-                  </div>
-                ) : (
-                  <>
-                    <FastForward className="w-4 h-4" />
-                    <span>Try Sample Diet</span>
-                  </>
-                )}
-              </Button>
+                <div className="border rounded-lg p-4 bg-muted/30 h-full">
+                  <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                      2
+                    </span>
+                    Import from CSV
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Upload a CSV file with your food items
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      document.getElementById("csv-upload").click()
+                    }
+                    className="w-full sm:w-auto"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Choose File
+                  </Button>
+                  <input
+                    id="csv-upload"
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </div>
+              </motion.div>
             </div>
-            <input
-              id="csv-upload"
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-          </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              <div className="border rounded-lg p-4 bg-muted/30">
+                <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                    3
+                  </span>
+                  Search Database
+                </h3>
+
+                <form onSubmit={handleSearch} className="space-y-3">
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Search for foods (e.g., chicken breast, broccoli)..."
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setHasSearched(false);
+                      }}
+                      disabled={loading || !apiKey}
+                      className="flex-1"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={loading || !apiKey || !searchTerm.trim()}
+                    >
+                      {loading ? (
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      ) : (
+                        <Search className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                </form>
+                <div className="mb-4 p-3">
+                  <form onSubmit={handleApiKeySubmit}>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex flex-col md:flex-row md:items-center gap-2">
+                        <p className="text-xs text-muted-foreground italic">
+                          Please enter a USDA FoodData Central API key to search
+                          for food items:
+                        </p>
+                        <Input
+                          type="text"
+                          value={apiKey}
+                          onChange={(e) => setApiKey(e.target.value)}
+                          placeholder=""
+                          className="h-6 w-full md:w-64 rounded-full self-start"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground italic">
+                        Don&apos;t have an API key? Get one{" "}
+                        <a
+                          href="https://fdc.nal.usda.gov/api-key-signup.html"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
+                        >
+                          here
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </p>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
           <AnimatePresence>
             {searchResults.length > 0 && (
               <motion.div
-                className="search-results border rounded-md overflow-hidden"
+                ref={searchResultsRef}
+                className="search-results border rounded-md overflow-hidden mt-6"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
@@ -264,7 +335,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                 <div className="flex items-center justify-between bg-muted/50 px-4 py-2 border-b">
                   <h6 className="text-sm font-semibold">Search Results</h6>
                   <Button
-                    variant="destructive"
+                    variant="ghost"
                     size="sm"
                     onClick={handleCloseResults}
                   >

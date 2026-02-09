@@ -192,7 +192,7 @@ function App() {
     const duplicates = importedFoods.length - uniqueNewFoods.length;
     if (duplicates > 0)
       setNotification(
-        `${duplicates} duplicate food item(s) were skipped during import.`,
+        `${duplicates} duplicate food item(s) were skipped.`,
       );
     else setNotification(null);
 
