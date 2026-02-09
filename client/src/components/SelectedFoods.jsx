@@ -63,24 +63,20 @@ const SelectedFoods = ({
 
   useEffect(() => {
     if (lastAddedIds.length > 0) {
-      const firstNewId = lastAddedIds[0];
-      const element = document.getElementById(`row-${firstNewId}`);
+      const mountTimeout = setTimeout(() => {
+        const firstNewId = lastAddedIds[0];
+        const element = document.getElementById(`row-${firstNewId}`);
 
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-
-        const scrollTimeout = setTimeout(() => {
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
           setFlashingFoods(lastAddedIds);
-
-          const flashTimeout = setTimeout(() => {
+          setTimeout(() => {
             setFlashingFoods([]);
           }, 2000);
+        }
+      }, 400);
 
-          return () => clearTimeout(flashTimeout);
-        }, 1000);
-
-        return () => clearTimeout(scrollTimeout);
-      }
+      return () => clearTimeout(mountTimeout);
     }
   }, [lastAddedIds]);
 

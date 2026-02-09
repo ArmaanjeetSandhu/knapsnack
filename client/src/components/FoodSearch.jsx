@@ -117,7 +117,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       const csvText = await response.text();
       Papa.parse(csvText, createParseConfig("Error processing sample diet"));
     } catch (error) {
-      setSearchError(`Error loading sample diet: ${error.message}`);
+      setSearchError(error.message);
     } finally {
       setSampleLoading(false);
     }
