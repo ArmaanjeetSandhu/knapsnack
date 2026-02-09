@@ -287,7 +287,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                     </Button>
                   </div>
                 </form>
-                <div className="mb-4 p-3">
+                <div className="mb-4 mt-3 ml-2">
                   <form onSubmit={handleApiKeySubmit}>
                     <div className="flex flex-col gap-3">
                       <div className="flex flex-col md:flex-row md:items-center gap-2">
@@ -318,94 +318,100 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                     </div>
                   </form>
                 </div>
+
+                <AnimatePresence>
+                  {searchResults.length > 0 && (
+                    <motion.div
+                      ref={searchResultsRef}
+                      className="search-results border rounded-md overflow-hidden mt-6 bg-background"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <div className="flex items-center justify-between bg-muted/50 px-4 py-2 border-b">
+                        <h6 className="text-sm font-semibold">
+                          Search Results
+                        </h6>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCloseResults}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="h-[400px] overflow-y-auto">
+                        <div className="divide-y">
+                          <AnimatePresence initial={false}>
+                            {searchResults.map((food, index) => {
+                              const added = isAdded(food.fdcId);
+                              return (
+                                <motion.div
+                                  key={food.fdcId}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{
+                                    duration: 0.2,
+                                    delay: index * 0.03,
+                                  }}
+                                  className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                                >
+                                  <span className="text-sm">
+                                    {food.description}
+                                  </span>
+                                  <motion.div
+                                    whileHover={{ scale: added ? 1 : 1.05 }}
+                                    whileTap={{ scale: added ? 1 : 0.95 }}
+                                  >
+                                    <Button
+                                      variant={added ? "success" : "secondary"}
+                                      size="sm"
+                                      onClick={() =>
+                                        !added && handleFoodAdd(food)
+                                      }
+                                      disabled={added}
+                                      className={`ml-4 transition-all duration-200 ${
+                                        added
+                                          ? "bg-success hover:bg-success text-success-foreground"
+                                          : ""
+                                      }`}
+                                    >
+                                      {added ? (
+                                        <>
+                                          <Check className="w-4 h-4" />
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Plus className="w-4 h-4" />
+                                        </>
+                                      )}
+                                    </Button>
+                                  </motion.div>
+                                </motion.div>
+                              );
+                            })}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <AnimatePresence>
+                  {searchResults.length === 0 &&
+                    searchTerm &&
+                    hasSearched &&
+                    !loading &&
+                    !searchError && (
+                      <NotificationToast
+                        message="No foods found matching your search. Try different keywords."
+                        onDismiss={() => setHasSearched(false)}
+                      />
+                    )}
+                </AnimatePresence>
               </div>
             </motion.div>
           </div>
-
-          <AnimatePresence>
-            {searchResults.length > 0 && (
-              <motion.div
-                ref={searchResultsRef}
-                className="search-results border rounded-md overflow-hidden mt-6"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <div className="flex items-center justify-between bg-muted/50 px-4 py-2 border-b">
-                  <h6 className="text-sm font-semibold">Search Results</h6>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCloseResults}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="h-[400px] overflow-y-auto">
-                  <div className="divide-y">
-                    <AnimatePresence initial={false}>
-                      {searchResults.map((food, index) => {
-                        const added = isAdded(food.fdcId);
-                        return (
-                          <motion.div
-                            key={food.fdcId}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                              duration: 0.2,
-                              delay: index * 0.03,
-                            }}
-                            className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                          >
-                            <span className="text-sm">{food.description}</span>
-                            <motion.div
-                              whileHover={{ scale: added ? 1 : 1.05 }}
-                              whileTap={{ scale: added ? 1 : 0.95 }}
-                            >
-                              <Button
-                                variant={added ? "success" : "secondary"}
-                                size="sm"
-                                onClick={() => !added && handleFoodAdd(food)}
-                                disabled={added}
-                                className={`ml-4 transition-all duration-200 ${
-                                  added
-                                    ? "bg-success hover:bg-success text-success-foreground"
-                                    : ""
-                                }`}
-                              >
-                                {added ? (
-                                  <>
-                                    <Check className="w-4 h-4" />
-                                  </>
-                                ) : (
-                                  <>
-                                    <Plus className="w-4 h-4" />
-                                  </>
-                                )}
-                              </Button>
-                            </motion.div>
-                          </motion.div>
-                        );
-                      })}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {searchResults.length === 0 &&
-              searchTerm &&
-              hasSearched &&
-              !loading &&
-              !searchError && (
-                <NotificationToast
-                  message="No foods found matching your search. Try different keywords."
-                  onDismiss={() => setHasSearched(false)}
-                />
-              )}
-          </AnimatePresence>
         </CardContent>
       </Card>
     </motion.div>

@@ -292,7 +292,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
       </div>
     );
 
-  if (configError) {
+  if (configError)
     return (
       <Alert variant="destructive" className="max-w-2xl mx-auto mt-8">
         <AlertDescription>
@@ -300,7 +300,6 @@ const PersonalInfoForm = ({ onSubmit }) => {
         </AlertDescription>
       </Alert>
     );
-  }
 
   return (
     <div className="max-w-2xl mx-auto">
