@@ -7,7 +7,14 @@ export const processCSVData = (results) => {
     };
 
   try {
-    const importedFoods = results.data.map((row, index) => {
+    const validRows = results.data.filter(
+      (row) => row["Food Item"] && typeof row["Food Item"] === "string",
+    );
+
+    if (results.data.length > 0 && validRows.length === 0)
+      throw new Error("Missing required 'Food Item' column");
+
+    const importedFoods = validRows.map((row, index) => {
       const servingSize = row["Serving Size (g)"] || 100;
       const normalisedNutrients = {
         "Vitamin A (µg)":
@@ -85,7 +92,7 @@ export const processCSVData = (results) => {
     return {
       success: false,
       error:
-        "Invalid CSV format. Please use a CSV file exported from this application.",
+        "Invalid CSV format! Please ensure your file matches the format of a CSV exported from the 'Selected Foods' section.",
     };
   }
 };

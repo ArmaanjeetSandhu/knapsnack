@@ -8,7 +8,7 @@ import {
   Newspaper,
   RefreshCw,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Link,
   Route,
@@ -44,8 +44,8 @@ import api from "./services/api";
 const isDuplicateFood = (newFood, existingFoods) => {
   return existingFoods.some((food) => {
     return (
-      food.description.trim().toLowerCase() ===
-      newFood.description.trim().toLowerCase()
+      food.description?.trim().toLowerCase() ===
+      newFood.description?.trim().toLowerCase()
     );
   });
 };
@@ -57,6 +57,7 @@ function App() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [feasibilityResults, setFeasibilityResults] = useState(null);
   const [lastAddedIds, setLastAddedIds] = useState([]);
+  const calculationResultsRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -139,7 +140,8 @@ function App() {
       });
       setError(null);
       setIsEditModalOpen(false);
-      window.scrollTo(0, 0);
+
+      calculationResultsRef.current?.scrollIntoView({ behavior: "smooth" });
 
       actions.setAdjustedLowerBounds(null);
       actions.setAdjustedUpperBounds(null);
@@ -191,9 +193,7 @@ function App() {
     );
     const duplicates = importedFoods.length - uniqueNewFoods.length;
     if (duplicates > 0)
-      setNotification(
-        `${duplicates} duplicate food item(s) were skipped.`,
-      );
+      setNotification(`${duplicates} duplicate food item(s) were skipped.`);
     else setNotification(null);
 
     if (uniqueNewFoods.length > 0) {
@@ -274,7 +274,10 @@ function App() {
         open={isEditModalOpen}
         onOpenChange={(open) => {
           setIsEditModalOpen(open);
-          if (!open) window.scrollTo(0, 0);
+          if (!open)
+            calculationResultsRef.current?.scrollIntoView({
+              behavior: "smooth",
+            });
         }}
       >
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
@@ -283,7 +286,9 @@ function App() {
             onSave={handleProfileUpdate}
             onCancel={() => {
               setIsEditModalOpen(false);
-              window.scrollTo(0, 0);
+              calculationResultsRef.current?.scrollIntoView({
+                behavior: "smooth",
+              });
             }}
           />
         </DialogContent>
@@ -294,7 +299,7 @@ function App() {
           <PersonalInfoForm onSubmit={handleFormSubmit} />
         </div>
       ) : showCalculationResults ? (
-        <div className="w-full mx-auto">
+        <div className="w-full mx-auto scroll-mt-4" ref={calculationResultsRef}>
           {hasVisitedFoodSelection && (
             <div className="mb-4">
               <Button
