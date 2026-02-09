@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ListCheck, ListX, Trash2, WandSparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
@@ -61,6 +61,41 @@ const SelectedFoods = ({
   const [showInputErrorDialog, setShowInputErrorDialog] = useState(false);
   const [flashingFoods, setFlashingFoods] = useState([]);
 
+  const getSortedFoods = () => {
+    const sortableFoods = [...foods];
+    if (sortConfig.key) {
+      sortableFoods.sort((a, b) => {
+        let aValue, bValue;
+        if (sortConfig.key === "food") {
+          aValue = a.description.toLowerCase();
+          bValue = b.description.toLowerCase();
+        } else if (sortConfig.key === "price") {
+          aValue = parseFloat(a.price) || 0;
+          bValue = parseFloat(b.price) || 0;
+        } else if (sortConfig.key === "servingSize") {
+          aValue = parseFloat(a.servingSize) || 0;
+          bValue = parseFloat(b.servingSize) || 0;
+        } else if (sortConfig.key === "maxServing") {
+          aValue = parseFloat(a.maxServing) || 0;
+          bValue = parseFloat(b.maxServing) || 0;
+        }
+        if (aValue < bValue)
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        if (aValue > bValue)
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortableFoods;
+  };
+
+  const sortedFoods = getSortedFoods();
+  const sortedFoodsRef = useRef(sortedFoods);
+
+  useEffect(() => {
+    sortedFoodsRef.current = sortedFoods;
+  }, [sortedFoods]);
+
   useEffect(() => {
     if (lastAddedIds.length > 0) {
       const mountTimeout = setTimeout(() => {
@@ -69,10 +104,20 @@ const SelectedFoods = ({
 
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "center" });
-          setFlashingFoods(lastAddedIds);
+
+          const itemIndex = sortedFoodsRef.current.findIndex(
+            (f) => f.fdcId === firstNewId,
+          );
+
+          const scrollDelay = itemIndex !== -1 ? 100 + itemIndex * 20 : 200;
+
           setTimeout(() => {
-            setFlashingFoods([]);
-          }, 2000);
+            setFlashingFoods(lastAddedIds);
+
+            setTimeout(() => {
+              setFlashingFoods([]);
+            }, 2000);
+          }, scrollDelay);
         }
       }, 400);
 
@@ -153,40 +198,10 @@ const SelectedFoods = ({
     setSortConfig({ key, direction });
   };
 
-  const getSortedFoods = () => {
-    const sortableFoods = [...foods];
-    if (sortConfig.key) {
-      sortableFoods.sort((a, b) => {
-        let aValue, bValue;
-        if (sortConfig.key === "food") {
-          aValue = a.description.toLowerCase();
-          bValue = b.description.toLowerCase();
-        } else if (sortConfig.key === "price") {
-          aValue = parseFloat(a.price) || 0;
-          bValue = parseFloat(b.price) || 0;
-        } else if (sortConfig.key === "servingSize") {
-          aValue = parseFloat(a.servingSize) || 0;
-          bValue = parseFloat(b.servingSize) || 0;
-        } else if (sortConfig.key === "maxServing") {
-          aValue = parseFloat(a.maxServing) || 0;
-          bValue = parseFloat(b.maxServing) || 0;
-        }
-        if (aValue < bValue)
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        if (aValue > bValue)
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        return 0;
-      });
-    }
-    return sortableFoods;
-  };
-
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) return null;
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
-
-  const sortedFoods = getSortedFoods();
 
   useEffect(() => {
     window.scrollTo(0, 0);
