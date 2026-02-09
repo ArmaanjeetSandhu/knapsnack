@@ -203,10 +203,6 @@ const SelectedFoods = ({
     return sortConfig.direction === "ascending" ? " ↑" : " ↓";
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <>
       <Card className="mb-6 shadow-lg">

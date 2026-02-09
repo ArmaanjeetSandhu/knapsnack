@@ -14,7 +14,7 @@ import {
   Target,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MINERALS_CONFIG,
   OTHERS_CONFIG,
@@ -47,8 +47,10 @@ const CalculationResults = ({
   savedBounds,
 }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
+  const resultsRef = useRef(null);
 
   const { state, actions } = useNutrientBounds(calculationData, savedBounds);
+
   const {
     customisingBounds,
     adjustedLowerBounds,
@@ -59,7 +61,8 @@ const CalculationResults = ({
   } = state;
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (resultsRef.current)
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   const handleProceed = () => {
@@ -248,7 +251,8 @@ const CalculationResults = ({
 
   return (
     <motion.div
-      className="space-y-6"
+      ref={resultsRef}
+      className="space-y-6 scroll-mt-4"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
