@@ -37,7 +37,7 @@ import {
   validateMaxTwoDecimals,
 } from "../lib/utils";
 import api from "../services/api";
-import NotificationToast from "./NotificationToast";
+import NotificationToast from "./common/NotificationToast";
 
 const MotionTableRow = motion.create(TableRow);
 

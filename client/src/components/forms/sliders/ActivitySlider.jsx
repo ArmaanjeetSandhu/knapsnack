@@ -6,7 +6,7 @@ import {
   Dumbbell,
   Heart,
 } from "lucide-react";
-import CategorizedSlider from "./CategorizedSlider";
+import CategorisedSlider from "../../CategorisedSlider";
 
 const ActivitySlider = ({ value, onChange, autoFocus }) => {
   const categories = [
@@ -68,7 +68,7 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
     `Range: ${category.min.toFixed(1)} - ${category.max.toFixed(1)}`;
 
   return (
-    <CategorizedSlider
+    <CategorisedSlider
       value={value}
       onChange={onChange}
       autoFocus={autoFocus}

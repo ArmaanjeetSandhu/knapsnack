@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 const LandingPage = ({ onGetStarted }) => {
   useEffect(() => {

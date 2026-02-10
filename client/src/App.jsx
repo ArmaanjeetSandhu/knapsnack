@@ -16,20 +16,26 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import AboutPage from "./components/AboutPage";
-import BlogPage from "./components/BlogPage";
-import BlogPostPage from "./components/BlogPostPage";
-import CalculationInputEditor from "./components/CalculationInputEditor";
-import CalculationResults from "./components/CalculationResults";
-import ErrorPage from "./components/ErrorPage";
-import FeasibilityAnalysis from "./components/FeasibilityAnalysis";
+
 import FoodSearch from "./components/FoodSearch";
-import LandingPage from "./components/LandingPage";
-import NotificationToast from "./components/NotificationToast";
-import OptimisationResults from "./components/OptimisationResults";
-import PersonalInfoForm from "./components/PersonalInfoForm";
 import SelectedFoods from "./components/SelectedFoods";
-import ThemeToggle from "./components/ThemeToggle";
+
+import NotificationToast from "./components/common/NotificationToast";
+import ThemeToggle from "./components/common/ThemeToggle";
+
+import CalculationInputEditor from "./components/forms/CalculationInputEditor";
+import PersonalInfoForm from "./components/forms/PersonalInfoForm";
+
+import AboutPage from "./components/pages/AboutPage";
+import BlogPage from "./components/pages/BlogPage";
+import BlogPostPage from "./components/pages/BlogPostPage";
+import ErrorPage from "./components/pages/ErrorPage";
+import LandingPage from "./components/pages/LandingPage";
+
+import CalculationResults from "./components/results/CalculationResults";
+import FeasibilityAnalysis from "./components/results/FeasibilityAnalysis";
+import OptimisationResults from "./components/results/OptimisationResults";
+
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { Button } from "./components/ui/button";
 import { Dialog, DialogContent } from "./components/ui/dialog";

@@ -1,17 +1,17 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { useFormWizard } from "../hooks/useFormWizard";
-import { preventInvalidIntegerChars } from "../lib/utils";
-import api from "../services/api";
-import ActivitySlider from "./ActivitySlider";
-import CalorieTargetSlider from "./CalorieTargetSlider";
-import LoadingSpinner from "./LoadingSpinner";
-import MacroRatioValidator from "./MacroRatioValidator";
-import NotificationToast from "./NotificationToast";
+import { useFormWizard } from "../../hooks/useFormWizard";
+import { preventInvalidIntegerChars } from "../../lib/utils";
+import api from "../../services/api";
+import LoadingSpinner from "../common/LoadingSpinner";
+import NotificationToast from "../common/NotificationToast";
+import ActivitySlider from "../forms/sliders/ActivitySlider";
+import CalorieTargetSlider from "../forms/sliders/CalorieTargetSlider";
+import MacroRatioValidator from "../forms/sliders/MacroRatioValidator";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const SelectionGroup = ({ options, value, onChange }) => (
   <div className="flex gap-2">

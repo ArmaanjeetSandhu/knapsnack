@@ -20,7 +20,7 @@ import {
 import { Input } from "../components/ui/input";
 import { processCSVData } from "../lib/csvParser";
 import api from "../services/api";
-import NotificationToast from "./NotificationToast";
+import NotificationToast from "./common/NotificationToast";
 
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(

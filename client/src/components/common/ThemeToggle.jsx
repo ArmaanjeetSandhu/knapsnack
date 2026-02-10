@@ -1,12 +1,12 @@
 import { Moon, Sun } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
+} from "../ui/tooltip";
 
 const ThemeToggle = () => {
   const [isDark, setIsDark] = useState(false);

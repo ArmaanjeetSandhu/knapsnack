@@ -12,7 +12,7 @@ const COLOR_MAP = COLORS.reduce((acc, color) => {
   return acc;
 }, {});
 
-const CategorizedSlider = ({
+const CategorisedSlider = ({
   value,
   onChange,
   min,
@@ -149,4 +149,4 @@ const CategorizedSlider = ({
   );
 };
 
-export default CategorizedSlider;
+export default CategorisedSlider;

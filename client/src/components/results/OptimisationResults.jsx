@@ -17,18 +17,18 @@ import {
   MINERALS_CONFIG,
   OTHERS_CONFIG,
   VITAMINS_CONFIG,
-} from "../config/nutrientData";
+} from "../../config/nutrientData";
 import {
   bankersRound,
   calculateConsistentResults,
   formatValue,
   sortItems,
-} from "../lib/resultsHelpers";
-import handleExportCSV from "./ExportHandler";
-import { NutrientCards, NutrientTable } from "./NutrientDisplay";
-import { Alert, AlertDescription } from "./ui/alert";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+} from "../../lib/resultsHelpers";
+import handleExportCSV from "../ExportHandler";
+import { NutrientCards, NutrientTable } from "../nutrients/NutrientDisplay";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Table,
   TableBody,
@@ -36,8 +36,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+} from "../ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const OptimisationResults = ({ results, selectedFoods, nutrientGoals }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");

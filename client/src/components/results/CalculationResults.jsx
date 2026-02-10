@@ -19,17 +19,17 @@ import {
   MINERALS_CONFIG,
   OTHERS_CONFIG,
   VITAMINS_CONFIG,
-} from "../config/nutrientData";
-import { useNutrientBounds } from "../hooks/useNutrientBounds";
+} from "../../config/nutrientData";
+import { useNutrientBounds } from "../../hooks/useNutrientBounds";
 import {
   preventInvalidFloatChars,
   preventInvalidIntegerChars,
   validateMaxTwoDecimals,
-} from "../lib/utils";
-import { NutrientCards, NutrientTable } from "./NutrientDisplay";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
+} from "../../lib/utils";
+import { NutrientCards, NutrientTable } from "../nutrients/NutrientDisplay";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
 import {
   Table,
   TableBody,
@@ -37,8 +37,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+} from "../ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const CalculationResults = ({
   calculationData,

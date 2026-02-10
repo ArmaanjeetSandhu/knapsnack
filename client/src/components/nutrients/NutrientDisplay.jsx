@@ -1,5 +1,8 @@
 import { useCallback } from "react";
-import { Card, CardContent } from "../components/ui/card";
+import { useNutrientDisplay } from "../../hooks/useNutrientDisplay";
+import { useSortableData } from "../../hooks/useSortableData";
+import NutrientInfoPopup from "../nutrients/NutrientInfoPopup";
+import { Card, CardContent } from "../ui/card";
 import {
   Table,
   TableBody,
@@ -7,10 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../components/ui/table";
-import { useNutrientDisplay } from "../hooks/useNutrientDisplay";
-import { useSortableData } from "../hooks/useSortableData";
-import NutrientInfoPopup from "./NutrientInfoPopup";
+} from "../ui/table";
 
 const BlinkingDot = () => (
   <div className="w-2 h-2 shrink-0 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />

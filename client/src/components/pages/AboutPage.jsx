@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, ExternalLink } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { BlockMath, InlineMath } from "react-katex";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent } from "../ui/card";
 
 const faqs = [
   {

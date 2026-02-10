@@ -10,7 +10,7 @@ import {
   Weight,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 const AMDR = {
   protein: { min: 10, max: 40 },

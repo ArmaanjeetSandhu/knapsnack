@@ -1,7 +1,7 @@
 import { AlertTriangle, CheckCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { Card, CardContent } from "../components/ui/card";
+import { Alert, AlertDescription } from "../../ui/alert";
+import { Card, CardContent } from "../../ui/card";
 
 const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
   const firstInputRef = useRef(null);

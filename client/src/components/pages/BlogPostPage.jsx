@@ -2,9 +2,9 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, MARKS } from "@contentful/rich-text-types";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { formatDate } from "../lib/utils";
-import api from "../services/api";
-import LoadingSpinner from "./LoadingSpinner";
+import { formatDate } from "../../lib/utils";
+import api from "../../services/api";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const renderOptions = {
   renderMark: {

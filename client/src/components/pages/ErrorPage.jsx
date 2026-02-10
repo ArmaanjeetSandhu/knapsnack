@@ -1,6 +1,6 @@
 import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 const ErrorPage = () => {
   return (

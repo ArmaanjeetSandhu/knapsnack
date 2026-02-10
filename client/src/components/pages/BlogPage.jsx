@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { formatDate } from "../lib/utils";
-import api from "../services/api";
-import LoadingSpinner from "./LoadingSpinner";
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { formatDate } from "../../lib/utils";
+import api from "../../services/api";
+import LoadingSpinner from "../common/LoadingSpinner";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 const BlogPage = () => {
   const [posts, setPosts] = useState([]);

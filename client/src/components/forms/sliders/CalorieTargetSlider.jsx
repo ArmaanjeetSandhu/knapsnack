@@ -1,5 +1,5 @@
 import { Minus, Scale, TrendingDown, TrendingUp } from "lucide-react";
-import CategorizedSlider from "./CategorizedSlider";
+import CategorisedSlider from "../../CategorisedSlider";
 
 const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
   const categories = [
@@ -50,7 +50,7 @@ const CalorieTargetSlider = ({ value, onChange, autoFocus }) => {
   };
 
   return (
-    <CategorizedSlider
+    <CategorisedSlider
       value={value}
       onChange={onChange}
       autoFocus={autoFocus}
