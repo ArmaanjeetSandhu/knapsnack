@@ -42,9 +42,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     if (result.success) {
       onFoodsImport(result.data);
       setSearchError(null);
-    } else {
-      setSearchError(result.error);
-    }
+    } else setSearchError(result.error);
   };
 
   const createParseConfig = (errorPrefix) => ({

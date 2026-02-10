@@ -326,13 +326,12 @@ const AboutPage = () => {
     if (isOpening) {
       const slug = createSlug(otherFaqs[index].question);
       window.history.replaceState(null, null, `#${slug}`);
-    } else {
+    } else
       window.history.replaceState(
         null,
         null,
         window.location.pathname + window.location.search,
       );
-    }
   };
 
   return (

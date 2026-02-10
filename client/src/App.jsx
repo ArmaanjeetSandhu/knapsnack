@@ -8,7 +8,7 @@ import {
   Newspaper,
   RefreshCw,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Link,
   Route,
@@ -58,6 +58,7 @@ function App() {
   const [feasibilityResults, setFeasibilityResults] = useState(null);
   const [lastAddedIds, setLastAddedIds] = useState([]);
   const calculationResultsRef = useRef(null);
+  const foodSearchRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -250,6 +251,11 @@ function App() {
     hasVisitedFoodSelection,
   } = state;
 
+  useEffect(() => {
+    if (!showCalculationResults && foodSearchRef.current)
+      foodSearchRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [showCalculationResults]);
+
   const effectiveNutrientGoals = useCustomBounds
     ? {
         ...nutrientGoals,
@@ -372,11 +378,13 @@ function App() {
 
           {!optimisationResults && !feasibilityResults && (
             <>
-              <FoodSearch
-                onFoodSelect={handleFoodSelect}
-                onFoodsImport={handleFoodsImport}
-                selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
-              />
+              <div ref={foodSearchRef} className="scroll-mt-4">
+                <FoodSearch
+                  onFoodSelect={handleFoodSelect}
+                  onFoodsImport={handleFoodsImport}
+                  selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
+                />
+              </div>
               <SelectedFoods
                 foods={selectedFoods}
                 onFoodsUpdate={actions.setSelectedFoods}
