@@ -53,27 +53,6 @@ export const calculateConsistentResults = (results, selectedFoods) => {
   return { items, totals };
 };
 
-export const getNonZeroItems = (results, selectedFoods) => {
-  return results.food_items
-    .map((foodName, index) => {
-      const servings = results.servings[index];
-      if (servings <= 0) return null;
-      const food = selectedFoods.find((f) => f.description === foodName);
-      if (!food) return null;
-      const servingSize = parseFloat(food.servingSize) || 100;
-      const totalServing = servings * servingSize;
-      const cost = results.total_cost[index];
-      return {
-        food: foodName,
-        servings,
-        servingSize,
-        totalServing,
-        cost,
-      };
-    })
-    .filter((item) => item !== null);
-};
-
 export const sortItems = (items, config, type = "portions") => {
   if (!config.key) return items;
 
