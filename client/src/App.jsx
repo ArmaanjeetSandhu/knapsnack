@@ -174,8 +174,11 @@ function App() {
   };
 
   const handleHideFeasibilityResults = () => {
+    setLastAddedIds([]);
     setFeasibilityResults(null);
-    window.scrollTo(0, 0);
+    setTimeout(() => {
+      selectedFoodsRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   const handleFoodSelect = (food) => {
@@ -224,8 +227,11 @@ function App() {
   };
 
   const handleHideResults = () => {
+    setLastAddedIds([]);
     actions.setOptimisationResults(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => {
+      selectedFoodsRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   const handleViewCalculationResults = () => {
