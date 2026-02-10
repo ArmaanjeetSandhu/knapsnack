@@ -8,7 +8,7 @@ import {
   Newspaper,
   RefreshCw,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Link,
   Route,
@@ -76,6 +76,11 @@ function App() {
   useEffect(() => {
     if (feasibilityResults) smoothScrollTo(feasibilityResultsRef);
   }, [feasibilityResults]);
+
+  const scrollToFoodSelection = useCallback((hasFoods) => {
+    const targetRef = hasFoods ? selectedFoodsRef : foodSearchRef;
+    smoothScrollTo(targetRef, 100);
+  }, []);
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -182,7 +187,7 @@ function App() {
   const handleHideFeasibilityResults = () => {
     setLastAddedIds([]);
     setFeasibilityResults(null);
-    smoothScrollTo(selectedFoodsRef, 100);
+    scrollToFoodSelection(state.selectedFoods.length > 0);
   };
 
   const handleFoodSelect = (food) => {
@@ -233,7 +238,7 @@ function App() {
   const handleHideResults = () => {
     setLastAddedIds([]);
     actions.setOptimisationResults(null);
-    smoothScrollTo(selectedFoodsRef, 100);
+    scrollToFoodSelection(state.selectedFoods.length > 0);
   };
 
   const handleViewCalculationResults = () => {
@@ -271,12 +276,9 @@ function App() {
   } = state;
 
   useEffect(() => {
-    if (!showCalculationResults) {
-      const targetRef =
-        selectedFoods.length > 0 ? selectedFoodsRef : foodSearchRef;
-      smoothScrollTo(targetRef, 100);
-    }
-  }, [showCalculationResults, selectedFoods.length]);
+    if (!showCalculationResults)
+      scrollToFoodSelection(selectedFoods.length > 0);
+  }, [showCalculationResults, selectedFoods.length, scrollToFoodSelection]);
 
   const effectiveNutrientGoals = useCustomBounds
     ? {

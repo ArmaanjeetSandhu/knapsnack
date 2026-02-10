@@ -251,6 +251,8 @@ const PersonalInfoForm = ({ onSubmit }) => {
         const activeElement = document.activeElement;
         const tagName = activeElement.tagName.toLowerCase();
 
+        if (tagName === "a") return;
+
         const isSelectedButton = () => {
           if (tagName !== "button") return false;
           const text = activeElement.textContent?.trim();
