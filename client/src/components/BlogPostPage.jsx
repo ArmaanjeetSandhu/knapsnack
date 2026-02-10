@@ -2,6 +2,7 @@ import { documentToReactComponents } from "@contentful/rich-text-react-renderer"
 import { BLOCKS, MARKS } from "@contentful/rich-text-types";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { formatDate } from "../lib/utils";
 import api from "../services/api";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -105,14 +106,6 @@ const BlogPostPage = () => {
     };
     fetchPost();
   }, [slug]);
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   if (loading) return <LoadingSpinner message="Loading post..." />;
   if (error) return <div>Error: {error}</div>;

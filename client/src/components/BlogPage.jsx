@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { formatDate } from "../lib/utils";
 import api from "../services/api";
 import LoadingSpinner from "./LoadingSpinner";
 import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -25,14 +26,6 @@ const BlogPage = () => {
 
   if (loading) return <LoadingSpinner message="Loading posts..." />;
   if (error) return <div>Error: {error}</div>;
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   return (
     <div className="max-w-4xl mx-auto">

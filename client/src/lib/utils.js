@@ -18,3 +18,11 @@ export const validateMaxTwoDecimals = (value) => {
   const regex = /^\d*\.?\d{0,2}$/;
   return regex.test(value);
 };
+
+export const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
