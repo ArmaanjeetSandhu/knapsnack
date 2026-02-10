@@ -14,7 +14,6 @@ export const useSortableData = (items, getSortValue, config = null) => {
 
         if (aValue < bValue)
           return sortConfig.direction === "ascending" ? -1 : 1;
-
         if (aValue > bValue)
           return sortConfig.direction === "ascending" ? 1 : -1;
 

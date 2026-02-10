@@ -1,5 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 
+const COLORS = ["gray", "green", "blue", "purple", "red", "orange"];
+
+const COLOR_MAP = COLORS.reduce((acc, color) => {
+  acc[color] = {
+    text: `text-${color}-500 dark:text-${color}-400`,
+    bg: `bg-${color}-500 dark:bg-${color}-400`,
+    border: `border-${color}-500 dark:border-${color}-400`,
+    bgOpacity: `bg-${color}-500/20 dark:bg-${color}-400/20`,
+  };
+  return acc;
+}, {});
+
 const CategorizedSlider = ({
   value,
   onChange,
@@ -7,7 +19,7 @@ const CategorizedSlider = ({
   max,
   step,
   title,
-  Icon, 
+  Icon,
   categories,
   gradientClass,
   getCurrentCategory,
@@ -21,45 +33,7 @@ const CategorizedSlider = ({
   const [isAnimating, setIsAnimating] = useState(false);
 
   const getColorClasses = (baseColor) => {
-    const colorMap = {
-      gray: {
-        text: "text-gray-500 dark:text-gray-400",
-        bg: "bg-gray-500 dark:bg-gray-400",
-        border: "border-gray-500 dark:border-gray-400",
-        bgOpacity: "bg-gray-500/20 dark:bg-gray-400/20",
-      },
-      green: {
-        text: "text-green-500 dark:text-green-400",
-        bg: "bg-green-500 dark:bg-green-400",
-        border: "border-green-500 dark:border-green-400",
-        bgOpacity: "bg-green-500/20 dark:bg-green-400/20",
-      },
-      blue: {
-        text: "text-blue-500 dark:text-blue-400",
-        bg: "bg-blue-500 dark:bg-blue-400",
-        border: "border-blue-500 dark:border-blue-400",
-        bgOpacity: "bg-blue-500/20 dark:bg-blue-400/20",
-      },
-      purple: {
-        text: "text-purple-500 dark:text-purple-400",
-        bg: "bg-purple-500 dark:bg-purple-400",
-        border: "border-purple-500 dark:border-purple-400",
-        bgOpacity: "bg-purple-500/20 dark:bg-purple-400/20",
-      },
-      red: {
-        text: "text-red-500 dark:text-red-400",
-        bg: "bg-red-500 dark:bg-red-400",
-        border: "border-red-500 dark:border-red-400",
-        bgOpacity: "bg-red-500/20 dark:bg-red-400/20",
-      },
-      orange: {
-        text: "text-orange-500 dark:text-orange-400",
-        bg: "bg-orange-500 dark:bg-orange-400",
-        border: "border-orange-500 dark:border-orange-400",
-        bgOpacity: "bg-orange-500/20 dark:bg-orange-400/20",
-      },
-    };
-    return colorMap[baseColor] || colorMap.gray;
+    return COLOR_MAP[baseColor] || COLOR_MAP.gray;
   };
 
   const handleChange = (e) => {

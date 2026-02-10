@@ -250,6 +250,24 @@ const NUTRIENT_INFO = {
   },
 };
 
+const SymptomList = ({ title, symptoms, headerClassName, dotClassName }) => {
+  return (
+    <div>
+      <h3 className={`text-lg font-semibold mb-3 ${headerClassName}`}>
+        {title}
+      </h3>
+      <ul className="space-y-2">
+        {symptoms.map((symptom, index) => (
+          <li key={index} className="flex items-center gap-2 text-sm">
+            <span className={`h-1.5 w-1.5 rounded-full ${dotClassName}`} />
+            {symptom}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 const NutrientInfoPopup = ({ isOpen, onClose, nutrient, rda, ul, unit }) => {
   const nutrientName = nutrient.split(" (")[0];
   const info = NUTRIENT_INFO[nutrientName];
@@ -312,33 +330,19 @@ const NutrientInfoPopup = ({ isOpen, onClose, nutrient, rda, ul, unit }) => {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <div>
-              <h3 className="text-lg font-semibold mb-3 text-yellow-600 dark:text-yellow-400">
-                Deficiency Symptoms
-              </h3>
-              <ul className="space-y-2">
-                {info.deficiencySymptoms.map((symptom, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
-                    {symptom}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <SymptomList
+              title="Deficiency Symptoms"
+              symptoms={info.deficiencySymptoms}
+              headerClassName="text-yellow-600 dark:text-yellow-400"
+              dotClassName="bg-yellow-500"
+            />
 
-            <div>
-              <h3 className="text-lg font-semibold mb-3 text-red-600 dark:text-red-400">
-                Toxicity Symptoms
-              </h3>
-              <ul className="space-y-2">
-                {info.toxicitySymptoms.map((symptom, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                    {symptom}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <SymptomList
+              title="Toxicity Symptoms"
+              symptoms={info.toxicitySymptoms}
+              headerClassName="text-red-600 dark:text-red-400"
+              dotClassName="bg-red-500"
+            />
           </div>
         </div>
       </DialogContent>

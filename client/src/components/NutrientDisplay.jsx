@@ -16,6 +16,13 @@ const BlinkingDot = () => (
   <div className="w-2 h-2 shrink-0 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
 );
 
+const formatBoundValue = (bounds, key, unit) => {
+  const value = bounds?.[key];
+  if (value !== "" && value != null)
+    return unit ? `${value.toLocaleString()} ${unit}` : value.toLocaleString();
+  return "N/A";
+};
+
 export const NutrientTable = ({
   nutrients,
   lowerBounds,
@@ -205,25 +212,13 @@ export const NutrientCards = ({
                       <div className="flex justify-between">
                         <span className="text-sm">RDA:</span>
                         <span className="font-medium">
-                          {lowerBounds &&
-                          lowerBounds[key] !== "" &&
-                          lowerBounds[key] != null
-                            ? `${lowerBounds[key].toLocaleString()} ${
-                                nutrient.unit
-                              }`
-                            : "N/A"}
+                          {formatBoundValue(lowerBounds, key, nutrient.unit)}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm">UL:</span>
                         <span className="font-medium">
-                          {upperBounds &&
-                          upperBounds[key] !== "" &&
-                          upperBounds[key] != null
-                            ? `${upperBounds[key].toLocaleString()} ${
-                                nutrient.unit
-                              }`
-                            : "N/A"}
+                          {formatBoundValue(upperBounds, key, nutrient.unit)}
                         </span>
                       </div>
                     </>
