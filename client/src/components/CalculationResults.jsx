@@ -172,74 +172,47 @@ const CalculationResults = ({
                   <TableCell className="align-top">
                     {nutrient.name} ({nutrient.unit})
                   </TableCell>
-                  <TableCell className="align-top">
-                    <Input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      value={
-                        adjustedLowerBounds[nutrient.key] !== undefined
-                          ? adjustedLowerBounds[nutrient.key]
-                          : ""
-                      }
-                      onChange={(e) => {
-                        if (validateMaxTwoDecimals(e.target.value))
-                          actions.handleBoundChange(
-                            nutrient.key,
-                            "lower",
-                            e.target.value,
-                          );
-                      }}
-                      onKeyDown={preventInvalidFloatChars}
-                      className={`w-[100px] ${
-                        lowerError ? "border-red-500" : ""
-                      }`}
-                    />
-                    {lowerError && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="text-xs text-red-500 mt-3"
-                      >
-                        {lowerError}
-                      </motion.p>
-                    )}
-                  </TableCell>
-                  <TableCell className="align-top">
-                    <Input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      value={
-                        adjustedUpperBounds[nutrient.key] !== undefined
-                          ? adjustedUpperBounds[nutrient.key]
-                          : ""
-                      }
-                      onChange={(e) => {
-                        if (validateMaxTwoDecimals(e.target.value))
-                          actions.handleBoundChange(
-                            nutrient.key,
-                            "upper",
-                            e.target.value,
-                          );
-                      }}
-                      onKeyDown={preventInvalidFloatChars}
-                      className={`w-[100px] ${
-                        upperError ? "border-red-500" : ""
-                      }`}
-                    />
-                    {upperError && (
-                      <motion.p
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="text-xs text-red-500 mt-3"
-                      >
-                        {upperError}
-                      </motion.p>
-                    )}
-                  </TableCell>
+                  {["lower", "upper"].map((boundType) => {
+                    const isLower = boundType === "lower";
+                    const currentBounds = isLower
+                      ? adjustedLowerBounds
+                      : adjustedUpperBounds;
+                    const error = isLower ? lowerError : upperError;
+
+                    return (
+                      <TableCell key={boundType} className="align-top">
+                        <Input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          value={currentBounds[nutrient.key] ?? ""}
+                          onChange={(e) => {
+                            if (validateMaxTwoDecimals(e.target.value)) {
+                              actions.handleBoundChange(
+                                nutrient.key,
+                                boundType,
+                                e.target.value,
+                              );
+                            }
+                          }}
+                          onKeyDown={preventInvalidFloatChars}
+                          className={`w-[100px] ${
+                            error ? "border-red-500" : ""
+                          }`}
+                        />
+                        {error && (
+                          <motion.p
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="text-xs text-red-500 mt-3"
+                          >
+                            {error}
+                          </motion.p>
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </motion.tr>
               );
             })}
@@ -767,124 +740,62 @@ const CalculationResults = ({
                 )}
               </div>
             </div>
-            <AnimatePresence mode="wait">
-              {customisingBounds ? (
-                <motion.div
-                  key="customising-bounds"
-                  className="space-y-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Tabs defaultValue="vitamins" className="w-full">
-                    <TabsList className="w-full">
-                      <TabsTrigger value="vitamins" className="flex-1">
-                        Vitamins
-                      </TabsTrigger>
-                      <TabsTrigger value="minerals" className="flex-1">
-                        Minerals
-                      </TabsTrigger>
-                      <TabsTrigger value="others" className="flex-1">
-                        Others
-                      </TabsTrigger>
-                    </TabsList>
-                    <AnimatePresence mode="wait">
-                      <TabsContent value="vitamins">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          {renderEditableBoundsTable(vitamins)}
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="minerals">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          {renderEditableBoundsTable(minerals)}
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="others">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          {renderEditableBoundsTable(others)}
-                        </div>
-                      </TabsContent>
-                    </AnimatePresence>
-                  </Tabs>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="viewing-bounds"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <Tabs defaultValue="vitamins" className="w-full">
-                    <TabsList className="w-full">
-                      <TabsTrigger value="vitamins" className="flex-1">
-                        Vitamins
-                      </TabsTrigger>
-                      <TabsTrigger value="minerals" className="flex-1">
-                        Minerals
-                      </TabsTrigger>
-                      <TabsTrigger value="others" className="flex-1">
-                        Others
-                      </TabsTrigger>
-                    </TabsList>
-                    <AnimatePresence mode="wait">
-                      <TabsContent value="vitamins">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          <AnimatePresence mode="wait">
-                            <motion.div
-                              key={nutrientDisplayMode}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              {nutrientDisplayMode === "table"
-                                ? renderNutrientTable(vitamins)
-                                : renderNutrientCards(vitamins)}
-                            </motion.div>
-                          </AnimatePresence>
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="minerals">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          <AnimatePresence mode="wait">
-                            <motion.div
-                              key={nutrientDisplayMode}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              {nutrientDisplayMode === "table"
-                                ? renderNutrientTable(minerals)
-                                : renderNutrientCards(minerals)}
-                            </motion.div>
-                          </AnimatePresence>
-                        </div>
-                      </TabsContent>
-                      <TabsContent value="others">
-                        <div className="h-[400px] overflow-y-auto relative">
-                          <AnimatePresence mode="wait">
-                            <motion.div
-                              key={nutrientDisplayMode}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.3 }}
-                            >
-                              {nutrientDisplayMode === "table"
-                                ? renderNutrientTable(others)
-                                : renderNutrientCards(others)}
-                            </motion.div>
-                          </AnimatePresence>
-                        </div>
-                      </TabsContent>
-                    </AnimatePresence>
-                  </Tabs>
-                </motion.div>
-              )}
-            </AnimatePresence>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Tabs defaultValue="vitamins" className="w-full">
+                <TabsList className="w-full">
+                  <TabsTrigger value="vitamins" className="flex-1">
+                    Vitamins
+                  </TabsTrigger>
+                  <TabsTrigger value="minerals" className="flex-1">
+                    Minerals
+                  </TabsTrigger>
+                  <TabsTrigger value="others" className="flex-1">
+                    Others
+                  </TabsTrigger>
+                </TabsList>
+
+                {[
+                  { key: "vitamins", data: vitamins },
+                  { key: "minerals", data: minerals },
+                  { key: "others", data: others },
+                ].map((category) => (
+                  <TabsContent key={category.key} value={category.key}>
+                    <div className="h-[400px] overflow-y-auto relative">
+                      <AnimatePresence mode="wait">
+                        {customisingBounds ? (
+                          <motion.div
+                            key="editing"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 20 }}
+                            transition={{ duration: 0.4 }}
+                          >
+                            {renderEditableBoundsTable(category.data)}
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key={nutrientDisplayMode}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            {nutrientDisplayMode === "table"
+                              ? renderNutrientTable(category.data)
+                              : renderNutrientCards(category.data)}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </motion.div>
           </motion.div>
         </CardContent>
       </Card>
