@@ -11,29 +11,7 @@ import {
   Table as TableIcon,
   Utensils,
 } from "lucide-react";
-import { useState } from "react";
-import { Alert, AlertDescription } from "./ui/alert";
-import { Button } from "./ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "./ui/tabs";
+import { useEffect, useRef, useState } from "react";
 import {
   HYDRATION_CONFIG,
   MINERALS_CONFIG,
@@ -48,6 +26,18 @@ import {
 } from "../lib/resultsHelpers";
 import handleExportCSV from "./ExportHandler";
 import { NutrientCards, NutrientTable } from "./NutrientDisplay";
+import { Alert, AlertDescription } from "./ui/alert";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
 const OptimisationResults = ({ results, selectedFoods, nutrientGoals }) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
@@ -55,6 +45,13 @@ const OptimisationResults = ({ results, selectedFoods, nutrientGoals }) => {
     key: null,
     direction: "ascending",
   });
+
+  const resultsRef = useRef(null);
+
+  useEffect(() => {
+    if (resultsRef.current)
+      resultsRef.current.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
   const { items: nonZeroItems, totals } = calculateConsistentResults(
     results,
@@ -151,7 +148,7 @@ const OptimisationResults = ({ results, selectedFoods, nutrientGoals }) => {
   );
 
   return (
-    <div className="space-y-6">
+    <div ref={resultsRef} className="space-y-6 scroll-mt-4">
       <Card>
         <CardHeader className="space-y-0 pb-2">
           <CardTitle className="text-2xl font-bold mb-2">

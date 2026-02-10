@@ -61,6 +61,7 @@ function App() {
   const calculationResultsRef = useRef(null);
   const feasibilityResultsRef = useRef(null);
   const foodSearchRef = useRef(null);
+  const selectedFoodsRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,6 +93,9 @@ function App() {
         weight: parseInt(formData.weight),
         height: parseInt(formData.height),
       });
+
+      setLastAddedIds([]);
+
       actions.setShowCalculationResults(true);
       setError(null);
       actions.setAdjustedLowerBounds(null);
@@ -225,6 +229,7 @@ function App() {
   };
 
   const handleViewCalculationResults = () => {
+    setLastAddedIds([]);
     actions.setShowCalculationResults(true);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "true");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -258,11 +263,15 @@ function App() {
   } = state;
 
   useEffect(() => {
-    if (!showCalculationResults && foodSearchRef.current)
+    if (!showCalculationResults) {
       setTimeout(() => {
-        foodSearchRef.current.scrollIntoView({ behavior: "smooth" });
+        if (selectedFoods.length > 0 && selectedFoodsRef.current)
+          selectedFoodsRef.current.scrollIntoView({ behavior: "smooth" });
+        else if (foodSearchRef.current)
+          foodSearchRef.current.scrollIntoView({ behavior: "smooth" });
       }, 100);
-  }, [showCalculationResults]);
+    }
+  }, [showCalculationResults, selectedFoods.length]);
 
   const effectiveNutrientGoals = useCustomBounds
     ? {
@@ -393,27 +402,29 @@ function App() {
                   selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
                 />
               </div>
-              <SelectedFoods
-                foods={selectedFoods}
-                onFoodsUpdate={actions.setSelectedFoods}
-                nutrientGoals={
-                  useCustomBounds
-                    ? {
-                        ...nutrientGoals,
-                        lower_bounds:
-                          adjustedLowerBounds || nutrientGoals.lower_bounds,
-                        upper_bounds:
-                          adjustedUpperBounds || nutrientGoals.upper_bounds,
-                      }
-                    : nutrientGoals
-                }
-                userInfo={userInfo}
-                onOptimisationResults={handleOptimisationSuccess}
-                onFeasibilityResults={handleFeasibilityResults}
-                notification={notification}
-                onNotificationClear={() => setNotification(null)}
-                lastAddedIds={lastAddedIds}
-              />
+              <div ref={selectedFoodsRef} className="scroll-mt-4">
+                <SelectedFoods
+                  foods={selectedFoods}
+                  onFoodsUpdate={actions.setSelectedFoods}
+                  nutrientGoals={
+                    useCustomBounds
+                      ? {
+                          ...nutrientGoals,
+                          lower_bounds:
+                            adjustedLowerBounds || nutrientGoals.lower_bounds,
+                          upper_bounds:
+                            adjustedUpperBounds || nutrientGoals.upper_bounds,
+                        }
+                      : nutrientGoals
+                  }
+                  userInfo={userInfo}
+                  onOptimisationResults={handleOptimisationSuccess}
+                  onFeasibilityResults={handleFeasibilityResults}
+                  notification={notification}
+                  onNotificationClear={() => setNotification(null)}
+                  lastAddedIds={lastAddedIds}
+                />
+              </div>
               {useCustomBounds && (
                 <Alert className="mt-4">
                   <AlertDescription>
@@ -545,7 +556,7 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-gray-900 text-white py-4 mb-6">
-        <div className="container mx-auto px-4">
+        <div className="px-4">
           <div className="flex justify-between items-center">
             <button
               onClick={handleReset}
@@ -597,7 +608,7 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 mb-8 flex-grow">
+      <main className="px-4 mb-8 flex-grow">
         <Routes>
           <Route
             path="/about"
