@@ -57,11 +57,18 @@ function App() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [feasibilityResults, setFeasibilityResults] = useState(null);
   const [lastAddedIds, setLastAddedIds] = useState([]);
+
   const calculationResultsRef = useRef(null);
+  const feasibilityResultsRef = useRef(null);
   const foodSearchRef = useRef(null);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (feasibilityResults)
+      feasibilityResultsRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [feasibilityResults]);
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -160,7 +167,6 @@ function App() {
 
   const handleFeasibilityResults = (result) => {
     setFeasibilityResults(result);
-    window.scrollTo(0, 0);
   };
 
   const handleHideFeasibilityResults = () => {
@@ -447,7 +453,7 @@ function App() {
           )}
 
           {feasibilityResults && (
-            <>
+            <div ref={feasibilityResultsRef} className="scroll-mt-4">
               <div
                 className={`mb-4 grid grid-cols-1 ${
                   storedResults ? "md:grid-cols-2" : ""
@@ -504,7 +510,7 @@ function App() {
                   </Button>
                 )}
               </div>
-            </>
+            </div>
           )}
 
           {optimisationResults && (

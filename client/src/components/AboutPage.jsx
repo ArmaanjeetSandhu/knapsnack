@@ -313,7 +313,6 @@ const AboutPage = () => {
       setTimeout(() => {
         faqRefs.current[openItemIndex]?.scrollIntoView({
           behavior: "smooth",
-          block: "start",
         });
       }, 400);
     }

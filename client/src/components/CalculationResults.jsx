@@ -62,7 +62,7 @@ const CalculationResults = ({
 
   useEffect(() => {
     if (resultsRef.current)
-      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultsRef.current.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   const handleProceed = () => {
