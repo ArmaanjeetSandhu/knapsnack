@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import {
   Table,
@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "../components/ui/table";
 import { useNutrientDisplay } from "../hooks/useNutrientDisplay";
+import { useSortableData } from "../hooks/useSortableData";
 import NutrientInfoPopup from "./NutrientInfoPopup";
 
 const BlinkingDot = () => (
@@ -34,58 +35,24 @@ export const NutrientTable = ({
     showBoundsInLayout,
   );
 
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: "ascending",
-  });
+  const getNutrientSortValue = useCallback(
+    (nutrient, key) => {
+      const nutrientKey = nutrient.key;
+      if (key === "nutrient") return nutrient.name.toLowerCase();
+      if (key === "amount") return nutrient.value || 0;
+      if (key === "rda") return (lowerBounds && lowerBounds[nutrientKey]) || 0;
+      if (key === "ul") return (upperBounds && upperBounds[nutrientKey]) || 0;
+      if (key === "unit") return nutrient.unit.toLowerCase();
+      return 0;
+    },
+    [lowerBounds, upperBounds],
+  );
 
-  const handleSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending")
-      direction = "descending";
-    setSortConfig({ key, direction });
-  };
-
-  const getSortedNutrients = () => {
-    const sortableNutrients = [...nutrients];
-    if (sortConfig.key) {
-      sortableNutrients.sort((a, b) => {
-        let aValue, bValue;
-        const keyA = a.key;
-        const keyB = b.key;
-
-        if (sortConfig.key === "nutrient") {
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-        } else if (sortConfig.key === "amount") {
-          aValue = a.value || 0;
-          bValue = b.value || 0;
-        } else if (sortConfig.key === "rda") {
-          aValue = (lowerBounds && lowerBounds[keyA]) || 0;
-          bValue = (lowerBounds && lowerBounds[keyB]) || 0;
-        } else if (sortConfig.key === "ul") {
-          aValue = (upperBounds && upperBounds[keyA]) || 0;
-          bValue = (upperBounds && upperBounds[keyB]) || 0;
-        } else if (sortConfig.key === "unit") {
-          aValue = a.unit.toLowerCase();
-          bValue = b.unit.toLowerCase();
-        }
-        if (aValue < bValue)
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        if (aValue > bValue)
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        return 0;
-      });
-    }
-    return sortableNutrients;
-  };
-
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === "ascending" ? " ↑" : " ↓";
-  };
-
-  const sortedNutrients = getSortedNutrients();
+  const {
+    sortedItems: sortedNutrients,
+    requestSort,
+    getSortIcon,
+  } = useSortableData(nutrients, getNutrientSortValue);
 
   return (
     <>
@@ -94,14 +61,14 @@ export const NutrientTable = ({
           <TableHeader style={{ position: "sticky", top: 0, zIndex: 10 }}>
             <TableRow>
               <TableHead
-                onClick={() => handleSort("nutrient")}
+                onClick={() => requestSort("nutrient")}
                 className="cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
               >
                 Nutrient{getSortIcon("nutrient")}
               </TableHead>
               {showAmount && (
                 <TableHead
-                  onClick={() => handleSort("amount")}
+                  onClick={() => requestSort("amount")}
                   className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
                 >
                   Amount{getSortIcon("amount")}
@@ -110,13 +77,13 @@ export const NutrientTable = ({
               {showBounds && (
                 <>
                   <TableHead
-                    onClick={() => handleSort("rda")}
+                    onClick={() => requestSort("rda")}
                     className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
                   >
                     RDA{getSortIcon("rda")}
                   </TableHead>
                   <TableHead
-                    onClick={() => handleSort("ul")}
+                    onClick={() => requestSort("ul")}
                     className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
                   >
                     UL{getSortIcon("ul")}
@@ -124,7 +91,7 @@ export const NutrientTable = ({
                 </>
               )}
               <TableHead
-                onClick={() => handleSort("unit")}
+                onClick={() => requestSort("unit")}
                 className="text-right cursor-pointer hover:bg-muted/50 transition-colors no-select text-foreground font-medium"
               >
                 Unit{getSortIcon("unit")}

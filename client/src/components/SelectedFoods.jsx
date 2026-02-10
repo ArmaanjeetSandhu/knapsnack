@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ListX, Trash2, WandSparkles } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
@@ -26,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import { useSortableData } from "../hooks/useSortableData";
 import {
   exportSelectedFoodsToCSV,
   prepareOptimisationPayload,
@@ -53,43 +54,24 @@ const SelectedFoods = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: "ascending",
-  });
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [showInputErrorDialog, setShowInputErrorDialog] = useState(false);
   const [flashingFoods, setFlashingFoods] = useState([]);
 
-  const getSortedFoods = () => {
-    const sortableFoods = [...foods];
-    if (sortConfig.key) {
-      sortableFoods.sort((a, b) => {
-        let aValue, bValue;
-        if (sortConfig.key === "food") {
-          aValue = a.description.toLowerCase();
-          bValue = b.description.toLowerCase();
-        } else if (sortConfig.key === "price") {
-          aValue = parseFloat(a.price) || 0;
-          bValue = parseFloat(b.price) || 0;
-        } else if (sortConfig.key === "servingSize") {
-          aValue = parseFloat(a.servingSize) || 0;
-          bValue = parseFloat(b.servingSize) || 0;
-        } else if (sortConfig.key === "maxServing") {
-          aValue = parseFloat(a.maxServing) || 0;
-          bValue = parseFloat(b.maxServing) || 0;
-        }
-        if (aValue < bValue)
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        if (aValue > bValue)
-          return sortConfig.direction === "ascending" ? 1 : -1;
-        return 0;
-      });
-    }
-    return sortableFoods;
-  };
+  const getFoodSortValue = useCallback((food, key) => {
+    if (key === "food") return food.description.toLowerCase();
+    if (key === "price") return parseFloat(food.price) || 0;
+    if (key === "servingSize") return parseFloat(food.servingSize) || 0;
+    if (key === "maxServing") return parseFloat(food.maxServing) || 0;
+    return 0;
+  }, []);
 
-  const sortedFoods = getSortedFoods();
+  const {
+    sortedItems: sortedFoods,
+    requestSort,
+    getSortIcon,
+  } = useSortableData(foods, getFoodSortValue);
+
   const sortedFoodsRef = useRef(sortedFoods);
 
   useEffect(() => {
@@ -191,18 +173,6 @@ const SelectedFoods = ({
     exportSelectedFoodsToCSV(foods);
   };
 
-  const handleSort = (key) => {
-    let direction = "ascending";
-    if (sortConfig.key === key && sortConfig.direction === "ascending")
-      direction = "descending";
-    setSortConfig({ key, direction });
-  };
-
-  const getSortIcon = (key) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === "ascending" ? " ↑" : " ↓";
-  };
-
   return (
     <>
       <Card className="mb-6 shadow-lg">
@@ -273,25 +243,25 @@ const SelectedFoods = ({
                           Discrete Servings
                         </TableHead>
                         <TableHead
-                          onClick={() => handleSort("food")}
+                          onClick={() => requestSort("food")}
                           className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                         >
                           Food Item{getSortIcon("food")}
                         </TableHead>
                         <TableHead
-                          onClick={() => handleSort("price")}
+                          onClick={() => requestSort("price")}
                           className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                         >
                           Price Per Serving{getSortIcon("price")}
                         </TableHead>
                         <TableHead
-                          onClick={() => handleSort("servingSize")}
+                          onClick={() => requestSort("servingSize")}
                           className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                         >
                           Serving Size (g){getSortIcon("servingSize")}
                         </TableHead>
                         <TableHead
-                          onClick={() => handleSort("maxServing")}
+                          onClick={() => requestSort("maxServing")}
                           className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
                         >
                           Max Serving (g){getSortIcon("maxServing")}
