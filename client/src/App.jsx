@@ -259,7 +259,9 @@ function App() {
 
   useEffect(() => {
     if (!showCalculationResults && foodSearchRef.current)
-      foodSearchRef.current.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        foodSearchRef.current.scrollIntoView({ behavior: "smooth" });
+      }, 100);
   }, [showCalculationResults]);
 
   const effectiveNutrientGoals = useCustomBounds
