@@ -39,6 +39,7 @@ import {
   NavigationMenuList,
 } from "./components/ui/navigation-menu";
 import { useAppState } from "./hooks/useAppState";
+import { smoothScrollTo } from "./lib/utils";
 import api from "./services/api";
 
 const isDuplicateFood = (newFood, existingFoods) => {
@@ -67,8 +68,7 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    if (feasibilityResults)
-      feasibilityResultsRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (feasibilityResults) smoothScrollTo(feasibilityResultsRef);
   }, [feasibilityResults]);
 
   const handleFormSubmit = async (formData) => {
@@ -153,7 +153,7 @@ function App() {
       setError(null);
       setIsEditModalOpen(false);
 
-      calculationResultsRef.current?.scrollIntoView({ behavior: "smooth" });
+      smoothScrollTo(calculationResultsRef);
 
       actions.setAdjustedLowerBounds(null);
       actions.setAdjustedUpperBounds(null);
@@ -176,9 +176,7 @@ function App() {
   const handleHideFeasibilityResults = () => {
     setLastAddedIds([]);
     setFeasibilityResults(null);
-    setTimeout(() => {
-      selectedFoodsRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    smoothScrollTo(selectedFoodsRef, 100);
   };
 
   const handleFoodSelect = (food) => {
@@ -229,9 +227,7 @@ function App() {
   const handleHideResults = () => {
     setLastAddedIds([]);
     actions.setOptimisationResults(null);
-    setTimeout(() => {
-      selectedFoodsRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    smoothScrollTo(selectedFoodsRef, 100);
   };
 
   const handleViewCalculationResults = () => {
@@ -270,12 +266,9 @@ function App() {
 
   useEffect(() => {
     if (!showCalculationResults) {
-      setTimeout(() => {
-        if (selectedFoods.length > 0 && selectedFoodsRef.current)
-          selectedFoodsRef.current.scrollIntoView({ behavior: "smooth" });
-        else if (foodSearchRef.current)
-          foodSearchRef.current.scrollIntoView({ behavior: "smooth" });
-      }, 100);
+      const targetRef =
+        selectedFoods.length > 0 ? selectedFoodsRef : foodSearchRef;
+      smoothScrollTo(targetRef, 100);
     }
   }, [showCalculationResults, selectedFoods.length]);
 
@@ -303,10 +296,7 @@ function App() {
         open={isEditModalOpen}
         onOpenChange={(open) => {
           setIsEditModalOpen(open);
-          if (!open)
-            calculationResultsRef.current?.scrollIntoView({
-              behavior: "smooth",
-            });
+          if (!open) smoothScrollTo(calculationResultsRef);
         }}
       >
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
@@ -315,9 +305,7 @@ function App() {
             onSave={handleProfileUpdate}
             onCancel={() => {
               setIsEditModalOpen(false);
-              calculationResultsRef.current?.scrollIntoView({
-                behavior: "smooth",
-              });
+              smoothScrollTo(calculationResultsRef);
             }}
           />
         </DialogContent>

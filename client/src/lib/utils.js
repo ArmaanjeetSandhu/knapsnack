@@ -26,3 +26,9 @@ export const formatDate = (dateString) => {
     day: "numeric",
   });
 };
+
+export const smoothScrollTo = (ref, delay = 0) => {
+  setTimeout(() => {
+    if (ref && ref.current) ref.current.scrollIntoView({ behavior: "smooth" });
+  }, delay);
+};
