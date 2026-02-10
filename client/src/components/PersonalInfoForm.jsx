@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, HelpCircle, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -9,6 +9,7 @@ import { preventInvalidIntegerChars } from "../lib/utils";
 import api from "../services/api";
 import ActivitySlider from "./ActivitySlider";
 import CalorieTargetSlider from "./CalorieTargetSlider";
+import LoadingSpinner from "./LoadingSpinner";
 import MacroRatioValidator from "./MacroRatioValidator";
 import NotificationToast from "./NotificationToast";
 
@@ -285,12 +286,7 @@ const PersonalInfoForm = ({ onSubmit }) => {
   }, [handleNext, handlePrevious, currentStep, formData]);
 
   if (!limits && !configError)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading configuration...</p>
-      </div>
-    );
+    return <LoadingSpinner message="Loading configuration..." />;
 
   if (configError)
     return (

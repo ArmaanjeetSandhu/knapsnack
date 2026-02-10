@@ -1,9 +1,9 @@
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS, MARKS } from "@contentful/rich-text-types";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
+import LoadingSpinner from "./LoadingSpinner";
 
 const renderOptions = {
   renderMark: {
@@ -114,13 +114,7 @@ const BlogPostPage = () => {
     });
   };
 
-  if (loading)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading post...</p>
-      </div>
-    );
+  if (loading) return <LoadingSpinner message="Loading post..." />;
   if (error) return <div>Error: {error}</div>;
   if (!post) return <div>Post not found.</div>;
 
