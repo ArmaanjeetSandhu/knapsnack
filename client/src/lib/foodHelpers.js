@@ -16,6 +16,7 @@ export const prepareOptimisationPayload = (foods, nutrientGoals, userInfo) => {
     servingSize: parseFloat(food.servingSize),
     maxServing: parseFloat(food.maxServing),
     requires_integer_servings: !!food.integerServings,
+    must_include: !!food.mustInclude,
     nutrients: adjustNutrientsForServingSize(
       food.nutrients,
       parseFloat(food.servingSize),
@@ -34,6 +35,7 @@ export const prepareOptimisationPayload = (foods, nutrientGoals, userInfo) => {
 export const exportSelectedFoodsToCSV = (foods) => {
   const headers = [
     "Discrete Servings",
+    "Must Include",
     "Food Item",
     "Price Per Serving",
     "Serving Size (g)",
@@ -49,6 +51,7 @@ export const exportSelectedFoodsToCSV = (foods) => {
     );
     const row = [
       food.integerServings ? "Yes" : "No",
+      food.mustInclude ? "Yes" : "No",
       `"${food.description}"`,
       food.price || "",
       food.servingSize || "",

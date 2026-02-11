@@ -71,8 +71,8 @@ const faqs = [
       </h4>,
       "Each food has a maximum practical serving size $s_i$ (as set by you), and a binary variable $y_i \\in \\{0, 1\\}$ that determines whether the food is included at all. If $y_i = 0$, then $x_i = 0$. If $y_i = 1$, the food must be served in at least 1 unit, but no more than $s_i$:",
       "$$\n x_i \\leq s_i \\cdot y_i \\quad \\text{and} \\quad x_i \\geq y_i \\quad \\forall i \\in \\{1,2,\\dots,n\\}\n$$",
-      "If a food item is explicitly marked for 'Discrete Servings', an additional constraint ensures $x_i$ is a natural number, preventing fractional recommendations (e.g., 1.5 eggs):",
-      "$$\n x_i \\in \\mathbb{N}\n$$",
+      "Foods marked as 'Discrete Servings' will not be recommended in fractional amounts, e.g., 1.5 eggs:  $x_i \\in \\mathbb{Z}^+$",
+      "Foods marked as 'Must Include' will be guaranteed to appear in your meal plan:  $y_i = 1$",
     ],
   },
   {

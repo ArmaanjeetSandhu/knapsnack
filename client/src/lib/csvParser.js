@@ -84,6 +84,7 @@ export const processCSVData = (results) => {
         servingSize: row["Serving Size (g)"],
         maxServing: row["Max Serving (g)"],
         integerServings: row["Discrete Servings"] === "Yes",
+        mustInclude: row["Must Include"] === "Yes",
         nutrients: normalisedNutrients,
       };
     });

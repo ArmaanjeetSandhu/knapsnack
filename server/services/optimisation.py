@@ -297,6 +297,9 @@ def solve_optimisation_problem(
         prob += x[i] <= max_servings[i] * y[i]
         prob += x[i] >= y[i]
 
+        if selected_foods[i].get("must_include", False):
+            prob += y[i] == 1
+
     for i, nutrient in enumerate(nutrients):
         nutrient_key = nutrient.lower().replace(" ", "_")
         if nutrient_key in nutrient_goals:

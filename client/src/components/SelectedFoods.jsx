@@ -242,6 +242,9 @@ const SelectedFoods = ({
                         <TableHead className="w-[100px] text-center">
                           Discrete Servings
                         </TableHead>
+                        <TableHead className="w-[100px] text-center">
+                          Must Include
+                        </TableHead>
                         <TableHead
                           onClick={() => requestSort("food")}
                           className="cursor-pointer hover:bg-muted/50 transition-colors no-select"
@@ -310,6 +313,23 @@ const SelectedFoods = ({
                                     )
                                   }
                                   aria-label={`Require discrete servings for ${food.description}`}
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex justify-center items-center h-full pt-2">
+                                <input
+                                  type="checkbox"
+                                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                  checked={!!food.mustInclude}
+                                  onChange={(e) =>
+                                    handleInputChange(
+                                      food.fdcId,
+                                      "mustInclude",
+                                      e.target.checked,
+                                    )
+                                  }
+                                  aria-label={`Must include ${food.description}`}
                                 />
                               </div>
                             </TableCell>
