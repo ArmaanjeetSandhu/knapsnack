@@ -57,6 +57,19 @@ const isDuplicateFood = (newFood, existingFoods) => {
   });
 };
 
+const prepareCalculationData = (data) => ({
+  gender: data.gender,
+  age: data.age,
+  weight: data.weight,
+  height: data.height,
+  activity: data.activity,
+  percentage: data.percentage,
+  protein: data.macroRatios.protein,
+  carbohydrate: data.macroRatios.carbohydrate,
+  fats: data.macroRatios.fats,
+  smokingStatus: data.smokingStatus,
+});
+
 function App() {
   const { state, actions, STORAGE_KEYS } = useAppState();
   const [error, setError] = useState(null);
@@ -84,18 +97,7 @@ function App() {
 
   const handleFormSubmit = async (formData) => {
     try {
-      const calculationData = {
-        gender: formData.gender,
-        age: formData.age,
-        weight: formData.weight,
-        height: formData.height,
-        activity: formData.activity,
-        percentage: formData.percentage,
-        protein: formData.macroRatios.protein,
-        carbohydrate: formData.macroRatios.carbohydrate,
-        fats: formData.macroRatios.fats,
-        smokingStatus: formData.smokingStatus,
-      };
+      const calculationData = prepareCalculationData(formData);
       const result = await api.calculateNutrition(calculationData);
       actions.setNutrientGoals(result);
       actions.setUserInfo({
@@ -140,18 +142,7 @@ function App() {
 
   const handleProfileUpdate = async (updatedData) => {
     try {
-      const calculationData = {
-        gender: updatedData.gender,
-        age: updatedData.age,
-        weight: updatedData.weight,
-        height: updatedData.height,
-        activity: updatedData.activity,
-        percentage: updatedData.percentage,
-        protein: updatedData.macroRatios.protein,
-        carbohydrate: updatedData.macroRatios.carbohydrate,
-        fats: updatedData.macroRatios.fats,
-        smokingStatus: updatedData.smokingStatus,
-      };
+      const calculationData = prepareCalculationData(updatedData);
 
       const result = await api.calculateNutrition(calculationData);
       actions.setNutrientGoals(result);
@@ -288,6 +279,35 @@ function App() {
       }
     : nutrientGoals;
 
+  const ActionButtons = ({ className = "mb-4" }) => (
+    <div
+      className={`${className} grid grid-cols-1 ${
+        storedResults ? "md:grid-cols-2" : ""
+      } gap-4`}
+    >
+      {storedResults && (
+        <Button
+          onClick={handleViewPreviousResults}
+          variant="outline"
+          className="w-full"
+        >
+          <Eye className="w-5 h-5 mr-2" />
+          View Previous Optimisation Results
+        </Button>
+      )}
+      {nutrientGoals && (
+        <Button
+          onClick={handleViewCalculationResults}
+          variant="outline"
+          className="w-full"
+        >
+          <Calculator className="w-5 h-5 mr-2" />
+          View Nutrition Requirements
+        </Button>
+      )}
+    </div>
+  );
+
   const mainPlanner = (
     <>
       <AnimatePresence mode="wait">
@@ -353,34 +373,7 @@ function App() {
         <>
           {!optimisationResults &&
             !feasibilityResults &&
-            !showCalculationResults && (
-              <div
-                className={`mb-4 grid grid-cols-1 ${
-                  storedResults ? "md:grid-cols-2" : ""
-                } gap-4`}
-              >
-                {storedResults && (
-                  <Button
-                    onClick={handleViewPreviousResults}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Eye className="w-5 h-5 mr-2" />
-                    View Previous Optimisation Results
-                  </Button>
-                )}
-                {nutrientGoals && (
-                  <Button
-                    onClick={handleViewCalculationResults}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    View Nutrition Requirements
-                  </Button>
-                )}
-              </div>
-            )}
+            !showCalculationResults && <ActionButtons className="mb-4" />}
 
           {optimisationResults && (
             <div className="mb-4">
@@ -408,17 +401,7 @@ function App() {
                 <SelectedFoods
                   foods={selectedFoods}
                   onFoodsUpdate={actions.setSelectedFoods}
-                  nutrientGoals={
-                    useCustomBounds
-                      ? {
-                          ...nutrientGoals,
-                          lower_bounds:
-                            adjustedLowerBounds || nutrientGoals.lower_bounds,
-                          upper_bounds:
-                            adjustedUpperBounds || nutrientGoals.upper_bounds,
-                        }
-                      : nutrientGoals
-                  }
+                  nutrientGoals={effectiveNutrientGoals}
                   userInfo={userInfo}
                   onOptimisationResults={handleOptimisationSuccess}
                   onFeasibilityResults={handleFeasibilityResults}
@@ -436,95 +419,20 @@ function App() {
                 </Alert>
               )}
 
-              {!showCalculationResults && (
-                <div
-                  className={`mt-6 grid grid-cols-1 ${
-                    storedResults ? "md:grid-cols-2" : ""
-                  } gap-4`}
-                >
-                  {storedResults && (
-                    <Button
-                      onClick={handleViewPreviousResults}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      <Eye className="w-5 h-5 mr-2" />
-                      View Previous Optimisation Results
-                    </Button>
-                  )}
-                  {nutrientGoals && (
-                    <Button
-                      onClick={handleViewCalculationResults}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      <Calculator className="w-5 h-5 mr-2" />
-                      View Nutrition Requirements
-                    </Button>
-                  )}
-                </div>
-              )}
+              {!showCalculationResults && <ActionButtons className="mt-6" />}
             </>
           )}
 
           {feasibilityResults && (
             <div ref={feasibilityResultsRef} className="scroll-mt-4">
-              <div
-                className={`mb-4 grid grid-cols-1 ${
-                  storedResults ? "md:grid-cols-2" : ""
-                } gap-4`}
-              >
-                {storedResults && (
-                  <Button
-                    onClick={handleViewPreviousResults}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Eye className="w-5 h-5 mr-2" />
-                    View Previous Optimisation Results
-                  </Button>
-                )}
-                {nutrientGoals && (
-                  <Button
-                    onClick={handleViewCalculationResults}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    View Nutrition Requirements
-                  </Button>
-                )}
-              </div>
+              <ActionButtons className="mb-4" />
+
               <FeasibilityAnalysis
                 feasibilityData={feasibilityResults}
                 onGoBack={handleHideFeasibilityResults}
               />
-              <div
-                className={`mt-6 grid grid-cols-1 ${
-                  storedResults ? "md:grid-cols-2" : ""
-                } gap-4`}
-              >
-                {storedResults && (
-                  <Button
-                    onClick={handleViewPreviousResults}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Eye className="w-5 h-5 mr-2" />
-                    View Previous Optimisation Results
-                  </Button>
-                )}
-                {nutrientGoals && (
-                  <Button
-                    onClick={handleViewCalculationResults}
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Calculator className="w-5 h-5 mr-2" />
-                    View Nutrition Requirements
-                  </Button>
-                )}
-              </div>
+
+              <ActionButtons className="mt-6" />
             </div>
           )}
 
