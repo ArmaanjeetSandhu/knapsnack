@@ -46,9 +46,13 @@ const CalculationResults = ({
   onRecalculate,
   savedBounds,
 }) => {
-  const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
-  const resultsRef = useRef(null);
+  const [nutrientDisplayMode, setNutrientDisplayMode] = useState(() => {
+    if (typeof window !== "undefined")
+      return window.innerWidth < 768 ? "cards" : "table";
+    return "table";
+  });
 
+  const resultsRef = useRef(null);
   const { state, actions } = useNutrientBounds(calculationData, savedBounds);
 
   const {
@@ -389,8 +393,7 @@ const CalculationResults = ({
                               <p className="text-2xl font-bold">
                                 {macro.label === "Fibre" && "≥ "}
                                 {macro.label === "Saturated Fats" && "≤ "}
-                                {currentValue}
-                                {macro.unit}
+                                {currentValue} {macro.unit}
                               </p>
                             </motion.div>
                           )}

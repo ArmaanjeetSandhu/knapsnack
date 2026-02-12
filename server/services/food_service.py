@@ -13,7 +13,7 @@ def search_foods(
     api_key: str, search_term: str, api_endpoint: str
 ) -> List[Dict[str, Any]]:
     """
-    Search for foods using the USDA API.
+    Search for foods using the USDA API with pagination.
 
     Args:
         api_key: USDA API key
@@ -26,25 +26,42 @@ def search_foods(
     Raises:
         requests.exceptions.RequestException: If API request fails
     """
-    params: Dict[str, Union[str, int, bool]] = {
-        "api_key": api_key,
-        "query": search_term,
-        "dataType": "SR Legacy",
-        "pageSize": 25,
-        "requireAllWords": True,
-    }
-
-    response = requests.get(api_endpoint, params=params)
-    response.raise_for_status()
-
     search_results = []
-    for food in response.json().get("foods", []):
-        search_results.append(
-            {
-                "fdcId": str(food.get("fdcId")),
-                "description": food.get("description"),
-                "nutrients": extract_nutrients(food.get("foodNutrients", [])),
-            }
-        )
+    page_size = 200
+    page_number = 1
+    total_pages = 1
+
+    while page_number <= total_pages:
+        params: Dict[str, Union[str, int, bool]] = {
+            "api_key": api_key,
+            "query": search_term,
+            "dataType": "SR Legacy",
+            "pageSize": page_size,
+            "pageNumber": page_number,
+            "requireAllWords": True,
+        }
+
+        response = requests.get(api_endpoint, params=params)
+        response.raise_for_status()
+
+        data = response.json()
+
+        if page_number == 1:
+            total_hits = data.get("totalHits", 0)
+            total_pages = (total_hits + page_size - 1) // page_size
+
+            if total_pages > 10:
+                total_pages = 10
+
+        for food in data.get("foods", []):
+            search_results.append(
+                {
+                    "fdcId": str(food.get("fdcId")),
+                    "description": food.get("description"),
+                    "nutrients": extract_nutrients(food.get("foodNutrients", [])),
+                }
+            )
+
+        page_number += 1
 
     return search_results

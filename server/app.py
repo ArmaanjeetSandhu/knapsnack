@@ -282,8 +282,6 @@ def optimise_api():
 
             max_servings_list.append(limit / serving_size)
 
-        max_servings = np.array(max_servings_list)
-
         has_custom_bounds = False
         lower_bounds, upper_bounds = get_nutrient_bounds(age, gender)
 
@@ -314,8 +312,6 @@ def optimise_api():
                     lower_bounds, upper_bounds, smoking_status=smoking_status
                 )
             app.logger.info("Using default nutrient bounds")
-
-        max_servings_list = [float(x) for x in max_servings]
 
         feasibility_analysis = analyse_feasibility(
             selected_foods_data,

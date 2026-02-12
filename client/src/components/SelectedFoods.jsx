@@ -305,7 +305,7 @@ const SelectedFoods = ({
                               <div className="flex justify-center items-center h-full pt-2">
                                 <input
                                   type="checkbox"
-                                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                  className="h-4 w-4 rounded border-gray-300 accent-primary cursor-pointer"
                                   checked={!!food.integerServings}
                                   onChange={(e) =>
                                     handleInputChange(
@@ -322,7 +322,7 @@ const SelectedFoods = ({
                               <div className="flex justify-center items-center h-full pt-2">
                                 <input
                                   type="checkbox"
-                                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                  className="h-4 w-4 rounded border-gray-300 accent-primary cursor-pointer"
                                   checked={!!food.mustInclude}
                                   onChange={(e) =>
                                     handleInputChange(

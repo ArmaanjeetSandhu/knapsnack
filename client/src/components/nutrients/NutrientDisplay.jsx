@@ -13,7 +13,7 @@ import {
 } from "../ui/table";
 
 const BlinkingDot = () => (
-  <div className="w-2 h-2 shrink-0 rounded-full bg-blue-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+  <div className="w-2 h-2 shrink-0 rounded-full bg-primary animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
 );
 
 const formatBoundValue = (bounds, key, unit) => {

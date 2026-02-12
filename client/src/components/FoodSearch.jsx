@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import Papa from "papaparse";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -21,6 +21,41 @@ import { Input } from "../components/ui/input";
 import { processCSVData } from "../lib/csvParser";
 import api from "../services/api";
 import NotificationToast from "./common/NotificationToast";
+
+const VirtualisedList = ({ items, height, itemHeight, renderItem }) => {
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const handleScroll = useCallback((e) => {
+    setScrollTop(e.target.scrollTop);
+  }, []);
+
+  const totalHeight = items.length * itemHeight;
+  const startIndex = Math.floor(scrollTop / itemHeight);
+  const endIndex = Math.min(
+    items.length - 1,
+    Math.ceil((scrollTop + height) / itemHeight),
+  );
+
+  const visibleItems = items.slice(startIndex, endIndex + 1);
+  const offsetY = startIndex * itemHeight;
+
+  return (
+    <div
+      onScroll={handleScroll}
+      style={{
+        height: `${height}px`,
+        overflow: "auto",
+        position: "relative",
+      }}
+    >
+      <div style={{ height: `${totalHeight}px`, position: "relative" }}>
+        <div style={{ transform: `translateY(${offsetY}px)` }}>
+          {visibleItems.map((item) => renderItem(item))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
   const [apiKey, setApiKey] = useState(
@@ -141,6 +176,44 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
       }, 100);
     }
   }, [searchResults.length]);
+
+  const renderFoodItem = (food) => {
+    const added = isAdded(food.fdcId);
+
+    return (
+      <div
+        key={food.fdcId}
+        className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors border-b"
+        style={{ height: "60px" }}
+      >
+        <span className="text-sm pr-4">{food.description}</span>
+        <motion.div
+          whileHover={{ scale: added ? 1 : 1.05 }}
+          whileTap={{ scale: added ? 1 : 0.95 }}
+        >
+          <Button
+            variant={added ? "success" : "secondary"}
+            size="sm"
+            onClick={() => !added && handleFoodAdd(food)}
+            disabled={added}
+            className={`ml-4 transition-all duration-200 ${
+              added ? "bg-success hover:bg-success text-success-foreground" : ""
+            }`}
+          >
+            {added ? (
+              <>
+                <Check className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4" />
+              </>
+            )}
+          </Button>
+        </motion.div>
+      </div>
+    );
+  };
 
   return (
     <motion.div
@@ -329,7 +402,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                     >
                       <div className="flex items-center justify-between bg-muted/50 px-4 py-2 border-b">
                         <h6 className="text-sm font-semibold">
-                          Search Results
+                          Search Results ({searchResults.length} items)
                         </h6>
                         <Button
                           variant="ghost"
@@ -339,59 +412,12 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                           <X className="w-4 h-4" />
                         </Button>
                       </div>
-                      <div className="h-[400px] overflow-y-auto">
-                        <div className="divide-y">
-                          <AnimatePresence initial={false}>
-                            {searchResults.map((food, index) => {
-                              const added = isAdded(food.fdcId);
-                              return (
-                                <motion.div
-                                  key={food.fdcId}
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{
-                                    duration: 0.2,
-                                    delay: index * 0.03,
-                                  }}
-                                  className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                                >
-                                  <span className="text-sm">
-                                    {food.description}
-                                  </span>
-                                  <motion.div
-                                    whileHover={{ scale: added ? 1 : 1.05 }}
-                                    whileTap={{ scale: added ? 1 : 0.95 }}
-                                  >
-                                    <Button
-                                      variant={added ? "success" : "secondary"}
-                                      size="sm"
-                                      onClick={() =>
-                                        !added && handleFoodAdd(food)
-                                      }
-                                      disabled={added}
-                                      className={`ml-4 transition-all duration-200 ${
-                                        added
-                                          ? "bg-success hover:bg-success text-success-foreground"
-                                          : ""
-                                      }`}
-                                    >
-                                      {added ? (
-                                        <>
-                                          <Check className="w-4 h-4" />
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Plus className="w-4 h-4" />
-                                        </>
-                                      )}
-                                    </Button>
-                                  </motion.div>
-                                </motion.div>
-                              );
-                            })}
-                          </AnimatePresence>
-                        </div>
-                      </div>
+                      <VirtualisedList
+                        items={searchResults}
+                        height={400}
+                        itemHeight={60}
+                        renderItem={renderFoodItem}
+                      />
                     </motion.div>
                   )}
                 </AnimatePresence>

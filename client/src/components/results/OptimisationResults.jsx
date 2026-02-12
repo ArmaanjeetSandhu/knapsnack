@@ -40,7 +40,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const OptimisationResults = ({ results, selectedFoods, nutrientGoals }) => {
-  const [nutrientDisplayMode, setNutrientDisplayMode] = useState("table");
+  const [nutrientDisplayMode, setNutrientDisplayMode] = useState(() => {
+    if (typeof window !== "undefined")
+      return window.innerWidth < 768 ? "cards" : "table";
+    return "table";
+  });
+
   const [portionsSortConfig, setPortionsSortConfig] = useState({
     key: null,
     direction: "ascending",
