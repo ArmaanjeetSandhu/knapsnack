@@ -279,12 +279,12 @@ export default function CalculationInputEditor({
   };
 
   return (
-    <div className="space-y-6 select-none p-4">
+    <div className="space-y-6 no-select p-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <div
             onClick={() => setGender("male")}
-            className="relative w-full h-12 bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex cursor-pointer select-none"
+            className="relative w-full h-12 bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex cursor-pointer no-select"
           >
             <div
               className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-gray-600 rounded-full shadow-sm transition-all duration-300 ${
@@ -331,7 +331,7 @@ export default function CalculationInputEditor({
         <div className="flex-1">
           <div
             onClick={() => setSmoker(false)}
-            className="relative w-full h-12 bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex cursor-pointer select-none"
+            className="relative w-full h-12 bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex cursor-pointer no-select"
           >
             <div
               className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white dark:bg-gray-600 rounded-full shadow-sm transition-all duration-300 ${
@@ -477,13 +477,13 @@ export default function CalculationInputEditor({
 
         <div
           ref={trackRef}
-          className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner select-none"
+          className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner no-select"
         >
           <div
             className="absolute h-full bg-[#5A7ACD] dark:bg-[#234C6A] rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{ width: `${protein}%` }}
           >
-            <span className="text-white font-bold text-xs select-none whitespace-nowrap">
+            <span className="text-white font-bold text-xs no-select whitespace-nowrap">
               P : {protein}%
             </span>
           </div>
@@ -495,7 +495,7 @@ export default function CalculationInputEditor({
               width: `${carbs}%`,
             }}
           >
-            <span className="text-white font-bold text-xs select-none whitespace-nowrap">
+            <span className="text-white font-bold text-xs no-select whitespace-nowrap">
               C : {carbs}%
             </span>
           </div>
@@ -507,13 +507,13 @@ export default function CalculationInputEditor({
               width: `${fat}%`,
             }}
           >
-            <span className="text-gray-900 font-bold text-xs select-none whitespace-nowrap">
+            <span className="text-gray-900 font-bold text-xs no-select whitespace-nowrap">
               F : {fat}%
             </span>
           </div>
 
           <div
-            className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 select-none flex items-center justify-center outline-none group"
+            className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 no-select flex items-center justify-center outline-none group"
             style={{ left: `calc(${protein}% - 16px)` }}
             onPointerDown={(e) => startDrag("PROTEIN_CARB", e)}
             tabIndex={0}
@@ -528,7 +528,7 @@ export default function CalculationInputEditor({
           </div>
 
           <div
-            className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 select-none flex items-center justify-center outline-none group"
+            className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 no-select flex items-center justify-center outline-none group"
             style={{
               left: `calc(${protein + carbs}% - 16px)`,
             }}

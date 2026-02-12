@@ -239,10 +239,10 @@ const SelectedFoods = ({
                       style={{ position: "sticky", top: 0, zIndex: 10 }}
                     >
                       <TableRow>
-                        <TableHead className="w-[100px] text-center">
+                        <TableHead className="w-[100px] text-center no-select">
                           Discrete Servings
                         </TableHead>
-                        <TableHead className="w-[100px] text-center">
+                        <TableHead className="w-[100px] text-center no-select">
                           Must Include
                         </TableHead>
                         <TableHead
@@ -269,7 +269,9 @@ const SelectedFoods = ({
                         >
                           Max Serving (g){getSortIcon("maxServing")}
                         </TableHead>
-                        <TableHead className="w-[100px]">Actions</TableHead>
+                        <TableHead className="w-[100px] no-select">
+                          Actions
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>

@@ -89,7 +89,9 @@ h6 {
   letter-spacing: -0.025em;
 }
 
-.no-select {
+.no-select,
+input::placeholder,
+textarea::placeholder {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

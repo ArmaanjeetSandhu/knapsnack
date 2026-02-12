@@ -5,11 +5,11 @@ import { Button } from "../ui/button";
 const ErrorPage = () => {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center p-4 text-center">
-      <div className="mb-8">
+      <div className="mb-4">
         <img
           src="/goals.gif"
           alt="404 Error"
-          className="w-32 h-auto mx-auto object-contain rounded-lg"
+          className="w-48 h-auto mx-auto object-contain rounded-lg"
         />
       </div>
 

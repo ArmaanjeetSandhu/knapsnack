@@ -264,7 +264,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                   <div className="flex gap-2">
                     <Input
                       type="text"
-                      placeholder="Search for foods (e.g., chicken breast, broccoli)..."
+                      placeholder="Search for foods..."
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);
