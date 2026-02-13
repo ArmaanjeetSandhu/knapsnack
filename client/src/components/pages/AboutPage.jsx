@@ -51,8 +51,6 @@ const faqs = [
       "$$\n\\sum_{i=1}^{n} a_{i,c} x_i \\geq \\frac{C \\times r_c}{w_c}\n$$",
       "$$\n\\sum_{i=1}^{n} a_{i,f} x_i \\geq \\frac{C \\times r_f}{w_f}\n$$",
       "where:\n\t• $C$ is your daily caloric goal\n\t• $r_p, r_c$ and $r_f$ are the proportion of calories from protein, carbs, and fats respectively\n\t• $a_{i,p}, a_{i,c}$ and $a_{i,f}$ are grams of protein, carbs, and fats in food item $i$\n\t• $w_p, w_c$ and $w_f$ are the Atwater energy factors for protein (4 kcal/g), carbs (4 kcal/g), and fats (9 kcal/g)",
-      "As per Acceptable Macronutrient Distribution Ranges (AMDR) guidelines, $r_p, r_c$ and $r_f$ must fall within the following percentage ranges:",
-      "$$\n10\\% \\le r_p \\le 40\\%, \\quad 40\\% \\le r_c \\le 65\\%, \\quad 20\\% \\le r_f \\le 35\\%\n$$",
       "Additionally, in accordance with evidence-based recommendations, fibre has been given a lower limit of 14 grams per 1000 calories:",
       "$$\n\\sum_{i=1}^{n} a_{i,fb} x_i \\geq \\frac{14 \\times C}{1000}\n$$",
       "And saturated fats have been capped at 10% of your daily caloric goal:",

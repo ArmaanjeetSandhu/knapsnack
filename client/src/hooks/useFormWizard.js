@@ -79,10 +79,7 @@ export function useFormWizard(steps, onSubmit) {
     if (validateStep()) {
       if (currentStep === steps.length - 1) {
         if (formData.macroRatios) onSubmit(formData);
-        else
-          setError(
-            "Please ensure your macro ratios total 100% and are within the guidelines",
-          );
+        else setError("Please ensure your macro ratios total 100%");
       } else {
         setCurrentStep((prev) => prev + 1);
         setError(null);

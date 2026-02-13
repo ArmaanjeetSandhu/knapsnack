@@ -1,6 +1,4 @@
-import { AlertTriangle, CheckCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, AlertDescription } from "../../ui/alert";
 import { Card, CardContent } from "../../ui/card";
 
 const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
@@ -31,15 +29,6 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     return () => observer.disconnect();
   }, []);
 
-  const amdrRanges = useMemo(
-    () => ({
-      protein: { min: 10, max: 40 },
-      carbohydrate: { min: 40, max: 65 },
-      fats: { min: 20, max: 35 },
-    }),
-    [],
-  );
-
   const [macros, setMacros] = useState(
     initialMacros || {
       protein: 30,
@@ -50,40 +39,22 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
 
   const total = Object.values(macros).reduce((sum, value) => sum + value, 0);
 
-  const getAMDRViolations = useCallback(() => {
-    const violations = [];
-    Object.entries(macros).forEach(([macro, value]) => {
-      const range = amdrRanges[macro];
-      if (value < range.min)
-        violations.push(`${macro} is below minimum (${range.min}%)`);
-      else if (value > range.max)
-        violations.push(`${macro} exceeds maximum (${range.max}%)`);
-    });
-    return violations;
-  }, [macros, amdrRanges]);
-
   useEffect(() => {
-    const violations = getAMDRViolations();
     const validTotal = total === 100;
-    const isValid = violations.length === 0 && validTotal;
-    onValidRatios(isValid ? macros : null);
-  }, [macros, total, onValidRatios, getAMDRViolations]);
+    onValidRatios(validTotal ? macros : null);
+  }, [macros, total, onValidRatios]);
 
   useEffect(() => {
     if (autoFocus && firstInputRef.current) firstInputRef.current.focus();
   }, [autoFocus]);
 
-  const handleMacroChange = useCallback(
-    (macroType, newValue) => {
-      const range = amdrRanges[macroType];
-      newValue = Math.max(range.min, Math.min(range.max, Number(newValue)));
-      setMacros((prev) => ({
-        ...prev,
-        [macroType]: newValue,
-      }));
-    },
-    [amdrRanges],
-  );
+  const handleMacroChange = useCallback((macroType, newValue) => {
+    newValue = Math.max(0, Math.min(100, Number(newValue)));
+    setMacros((prev) => ({
+      ...prev,
+      [macroType]: newValue,
+    }));
+  }, []);
 
   const macroColors = useMemo(
     () => ({
@@ -95,14 +66,12 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
         invalid: "bg-pink-50 dark:bg-pink-900/10",
         slider: {
           light: {
-            invalid: "#fdf2f8",
-            range: "#fce7f3",
             main: "#ec4899",
+            track: "#e5e7eb",
           },
           dark: {
-            invalid: "#831843",
-            range: "#9d174d",
             main: "#f472b6",
+            track: "#374151",
           },
         },
       },
@@ -114,14 +83,12 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
         invalid: "bg-indigo-50 dark:bg-indigo-900/10",
         slider: {
           light: {
-            invalid: "#eef2ff",
-            range: "#e0e7ff",
             main: "#6366f1",
+            track: "#e5e7eb",
           },
           dark: {
-            invalid: "#312e81",
-            range: "#3730a3",
             main: "#818cf8",
+            track: "#374151",
           },
         },
       },
@@ -133,14 +100,12 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
         invalid: "bg-yellow-50 dark:bg-yellow-900/10",
         slider: {
           light: {
-            invalid: "#fefce8",
-            range: "#fef9c3",
             main: "#eab308",
+            track: "#e5e7eb",
           },
           dark: {
-            invalid: "#713f12",
-            range: "#854d0e",
             main: "#facc15",
+            track: "#374151",
           },
         },
       },
@@ -148,54 +113,20 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
     [],
   );
 
-  const getAlertMessages = useCallback(() => {
-    const messages = [];
-    const difference = Math.abs(100 - total);
-    if (total === 100)
-      messages.push({
-        type: "success",
-        message:
-          "Perfect! Your macros total 100% and are within AMDR guidelines",
-      });
-    else if (total < 100)
-      messages.push({
-        type: "warning",
-        message: `Your macros total ${total}%. Please add ${difference}% to reach 100%`,
-      });
-    else
-      messages.push({
-        type: "warning",
-        message: `Your macros total ${total}%. Please reduce by ${difference}% to reach 100%`,
-      });
-    const violations = getAMDRViolations();
-    if (violations.length > 0)
-      messages.push({
-        type: "error",
-        message: `AMDR violations detected: ${violations.join(", ")}`,
-      });
-    return messages;
-  }, [total, getAMDRViolations]);
-
   const getSliderBackground = useCallback(
     (macro) => {
-      const range = amdrRanges[macro];
       const value = macros[macro];
       const colors = macroColors[macro].slider;
-
       const currentColors = isDark ? colors.dark : colors.light;
 
       return `linear-gradient(to right,
-      ${currentColors.invalid} 0%,
-      ${currentColors.invalid} ${range.min}%,
-      ${currentColors.range} ${range.min}%,
-      ${currentColors.main} ${value}%,
-      ${currentColors.range} ${value}%,
-      ${currentColors.range} ${range.max}%,
-      ${currentColors.invalid} ${range.max}%,
-      ${currentColors.invalid} 100%
-    )`;
+        ${currentColors.track} 0%,
+        ${currentColors.main} ${value}%,
+        ${currentColors.track} ${value}%,
+        ${currentColors.track} 100%
+      )`;
     },
-    [amdrRanges, macros, macroColors, isDark],
+    [macros, macroColors, isDark],
   );
 
   return (
@@ -227,18 +158,6 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
               />
               <div className="absolute top-7 left-0 right-0 flex justify-between text-xs text-muted-foreground pt-1">
                 <span>0%</span>
-                <span
-                  style={{ left: `${amdrRanges[macro].min}%` }}
-                  className="absolute transform -translate-x-1/2"
-                >
-                  {amdrRanges[macro].min}%
-                </span>
-                <span
-                  style={{ left: `${amdrRanges[macro].max}%` }}
-                  className="absolute transform -translate-x-1/2"
-                >
-                  {amdrRanges[macro].max}%
-                </span>
                 <span>100%</span>
               </div>
             </div>
@@ -250,27 +169,6 @@ const MacroRatioValidator = ({ onValidRatios, initialMacros, autoFocus }) => {
             />
           </div>
         ))}
-
-        <div className="space-y-2">
-          {getAlertMessages().map((alert, index) => (
-            <Alert
-              key={index}
-              variant={alert.type === "success" ? "default" : "warning"}
-              className={
-                alert.type === "success"
-                  ? "bg-success/10 dark:bg-success/20 border-success/50"
-                  : undefined
-              }
-            >
-              {alert.type === "success" ? (
-                <CheckCircle className="h-4 w-4 text-success" />
-              ) : (
-                <AlertTriangle className="h-4 w-4" />
-              )}
-              <AlertDescription>{alert.message}</AlertDescription>
-            </Alert>
-          ))}
-        </div>
       </CardContent>
     </Card>
   );

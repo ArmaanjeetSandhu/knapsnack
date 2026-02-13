@@ -12,12 +12,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 
-const AMDR = {
-  protein: { min: 10, max: 40 },
-  carbs: { min: 40, max: 65 },
-  fat: { min: 20, max: 35 },
-};
-
 const quantize = (x) => Math.round(x / 5) * 5;
 
 const clamp = (x, min, max) => Math.min(Math.max(x, min), max);
@@ -27,44 +21,14 @@ function updateMacros({ mode, intent, protein, carbs }) {
 
   if (mode === "PROTEIN_CARB") {
     const available = 100 - fat;
-
     let newProtein = clamp(intent, 0, available);
     let newCarbs = available - newProtein;
-
-    newProtein = clamp(newProtein, AMDR.protein.min, AMDR.protein.max);
-    newCarbs = available - newProtein;
-
-    if (newCarbs < AMDR.carbs.min) {
-      newCarbs = AMDR.carbs.min;
-      newProtein = available - newCarbs;
-    }
-    if (newCarbs > AMDR.carbs.max) {
-      newCarbs = AMDR.carbs.max;
-      newProtein = available - newCarbs;
-    }
-
     return { protein: newProtein, carbs: newCarbs };
   }
 
   if (mode === "CARB_FAT") {
-    const available = 100 - protein;
-
     let proteinPlusCarbs = clamp(intent, protein, 100);
     let newCarbs = proteinPlusCarbs - protein;
-    let newFat = available - newCarbs;
-
-    newCarbs = clamp(newCarbs, AMDR.carbs.min, AMDR.carbs.max);
-    newFat = available - newCarbs;
-
-    if (newFat < AMDR.fat.min) {
-      newFat = AMDR.fat.min;
-      newCarbs = available - newFat;
-    }
-    if (newFat > AMDR.fat.max) {
-      newFat = AMDR.fat.max;
-      newCarbs = available - newFat;
-    }
-
     return { protein, carbs: newCarbs };
   }
 
@@ -519,8 +483,8 @@ export default function CalculationInputEditor({
             tabIndex={0}
             role="slider"
             aria-label="Protein to Carbohydrate Ratio"
-            aria-valuemin={AMDR.protein.min}
-            aria-valuemax={AMDR.protein.max}
+            aria-valuemin={0}
+            aria-valuemax={100}
             aria-valuenow={protein}
             onKeyDown={(e) => handleKeyDown(e, "PROTEIN_CARB")}
           >
@@ -536,8 +500,8 @@ export default function CalculationInputEditor({
             tabIndex={0}
             role="slider"
             aria-label="Carbohydrate to Fat Ratio"
-            aria-valuemin={AMDR.carbs.min}
-            aria-valuemax={AMDR.carbs.max}
+            aria-valuemin={0}
+            aria-valuemax={100}
             aria-valuenow={protein + carbs}
             onKeyDown={(e) => handleKeyDown(e, "CARB_FAT")}
           >
