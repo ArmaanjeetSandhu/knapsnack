@@ -148,7 +148,7 @@ const faqs = [
       </h4>,
       "Fluoride deficiency, particularly with respect to dental health, is rare due to community water fluoridation, widespread use of fluoride-containing dental products, and natural dietary sources such as tea and seafood.",
 
-      "\nAdding more variables to a linear programming model increases computational complexity, and so excluding these nutrients helps Knap[Snack] converge on solutions more efficiently.",
+      "\nAdding more variables to a linear programming model increases computational complexity, so excluding these nutrients helps Knap[Snack] converge on solutions more efficiently. If you're curious, you can look up recommended intake values with [[this]] tool.",
     ],
   },
   {
@@ -215,6 +215,7 @@ const ContentRenderer = ({ content }) => {
     "Gut Bites MD's Blog": "https://gutbites.org/stories/",
     "Knap[Snack] blog": "https://knapsnack-b4b10d2b0910.herokuapp.com/blog",
     here: "https://health.clevelandclinic.org/how-much-cholesterol-per-day",
+    this: "https://www.omnicalculator.com/health/dri",
   };
 
   const parseText = (text) => {
