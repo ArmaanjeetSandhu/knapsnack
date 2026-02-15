@@ -242,8 +242,10 @@ export default function CalculationInputEditor({
     onSave(formData);
   };
 
+  const isLeftAligned = fat < 10;
+
   return (
-    <div className="space-y-6 no-select p-4">
+    <div className="space-y-5 no-select p-4">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <div
@@ -441,15 +443,17 @@ export default function CalculationInputEditor({
 
         <div
           ref={trackRef}
-          className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner no-select"
+          className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner mb-12"
         >
           <div
             className="absolute h-full bg-[#5A7ACD] dark:bg-[#234C6A] rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{ width: `${protein}%` }}
           >
-            <span className="text-white font-bold text-xs no-select whitespace-nowrap">
-              P : {protein}%
-            </span>
+            {protein >= 10 && (
+              <span className="text-white font-bold text-xs no-select whitespace-nowrap">
+                P : {protein}%
+              </span>
+            )}
           </div>
 
           <div
@@ -459,9 +463,11 @@ export default function CalculationInputEditor({
               width: `${carbs}%`,
             }}
           >
-            <span className="text-white font-bold text-xs no-select whitespace-nowrap">
-              C : {carbs}%
-            </span>
+            {carbs >= 10 && (
+              <span className="text-white font-bold text-xs no-select whitespace-nowrap">
+                C : {carbs}%
+              </span>
+            )}
           </div>
 
           <div
@@ -471,10 +477,43 @@ export default function CalculationInputEditor({
               width: `${fat}%`,
             }}
           >
-            <span className="text-gray-900 font-bold text-xs no-select whitespace-nowrap">
+            {fat >= 10 && (
+              <span className="text-gray-900 font-bold text-xs no-select whitespace-nowrap">
+                F : {fat}%
+              </span>
+            )}
+          </div>
+
+          {protein < 10 && (
+            <span
+              className="absolute top-full mt-2 text-gray-900 dark:text-gray-100 font-bold text-xs no-select whitespace-nowrap -translate-x-1/2"
+              style={{ left: `${protein / 2}%` }}
+            >
+              P : {protein}%
+            </span>
+          )}
+
+          {carbs < 10 && (
+            <span
+              className={`absolute top-full text-gray-900 dark:text-gray-100 font-bold text-xs no-select whitespace-nowrap -translate-x-1/2 ${
+                protein < 10 ? "mt-8" : "mt-2"
+              }`}
+              style={{ left: `${protein + carbs / 2}%` }}
+            >
+              C : {carbs}%
+            </span>
+          )}
+
+          {fat < 10 && (
+            <span
+              className={`absolute top-full text-gray-900 dark:text-gray-100 font-bold text-xs no-select whitespace-nowrap -translate-x-1/2 ${
+                carbs < 10 && protein >= 10 ? "mt-8" : "mt-2"
+              }`}
+              style={{ left: `${protein + carbs + fat / 2}%` }}
+            >
               F : {fat}%
             </span>
-          </div>
+          )}
 
           <div
             className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 no-select flex items-center justify-center outline-none group"
@@ -510,11 +549,18 @@ export default function CalculationInputEditor({
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 mt-6">
-        <Button variant="outline" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button onClick={handleSave}>Confirm</Button>
+      <div className="flex mt-6 w-full">
+        <div
+          className={`transition-[flex-grow] duration-500 ease-in-out ${
+            isLeftAligned ? "grow-0" : "grow"
+          }`}
+        />
+        <div className="flex gap-3 shrink-0 mt-2">
+          <Button variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave}>Confirm</Button>
+        </div>
       </div>
     </div>
   );
