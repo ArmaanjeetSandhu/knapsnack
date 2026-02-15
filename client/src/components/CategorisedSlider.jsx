@@ -69,8 +69,8 @@ const CategorisedSlider = ({
         </span>
       </div>
 
-      <div className="relative">
-        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="relative group">
+        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden group-focus-within:ring-2 group-focus-within:ring-blue-500/50 group-focus-within:ring-offset-2 transition-all duration-200">
           <div
             className={`h-full transition-all duration-300 ${gradientClass}`}
             style={{ width: `${Math.min(Math.max(progress, 0), 100)}%` }}
@@ -86,7 +86,7 @@ const CategorisedSlider = ({
           onChange={handleChange}
           className="absolute inset-0 w-full h-2 opacity-0 cursor-pointer"
         />
-        <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
           <span>{labels?.[0] || min}</span>
           <span>{labels?.[1] || max}</span>
         </div>
