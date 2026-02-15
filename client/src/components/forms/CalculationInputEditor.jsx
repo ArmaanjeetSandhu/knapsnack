@@ -195,6 +195,7 @@ export default function CalculationInputEditor({
 
   function startDrag(mode, e) {
     e.preventDefault();
+    e.currentTarget.focus();
     dragMode.current = mode;
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", stopDrag);
@@ -446,10 +447,10 @@ export default function CalculationInputEditor({
           className="relative h-14 bg-gray-200 dark:bg-gray-700 rounded-full cursor-pointer shadow-inner mb-12"
         >
           <div
-            className="absolute h-full bg-[#5A7ACD] dark:bg-[#234C6A] rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
+            className="absolute h-full bg-[#215E61] dark:bg-[#1A3263] rounded-l-full transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{ width: `${protein}%` }}
           >
-            {protein >= 10 && (
+            {protein >= 15 && (
               <span className="text-white font-bold text-xs no-select whitespace-nowrap">
                 P : {protein}%
               </span>
@@ -457,13 +458,13 @@ export default function CalculationInputEditor({
           </div>
 
           <div
-            className="absolute h-full bg-[#FEB05D] dark:bg-[#456882] transition-all duration-100 flex items-center justify-center overflow-hidden"
+            className="absolute h-full bg-[#233D4D] dark:bg-[#547792] transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{
               left: `${protein}%`,
               width: `${carbs}%`,
             }}
           >
-            {carbs >= 10 && (
+            {carbs >= 15 && (
               <span className="text-white font-bold text-xs no-select whitespace-nowrap">
                 C : {carbs}%
               </span>
@@ -471,20 +472,20 @@ export default function CalculationInputEditor({
           </div>
 
           <div
-            className="absolute h-full bg-[#F5F2F2] dark:bg-[#D2C1B6] rounded-r-full transition-all duration-100 flex items-center justify-center overflow-hidden"
+            className="absolute h-full bg-[#FE7F2D] dark:bg-[#FAB95B] rounded-r-full transition-all duration-100 flex items-center justify-center overflow-hidden"
             style={{
               left: `${protein + carbs}%`,
               width: `${fat}%`,
             }}
           >
-            {fat >= 10 && (
-              <span className="text-gray-900 font-bold text-xs no-select whitespace-nowrap">
+            {fat >= 15 && (
+              <span className="text-white font-bold text-xs no-select whitespace-nowrap">
                 F : {fat}%
               </span>
             )}
           </div>
 
-          {protein < 10 && (
+          {protein < 15 && (
             <span
               className="absolute top-full mt-2 text-gray-900 dark:text-gray-100 font-bold text-xs no-select whitespace-nowrap -translate-x-1/2"
               style={{ left: `${protein / 2}%` }}
@@ -493,10 +494,10 @@ export default function CalculationInputEditor({
             </span>
           )}
 
-          {carbs < 10 && (
+          {carbs < 15 && (
             <span
               className={`absolute top-full text-gray-900 dark:text-gray-100 font-bold text-xs no-select whitespace-nowrap -translate-x-1/2 ${
-                protein < 10 ? "mt-8" : "mt-2"
+                protein < 15 ? "mt-8" : "mt-2"
               }`}
               style={{ left: `${protein + carbs / 2}%` }}
             >
@@ -504,10 +505,10 @@ export default function CalculationInputEditor({
             </span>
           )}
 
-          {fat < 10 && (
+          {fat < 15 && (
             <span
               className={`absolute top-full text-gray-900 dark:text-gray-100 font-bold text-xs no-select whitespace-nowrap -translate-x-1/2 ${
-                carbs < 10 && protein >= 10 ? "mt-8" : "mt-2"
+                carbs < 15 && protein >= 15 ? "mt-8" : "mt-2"
               }`}
               style={{ left: `${protein + carbs + fat / 2}%` }}
             >
@@ -517,7 +518,9 @@ export default function CalculationInputEditor({
 
           <div
             className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 no-select flex items-center justify-center outline-none group"
-            style={{ left: `calc(${protein}% - 16px)` }}
+            style={{
+              left: `calc(${protein}% - 16px - ${carbs === 0 ? 6 : 0}px)`,
+            }}
             onPointerDown={(e) => startDrag("PROTEIN_CARB", e)}
             tabIndex={0}
             role="slider"
@@ -527,13 +530,13 @@ export default function CalculationInputEditor({
             aria-valuenow={protein}
             onKeyDown={(e) => handleKeyDown(e, "PROTEIN_CARB")}
           >
-            <div className="w-1.5 h-12 bg-white dark:bg-gray-100 ring-2 ring-blue-500 rounded-full opacity-0 group-focus:opacity-100 shadow-xl transition-all" />
+            <div className="w-1.5 h-12 bg-white dark:bg-gray-100 ring-0 group-focus:ring-2 group-active:ring-2 ring-black rounded-full shadow-xl transition-all" />
           </div>
 
           <div
             className="absolute top-[-2px] w-8 h-[60px] rounded cursor-grab active:cursor-grabbing z-10 no-select flex items-center justify-center outline-none group"
             style={{
-              left: `calc(${protein + carbs}% - 16px)`,
+              left: `calc(${protein + carbs}% - 16px + ${carbs === 0 ? 6 : 0}px)`,
             }}
             onPointerDown={(e) => startDrag("CARB_FAT", e)}
             tabIndex={0}
@@ -544,7 +547,7 @@ export default function CalculationInputEditor({
             aria-valuenow={protein + carbs}
             onKeyDown={(e) => handleKeyDown(e, "CARB_FAT")}
           >
-            <div className="w-1.5 h-12 bg-white dark:bg-gray-100 ring-2 ring-blue-500 rounded-full opacity-0 group-focus:opacity-100 shadow-xl transition-all" />
+            <div className="w-1.5 h-12 bg-white dark:bg-gray-100 ring-0 group-focus:ring-2 group-active:ring-2 ring-black rounded-full shadow-xl transition-all" />
           </div>
         </div>
       </div>
@@ -555,7 +558,7 @@ export default function CalculationInputEditor({
             isLeftAligned ? "grow-0" : "grow"
           }`}
         />
-        <div className="flex gap-3 shrink-0 mt-2">
+        <div className="flex gap-3 shrink-0 mt-5">
           <Button variant="outline" onClick={onCancel}>
             Cancel
           </Button>
