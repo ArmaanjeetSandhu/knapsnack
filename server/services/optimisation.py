@@ -324,6 +324,15 @@ def solve_optimisation_problem(
             <= sat_fat_goal
         )
 
+    if "fibre" in nutrient_goals:
+        fibre_goal = nutrient_goals["fibre"]
+        fibre_values = [
+            (food["nutrients"].get("fibre") or 0) for food in selected_foods
+        ]
+        prob += (
+            pulp.lpSum([fibre_values[j] * x[j] for j in range(num_foods)]) >= fibre_goal
+        )
+
     for nutrient, _ in NUTRIENT_MAP.items():
         if nutrient not in nutrients:
             values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
