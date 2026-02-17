@@ -183,11 +183,20 @@ export function useNutrientBounds(calculationData, savedBounds) {
     if (!isValid) return;
 
     const val = parseFloat(valString);
-    if (boundType === "lower")
-      setAdjustedLowerBounds((prev) => ({ ...prev, [key]: val }));
-    else setAdjustedUpperBounds((prev) => ({ ...prev, [key]: val }));
 
-    setUseCustomBounds(true);
+    const newLower =
+      boundType === "lower"
+        ? { ...adjustedLowerBounds, [key]: val }
+        : adjustedLowerBounds;
+    const newUpper =
+      boundType === "upper"
+        ? { ...adjustedUpperBounds, [key]: val }
+        : adjustedUpperBounds;
+
+    if (boundType === "lower") setAdjustedLowerBounds(newLower);
+    else setAdjustedUpperBounds(newUpper);
+
+    setUseCustomBounds(areBoundsChanged(newLower, newUpper));
     setEditingValues((prev) => {
       const next = { ...prev };
       delete next[target];
@@ -223,9 +232,31 @@ export function useNutrientBounds(calculationData, savedBounds) {
     });
   };
 
+  const getCanonicalOriginalBounds = () => ({
+    lower: {
+      ...calculationData.lower_bounds,
+      "Fibre (g)": calculationData.fibre,
+    },
+    upper: {
+      ...calculationData.upper_bounds,
+      "Saturated Fats (g)": calculationData.saturated_fats,
+    },
+  });
+
+  const areBoundsChanged = (newLower, newUpper) => {
+    const { lower: originalLower, upper: originalUpper } =
+      getCanonicalOriginalBounds();
+    return (
+      Object.keys(newLower).some((k) => newLower[k] !== originalLower[k]) ||
+      Object.keys(newUpper).some((k) => newUpper[k] !== originalUpper[k])
+    );
+  };
+
   const handleSave = () => {
     if (Object.keys(validationErrors).length === 0) {
-      setUseCustomBounds(true);
+      setUseCustomBounds(
+        areBoundsChanged(adjustedLowerBounds, adjustedUpperBounds),
+      );
       setCustomisingBounds(false);
     }
   };
