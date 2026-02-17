@@ -58,7 +58,7 @@ export const exportSelectedFoodsToCSV = (foods) => {
       food.maxServing || "",
     ];
 
-    headers.slice(5).forEach((header) => {
+    headers.slice(6).forEach((header) => {
       const key = getNutrientKey(header);
       row.push(adjustedNutrients[key]?.toFixed(2) || "");
     });
