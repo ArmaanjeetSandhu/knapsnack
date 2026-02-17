@@ -90,13 +90,10 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
     },
   });
 
-  const handleApiKeySubmit = (e) => {
-    e.preventDefault();
-    if (!apiKey.trim()) {
-      setApiKeyError("Please enter an API key");
-      return;
-    }
-    localStorage.setItem("usda_api_key", apiKey);
+  const handleApiKeyChange = (e) => {
+    const newKey = e.target.value;
+    setApiKey(newKey);
+    localStorage.setItem("usda_api_key", newKey);
     setApiKeyError(null);
   };
 
@@ -359,35 +356,33 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                   </div>
                 </form>
                 <div className="mb-4 mt-3 ml-2">
-                  <form onSubmit={handleApiKeySubmit}>
-                    <div className="flex flex-col gap-3">
-                      <div className="flex flex-col md:flex-row md:items-center gap-2">
-                        <p className="text-xs text-muted-foreground italic">
-                          Please enter a USDA FoodData Central API key to search
-                          for food items:
-                        </p>
-                        <Input
-                          type="text"
-                          value={apiKey}
-                          onChange={(e) => setApiKey(e.target.value)}
-                          placeholder=""
-                          className="h-6 w-full md:w-64 rounded-full self-start"
-                        />
-                      </div>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col md:flex-row md:items-center gap-2">
                       <p className="text-xs text-muted-foreground italic">
-                        Don&apos;t have an API key? Get one{" "}
-                        <a
-                          href="https://fdc.nal.usda.gov/api-key-signup.html"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
-                        >
-                          here
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
+                        Please enter a USDA FoodData Central API key to search
+                        for food items:
                       </p>
+                      <Input
+                        type="text"
+                        value={apiKey}
+                        onChange={handleApiKeyChange}
+                        placeholder=""
+                        className="h-6 w-full md:w-64 rounded-full self-start"
+                      />
                     </div>
-                  </form>
+                    <p className="text-xs text-muted-foreground italic">
+                      Don&apos;t have an API key? Get one{" "}
+                      <a
+                        href="https://fdc.nal.usda.gov/api-key-signup.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-primary underline font-medium decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
+                      >
+                        here
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </p>
+                  </div>
                 </div>
 
                 <AnimatePresence>
