@@ -359,7 +359,6 @@ function App() {
           )}
           <CalculationResults
             calculationData={nutrientGoals}
-            userInfo={userInfo}
             onProceed={handleHideCalculationResults}
             onRecalculate={() => setIsEditModalOpen(true)}
             savedBounds={{

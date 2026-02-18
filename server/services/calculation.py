@@ -11,6 +11,7 @@ from server.utils.nutrient_utils import (
     calculate_bmr,
     calculate_macros,
     calculate_tdee,
+    standardise_nutrient_bounds,
 )
 
 
@@ -90,17 +91,13 @@ def calculate_nutrition_requirements(
 
     lower_bounds, upper_bounds = get_nutrient_bounds(age, gender)
 
-    if smoking_status == "yes":
-        vitamin_c_key = "Vitamin C (mg)"
-        if vitamin_c_key in lower_bounds:
-            lower_bounds[vitamin_c_key] += 35.0
+    lower_bounds, upper_bounds = adjust_nutrient_bounds(
+        lower_bounds, upper_bounds, smoking_status=smoking_status
+    )
 
-    lower_bounds_dict = {
-        k: float(v) for k, v in lower_bounds.to_dict().items() if pd.notna(v)
-    }
-    upper_bounds_dict = {
-        k: float(v) for k, v in upper_bounds.to_dict().items() if pd.notna(v)
-    }
+    lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
+        lower_bounds, upper_bounds
+    )
 
     return {
         "bmr": bmr,

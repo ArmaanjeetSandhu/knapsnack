@@ -22,16 +22,6 @@ def analyse_feasibility(
 ) -> Dict[str, Any]:
     """
     Analyse whether the selected foods can meet nutrient requirements.
-
-    Args:
-        selected_foods: List of food dictionaries with nutrients
-        max_servings: Maximum servings for each food
-        lower_bounds: Lower bounds for nutrients
-        upper_bounds: Upper bounds for nutrients
-        nutrient_goals: Target nutrient goals
-
-    Returns:
-        Dictionary with feasibility analysis results
     """
     lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
         lower_bounds, upper_bounds
@@ -62,6 +52,27 @@ def analyse_feasibility(
     }
 
 
+def _make_lower_bound_issue(
+    display_name: str,
+    min_value: float,
+    max_possible: float,
+) -> Optional[Dict[str, Any]]:
+    """
+    Build a lower bound issue dict if max_possible falls short of min_value.
+    Returns None if the bound is satisfied.
+    """
+    if max_possible >= min_value:
+        return None
+    shortfall = min_value - max_possible
+    return {
+        "nutrient": display_name,
+        "required": min_value,
+        "achievable": max_possible,
+        "shortfall": shortfall,
+        "shortfallPercentage": (shortfall / min_value) * 100,
+    }
+
+
 def analyse_lower_bound_feasibility(
     selected_foods: List[Dict[str, Any]],
     max_servings: List[float],
@@ -70,15 +81,6 @@ def analyse_lower_bound_feasibility(
 ) -> List[Dict[str, Any]]:
     """
     Analyse lower bound feasibility for nutrients.
-
-    Args:
-        selected_foods: List of food dictionaries with nutrients
-        max_servings: Maximum servings for each food
-        lower_bounds: Lower bounds for nutrients
-        nutrient_goals: Target nutrient goals
-
-    Returns:
-        List of issues with lower bounds
     """
     lower_bound_issues = []
 
@@ -86,25 +88,13 @@ def analyse_lower_bound_feasibility(
         if nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
             continue
 
-        max_possible = 0
-        for i, food in enumerate(selected_foods):
-            val = food["nutrients"].get(nutrient)
-            if val is not None:
-                max_possible += val * max_servings[i]
+        max_possible = sum(
+            (food["nutrients"].get(nutrient) or 0) * max_servings[i]
+            for i, food in enumerate(selected_foods)
+        )
 
-        if max_possible < min_value:
-            shortfall = min_value - max_possible
-            shortfall_percentage = (shortfall / min_value) * 100
-
-            lower_bound_issues.append(
-                {
-                    "nutrient": nutrient,
-                    "required": min_value,
-                    "achievable": max_possible,
-                    "shortfall": shortfall,
-                    "shortfallPercentage": shortfall_percentage,
-                }
-            )
+        if issue := _make_lower_bound_issue(nutrient, min_value, max_possible):
+            lower_bound_issues.append(issue)
 
     macro_display_names = {
         "protein": "Protein (g)",
@@ -114,27 +104,18 @@ def analyse_lower_bound_feasibility(
     }
 
     for nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
-        if nutrient in nutrient_goals:
-            min_value = nutrient_goals[nutrient]
-            max_possible = 0
-            for i, food in enumerate(selected_foods):
-                val = food["nutrients"].get(nutrient)
-                if val is not None:
-                    max_possible += val * max_servings[i]
+        if nutrient not in nutrient_goals:
+            continue
 
-            if max_possible < min_value:
-                shortfall = min_value - max_possible
-                shortfall_percentage = (shortfall / min_value) * 100
+        max_possible = sum(
+            (food["nutrients"].get(nutrient) or 0) * max_servings[i]
+            for i, food in enumerate(selected_foods)
+        )
 
-                lower_bound_issues.append(
-                    {
-                        "nutrient": macro_display_names.get(nutrient, nutrient),
-                        "required": min_value,
-                        "achievable": max_possible,
-                        "shortfall": shortfall,
-                        "shortfallPercentage": shortfall_percentage,
-                    }
-                )
+        if issue := _make_lower_bound_issue(
+            macro_display_names[nutrient], nutrient_goals[nutrient], max_possible
+        ):
+            lower_bound_issues.append(issue)
 
     return lower_bound_issues
 
@@ -147,14 +128,6 @@ def analyse_upper_bound_feasibility(
     """
     Analyse upper bound feasibility for nutrients.
     Flags any single food item that exceeds a limit on its own at 1 serving.
-
-    Args:
-        selected_foods: List of food dictionaries with nutrients
-        upper_bounds: Upper bounds for nutrients
-        nutrient_goals: Target nutrient goals (for saturated fats)
-
-    Returns:
-        List of issues with upper bounds
     """
     upper_bound_issues = []
     checked_nutrients = set()
@@ -169,15 +142,10 @@ def analyse_upper_bound_feasibility(
                     (excess / limit_value) * 100 if limit_value > 0 else 0
                 )
 
-                name_to_show = (
-                    display_name_override if display_name_override else nutrient_name
-                )
-                food_name = food.get("description", "Unknown Food Item")
-
                 upper_bound_issues.append(
                     {
-                        "nutrient": name_to_show,
-                        "foodItem": food_name,
+                        "nutrient": display_name_override or nutrient_name,
+                        "foodItem": food.get("description", "Unknown Food Item"),
                         "limit": limit_value,
                         "minimum": val,
                         "excess": excess,
@@ -186,10 +154,7 @@ def analyse_upper_bound_feasibility(
                 )
 
     for nutrient, max_value in upper_bounds.items():
-        display_name = None
-        if nutrient == "saturated_fats":
-            display_name = "Saturated Fats (g)"
-
+        display_name = "Saturated Fats (g)" if nutrient == "saturated_fats" else None
         check_limit(nutrient, max_value, display_name_override=display_name)
         checked_nutrients.add(nutrient)
 
@@ -213,17 +178,6 @@ def optimise_diet(
 ) -> Optional[Dict[str, Any]]:
     """
     Find optimal diet by trying different overflow percentages.
-
-    Args:
-        selected_foods: List of food dictionaries
-        costs: Array of costs for each food
-        max_servings: Maximum allowed servings for each food
-        nutrient_goals: Target nutrient goals
-        lower_bounds: Lower bounds for nutrients
-        upper_bounds: Upper bounds for nutrients
-
-    Returns:
-        Optimisation result or None if no feasible solution
     """
     overflow_percentages = list(range(0, 11))
     nutrients = ["protein", "carbohydrate", "fats"]
@@ -259,18 +213,6 @@ def solve_optimisation_problem(
 ) -> Optional[Dict[str, Any]]:
     """
     Solve the diet optimisation problem with the given parameters.
-
-    Args:
-        selected_foods: List of food dictionaries
-        costs: Array of costs for each food
-        max_servings: Maximum allowed servings for each food
-        nutrient_goals: Target nutrient goals
-        lower_bounds: Lower bounds for nutrients
-        upper_bounds: Upper bounds for nutrients
-        overflow_percentages: Overflow percentages for (protein, carbs, fats)
-
-    Returns:
-        Result dictionary if optimisation succeeds, None otherwise
     """
     lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
         lower_bounds, upper_bounds
@@ -308,32 +250,30 @@ def solve_optimisation_problem(
             overflow_factor = 1 + (overflow_percentages[i] / 100)
 
             prob += pulp.lpSum([values[j] * x[j] for j in range(num_foods)]) >= goal
-
             prob += (
                 pulp.lpSum([values[j] * x[j] for j in range(num_foods)])
                 <= goal * overflow_factor
             )
 
     if "saturated_fats" in nutrient_goals:
-        sat_fat_goal = nutrient_goals["saturated_fats"]
         sat_fat_values = [
             (food["nutrients"].get("saturated_fats") or 0) for food in selected_foods
         ]
         prob += (
             pulp.lpSum([sat_fat_values[j] * x[j] for j in range(num_foods)])
-            <= sat_fat_goal
+            <= nutrient_goals["saturated_fats"]
         )
 
     if "fibre" in nutrient_goals:
-        fibre_goal = nutrient_goals["fibre"]
         fibre_values = [
             (food["nutrients"].get("fibre") or 0) for food in selected_foods
         ]
         prob += (
-            pulp.lpSum([fibre_values[j] * x[j] for j in range(num_foods)]) >= fibre_goal
+            pulp.lpSum([fibre_values[j] * x[j] for j in range(num_foods)])
+            >= nutrient_goals["fibre"]
         )
 
-    for nutrient, _ in NUTRIENT_MAP.items():
+    for nutrient in NUTRIENT_MAP.keys():
         if nutrient not in nutrients:
             values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
 

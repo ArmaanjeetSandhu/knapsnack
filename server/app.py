@@ -307,10 +307,9 @@ def optimise_api():
 
             app.logger.info("Using custom nutrient bounds from request")
         else:
-            if smoking_status == "yes":
-                lower_bounds, upper_bounds = adjust_nutrient_bounds(
-                    lower_bounds, upper_bounds, smoking_status=smoking_status
-                )
+            lower_bounds, upper_bounds = adjust_nutrient_bounds(
+                lower_bounds, upper_bounds, smoking_status=smoking_status
+            )
             app.logger.info("Using default nutrient bounds")
 
         feasibility_analysis = analyse_feasibility(
