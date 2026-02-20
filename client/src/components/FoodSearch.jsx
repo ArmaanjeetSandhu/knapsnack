@@ -294,7 +294,7 @@ const FoodSearch = ({ onFoodSelect, onFoodsImport, selectedFoodIds }) => {
                     Import from CSV
                   </h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Upload a CSV file with your food items
+                    Upload or drag & drop a CSV file with your food items
                   </p>
                   <Button
                     variant="outline"

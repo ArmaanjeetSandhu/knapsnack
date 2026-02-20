@@ -21,6 +21,7 @@ import {
 import FoodSearch from "./components/FoodSearch";
 import SelectedFoods from "./components/SelectedFoods";
 
+import DropzoneOverlay from "./components/common/DropzoneOverlay";
 import NotificationToast from "./components/common/NotificationToast";
 import ThemeToggle from "./components/common/ThemeToggle";
 
@@ -51,6 +52,8 @@ import {
   NavigationMenuList,
 } from "./components/ui/navigation-menu";
 import { useAppState } from "./hooks/useAppState";
+import { useCsvImport } from "./hooks/useCsvImport";
+import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { smoothScrollTo } from "./lib/utils";
 import api from "./services/api";
 
@@ -227,6 +230,16 @@ function App() {
     }
   };
 
+  const { handleFileDrop } = useCsvImport(
+    (data) => {
+      handleFoodsImport(data);
+      setError(null);
+    },
+    (errorMsg) => setError(errorMsg),
+  );
+
+  const { isDragging, dragHandlers } = useDragAndDrop(handleFileDrop);
+
   const handleViewPreviousResults = () => {
     if (state.storedResults)
       actions.setOptimisationResults(state.storedResults);
@@ -315,7 +328,9 @@ function App() {
   );
 
   const mainPlanner = (
-    <>
+    <div {...dragHandlers} className="relative min-h-[calc(100vh-120px)] pb-4">
+      <DropzoneOverlay isDragging={isDragging} />
+
       <AnimatePresence mode="wait">
         {error && (
           <NotificationToast
@@ -469,7 +484,7 @@ function App() {
           )}
         </>
       )}
-    </>
+    </div>
   );
 
   if (showLanding && location.pathname === "/")
