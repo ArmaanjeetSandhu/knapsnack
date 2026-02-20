@@ -1,4 +1,5 @@
 import { GithubLogoIcon } from "@phosphor-icons/react";
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -38,7 +39,12 @@ import OptimisationResults from "./components/results/OptimisationResults";
 
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { Button } from "./components/ui/button";
-import { Dialog, DialogContent } from "./components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "./components/ui/dialog";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -328,6 +334,13 @@ function App() {
         }}
       >
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          <VisuallyHidden.Root>
+            <DialogTitle>Modify Personal Info</DialogTitle>
+            <DialogDescription>
+              Update your personal details to recalculate your nutritional
+              targets.
+            </DialogDescription>
+          </VisuallyHidden.Root>
           <CalculationInputEditor
             initialData={userInfo}
             onSave={handleProfileUpdate}

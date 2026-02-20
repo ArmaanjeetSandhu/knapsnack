@@ -61,7 +61,10 @@ const ActivitySlider = ({ value, onChange, autoFocus }) => {
   };
 
   const isCategoryActive = (category, val) => {
-    return val >= category.min && val < category.max;
+    return (
+      (val >= category.min && val < category.max) ||
+      (val === 2.4 && category.max === 2.4)
+    );
   };
 
   const getDetailText = (category) =>
