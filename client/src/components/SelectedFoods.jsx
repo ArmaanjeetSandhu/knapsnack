@@ -351,7 +351,7 @@ const SelectedFoods = ({
                                   type="number"
                                   step="0.01"
                                   min="0"
-                                  value={food.price}
+                                  value={food.price ?? ""}
                                   onKeyDown={preventInvalidFloatChars}
                                   onChange={(e) => {
                                     if (validateMaxTwoDecimals(e.target.value))
@@ -379,7 +379,7 @@ const SelectedFoods = ({
                                   type="number"
                                   step="1"
                                   min="0"
-                                  value={food.servingSize}
+                                  value={food.servingSize ?? ""}
                                   onKeyDown={preventInvalidIntegerChars}
                                   onChange={(e) =>
                                     handleInputChange(
@@ -407,7 +407,7 @@ const SelectedFoods = ({
                                   type="number"
                                   step="1"
                                   min="0"
-                                  value={food.maxServing}
+                                  value={food.maxServing ?? ""}
                                   onKeyDown={preventInvalidIntegerChars}
                                   onChange={(e) =>
                                     handleInputChange(

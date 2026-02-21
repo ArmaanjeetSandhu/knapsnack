@@ -285,10 +285,11 @@ function App() {
     hasVisitedFoodSelection,
   } = state;
 
+  const hasSelectedFoods = selectedFoods.length > 0;
+
   useEffect(() => {
-    if (!showCalculationResults)
-      scrollToFoodSelection(selectedFoods.length > 0);
-  }, [showCalculationResults, selectedFoods.length, scrollToFoodSelection]);
+    if (!showCalculationResults) scrollToFoodSelection(hasSelectedFoods);
+  }, [showCalculationResults, hasSelectedFoods, scrollToFoodSelection]);
 
   const effectiveNutrientGoals = useCustomBounds
     ? {
