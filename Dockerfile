@@ -1,13 +1,16 @@
-FROM node:20 AS frontend-builder
+FROM node:22 AS frontend-builder
 WORKDIR /app/client
-COPY client/package*.json ./
 
-RUN npm install -g npm@latest
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-RUN npm install
+COPY client/package.json client/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
 COPY client/ ./
 COPY client/public/ ./public/
-RUN npm run build
+RUN pnpm run build
 
 FROM python:3.12-slim
 
