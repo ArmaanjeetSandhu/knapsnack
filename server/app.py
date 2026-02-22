@@ -18,11 +18,11 @@ from server.config import (
     API_ENDPOINT,
     CACHE_CONTROL_SETTINGS,
     CONTENT_SECURITY_POLICY,
-    UNLIMITED_MAX_SERVING,
     DEFAULT_PORT,
     HEIGHT_MAX,
     HEIGHT_MIN,
     SECURITY_HEADERS,
+    UNLIMITED_MAX_SERVING,
     WEIGHT_MAX,
     WEIGHT_MIN,
 )
@@ -31,8 +31,8 @@ from server.services.blog_service import get_all_posts, get_post_by_slug
 from server.services.calculation import (
     adjust_nutrient_bounds,
     calculate_nutrition_requirements,
-    validate_input_parameters,
     validate_age,
+    validate_input_parameters,
 )
 from server.services.food_service import search_foods
 from server.services.optimisation import analyse_feasibility, optimise_diet

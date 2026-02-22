@@ -1,6 +1,8 @@
-import contentful
-from datetime import datetime
 import re
+from datetime import datetime
+
+import contentful
+
 from server.config import (
     CONTENTFUL_ACCESS_TOKEN,
     CONTENTFUL_CONTENT_TYPE_ID,
