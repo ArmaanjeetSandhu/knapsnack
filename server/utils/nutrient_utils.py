@@ -115,12 +115,17 @@ def standardise_nutrient_bounds(
     Returns:
         Tuple of (lower_bounds_dict, upper_bounds_dict)
     """
-    if isinstance(lower_bounds, pd.Series):
-        lower_bounds = lower_bounds.to_dict()
-    if isinstance(upper_bounds, pd.Series):
-        upper_bounds = upper_bounds.to_dict()
+    lower_dict: Dict[str, float]
+    upper_dict: Dict[str, float]
 
-    lower_bounds = {k: float(v) for k, v in lower_bounds.items() if pd.notna(v)}
-    upper_bounds = {k: float(v) for k, v in upper_bounds.items() if pd.notna(v)}
+    lower_raw = (
+        lower_bounds.to_dict() if isinstance(lower_bounds, pd.Series) else lower_bounds
+    )
+    upper_raw = (
+        upper_bounds.to_dict() if isinstance(upper_bounds, pd.Series) else upper_bounds
+    )
 
-    return lower_bounds, upper_bounds
+    lower_dict = {str(k): float(v) for k, v in lower_raw.items() if pd.notna(v)}
+    upper_dict = {str(k): float(v) for k, v in upper_raw.items() if pd.notna(v)}
+
+    return lower_dict, upper_dict
