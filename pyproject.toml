@@ -1,0 +1,48 @@
+[project]
+name = "server"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "contentful",
+    "flask",
+    "flask-cors",
+    "gunicorn",
+    "numpy",
+    "pandas",
+    "pulp",
+    "python-dateutil",
+    "python-dotenv",
+    "pytz",
+    "requests",
+]
+
+[dependency-groups]
+dev = [
+    "mypy",
+    "pandas-stubs",
+    "pre-commit",
+    "pytest",
+    "ruff",
+    "types-flask-cors",
+    "types-pytz",
+    "types-requests",
+]
+
+[tool.ruff]
+exclude = [
+    "__pycache__",
+    "venv",
+    ".venv",
+]
+
+[tool.ruff.lint]
+ignore = ["E501"]
+
+extend-select = ["I"]
+
+[tool.ruff.lint.isort]
+
+[tool.ruff.format]
+
+[tool.mypy]
+ignore_missing_imports = true

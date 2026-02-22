@@ -2,7 +2,6 @@ FROM node:20 AS frontend-builder
 WORKDIR /app/client
 COPY client/package*.json ./
 
-# Update npm to the latest version
 RUN npm install -g npm@latest
 
 RUN npm install
@@ -12,38 +11,30 @@ RUN npm run build
 
 FROM python:3.12-slim
 
-# Create a non-root user for running the app
 RUN useradd -m -u 1000 appuser && \
     mkdir -p /app && \
     chown -R appuser:appuser /app
 
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 WORKDIR /app
 
-# Copy frontend build
 COPY --from=frontend-builder /app/client/dist /app/client/dist
 COPY --from=frontend-builder /app/client/public /app/client/dist
 
-# Copy backend files
 COPY server/ /app/server/
-COPY requirements.txt .
 
-# Install Python dependencies (pip warning is expected in Docker and safe here)
-RUN pip install --upgrade pip --quiet && \
-    pip install --no-cache-dir -r requirements.txt --quiet
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-cache
 
-# Copy nutrient databases
 COPY server/nutrient-databases /app/server/nutrient-databases
 
-# Change ownership of all files to non-root user
 RUN chown -R appuser:appuser /app
 
-# Switch to non-root user
 USER appuser
 
-# Environment variables
 ENV FLASK_APP=server/app.py
 ENV FLASK_ENV=production
 ENV PYTHONUNBUFFERED=1
 
-# Run the application
-CMD gunicorn --bind 0.0.0.0:$PORT server.app:app
+CMD uv run --no-sync gunicorn --bind 0.0.0.0:$PORT server.app:app
