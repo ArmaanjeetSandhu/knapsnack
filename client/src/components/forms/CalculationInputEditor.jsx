@@ -136,30 +136,23 @@ export default function CalculationInputEditor({
   onSave,
   onCancel,
 }) {
-  const [gender, setGender] = useState("male");
-  const [age, setAge] = useState(30);
-  const [weight, setWeight] = useState(70);
-  const [height, setHeight] = useState(175);
-  const [activity, setActivity] = useState(1.4);
-  const [smoker, setSmoker] = useState(false);
-  const [calorieTarget, setCalorieTarget] = useState(100);
-
-  const [protein, setProtein] = useState(30);
-  const [carbs, setCarbs] = useState(45);
-
-  useEffect(() => {
-    if (initialData) {
-      setGender(initialData.gender === "m" ? "male" : "female");
-      setAge(initialData.age || 30);
-      setWeight(initialData.weight || 70);
-      setHeight(initialData.height || 175);
-      setActivity(initialData.activity || 1.4);
-      setSmoker(initialData.smokingStatus === "yes");
-      setCalorieTarget(initialData.percentage || 100);
-      setProtein(initialData.macroRatios?.protein || 30);
-      setCarbs(initialData.macroRatios?.carbohydrate || 45);
-    }
-  }, [initialData]);
+  const [gender, setGender] = useState(
+    initialData?.gender === "m" ? "male" : "female",
+  );
+  const [age, setAge] = useState(initialData?.age || 30);
+  const [weight, setWeight] = useState(initialData?.weight || 70);
+  const [height, setHeight] = useState(initialData?.height || 175);
+  const [activity, setActivity] = useState(initialData?.activity || 1.4);
+  const [smoker, setSmoker] = useState(initialData?.smokingStatus === "yes");
+  const [calorieTarget, setCalorieTarget] = useState(
+    initialData?.percentage || 100,
+  );
+  const [protein, setProtein] = useState(
+    initialData?.macroRatios?.protein || 30,
+  );
+  const [carbs, setCarbs] = useState(
+    initialData?.macroRatios?.carbohydrate || 45,
+  );
 
   const fat = 100 - protein - carbs;
 

@@ -9,34 +9,21 @@ import {
 } from "../ui/tooltip";
 
 const ThemeToggle = () => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    const storedTheme = localStorage.getItem("knapsnack_theme");
+    if (storedTheme) return storedTheme === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("knapsnack_theme");
-    if (storedTheme) {
-      const isDarkStored = storedTheme === "dark";
-      setIsDark(isDarkStored);
-      if (isDarkStored) document.documentElement.classList.add("dark");
-      else document.documentElement.classList.remove("dark");
-    } else {
-      const isSystemDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-      setIsDark(isSystemDark);
-      if (isSystemDark) document.documentElement.classList.add("dark");
-    }
-  }, []);
+    if (isDark) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [isDark]);
 
   const toggleTheme = useCallback(() => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
-    if (newIsDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("knapsnack_theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("knapsnack_theme", "light");
-    }
+    localStorage.setItem("knapsnack_theme", newIsDark ? "dark" : "light");
   }, [isDark]);
 
   useEffect(() => {

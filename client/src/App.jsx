@@ -79,6 +79,43 @@ const prepareCalculationData = (data) => ({
   smokingStatus: data.smokingStatus,
 });
 
+function ActionButtons({
+  className = "mb-4",
+  storedResults,
+  nutrientGoals,
+  onViewPreviousResults,
+  onViewCalculationResults,
+}) {
+  return (
+    <div
+      className={`${className} grid grid-cols-1 ${
+        storedResults ? "md:grid-cols-2" : ""
+      } gap-4`}
+    >
+      {storedResults && (
+        <Button
+          onClick={onViewPreviousResults}
+          variant="outline"
+          className="w-full"
+        >
+          <Eye className="w-5 h-5 mr-2" />
+          View Previous Optimisation Results
+        </Button>
+      )}
+      {nutrientGoals && (
+        <Button
+          onClick={onViewCalculationResults}
+          variant="outline"
+          className="w-full"
+        >
+          <Calculator className="w-5 h-5 mr-2" />
+          View Nutrition Requirements
+        </Button>
+      )}
+    </div>
+  );
+}
+
 function App() {
   const { state, actions, STORAGE_KEYS } = useAppState();
   const [error, setError] = useState(null);
@@ -176,6 +213,7 @@ function App() {
 
   const handleOptimisationSuccess = (result) => {
     actions.setOptimisationResults(result);
+    actions.setStoredResults(result);
     actions.setSnapshotFoods(state.selectedFoods);
     setFeasibilityResults(null);
   };
@@ -268,6 +306,8 @@ function App() {
     }
     actions.setShowCalculationResults(false);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
+
+    actions.setHasVisitedFoodSelection(true);
   };
 
   const {
@@ -299,34 +339,12 @@ function App() {
       }
     : nutrientGoals;
 
-  const ActionButtons = ({ className = "mb-4" }) => (
-    <div
-      className={`${className} grid grid-cols-1 ${
-        storedResults ? "md:grid-cols-2" : ""
-      } gap-4`}
-    >
-      {storedResults && (
-        <Button
-          onClick={handleViewPreviousResults}
-          variant="outline"
-          className="w-full"
-        >
-          <Eye className="w-5 h-5 mr-2" />
-          View Previous Optimisation Results
-        </Button>
-      )}
-      {nutrientGoals && (
-        <Button
-          onClick={handleViewCalculationResults}
-          variant="outline"
-          className="w-full"
-        >
-          <Calculator className="w-5 h-5 mr-2" />
-          View Nutrition Requirements
-        </Button>
-      )}
-    </div>
-  );
+  const actionButtonsProps = {
+    storedResults,
+    nutrientGoals,
+    onViewPreviousResults: handleViewPreviousResults,
+    onViewCalculationResults: handleViewCalculationResults,
+  };
 
   const mainPlanner = (
     <div {...dragHandlers} className="relative min-h-[calc(100vh-120px)] pb-4">
@@ -401,7 +419,9 @@ function App() {
         <>
           {!optimisationResults &&
             !feasibilityResults &&
-            !showCalculationResults && <ActionButtons className="mb-4" />}
+            !showCalculationResults && (
+              <ActionButtons {...actionButtonsProps} className="mb-4" />
+            )}
 
           {optimisationResults && (
             <div className="mb-4">
@@ -447,20 +467,22 @@ function App() {
                 </Alert>
               )}
 
-              {!showCalculationResults && <ActionButtons className="mt-6" />}
+              {!showCalculationResults && (
+                <ActionButtons {...actionButtonsProps} className="mt-6" />
+              )}
             </>
           )}
 
           {feasibilityResults && (
             <div ref={feasibilityResultsRef} className="scroll-mt-4">
-              <ActionButtons className="mb-4" />
+              <ActionButtons {...actionButtonsProps} className="mb-4" />
 
               <FeasibilityAnalysis
                 feasibilityData={feasibilityResults}
                 onGoBack={handleHideFeasibilityResults}
               />
 
-              <ActionButtons className="mt-6" />
+              <ActionButtons {...actionButtonsProps} className="mt-6" />
             </div>
           )}
 

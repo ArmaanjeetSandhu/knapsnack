@@ -14,72 +14,75 @@ const STORAGE_KEYS = {
   HAS_VISITED_FOOD_SELECTION: "knapsnack_has_visited_food_selection",
 };
 
+function readStorage(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw !== null ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function useAppState() {
-  const [showLanding, setShowLanding] = useState(true);
-  const [nutrientGoals, setNutrientGoals] = useState(null);
-  const [selectedFoods, setSelectedFoods] = useState([]);
-  const [optimisationResults, setOptimisationResults] = useState(null);
-  const [snapshotFoods, setSnapshotFoods] = useState([]);
-  const [storedResults, setStoredResults] = useState(null);
-  const [showCalculationResults, setShowCalculationResults] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(null);
-  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(null);
-  const [useCustomBounds, setUseCustomBounds] = useState(false);
-  const [hasVisitedFoodSelection, setHasVisitedFoodSelection] = useState(false);
+  const [showLanding, setShowLanding] = useState(() => {
+    return !localStorage.getItem(STORAGE_KEYS.NUTRIENT_GOALS);
+  });
 
-  useEffect(() => {
-    try {
-      const storedFoods = localStorage.getItem(STORAGE_KEYS.SELECTED_FOODS);
-      const storedGoals = localStorage.getItem(STORAGE_KEYS.NUTRIENT_GOALS);
-      const storedUserInfo = localStorage.getItem(STORAGE_KEYS.USER_INFO);
-      const previousResults = localStorage.getItem(
-        STORAGE_KEYS.OPTIMIZATION_RESULTS,
-      );
-      const storedSnapshot = localStorage.getItem(STORAGE_KEYS.SNAPSHOT_FOODS);
-      const storedLowerBounds = localStorage.getItem(
-        STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS,
-      );
-      const storedUpperBounds = localStorage.getItem(
-        STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS,
-      );
-      const storedUseCustomBounds = localStorage.getItem(
-        STORAGE_KEYS.USE_CUSTOM_BOUNDS,
-      );
-      const storedVisitedFoodSelection = localStorage.getItem(
-        STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION,
-      );
+  const [nutrientGoals, setNutrientGoals] = useState(() =>
+    readStorage(STORAGE_KEYS.NUTRIENT_GOALS, null),
+  );
 
-      if (storedFoods) setSelectedFoods(JSON.parse(storedFoods));
-      if (storedGoals) {
-        setNutrientGoals(JSON.parse(storedGoals));
-        setShowLanding(false);
-      }
-      if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo));
-      if (previousResults) {
-        const parsedResults = JSON.parse(previousResults);
-        setStoredResults(parsedResults);
-        setOptimisationResults(parsedResults);
-      }
-      if (storedSnapshot) setSnapshotFoods(JSON.parse(storedSnapshot));
-      if (storedLowerBounds)
-        setAdjustedLowerBounds(JSON.parse(storedLowerBounds));
-      if (storedUpperBounds)
-        setAdjustedUpperBounds(JSON.parse(storedUpperBounds));
-      if (storedUseCustomBounds)
-        setUseCustomBounds(JSON.parse(storedUseCustomBounds));
-      if (storedVisitedFoodSelection)
-        setHasVisitedFoodSelection(JSON.parse(storedVisitedFoodSelection));
+  const [selectedFoods, setSelectedFoods] = useState(() =>
+    readStorage(STORAGE_KEYS.SELECTED_FOODS, []),
+  );
 
-      const showCalcResults = localStorage.getItem(
-        STORAGE_KEYS.SHOW_CALCULATION_RESULTS,
-      );
-      if (showCalcResults === "true" && storedGoals)
-        setShowCalculationResults(true);
-    } catch (err) {
-      console.error("Error loading data from localStorage:", err);
-    }
-  }, []);
+  const [optimisationResults, setOptimisationResults] = useState(() =>
+    readStorage(STORAGE_KEYS.OPTIMIZATION_RESULTS, null),
+  );
+
+  const [snapshotFoods, setSnapshotFoods] = useState(() =>
+    readStorage(STORAGE_KEYS.SNAPSHOT_FOODS, []),
+  );
+
+  const [storedResults, setStoredResults] = useState(() =>
+    readStorage(STORAGE_KEYS.OPTIMIZATION_RESULTS, null),
+  );
+
+  const [showCalculationResults, setShowCalculationResults] = useState(() => {
+    const flag = localStorage.getItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS);
+    const hasGoals = !!localStorage.getItem(STORAGE_KEYS.NUTRIENT_GOALS);
+    return flag === "true" && hasGoals;
+  });
+
+  const [userInfo, setUserInfo] = useState(() =>
+    readStorage(STORAGE_KEYS.USER_INFO, null),
+  );
+
+  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(() =>
+    readStorage(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS, null),
+  );
+
+  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(() =>
+    readStorage(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS, null),
+  );
+
+  const [useCustomBounds, setUseCustomBounds] = useState(() =>
+    readStorage(STORAGE_KEYS.USE_CUSTOM_BOUNDS, false),
+  );
+
+  const [hasVisitedFoodSelection, setHasVisitedFoodSelection] = useState(() => {
+    const stored = localStorage.getItem(
+      STORAGE_KEYS.HAS_VISITED_FOOD_SELECTION,
+    );
+    if (stored !== null) return JSON.parse(stored);
+    const hasGoals = !!localStorage.getItem(STORAGE_KEYS.NUTRIENT_GOALS);
+    const showCalc =
+      localStorage.getItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS) === "true";
+    const hasOptResults = !!localStorage.getItem(
+      STORAGE_KEYS.OPTIMIZATION_RESULTS,
+    );
+    return hasGoals && !showCalc && !hasOptResults;
+  });
 
   useEffect(() => {
     if (selectedFoods.length > 0)
@@ -103,13 +106,11 @@ export function useAppState() {
   }, [userInfo]);
 
   useEffect(() => {
-    if (optimisationResults) {
+    if (optimisationResults)
       localStorage.setItem(
         STORAGE_KEYS.OPTIMIZATION_RESULTS,
         JSON.stringify(optimisationResults),
       );
-      setStoredResults(optimisationResults);
-    }
   }, [optimisationResults]);
 
   useEffect(() => {
@@ -149,11 +150,6 @@ export function useAppState() {
       JSON.stringify(hasVisitedFoodSelection),
     );
   }, [hasVisitedFoodSelection]);
-
-  useEffect(() => {
-    if (nutrientGoals && !showCalculationResults && !optimisationResults)
-      setHasVisitedFoodSelection(true);
-  }, [nutrientGoals, showCalculationResults, optimisationResults]);
 
   const clearStorage = () => {
     Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));

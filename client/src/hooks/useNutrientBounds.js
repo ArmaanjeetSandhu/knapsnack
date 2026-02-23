@@ -1,28 +1,39 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+
+function getInitialBounds(calculationData, savedBounds) {
+  if (savedBounds?.useCustomBounds)
+    return {
+      lower: { ...savedBounds.adjustedLowerBounds },
+      upper: { ...savedBounds.adjustedUpperBounds },
+      useCustom: true,
+    };
+  return {
+    lower: calculationData ? { ...calculationData.lower_bounds } : {},
+    upper: calculationData ? { ...calculationData.upper_bounds } : {},
+    useCustom: false,
+  };
+}
 
 export function useNutrientBounds(calculationData, savedBounds) {
   const [customisingBounds, setCustomisingBounds] = useState(false);
 
-  const [adjustedLowerBounds, setAdjustedLowerBounds] = useState(() => {
-    if (savedBounds?.useCustomBounds)
-      return { ...savedBounds.adjustedLowerBounds };
-    return calculationData ? { ...calculationData.lower_bounds } : {};
-  });
-
-  const [adjustedUpperBounds, setAdjustedUpperBounds] = useState(() => {
-    if (savedBounds?.useCustomBounds)
-      return { ...savedBounds.adjustedUpperBounds };
-    return calculationData ? { ...calculationData.upper_bounds } : {};
-  });
-
-  const [useCustomBounds, setUseCustomBounds] = useState(() => {
-    return !!savedBounds?.useCustomBounds;
-  });
+  const [bounds, setBounds] = useState(() =>
+    getInitialBounds(calculationData, savedBounds),
+  );
 
   const [validationErrors, setValidationErrors] = useState({});
   const [editingValues, setEditingValues] = useState({});
 
-  const prevCalculationData = useRef(calculationData);
+  const [prevCalculationData, setPrevCalculationData] =
+    useState(calculationData);
+  if (calculationData !== prevCalculationData && calculationData) {
+    setPrevCalculationData(calculationData);
+    setBounds({
+      lower: { ...calculationData.lower_bounds },
+      upper: { ...calculationData.upper_bounds },
+      useCustom: false,
+    });
+  }
 
   const boundsSnapshot = useRef({
     lower: {},
@@ -30,15 +41,6 @@ export function useNutrientBounds(calculationData, savedBounds) {
     useCustom: false,
     errors: {},
   });
-
-  useEffect(() => {
-    if (calculationData && calculationData !== prevCalculationData.current) {
-      setAdjustedLowerBounds({ ...calculationData.lower_bounds });
-      setAdjustedUpperBounds({ ...calculationData.upper_bounds });
-      setUseCustomBounds(false);
-      prevCalculationData.current = calculationData;
-    }
-  }, [calculationData]);
 
   const validateBounds = (nutrientKey, boundsType, value) => {
     const errors = { ...validationErrors };
@@ -49,10 +51,8 @@ export function useNutrientBounds(calculationData, savedBounds) {
     delete errors[upperKey];
     delete errors[nutrientKey];
 
-    let lower =
-      boundsType === "lower" ? value : adjustedLowerBounds[nutrientKey];
-    let upper =
-      boundsType === "upper" ? value : adjustedUpperBounds[nutrientKey];
+    const lower = boundsType === "lower" ? value : bounds.lower[nutrientKey];
+    const upper = boundsType === "upper" ? value : bounds.upper[nutrientKey];
 
     const isEmpty = (val) =>
       val === "" ||
@@ -62,12 +62,10 @@ export function useNutrientBounds(calculationData, savedBounds) {
     const isLowerEmpty = isEmpty(lower);
     const isUpperEmpty = isEmpty(upper);
 
-    let error = null;
-
     if (isLowerEmpty && isUpperEmpty) {
-      error = "At least one bound is required";
-      errors[lowerKey] = error;
-      errors[upperKey] = error;
+      const msg = "At least one bound is required";
+      errors[lowerKey] = msg;
+      errors[upperKey] = msg;
     } else if (!isLowerEmpty && !isUpperEmpty) {
       if (lower > upper) {
         if (boundsType === "lower")
@@ -81,16 +79,13 @@ export function useNutrientBounds(calculationData, savedBounds) {
 
   const handleBoundChange = (nutrientKey, boundsType, value) => {
     const numValue = parseFloat(value);
-    const bounds =
-      boundsType === "lower" ? adjustedLowerBounds : adjustedUpperBounds;
-    const setBounds =
-      boundsType === "lower" ? setAdjustedLowerBounds : setAdjustedUpperBounds;
-
-    setBounds({
-      ...bounds,
-      [nutrientKey]: isNaN(numValue) ? "" : numValue,
-    });
-
+    setBounds((prev) => ({
+      ...prev,
+      [boundsType === "lower" ? "lower" : "upper"]: {
+        ...(boundsType === "lower" ? prev.lower : prev.upper),
+        [nutrientKey]: isNaN(numValue) ? "" : numValue,
+      },
+    }));
     validateBounds(nutrientKey, boundsType, numValue);
   };
 
@@ -176,62 +171,6 @@ export function useNutrientBounds(calculationData, savedBounds) {
     }
   };
 
-  const saveTarget = (target, key, boundType) => {
-    const valString = editingValues[target];
-    const isValid = validateInput(target, valString, key);
-
-    if (!isValid) return;
-
-    const val = parseFloat(valString);
-
-    const newLower =
-      boundType === "lower"
-        ? { ...adjustedLowerBounds, [key]: val }
-        : adjustedLowerBounds;
-    const newUpper =
-      boundType === "upper"
-        ? { ...adjustedUpperBounds, [key]: val }
-        : adjustedUpperBounds;
-
-    if (boundType === "lower") setAdjustedLowerBounds(newLower);
-    else setAdjustedUpperBounds(newUpper);
-
-    setUseCustomBounds(areBoundsChanged(newLower, newUpper));
-    setEditingValues((prev) => {
-      const next = { ...prev };
-      delete next[target];
-      return next;
-    });
-  };
-
-  const resetBounds = () => {
-    const preservedKeys = ["Fibre (g)", "Saturated Fats (g)", "Water (mL)"];
-
-    setAdjustedLowerBounds((prev) => {
-      const next = { ...calculationData.lower_bounds };
-      preservedKeys.forEach((key) => {
-        if (prev[key] !== undefined) next[key] = prev[key];
-      });
-      return next;
-    });
-
-    setAdjustedUpperBounds((prev) => {
-      const next = { ...calculationData.upper_bounds };
-      preservedKeys.forEach((key) => {
-        if (prev[key] !== undefined) next[key] = prev[key];
-      });
-      return next;
-    });
-
-    setValidationErrors((prev) => {
-      const next = {};
-      Object.keys(prev).forEach((key) => {
-        if (preservedKeys.some((pk) => key.includes(pk))) next[key] = prev[key];
-      });
-      return next;
-    });
-  };
-
   const getCanonicalOriginalBounds = () => ({
     lower: {
       ...calculationData.lower_bounds,
@@ -252,40 +191,90 @@ export function useNutrientBounds(calculationData, savedBounds) {
     );
   };
 
+  const saveTarget = (target, key, boundType) => {
+    const valString = editingValues[target];
+    const isValid = validateInput(target, valString, key);
+
+    if (!isValid) return;
+
+    const val = parseFloat(valString);
+
+    const newLower =
+      boundType === "lower" ? { ...bounds.lower, [key]: val } : bounds.lower;
+    const newUpper =
+      boundType === "upper" ? { ...bounds.upper, [key]: val } : bounds.upper;
+
+    setBounds({
+      lower: newLower,
+      upper: newUpper,
+      useCustom: areBoundsChanged(newLower, newUpper),
+    });
+
+    setEditingValues((prev) => {
+      const next = { ...prev };
+      delete next[target];
+      return next;
+    });
+  };
+
+  const resetBounds = () => {
+    const preservedKeys = ["Fibre (g)", "Saturated Fats (g)", "Water (mL)"];
+
+    setBounds((prev) => {
+      const nextLower = { ...calculationData.lower_bounds };
+      const nextUpper = { ...calculationData.upper_bounds };
+      preservedKeys.forEach((key) => {
+        if (prev.lower[key] !== undefined) nextLower[key] = prev.lower[key];
+        if (prev.upper[key] !== undefined) nextUpper[key] = prev.upper[key];
+      });
+      return { lower: nextLower, upper: nextUpper, useCustom: prev.useCustom };
+    });
+
+    setValidationErrors((prev) => {
+      const next = {};
+      Object.keys(prev).forEach((key) => {
+        if (preservedKeys.some((pk) => key.includes(pk))) next[key] = prev[key];
+      });
+      return next;
+    });
+  };
+
   const handleSave = () => {
     if (Object.keys(validationErrors).length === 0) {
-      setUseCustomBounds(
-        areBoundsChanged(adjustedLowerBounds, adjustedUpperBounds),
-      );
+      setBounds((prev) => ({
+        ...prev,
+        useCustom: areBoundsChanged(prev.lower, prev.upper),
+      }));
       setCustomisingBounds(false);
     }
   };
 
   const startCustomising = () => {
     boundsSnapshot.current = {
-      lower: { ...adjustedLowerBounds },
-      upper: { ...adjustedUpperBounds },
-      useCustom: useCustomBounds,
+      lower: { ...bounds.lower },
+      upper: { ...bounds.upper },
+      useCustom: bounds.useCustom,
       errors: { ...validationErrors },
     };
     setCustomisingBounds(true);
   };
 
   const handleCancel = () => {
-    setAdjustedLowerBounds(boundsSnapshot.current.lower);
-    setAdjustedUpperBounds(boundsSnapshot.current.upper);
-    setUseCustomBounds(boundsSnapshot.current.useCustom);
+    setBounds({
+      lower: boundsSnapshot.current.lower,
+      upper: boundsSnapshot.current.upper,
+      useCustom: boundsSnapshot.current.useCustom,
+    });
     setValidationErrors(boundsSnapshot.current.errors);
-
     setCustomisingBounds(false);
   };
 
   return {
     state: {
       customisingBounds,
-      adjustedLowerBounds,
-      adjustedUpperBounds,
-      useCustomBounds,
+      adjustedLowerBounds: bounds.lower,
+      adjustedUpperBounds: bounds.upper,
+      useCustomBounds: bounds.useCustom,
       validationErrors,
       editingValues,
     },

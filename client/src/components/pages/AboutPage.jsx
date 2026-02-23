@@ -294,18 +294,16 @@ const createSlug = (text) => {
 };
 
 const AboutPage = () => {
-  const [openItemIndex, setOpenItemIndex] = useState(null);
-  const faqRefs = useRef([]);
-
-  useEffect(() => {
+  const [openItemIndex, setOpenItemIndex] = useState(() => {
     const hash = window.location.hash.slice(1);
-    if (hash) {
-      const index = otherFaqs.findIndex(
-        (faq) => createSlug(faq.question) === hash,
-      );
-      if (index !== -1) setOpenItemIndex(index);
-    }
-  }, []);
+    if (!hash) return null;
+    const index = otherFaqs.findIndex(
+      (faq) => createSlug(faq.question) === hash,
+    );
+    return index !== -1 ? index : null;
+  });
+
+  const faqRefs = useRef([]);
 
   useEffect(() => {
     if (openItemIndex !== null && faqRefs.current[openItemIndex]) {
