@@ -36,7 +36,7 @@ export interface NutrientRow {
 export type SortDirection = "ascending" | "descending";
 
 export interface SortConfig {
-  key: string;
+  key: string | null;
   direction: SortDirection;
 }
 

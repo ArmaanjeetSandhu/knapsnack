@@ -63,6 +63,7 @@ import type {
   NutritionCalculationRequest,
   UserInfo,
   FeasibilityAnalysis as FeasibilityAnalysisType,
+  NutrientMap,
 } from "./services/api";
 import type { FormData } from "./hooks/useFormWizard";
 import type { SavedBounds } from "./hooks/useNutrientBounds";
@@ -355,8 +356,10 @@ function App() {
     ? useCustomBounds
       ? {
           ...nutrientGoals,
-          lower_bounds: adjustedLowerBounds ?? nutrientGoals.lower_bounds,
-          upper_bounds: adjustedUpperBounds ?? nutrientGoals.upper_bounds,
+          lower_bounds: (adjustedLowerBounds ??
+            nutrientGoals.lower_bounds) as NutrientMap,
+          upper_bounds: (adjustedUpperBounds ??
+            nutrientGoals.upper_bounds) as NutrientMap,
         }
       : nutrientGoals
     : null;
@@ -430,8 +433,8 @@ function App() {
             onRecalculate={() => setIsEditModalOpen(true)}
             savedBounds={{
               useCustomBounds,
-              adjustedLowerBounds,
-              adjustedUpperBounds,
+              adjustedLowerBounds: adjustedLowerBounds ?? {},
+              adjustedUpperBounds: adjustedUpperBounds ?? {},
             }}
           />
         </div>

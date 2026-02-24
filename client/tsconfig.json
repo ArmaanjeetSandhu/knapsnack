@@ -6,7 +6,6 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
 
-    /* Path alias — matches vite.config */
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
@@ -14,10 +13,9 @@
 
     /* Start lenient; tighten after all files are migrated */
     "strict": false,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noImplicitAny": false,
 
-    /* Good hygiene, non-breaking */
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
