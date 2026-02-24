@@ -30,7 +30,7 @@ export interface UseFormWizardReturn {
   handleNext: () => void;
   handlePrevious: () => void;
   handleInputChange: (field: keyof FormData, value: unknown) => void;
-  handleMacroRatiosUpdate: (ratios: MacroRatios) => void;
+  handleMacroRatiosUpdate: (ratios: MacroRatios | null) => void;
   setError: (error: string | null) => void;
 }
 
@@ -94,7 +94,7 @@ export function useFormWizard(
   );
 
   const handleMacroRatiosUpdate = useCallback(
-    (ratios: MacroRatios) => handleInputChange("macroRatios", ratios),
+    (ratios: MacroRatios | null) => handleInputChange("macroRatios", ratios),
     [handleInputChange],
   );
 

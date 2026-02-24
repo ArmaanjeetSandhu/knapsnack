@@ -96,13 +96,13 @@ const ActivitySlider = ({
     Icon={Heart}
     gradientClass="bg-gradient-to-r from-gray-400 via-blue-500 to-red-500 dark:from-gray-500 dark:via-blue-400 dark:to-red-400"
     categories={categories}
-    getCurrentCategory={
-      getCurrentCategory as (val: number, cats: Category[]) => Category
+    getCurrentCategory={(val, cats) =>
+      getCurrentCategory(val, cats as ActivityCategory[])
     }
-    isCategoryActive={
-      isCategoryActive as (cat: Category, val: number) => boolean
+    isCategoryActive={(cat, val) =>
+      isCategoryActive(cat as ActivityCategory, val)
     }
-    getDetailText={getDetailText as (cat: Category, val: number) => string}
+    getDetailText={(cat) => getDetailText(cat as ActivityCategory)}
     formatValue={(val) => val.toFixed(1)}
     labels={["1.2", "2.4"]}
   />
