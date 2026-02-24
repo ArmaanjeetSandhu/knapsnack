@@ -104,9 +104,7 @@ const FoodSearch = ({
     }
   };
 
-  const createParseConfig = (
-    errorPrefix: string,
-  ): Papa.ParseConfig<RawCsvRow> => ({
+  const createParseConfig = (errorPrefix: string) => ({
     header: true,
     dynamicTyping: true,
     skipEmptyLines: true,
@@ -160,7 +158,7 @@ const FoodSearch = ({
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    Papa.parse<RawCsvRow>(file, createParseConfig("Error reading file"));
+    Papa.parse<RawCsvRow>(file, createParseConfig("Error reading file") as any);
     event.target.value = "";
   };
 

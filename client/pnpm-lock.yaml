@@ -98,6 +98,9 @@ importers:
       "@shadcn/ui":
         specifier: ^0.0.4
         version: 0.0.4
+      "@types/papaparse":
+        specifier: ^5.5.2
+        version: 5.5.2
       "@types/react":
         specifier: ^19.2.14
         version: 19.2.14
@@ -106,7 +109,7 @@ importers:
         version: 19.2.3(@types/react@19.2.14)
       "@vitejs/plugin-react":
         specifier: ^5.1.4
-        version: 5.1.4(vite@7.3.1(jiti@1.21.7)(yaml@2.7.0))
+        version: 5.1.4(vite@7.3.1(@types/node@25.3.0)(jiti@1.21.7)(yaml@2.7.0))
       autoprefixer:
         specifier: ^10.4.24
         version: 10.4.24(postcss@8.5.6)
@@ -151,7 +154,7 @@ importers:
         version: 5.9.3
       vite:
         specifier: ^7.3.1
-        version: 7.3.1(jiti@1.21.7)(yaml@2.7.0)
+        version: 7.3.1(@types/node@25.3.0)(jiti@1.21.7)(yaml@2.7.0)
 
 packages:
   "@alloc/quick-lru@5.2.0":
@@ -1587,6 +1590,18 @@ packages:
     resolution:
       {
         integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==,
+      }
+
+  "@types/node@25.3.0":
+    resolution:
+      {
+        integrity: sha512-4K3bqJpXpqfg2XKGK9bpDTc6xO/xoUP/RBWS7AtRMug6zZFaRekiLzjVtAoZMquxoAbzBvy5nxQ7veS5eYzf8A==,
+      }
+
+  "@types/papaparse@5.5.2":
+    resolution:
+      {
+        integrity: sha512-gFnFp/JMzLHCwRf7tQHrNnfhN4eYBVYYI897CGX4MY1tzY9l2aLkVyx2IlKZ/SAqDbB3I1AOZW5gTMGGsqWliA==,
       }
 
   "@types/react-dom@19.2.3":
@@ -4024,6 +4039,12 @@ packages:
       }
     engines: { node: ">= 0.4" }
 
+  undici-types@7.18.2:
+    resolution:
+      {
+        integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==,
+      }
+
   universalify@2.0.1:
     resolution:
       {
@@ -5063,6 +5084,14 @@ snapshots:
 
   "@types/json-schema@7.0.15": {}
 
+  "@types/node@25.3.0":
+    dependencies:
+      undici-types: 7.18.2
+
+  "@types/papaparse@5.5.2":
+    dependencies:
+      "@types/node": 25.3.0
+
   "@types/react-dom@19.2.3(@types/react@19.2.14)":
     dependencies:
       "@types/react": 19.2.14
@@ -5071,7 +5100,7 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  "@vitejs/plugin-react@5.1.4(vite@7.3.1(jiti@1.21.7)(yaml@2.7.0))":
+  "@vitejs/plugin-react@5.1.4(vite@7.3.1(@types/node@25.3.0)(jiti@1.21.7)(yaml@2.7.0))":
     dependencies:
       "@babel/core": 7.29.0
       "@babel/plugin-transform-react-jsx-self": 7.27.1(@babel/core@7.29.0)
@@ -5079,7 +5108,7 @@ snapshots:
       "@rolldown/pluginutils": 1.0.0-rc.3
       "@types/babel__core": 7.20.5
       react-refresh: 0.18.0
-      vite: 7.3.1(jiti@1.21.7)(yaml@2.7.0)
+      vite: 7.3.1(@types/node@25.3.0)(jiti@1.21.7)(yaml@2.7.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6680,6 +6709,8 @@ snapshots:
       has-symbols: 1.1.0
       which-boxed-primitive: 1.1.1
 
+  undici-types@7.18.2: {}
+
   universalify@2.0.1: {}
 
   update-browserslist-db@1.2.3(browserslist@4.28.1):
@@ -6709,7 +6740,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite@7.3.1(jiti@1.21.7)(yaml@2.7.0):
+  vite@7.3.1(@types/node@25.3.0)(jiti@1.21.7)(yaml@2.7.0):
     dependencies:
       esbuild: 0.27.3
       fdir: 6.5.0(picomatch@4.0.3)
@@ -6718,6 +6749,7 @@ snapshots:
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
+      "@types/node": 25.3.0
       fsevents: 2.3.3
       jiti: 1.21.7
       yaml: 2.7.0

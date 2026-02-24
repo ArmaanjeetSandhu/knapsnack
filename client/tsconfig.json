@@ -14,7 +14,7 @@
     /* Start lenient; tighten after all files are migrated */
     "strict": false,
     "strictNullChecks": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
 
     "noUnusedLocals": false,
     "noUnusedParameters": false,

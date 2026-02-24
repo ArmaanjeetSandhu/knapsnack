@@ -19,7 +19,7 @@ export const useCsvImport = (
     else onImportError?.((result as CsvParseFailure).error);
   };
 
-  const createParseConfig = (errorPrefix: string): ParseConfig<RawCsvRow> => ({
+  const createParseConfig = (errorPrefix: string) => ({
     header: true,
     dynamicTyping: true,
     skipEmptyLines: true,
@@ -32,7 +32,10 @@ export const useCsvImport = (
   const handleFileDrop = (file: File | null | undefined): void => {
     if (!file) return;
     if (file.type === "text/csv" || file.name.endsWith(".csv"))
-      Papa.parse<RawCsvRow>(file, createParseConfig("Error reading file"));
+      Papa.parse<RawCsvRow>(
+        file,
+        createParseConfig("Error reading file") as any,
+      );
     else onImportError?.("Please drop a valid CSV file.");
   };
 
