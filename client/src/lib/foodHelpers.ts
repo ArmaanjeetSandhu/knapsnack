@@ -1,6 +1,10 @@
 import { NUTRIENT_HEADERS, getNutrientKey } from "./csvConstants";
-import type { FoodItem, NutrientMap } from "../services/api";
-import type { OptimisationRequestPayload } from "../services/api";
+import type {
+  FoodItem,
+  NutrientMap,
+  NutritionCalculationResponse,
+  OptimisationRequestPayload,
+} from "../services/api";
 
 export type { FoodItem };
 
@@ -23,7 +27,7 @@ export const adjustNutrientsForServingSize = (
 
 export const prepareOptimisationPayload = (
   foods: FoodItem[],
-  nutrientGoals: NutrientMap,
+  nutrientGoals: NutritionCalculationResponse,
   userInfo: UserInfoForPayload,
 ): OptimisationRequestPayload => {
   const selected_foods = foods.map((food) => {
@@ -40,9 +44,19 @@ export const prepareOptimisationPayload = (
     };
   });
 
+  const nutrient_goals = {
+    protein: nutrientGoals.protein,
+    carbohydrate: nutrientGoals.carbohydrate,
+    fats: nutrientGoals.fats,
+    fibre: nutrientGoals.fibre,
+    saturated_fats: nutrientGoals.saturated_fats,
+    lower_bounds: nutrientGoals.lower_bounds,
+    upper_bounds: nutrientGoals.upper_bounds,
+  } as unknown as NutrientMap;
+
   return {
     selected_foods,
-    nutrient_goals: nutrientGoals,
+    nutrient_goals,
     age: parseInt(String(userInfo.age), 10),
     gender: userInfo.gender,
     smokingStatus: userInfo.smokingStatus,

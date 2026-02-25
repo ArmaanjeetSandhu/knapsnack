@@ -171,7 +171,7 @@ const SelectedFoods = ({
     try {
       const optimisationData = prepareOptimisationPayload(
         foods,
-        nutrientGoals.lower_bounds,
+        nutrientGoals,
         userInfo,
       );
       const result = await api.optimiseDiet(optimisationData);
