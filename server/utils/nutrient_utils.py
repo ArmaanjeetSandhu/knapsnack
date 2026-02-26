@@ -86,7 +86,7 @@ def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
     Returns:
         Dictionary with our nutrient names as keys and values per 100g
     """
-    result = {}
+    result: Dict[str, float] = {}
     reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
     for nutrient in nutrients_data:
         api_name = nutrient.get("nutrientName")
@@ -102,8 +102,8 @@ def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
 
 
 def standardise_nutrient_bounds(
-    lower_bounds: Union[pd.Series, Dict[str, float]],
-    upper_bounds: Union[pd.Series, Dict[str, float]],
+    lower_bounds: Union[pd.Series[float], Dict[str, float]],
+    upper_bounds: Union[pd.Series[float], Dict[str, float]],
 ) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
     Standardize nutrient bounds to dictionaries with float values.
@@ -118,11 +118,11 @@ def standardise_nutrient_bounds(
     lower_dict: Dict[str, float]
     upper_dict: Dict[str, float]
 
-    lower_raw = (
-        lower_bounds.to_dict() if isinstance(lower_bounds, pd.Series) else lower_bounds
+    lower_raw: Dict[str, float] = (
+        dict(lower_bounds) if isinstance(lower_bounds, pd.Series) else lower_bounds
     )
-    upper_raw = (
-        upper_bounds.to_dict() if isinstance(upper_bounds, pd.Series) else upper_bounds
+    upper_raw: Dict[str, float] = (
+        dict(upper_bounds) if isinstance(upper_bounds, pd.Series) else upper_bounds
     )
 
     lower_dict = {str(k): float(v) for k, v in lower_raw.items() if pd.notna(v)}

@@ -6,10 +6,19 @@ import logging
 import mimetypes
 import os
 from datetime import datetime, timedelta
+from typing import Tuple, Union
 
 import numpy as np
 import requests
-from flask import Flask, jsonify, make_response, request, send_file, send_from_directory
+from flask import (
+    Flask,
+    Response,
+    jsonify,
+    make_response,
+    request,
+    send_file,
+    send_from_directory,
+)
 from flask_cors import CORS
 
 from server.config import (
@@ -51,9 +60,11 @@ app = Flask(__name__, static_folder=static_folder)
 CORS(app)
 mimetypes.add_type("video/mp4", ".mp4")
 
+ResponseType = Union[Response, Tuple[Response, int], Tuple[str, int]]
+
 
 @app.after_request
-def add_security_headers(response):
+def add_security_headers(response: Response) -> Response:
     """Add security headers to all responses"""
     for header, value in SECURITY_HEADERS.items():
         response.headers[header] = value
@@ -62,7 +73,7 @@ def add_security_headers(response):
 
     if "Cache-Control" not in response.headers:
         cache_setting = CACHE_CONTROL_SETTINGS.get(
-            response.mimetype, CACHE_CONTROL_SETTINGS["default"]
+            response.mimetype or "default", CACHE_CONTROL_SETTINGS["default"]
         )
         response.headers["Cache-Control"] = cache_setting
 
@@ -70,7 +81,7 @@ def add_security_headers(response):
 
 
 @app.route("/robots.txt")
-def robots():
+def robots() -> Response:
     """Serve robots.txt file"""
     response = make_response(
         """
@@ -86,7 +97,7 @@ Sitemap: https://knapsnack-b4b10d2b0910.herokuapp.com/sitemap.xml
 
 
 @app.route("/sitemap.xml")
-def sitemap():
+def sitemap() -> Response:
     """Generate a simple sitemap"""
     host_url = request.host_url.rstrip("/")
 
@@ -103,7 +114,7 @@ def sitemap():
 
 
 @app.route("/.well-known/security.txt")
-def security_txt():
+def security_txt() -> Response:
     """Serve security.txt file"""
     expires_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -120,7 +131,7 @@ Canonical: https://knapsnack-b4b10d2b0910.herokuapp.com/.well-known/security.txt
 
 
 @app.route("/api/config", methods=["GET"])
-def get_config_api():
+def get_config_api() -> Response:
     """API endpoint to fetch configuration constants."""
     return jsonify(
         {
@@ -137,7 +148,7 @@ def get_config_api():
 
 
 @app.route("/api/posts", methods=["GET"])
-def get_posts_api():
+def get_posts_api() -> ResponseType:
     """API endpoint to fetch all blog posts."""
     posts = get_all_posts()
     if posts is None:
@@ -148,7 +159,7 @@ def get_posts_api():
 
 
 @app.route("/api/posts/<string:slug>", methods=["GET"])
-def get_post_api(slug):
+def get_post_api(slug: str) -> ResponseType:
     """API endpoint to get a single blog post by slug."""
     post = get_post_by_slug(slug)
     if not post:
@@ -157,7 +168,7 @@ def get_post_api(slug):
 
 
 @app.route("/api/search_food", methods=["POST"])
-def search_food_api():
+def search_food_api() -> ResponseType:
     """API endpoint to search for foods using the USDA API."""
     try:
         data = request.json
@@ -187,7 +198,7 @@ def search_food_api():
 
 
 @app.route("/api/calculate", methods=["POST"])
-def calculate_api():
+def calculate_api() -> ResponseType:
     """Calculate nutritional requirements based on user parameters."""
     try:
         data = request.json
@@ -245,7 +256,7 @@ def calculate_api():
 
 
 @app.route("/api/optimise", methods=["POST"])
-def optimise_api():
+def optimise_api() -> ResponseType:
     """Optimise diet based on selected foods and nutrient goals."""
     try:
         data = request.json
@@ -276,7 +287,7 @@ def optimise_api():
             max_val = food.get("maxServing")
 
             if max_val is None or max_val == "" or float(max_val) == 0:
-                limit = UNLIMITED_MAX_SERVING
+                limit: float = UNLIMITED_MAX_SERVING
             else:
                 limit = float(max_val)
 
@@ -359,7 +370,7 @@ def optimise_api():
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
-def serve(path):
+def serve(path: str) -> Union[Response, Tuple[str, int]]:
     """Serve static files or fallback to index.html for SPA routing."""
     static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
     normalised_path = os.path.normpath(os.path.join(static_folder_str, str(path)))

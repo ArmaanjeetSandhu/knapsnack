@@ -26,7 +26,7 @@ def search_foods(
     Raises:
         requests.exceptions.RequestException: If API request fails
     """
-    search_results = []
+    search_results: List[Dict[str, Any]] = []
     page_size = 200
     page_number = 1
     total_pages = 1

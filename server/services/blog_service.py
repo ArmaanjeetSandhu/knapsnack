@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 import contentful
 
@@ -16,7 +17,7 @@ except Exception as e:
     print(f"Failed to initialise Contentful client: {e}")
 
 
-def normalise_contentful_data(data):
+def normalise_contentful_data(data: Any) -> Any:
     """
     Recursively converts Contentful SDK objects (Entries, Assets, Links, datetimes)
     into JSON-serialisable dictionaries and strings.
@@ -49,7 +50,7 @@ def normalise_contentful_data(data):
     return data
 
 
-def extract_first_image(content):
+def extract_first_image(content: Any) -> Optional[str]:
     """
     Traverses content (Rich Text or Markdown string) to find the first image URL.
     """
@@ -73,12 +74,16 @@ def extract_first_image(content):
                 if isinstance(target, dict):
                     fields = target.get("fields", {})
                     file_data = fields.get("file", {})
-                    url = file_data.get("url")
+                    asset_url: Optional[str] = (
+                        file_data.get("url")
+                        if isinstance(file_data.get("url"), str)
+                        else None
+                    )
 
-                    if url:
-                        if url.startswith("//"):
-                            return f"https:{url}"
-                        return url
+                    if asset_url:
+                        if asset_url.startswith("//"):
+                            return f"https:{asset_url}"
+                        return asset_url
             except (AttributeError, KeyError, TypeError):
                 pass
 
@@ -92,7 +97,7 @@ def extract_first_image(content):
     return None
 
 
-def get_all_posts():
+def get_all_posts() -> Optional[List[Dict[str, Any]]]:
     """Fetches all blog post entries from Contentful."""
     if not client:
         print("Error: Contentful client not initialised.")
@@ -135,7 +140,7 @@ def get_all_posts():
         return None
 
 
-def get_post_by_slug(slug):
+def get_post_by_slug(slug: str) -> Optional[Dict[str, Any]]:
     """Fetches a single blog post entry by its slug from Contentful."""
     if not client:
         print("Error: Contentful client not initialised.")

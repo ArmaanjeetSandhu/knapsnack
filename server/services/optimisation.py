@@ -132,7 +132,11 @@ def analyse_upper_bound_feasibility(
     upper_bound_issues = []
     checked_nutrients = set()
 
-    def check_limit(nutrient_name, limit_value, display_name_override=None):
+    def check_limit(
+        nutrient_name: str,
+        limit_value: float,
+        display_name_override: Optional[str] = None,
+    ) -> None:
         for food in selected_foods:
             val = food["nutrients"].get(nutrient_name)
 
