@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import contentful
 
@@ -103,11 +103,14 @@ def get_all_posts() -> Optional[List[Dict[str, Any]]]:
         print("Error: Contentful client not initialised.")
         return None
     try:
-        entries = client.entries(
-            {
-                "content_type": CONTENTFUL_CONTENT_TYPE_ID,
-                "order": "-sys.createdAt",
-            }
+        entries = cast(
+            List[Any],
+            client.entries(
+                {
+                    "content_type": CONTENTFUL_CONTENT_TYPE_ID,
+                    "order": "-sys.createdAt",
+                }
+            ),
         )
 
         posts = []
@@ -146,12 +149,15 @@ def get_post_by_slug(slug: str) -> Optional[Dict[str, Any]]:
         print("Error: Contentful client not initialised.")
         return None
     try:
-        entries = client.entries(
-            {
-                "content_type": CONTENTFUL_CONTENT_TYPE_ID,
-                "fields.slug": slug,
-                "limit": 1,
-            }
+        entries = cast(
+            List[Any],
+            client.entries(
+                {
+                    "content_type": CONTENTFUL_CONTENT_TYPE_ID,
+                    "fields.slug": slug,
+                    "limit": 1,
+                }
+            ),
         )
         if not entries:
             return None
