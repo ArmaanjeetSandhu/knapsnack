@@ -3,7 +3,7 @@ Data access functions for nutrient databases.
 """
 
 import os
-from typing import List, Tuple
+from typing import Any, Callable, List, Tuple, cast
 
 import pandas as pd
 
@@ -28,9 +28,12 @@ def remove_excluded_age_groups(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with excluded age groups removed
     """
-    return df[
-        ~df["Life-Stage Group"].str.contains("|".join(EXCLUDED_AGE_GROUPS), na=False)
-    ]
+    df_any = cast(Any, df)
+    raw_mask = df_any["Life-Stage Group"].str.contains(
+        "|".join(EXCLUDED_AGE_GROUPS), na=False
+    )
+    mask = cast("pd.Series[bool]", raw_mask)
+    return df[~mask]
 
 
 def load_process_nutrient_data(
@@ -46,7 +49,8 @@ def load_process_nutrient_data(
     Returns:
         Processed DataFrame
     """
-    df = pd.read_csv(os.path.join(NUTRIENT_DB_PATH, filename)).replace("ND", None)
+    pd_any: Any = pd
+    df = pd_any.read_csv(os.path.join(NUTRIENT_DB_PATH, filename)).replace("ND", None)
     if columns_to_drop:
         df.drop(columns=columns_to_drop, inplace=True)
     return remove_excluded_age_groups(df)
@@ -83,7 +87,9 @@ def get_age_group(age: int, gender: str) -> str:
         return f"{gender_prefix} > 70 y"
 
 
-def get_nutrient_bounds(age: int, gender: str) -> Tuple[pd.Series, pd.Series]:
+def get_nutrient_bounds(
+    age: int, gender: str
+) -> Tuple[pd.Series[float], pd.Series[float]]:
     """
     Calculate lower and upper bounds for nutrients based on age and gender.
 
@@ -117,15 +123,27 @@ def get_nutrient_bounds(age: int, gender: str) -> Tuple[pd.Series, pd.Series]:
     ):
         raise ValueError(f"No nutrient data found for age group: {age_group}")
 
-    lower_bounds = pd.concat(
-        [vitamin_lower.iloc[0], element_lower.iloc[0], macro_lower.iloc[0]]
-    )
-    upper_bounds = pd.concat([vitamin_upper.iloc[0], element_upper.iloc[0]])
+    lower_series_list: List[pd.Series[Any]] = [
+        vitamin_lower.iloc[0],
+        element_lower.iloc[0],
+        macro_lower.iloc[0],
+    ]
+    upper_series_list: List[pd.Series[Any]] = [
+        vitamin_upper.iloc[0],
+        element_upper.iloc[0],
+    ]
+
+    lower_bounds = pd.concat(lower_series_list)
+    upper_bounds = pd.concat(upper_series_list)
 
     lower_bounds = lower_bounds.drop("Life-Stage Group")
     upper_bounds = upper_bounds.drop("Life-Stage Group")
-    lower_bounds = pd.to_numeric(lower_bounds, errors="coerce")
-    upper_bounds = pd.to_numeric(upper_bounds, errors="coerce")
+
+    pd_any: Any = pd
+    safe_to_numeric = cast("Callable[[Any, str], pd.Series[Any]]", pd_any.to_numeric)
+
+    lower_bounds = safe_to_numeric(lower_bounds, "coerce")
+    upper_bounds = safe_to_numeric(upper_bounds, "coerce")
 
     if "Total Water (L)" in lower_bounds:
         lower_bounds["Water (mL)"] = lower_bounds["Total Water (L)"] * 1000

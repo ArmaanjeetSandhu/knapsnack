@@ -6,6 +6,7 @@ from itertools import product
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import pulp
 
@@ -16,8 +17,8 @@ from server.utils.nutrient_utils import standardise_nutrient_bounds
 def analyse_feasibility(
     selected_foods: List[Dict[str, Any]],
     max_servings: List[float],
-    lower_bounds: Union[pd.Series, Dict[str, float]],
-    upper_bounds: Union[pd.Series, Dict[str, float]],
+    lower_bounds: Union[pd.Series[float], Dict[str, float]],
+    upper_bounds: Union[pd.Series[float], Dict[str, float]],
     nutrient_goals: Dict[str, Any],
 ) -> Dict[str, Any]:
     """
@@ -82,7 +83,7 @@ def analyse_lower_bound_feasibility(
     """
     Analyse lower bound feasibility for nutrients.
     """
-    lower_bound_issues = []
+    lower_bound_issues: List[Dict[str, Any]] = []
 
     for nutrient, min_value in lower_bounds.items():
         if nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
@@ -129,8 +130,8 @@ def analyse_upper_bound_feasibility(
     Analyse upper bound feasibility for nutrients.
     Flags any single food item that exceeds a limit on its own at 1 serving.
     """
-    upper_bound_issues = []
-    checked_nutrients = set()
+    upper_bound_issues: List[Dict[str, Any]] = []
+    checked_nutrients: set[str] = set()
 
     def check_limit(
         nutrient_name: str,
@@ -174,11 +175,11 @@ def analyse_upper_bound_feasibility(
 
 def optimise_diet(
     selected_foods: List[Dict[str, Any]],
-    costs: np.ndarray,
+    costs: npt.NDArray[np.float64],
     max_servings: List[float],
     nutrient_goals: Dict[str, Any],
-    lower_bounds: Union[pd.Series, Dict[str, float]],
-    upper_bounds: Union[pd.Series, Dict[str, float]],
+    lower_bounds: Union[pd.Series[float], Dict[str, float]],
+    upper_bounds: Union[pd.Series[float], Dict[str, float]],
 ) -> Optional[Dict[str, Any]]:
     """
     Find optimal diet by trying different overflow percentages.
@@ -208,11 +209,11 @@ def optimise_diet(
 
 def solve_optimisation_problem(
     selected_foods: List[Dict[str, Any]],
-    costs: np.ndarray,
+    costs: npt.NDArray[np.float64],
     max_servings: List[float],
     nutrient_goals: Dict[str, Any],
-    lower_bounds: Union[pd.Series, Dict[str, float]],
-    upper_bounds: Union[pd.Series, Dict[str, float]],
+    lower_bounds: Union[pd.Series[float], Dict[str, float]],
+    upper_bounds: Union[pd.Series[float], Dict[str, float]],
     overflow_percentages: Tuple[int, ...],
 ) -> Optional[Dict[str, Any]]:
     """
@@ -304,7 +305,7 @@ def solve_optimisation_problem(
 def format_optimisation_result(
     selected_foods: List[Dict[str, Any]],
     x: List[pulp.LpVariable],
-    costs: np.ndarray,
+    costs: npt.NDArray[np.float64],
     nutrients: List[str],
     overflow_percentages: Tuple[int, ...],
 ) -> Dict[str, Any]:

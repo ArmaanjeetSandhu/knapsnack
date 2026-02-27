@@ -48,7 +48,7 @@ def validate_input_parameters(
     """
     Validate input parameters for diet calculations.
     """
-    validation_errors = []
+    validation_errors: List[str] = []
 
     age = int(data.get("age", 0))
     if error := validate_age(age, age_min, age_max):
@@ -114,12 +114,12 @@ def calculate_nutrition_requirements(
 
 
 def adjust_nutrient_bounds(
-    lower_bounds: pd.Series,
-    upper_bounds: pd.Series,
+    lower_bounds: pd.Series[float],
+    upper_bounds: pd.Series[float],
     custom_lower_bounds: Optional[Dict[str, float]] = None,
     custom_upper_bounds: Optional[Dict[str, float]] = None,
     smoking_status: str = "no",
-) -> Tuple[pd.Series, pd.Series]:
+) -> Tuple[pd.Series[float], pd.Series[float]]:
     """
     Adjust nutrient bounds based on custom values and smoking status.
     """

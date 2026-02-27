@@ -6,7 +6,7 @@ import logging
 import mimetypes
 import os
 from datetime import datetime, timedelta
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 import numpy as np
 import requests
@@ -281,7 +281,7 @@ def optimise_api() -> ResponseType:
 
         costs = np.array([food["price"] for food in selected_foods_data])
 
-        max_servings_list = []
+        max_servings_list: List[float] = []
         for food in selected_foods_data:
             serving_size = float(food["servingSize"])
             max_val = food.get("maxServing")
