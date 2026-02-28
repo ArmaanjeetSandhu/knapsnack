@@ -2,6 +2,8 @@
 Utility functions for nutrient calculations.
 """
 
+from __future__ import annotations
+
 from typing import Any, Dict, List, Tuple, Union
 
 import pandas as pd

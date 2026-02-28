@@ -93,6 +93,7 @@ const FoodSearch = ({
   const [hasSearched, setHasSearched] = useState(false);
 
   const searchResultsRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleParseComplete = (results: Papa.ParseResult<RawCsvRow>) => {
     const result = processCSVData(results);
@@ -200,6 +201,27 @@ const FoodSearch = ({
       }, 100);
     }
   }, [searchResults.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      )
+        return;
+
+      if (e.key === "/") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const renderFoodItem = (food: FoodItem) => {
     const added = isAdded(food.fdcId);
@@ -361,8 +383,9 @@ const FoodSearch = ({
                 <form onSubmit={handleSearch} className="space-y-3">
                   <div className="flex gap-2">
                     <Input
+                      ref={searchInputRef}
                       type="text"
-                      placeholder="Search for foods..."
+                      placeholder="Press / to search for foods..."
                       value={searchTerm}
                       onChange={(e) => {
                         setSearchTerm(e.target.value);

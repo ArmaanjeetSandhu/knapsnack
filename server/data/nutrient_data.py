@@ -2,6 +2,8 @@
 Data access functions for nutrient databases.
 """
 
+from __future__ import annotations
+
 import os
 from typing import Any, Callable, List, Tuple, cast
 

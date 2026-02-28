@@ -2,6 +2,8 @@
 Diet optimisation services.
 """
 
+from __future__ import annotations
+
 from itertools import product
 from typing import Any, Dict, List, Optional, Tuple, Union
 

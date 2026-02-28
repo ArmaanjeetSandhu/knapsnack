@@ -19,7 +19,8 @@ Visualise the repo structure [here](https://mango-dune-07a8b7110.1.azurestaticap
 1. **Install server dependencies**
 
    ```bash
-   uv python install
+   uv venv
+   source .venv/bin/activate
    uv sync --frozen
    ```
 
@@ -50,5 +51,30 @@ make dev
 cd client
 pnpm dev
 ```
+
+</details>
+
+<details>
+<summary><strong>Deployment</strong></summary>
+
+### Deploying to Heroku
+
+1. **Log in to Heroku**
+
+   ```bash
+   heroku login
+   ```
+
+2. **Set the remote**
+
+   ```bash
+   heroku git:remote -a knapsnack
+   ```
+
+3. **Deploy**
+
+   ```bash
+   git push heroku main
+   ```
 
 </details>
