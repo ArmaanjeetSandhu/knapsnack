@@ -48,7 +48,3 @@ extend-select = ["I"]
 [tool.mypy]
 ignore_missing_imports = true
 strict = true
-
-[tool.pyright]
-venvPath = "."
-venv = ".venv"

@@ -197,6 +197,7 @@ const faqs: Faq[] = [
       "\t• [[MacroFactor's Blog]]",
       "\t• [[CronoMeter's Blog]]",
       "\t• [[Gut Bites MD's Blog]]",
+      "\t• [[Truth Be Told]]",
     ],
   },
 ];
@@ -206,6 +207,7 @@ const LINK_MAP: Record<string, string> = {
   "MacroFactor's Blog": "https://macrofactorapp.com/articles/",
   "CronoMeter's Blog": "https://cronometer.com/blog/",
   "Gut Bites MD's Blog": "https://gutbites.org/stories/",
+  "Truth Be Told": "https://tbthealth.substack.com/",
   "Knap[Snack] blog": "https://knapsnack-b4b10d2b0910.herokuapp.com/blog",
   here: "https://health.clevelandclinic.org/how-much-cholesterol-per-day",
   this: "https://www.omnicalculator.com/health/dri",
