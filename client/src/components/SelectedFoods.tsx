@@ -520,6 +520,18 @@ const SelectedFoods = ({
                 Reviewing any custom bounds to ensure the ranges aren&apos;t too
                 narrow
               </li>
+              <li>
+                Marking fewer foods for{" "}
+                <span className="font-medium text-muted-foreground">
+                  Discrete Servings
+                </span>
+              </li>
+              <li>
+                Marking fewer foods as{" "}
+                <span className="font-medium text-muted-foreground">
+                  Must Include
+                </span>
+              </li>
             </ul>
           </div>
           <DialogFooter>
