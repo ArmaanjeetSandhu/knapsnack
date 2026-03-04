@@ -316,19 +316,18 @@ const AboutPage = () => {
   const handleToggle = (index: number) => {
     const isOpening = openItemIndex !== index;
     setOpenItemIndex(isOpening ? index : null);
-    if (isOpening) {
+    if (isOpening)
       window.history.replaceState(
         null,
         "",
         `#${createSlug(otherFaqs[index].question)}`,
       );
-    } else {
+    else
       window.history.replaceState(
         null,
         "",
         window.location.pathname + window.location.search,
       );
-    }
   };
 
   return (

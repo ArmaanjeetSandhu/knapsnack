@@ -173,9 +173,9 @@ const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query, api_key: apiKey }),
     });
-    if (!response.ok) {
+    if (!response.ok)
       throw new Error(await extractError(response, "Search failed"));
-    }
+
     return response.json() as Promise<SearchFoodResponse>;
   },
 
@@ -187,9 +187,9 @@ const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!response.ok) {
+    if (!response.ok)
       throw new Error(await extractError(response, "Calculation failed"));
-    }
+
     return response.json() as Promise<NutritionCalculationResponse>;
   },
 

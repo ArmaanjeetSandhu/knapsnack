@@ -72,13 +72,13 @@ function getInitialBounds(
   calculationData: CalculationData | null,
   savedBounds?: SavedBounds | null,
 ): BoundsState {
-  if (savedBounds?.useCustomBounds) {
+  if (savedBounds?.useCustomBounds)
     return {
       lower: { ...savedBounds.adjustedLowerBounds },
       upper: { ...savedBounds.adjustedUpperBounds },
       useCustom: true,
     };
-  }
+
   return {
     lower: calculationData ? { ...calculationData.lower_bounds } : {},
     upper: calculationData ? { ...calculationData.upper_bounds } : {},

@@ -80,6 +80,26 @@ const SelectedFoods = ({
     [],
   );
 
+  const [marquee, setMarquee] = useState<{
+    startX: number;
+    startY: number;
+    currentX: number;
+    currentY: number;
+    active: boolean;
+  } | null>(null);
+  const marqueeRef = useRef(marquee);
+  useEffect(() => {
+    marqueeRef.current = marquee;
+  }, [marquee]);
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const initialStatesRef = useRef<
+    Record<string | number, { integerServings: boolean; mustInclude: boolean }>
+  >({});
+  const lastCursorPageYRef = useRef<number>(0);
+  const lastScrollYRef = useRef<number>(0);
+
   const getFoodSortValue = useCallback(
     (food: FoodItem, key: string): string | number => {
       if (key === "food") return food.description.toLowerCase();
@@ -176,17 +196,13 @@ const SelectedFoods = ({
       );
       const result = await api.optimiseDiet(optimisationData);
 
-      if (result.success) {
-        onOptimisationResults(result.result);
-      } else {
+      if (result.success) onOptimisationResults(result.result);
+      else {
         const failure = result as OptimisationFailure;
-        if (failure.feasibilityAnalysis?.isFeasible) {
-          setShowErrorDialog(true);
-        } else if (failure.feasibilityAnalysis) {
+        if (failure.feasibilityAnalysis?.isFeasible) setShowErrorDialog(true);
+        else if (failure.feasibilityAnalysis)
           onFeasibilityResults(failure.feasibilityAnalysis);
-        } else {
-          setError(failure.message);
-        }
+        else setError(failure.message);
       }
     } catch (err) {
       setError(
@@ -198,6 +214,158 @@ const SelectedFoods = ({
       setLoading(false);
     }
   };
+
+  const applyMarqueeSelection = useCallback(
+    (m: NonNullable<typeof marquee>, scrollTop: number) => {
+      if (!tableContainerRef.current) return;
+
+      const selLeft = Math.min(m.startX, m.currentX);
+      const selRight = Math.max(m.startX, m.currentX);
+      const selTop = Math.min(m.startY, m.currentY) - scrollTop;
+      const selBottom = Math.max(m.startY, m.currentY) - scrollTop;
+
+      const discreteHeader =
+        tableContainerRef.current.querySelector("th:nth-child(1)");
+      const mustHeader =
+        tableContainerRef.current.querySelector("th:nth-child(2)");
+      const affectsDiscrete = discreteHeader
+        ? (() => {
+            const r = discreteHeader.getBoundingClientRect();
+            return selRight > r.left && selLeft < r.right;
+          })()
+        : false;
+      const affectsMust = mustHeader
+        ? (() => {
+            const r = mustHeader.getBoundingClientRect();
+            return selRight > r.left && selLeft < r.right;
+          })()
+        : false;
+
+      if (!affectsDiscrete && !affectsMust) return;
+
+      const rows =
+        tableContainerRef.current.querySelectorAll<HTMLElement>("tbody tr");
+
+      const updatedFoods = sortedFoodsRef.current.map((food, index) => {
+        const row = rows[index];
+        if (!row) return food;
+        const rowRect = row.getBoundingClientRect();
+        const inSelection = rowRect.bottom > selTop && rowRect.top < selBottom;
+        const initial = initialStatesRef.current[food.fdcId];
+        if (!initial) return food;
+        return {
+          ...food,
+          ...(affectsDiscrete && {
+            integerServings: inSelection
+              ? !initial.integerServings
+              : initial.integerServings,
+          }),
+          ...(affectsMust && {
+            mustInclude: inSelection
+              ? !initial.mustInclude
+              : initial.mustInclude,
+          }),
+        };
+      });
+
+      onFoodsUpdate(updatedFoods);
+    },
+    [onFoodsUpdate],
+  );
+
+  const handleTableMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === "INPUT" ||
+        target.tagName === "BUTTON" ||
+        target.closest("button")
+      )
+        return;
+      if (!tableContainerRef.current) return;
+      e.preventDefault();
+
+      const snapshot: Record<
+        string | number,
+        { integerServings: boolean; mustInclude: boolean }
+      > = {};
+      for (const food of sortedFoodsRef.current) {
+        snapshot[food.fdcId] = {
+          integerServings: !!food.integerServings,
+          mustInclude: !!food.mustInclude,
+        };
+      }
+      initialStatesRef.current = snapshot;
+      lastCursorPageYRef.current = e.pageY;
+      lastScrollYRef.current = window.scrollY;
+
+      isDragging.current = false;
+      setMarquee({
+        startX: e.pageX,
+        startY: e.pageY,
+        currentX: e.pageX,
+        currentY: e.pageY,
+        active: false,
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const onScroll = () => {
+      const m = marqueeRef.current;
+      if (!m?.active) {
+        lastScrollYRef.current = window.scrollY;
+        return;
+      }
+      const scrollDelta = window.scrollY - lastScrollYRef.current;
+      lastScrollYRef.current = window.scrollY;
+
+      const extended = {
+        ...m,
+        currentY: m.currentY + scrollDelta,
+      };
+      marqueeRef.current = extended;
+      setMarquee(extended);
+      applyMarqueeSelection(extended, window.scrollY);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [applyMarqueeSelection]);
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!marqueeRef.current) return;
+      lastCursorPageYRef.current = e.pageY;
+      const dx = Math.abs(e.pageX - marqueeRef.current.startX);
+      const dy = Math.abs(e.pageY - marqueeRef.current.startY);
+      if (!isDragging.current && (dx > 4 || dy > 4)) isDragging.current = true;
+
+      if (!isDragging.current) return;
+      const updated = {
+        ...marqueeRef.current,
+        currentX: e.pageX,
+        currentY: e.pageY,
+        active: true,
+      };
+      marqueeRef.current = updated;
+      setMarquee(updated);
+      applyMarqueeSelection(updated, window.scrollY);
+    };
+    const onMouseUp = () => {
+      if (marqueeRef.current) {
+        setMarquee(null);
+        marqueeRef.current = null;
+        isDragging.current = false;
+      }
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [applyMarqueeSelection]);
 
   return (
     <>
@@ -259,7 +427,33 @@ const SelectedFoods = ({
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                <div className="rounded-md border">
+                <div
+                  className="rounded-md border"
+                  ref={tableContainerRef}
+                  onMouseDown={handleTableMouseDown}
+                  style={{
+                    position: "relative",
+                    userSelect: marquee?.active ? "none" : undefined,
+                  }}
+                >
+                  {marquee?.active && (
+                    <div
+                      style={{
+                        position: "fixed",
+                        left: Math.min(marquee.startX, marquee.currentX),
+                        top:
+                          Math.min(marquee.startY, marquee.currentY) -
+                          window.scrollY,
+                        width: Math.abs(marquee.currentX - marquee.startX),
+                        height: Math.abs(marquee.currentY - marquee.startY),
+                        border: "2px solid hsl(var(--primary))",
+                        backgroundColor: "hsl(var(--primary) / 0.1)",
+                        pointerEvents: "none",
+                        zIndex: 9999,
+                        borderRadius: "2px",
+                      }}
+                    />
+                  )}
                   <Table>
                     <TableHeader
                       style={{ position: "sticky", top: 0, zIndex: 10 }}

@@ -27,13 +27,12 @@ const firstDefined = (row: RawCsvRow, ...keys: string[]): string | undefined =>
 export const processCSVData = (
   results: ParseResult<RawCsvRow>,
 ): CsvParseResult => {
-  if (results.errors.length > 0) {
+  if (results.errors.length > 0)
     return {
       success: false,
       error:
         "Error parsing CSV file. Please ensure the file format is correct.",
     };
-  }
 
   try {
     const validRows = results.data.filter(
