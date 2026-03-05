@@ -207,7 +207,7 @@ const api = {
     };
 
     if (!response.ok || !result.success) {
-      if ((result as OptimisationFailure).feasibilityAnalysis) {
+      if ((result as OptimisationFailure).feasibilityAnalysis)
         return {
           success: false,
           message:
@@ -215,7 +215,6 @@ const api = {
           feasibilityAnalysis: (result as OptimisationFailure)
             .feasibilityAnalysis,
         };
-      }
       throw new Error(
         (result as { error?: string }).error ??
           (result as { message?: string }).message ??
@@ -234,11 +233,10 @@ const api = {
 
   async getBlogPost(slug: string): Promise<BlogPost> {
     const response = await fetch(`${config.apiUrl}/posts/${slug}`);
-    if (!response.ok) {
+    if (!response.ok)
       throw new Error(
         await extractError(response, `Failed to fetch post: ${slug}`),
       );
-    }
     return response.json() as Promise<BlogPost>;
   },
 };

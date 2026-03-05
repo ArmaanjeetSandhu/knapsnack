@@ -17,7 +17,10 @@ const LandingPage = ({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") onGetStarted();
+      if (event.key !== "Enter") return;
+      const focused = document.activeElement as HTMLElement | null;
+      if (focused && focused.tagName === "BUTTON") return;
+      onGetStarted();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -71,7 +74,7 @@ const LandingPage = ({
             <Button
               size="lg"
               onClick={onGetStarted}
-              className="w-full border-none bg-white/90 text-black hover:bg-white sm:w-auto"
+              className="w-full border-none bg-white/90 text-black transition-transform duration-150 hover:bg-white focus:outline-none focus-visible:scale-110 focus-visible:ring-0 sm:w-auto"
             >
               <ArrowLeft className="mr-2 h-5 w-5" />
               Back to App
@@ -121,13 +124,10 @@ const LandingPage = ({
                 size="lg"
                 data-startover-zone
                 onClick={() => {
-                  if (confirmingStartOver) {
-                    onStartOver?.();
-                  } else {
-                    setConfirmingStartOver(true);
-                  }
+                  if (confirmingStartOver) onStartOver?.();
+                  else setConfirmingStartOver(true);
                 }}
-                className={`w-full transition-all duration-200 sm:w-auto ${
+                className={`w-full transition-all duration-150 focus:outline-none focus-visible:scale-110 focus-visible:ring-0 sm:w-auto ${
                   confirmingStartOver
                     ? "border-2 border-red-400 bg-red-500/90 text-white hover:bg-red-500"
                     : "border-2 border-white/70 bg-transparent text-white hover:bg-white/10"
