@@ -262,7 +262,7 @@ function App() {
     }
     actions.setSelectedFoods((prevFoods) => [
       ...prevFoods,
-      { ...food, price: "", servingSize: 100, maxServing: 500 },
+      { ...food, price: 0, servingSize: 100, maxServing: 500 },
     ]);
     setLastAddedIds([food.fdcId]);
     actions.setOptimisationResults(null);
@@ -531,7 +531,16 @@ function App() {
   );
 
   if (showLanding && location.pathname === "/")
-    return <LandingPage onGetStarted={() => actions.setShowLanding(false)} />;
+    return (
+      <LandingPage
+        onGetStarted={() => actions.setShowLanding(false)}
+        hasExistingSession={!!nutrientGoals}
+        onStartOver={() => {
+          handleReset();
+          actions.setShowLanding(false);
+        }}
+      />
+    );
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -539,7 +548,7 @@ function App() {
         <div className="px-4">
           <div className="flex items-center justify-between">
             <button
-              onClick={handleReset}
+              onClick={() => actions.setShowLanding(true)}
               className="text-left text-xl font-bold transition-colors hover:text-gray-300"
             >
               Knap[Snack]: The Meal Planner
