@@ -29,13 +29,19 @@ export const prepareOptimisationPayload = (
   foods: FoodItem[],
   nutrientGoals: NutritionCalculationResponse,
   userInfo: UserInfoForPayload,
+  useFakeCosts: boolean = false,
 ): OptimisationRequestPayload => {
   const selected_foods = foods.map((food) => {
     const servingSize = parseFloat(String(food.servingSize)) || 100;
+    let price = parseFloat(String(food.price ?? 0));
+
+    if (useFakeCosts && price === 0)
+      price = Math.random() * (0.001 - 0.00001) + 0.00001;
+
     return {
       fdcId: food.fdcId,
       description: food.description,
-      price: parseFloat(String(food.price ?? 0)),
+      price: price,
       servingSize,
       maxServing: parseFloat(String(food.maxServing ?? 0)),
       requires_integer_servings: !!food.integerServings,

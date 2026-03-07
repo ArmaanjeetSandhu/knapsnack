@@ -1,12 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
   Beaker,
   Beef,
   Currency,
   Download,
   Droplets,
   LayoutGrid,
+  RefreshCw,
   Sliders,
   Table as TableIcon,
   Utensils,
@@ -52,6 +55,12 @@ interface OptimisationResultsProps {
   results: OptimisationApiResult;
   selectedFoods: FoodItem[];
   nutrientGoals: NutrientGoalsShape | null;
+  onGenerateAlternative?: () => void;
+  onPreviousPlan?: () => void;
+  onNextPlan?: () => void;
+  hasPrevious?: boolean;
+  hasNext?: boolean;
+  isGenerating?: boolean;
 }
 
 type NutrientDisplayMode = "table" | "cards";
@@ -87,6 +96,12 @@ const OptimisationResults = ({
   results,
   selectedFoods,
   nutrientGoals,
+  onGenerateAlternative,
+  onPreviousPlan,
+  onNextPlan,
+  hasPrevious = false,
+  hasNext = false,
+  isGenerating = false,
 }: OptimisationResultsProps) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] =
     useState<NutrientDisplayMode>(() =>
@@ -104,7 +119,7 @@ const OptimisationResults = ({
 
   useEffect(() => {
     resultsRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  }, [results]);
 
   const { items: nonZeroItems, totals } = calculateConsistentResults(
     results,
@@ -185,6 +200,10 @@ const OptimisationResults = ({
     { key: "minerals", data: minerals },
     { key: "others", data: others },
   ] as const;
+
+  const allPricesZero = selectedFoods.every(
+    (food) => !parseFloat(String(food.price ?? 0)),
+  );
 
   return (
     <div ref={resultsRef} className="scroll-mt-4 space-y-6">
@@ -458,6 +477,50 @@ const OptimisationResults = ({
           </div>
         </CardContent>
       </Card>
+
+      {allPricesZero && (
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="flex w-full items-center gap-2">
+            {(hasPrevious || hasNext) && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onPreviousPlan}
+                disabled={!hasPrevious || isGenerating}
+                title="Previous Plan"
+                className="h-10 w-10 shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+
+            <Button
+              onClick={onGenerateAlternative}
+              disabled={isGenerating}
+              className="flex h-10 flex-1 items-center justify-center gap-2"
+              variant="default"
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`}
+              />
+              {isGenerating ? "Generating..." : "Give me another plan"}
+            </Button>
+
+            {(hasPrevious || hasNext) && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={onNextPlan}
+                disabled={!hasNext || isGenerating}
+                title="Next Plan"
+                className="h-10 w-10 shrink-0"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

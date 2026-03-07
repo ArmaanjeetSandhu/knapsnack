@@ -59,6 +59,7 @@ import {
 import { useCsvImport } from "./hooks/useCsvImport";
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { smoothScrollTo } from "./lib/utils";
+import { prepareOptimisationPayload } from "./lib/foodHelpers";
 import api from "./services/api";
 import type {
   FoodItem,
@@ -147,6 +148,12 @@ function App() {
     useState<FeasibilityAnalysisType | null>(null);
   const [lastAddedIds, setLastAddedIds] = useState<Array<string | number>>([]);
 
+  const [planHistory, setPlanHistory] = useState<OptimisationResultsState[]>(
+    [],
+  );
+  const [currentPlanIndex, setCurrentPlanIndex] = useState(0);
+  const [isGeneratingAlternative, setIsGeneratingAlternative] = useState(false);
+
   const calculationResultsRef = useRef<HTMLDivElement>(null);
   const feasibilityResultsRef = useRef<HTMLDivElement>(null);
   const foodSearchRef = useRef<HTMLDivElement>(null);
@@ -209,6 +216,8 @@ function App() {
     setNotification(null);
     setFeasibilityResults(null);
     setLastAddedIds([]);
+    setPlanHistory([]);
+    setCurrentPlanIndex(0);
     navigate("/");
   };
 
@@ -245,6 +254,9 @@ function App() {
     actions.setStoredResults(result);
     actions.setSnapshotFoods(state.selectedFoods);
     setFeasibilityResults(null);
+
+    setPlanHistory([result]);
+    setCurrentPlanIndex(0);
   };
 
   const handleFeasibilityResults = (result: FeasibilityAnalysisType) => {
@@ -331,6 +343,67 @@ function App() {
     actions.setShowCalculationResults(false);
     localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
     actions.setHasVisitedFoodSelection(true);
+  };
+
+  const handleGenerateAlternativePlan = async () => {
+    if (!state.nutrientGoals || !state.userInfo) return;
+
+    setIsGeneratingAlternative(true);
+    try {
+      const payload = prepareOptimisationPayload(
+        state.selectedFoods,
+        state.nutrientGoals,
+        {
+          age: state.userInfo.age,
+          gender: state.userInfo.gender,
+          smokingStatus: state.userInfo.smokingStatus,
+        },
+        true,
+      );
+
+      const result = await api.optimiseDiet(payload);
+
+      if (result.success) {
+        const newResult = result.result;
+        const updatedHistory = [...planHistory, newResult];
+
+        setPlanHistory(updatedHistory);
+        setCurrentPlanIndex(updatedHistory.length - 1);
+
+        actions.setOptimisationResults(newResult);
+        actions.setStoredResults(newResult);
+      } else {
+        setError(
+          "Failed to generate an alternative plan with these specific random costs. Try again.",
+        );
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to generate alternative plan.",
+      );
+    } finally {
+      setIsGeneratingAlternative(false);
+    }
+  };
+
+  const handlePreviousPlan = () => {
+    if (currentPlanIndex > 0) {
+      const newIndex = currentPlanIndex - 1;
+      setCurrentPlanIndex(newIndex);
+      actions.setOptimisationResults(planHistory[newIndex]);
+      actions.setStoredResults(planHistory[newIndex]);
+    }
+  };
+
+  const handleNextPlan = () => {
+    if (currentPlanIndex < planHistory.length - 1) {
+      const newIndex = currentPlanIndex + 1;
+      setCurrentPlanIndex(newIndex);
+      actions.setOptimisationResults(planHistory[newIndex]);
+      actions.setStoredResults(planHistory[newIndex]);
+    }
   };
 
   const {
@@ -514,6 +587,12 @@ function App() {
                 results={optimisationResults}
                 selectedFoods={snapshotFoods}
                 nutrientGoals={effectiveNutrientGoals}
+                onGenerateAlternative={handleGenerateAlternativePlan}
+                onPreviousPlan={handlePreviousPlan}
+                onNextPlan={handleNextPlan}
+                hasPrevious={currentPlanIndex > 0}
+                hasNext={currentPlanIndex < planHistory.length - 1}
+                isGenerating={isGeneratingAlternative}
               />
               <div className="mt-6">
                 <Button
