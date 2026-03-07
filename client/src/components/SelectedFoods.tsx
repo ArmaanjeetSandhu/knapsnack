@@ -504,22 +504,16 @@ const SelectedFoods = ({
                             animate={{
                               opacity: 1,
                               x: 0,
-                              backgroundColor: flashingFoods.includes(
-                                food.fdcId,
-                              )
-                                ? [
-                                    "rgba(0,0,0,0)",
-                                    "rgba(34, 197, 94, 0.2)",
-                                    "rgba(0,0,0,0)",
-                                  ]
-                                : "rgba(0,0,0,0)",
                             }}
                             transition={{
-                              duration: flashingFoods.includes(food.fdcId)
-                                ? 1.5
-                                : 0.2,
+                              duration: 0.2,
                             }}
                             exit={{ opacity: 0, x: 10 }}
+                            className={
+                              flashingFoods.includes(food.fdcId)
+                                ? "animate-soft-flash"
+                                : ""
+                            }
                           >
                             <TableCell>
                               <div className="flex h-full items-center justify-center pt-2">
