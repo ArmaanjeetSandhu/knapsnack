@@ -6,7 +6,7 @@ const ErrorPage = () => (
   <div className="flex min-h-[60vh] flex-col items-center justify-center p-4 text-center">
     <div className="mb-4">
       <img
-        src="/goals.gif"
+        src="/error.gif"
         alt="404 Error"
         className="mx-auto h-auto w-48 rounded-lg object-contain"
       />

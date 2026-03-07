@@ -5,6 +5,7 @@ import {
   Calculator,
   Eye,
   Info,
+  MessageSquare,
   Newspaper,
   RefreshCw,
 } from "lucide-react";
@@ -31,6 +32,7 @@ import AboutPage from "./components/pages/AboutPage";
 import BlogPage from "./components/pages/BlogPage";
 import BlogPostPage from "./components/pages/BlogPostPage";
 import ErrorPage from "./components/pages/ErrorPage";
+import FeedbackPage from "./components/pages/FeedbackPage";
 import LandingPage from "./components/pages/LandingPage";
 
 import CalculationResults from "./components/results/CalculationResults";
@@ -602,10 +604,39 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/" element={mainPlanner} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
+      <footer className="mt-auto bg-gray-900 py-4 text-white">
+        <div className="px-4">
+          <div className="flex w-full items-center justify-between">
+            <a
+              href="https://www.buymeacoffee.com/armaanjeetsandhu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Support this project on Buy Me a Coffee"
+            >
+              <img
+                src="https://img.buymeacoffee.com/button-api/?text=Support%20this%20project&emoji=&slug=armaanjeetsandhu&button_colour=ffffff&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
+                alt="Support this project"
+                className="h-[36px] w-auto rounded-md shadow-sm"
+              />
+            </a>
+
+            <Link to="/feedback" aria-label="Provide Feedback">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 text-white hover:bg-transparent hover:text-gray-300"
+              >
+                <MessageSquare className="h-5 w-5" />
+                <span className="hidden sm:inline">Feedback</span>
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

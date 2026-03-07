@@ -100,9 +100,7 @@ const FoodSearch = ({
     if (result.success) {
       onFoodsImport(result.data);
       setSearchError(null);
-    } else {
-      setSearchError((result as CsvParseFailure).error);
-    }
+    } else setSearchError((result as CsvParseFailure).error);
   };
 
   const createParseConfig = (errorPrefix: string) => ({

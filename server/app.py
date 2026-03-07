@@ -5,11 +5,14 @@ Main Flask application for diet optimisation service.
 import logging
 import mimetypes
 import os
+import smtplib
 from datetime import datetime, timedelta
+from email.message import EmailMessage
 from typing import List, Tuple, Union
 
 import numpy as np
 import requests
+from dotenv import load_dotenv
 from flask import (
     Flask,
     Response,
@@ -46,6 +49,8 @@ from server.services.calculation import (
 from server.services.food_service import search_foods
 from server.services.optimisation import analyse_feasibility, optimise_diet
 from server.utils.response_utils import create_error_response
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.ERROR,
@@ -365,6 +370,50 @@ def optimise_api() -> ResponseType:
         app.logger.error(f"Error occurred during optimisation: {str(e)}", exc_info=True)
         return create_error_response(
             "An internal error has occurred. Please try again later.", status_code=500
+        )
+
+
+@app.route("/api/feedback", methods=["POST"])
+def feedback_api() -> ResponseType:
+    """API endpoint to handle and securely forward user feedback."""
+    try:
+        data = request.json
+        if not data or not data.get("message"):
+            return create_error_response("Message is required")
+
+        user_email = data.get("email") or "Anonymous"
+        message_body = data.get("message")
+
+        destination_email = "armaanjeetsandhu430@gmail.com"
+
+        smtp_user = os.environ.get("SMTP_USER")
+        smtp_pass = os.environ.get("SMTP_PASS")
+
+        if not smtp_user or not smtp_pass:
+            app.logger.error("SMTP credentials not configured.")
+            return create_error_response(
+                "Email sending is not configured on the server.", status_code=500
+            )
+
+        msg = EmailMessage()
+        msg.set_content(f"Feedback from: {user_email}\n\nMessage:\n{message_body}")
+        msg["Subject"] = "New Feedback for Knap[Snack]"
+        msg["From"] = smtp_user
+        msg["To"] = destination_email
+
+        if user_email != "Anonymous":
+            msg["Reply-To"] = user_email
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+
+        return jsonify({"success": True, "message": "Feedback sent successfully."})
+
+    except Exception as e:
+        app.logger.error(f"Failed to send feedback email: {str(e)}", exc_info=True)
+        return create_error_response(
+            "An internal error has occurred while sending feedback", status_code=500
         )
 
 

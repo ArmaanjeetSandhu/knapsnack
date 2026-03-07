@@ -306,11 +306,10 @@ const AboutPage = () => {
   const faqRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
-    if (openItemIndex !== null && faqRefs.current[openItemIndex]) {
+    if (openItemIndex !== null && faqRefs.current[openItemIndex])
       setTimeout(() => {
         faqRefs.current[openItemIndex]?.scrollIntoView({ behavior: "smooth" });
       }, 400);
-    }
   }, [openItemIndex]);
 
   const handleToggle = (index: number) => {

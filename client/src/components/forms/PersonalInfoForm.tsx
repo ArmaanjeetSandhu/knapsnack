@@ -300,9 +300,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
             e.preventDefault();
             handleNext();
           }
-        } else {
-          handleNext();
-        }
+        } else handleNext();
       }
     };
 
