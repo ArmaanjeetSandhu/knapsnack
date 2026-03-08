@@ -35,7 +35,7 @@ const FeedbackPage = () => {
   return (
     <div className="flex justify-center px-4">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-stretch gap-8 md:flex-row md:gap-16 lg:gap-24">
-        <div className="flex w-full flex-col justify-between py-2 text-center md:w-5/12">
+        <div className="flex w-full flex-col justify-between pb-6 pt-2 text-center md:w-5/12 md:pb-8 lg:pb-10">
           <div className="flex flex-col items-center">
             <div className="mb-6 flex justify-center">
               <img
