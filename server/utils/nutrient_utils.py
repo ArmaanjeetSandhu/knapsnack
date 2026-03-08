@@ -11,7 +11,7 @@ import pandas as pd
 from server.config import (
     CARB_CALORIES_PER_GRAM,
     FAT_CALORIES_PER_GRAM,
-    FIBER_RATIO,
+    FIBRE_RATIO,
     NUTRIENT_MAP,
     PROTEIN_CALORIES_PER_GRAM,
     SATURATED_FAT_RATIO,
@@ -69,7 +69,7 @@ def calculate_macros(
     protein = round(pratio * daily_caloric_intake / PROTEIN_CALORIES_PER_GRAM)
     carbohydrate = round(cratio * daily_caloric_intake / CARB_CALORIES_PER_GRAM)
     fats = round(fratio * daily_caloric_intake / FAT_CALORIES_PER_GRAM)
-    fibre = round(FIBER_RATIO * daily_caloric_intake)
+    fibre = round(FIBRE_RATIO * daily_caloric_intake)
     saturated_fats = round(
         SATURATED_FAT_RATIO * daily_caloric_intake / FAT_CALORIES_PER_GRAM
     )
