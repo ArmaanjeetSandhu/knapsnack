@@ -1,6 +1,5 @@
 import { Moon, Sun } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { Button } from "../ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -41,23 +40,33 @@ const ThemeToggle = () => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
+          <button
             onClick={toggleTheme}
-            className={`h-10 w-10 rounded-full transition-colors hover:bg-transparent ${
-              isDark
-                ? "text-yellow-500 hover:text-yellow-200"
-                : "text-white hover:text-gray-300"
-            }`}
+            className="no-select relative flex h-8 w-14 cursor-pointer rounded-full border border-gray-700 bg-gray-900 p-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-white/10 dark:bg-[#011d16] sm:h-10 sm:w-20"
+            aria-label="Toggle theme"
           >
-            {isDark ? (
-              <Sun className="h-5 w-5 transition-all" />
-            ) : (
-              <Moon className="h-5 w-5 transition-all" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
+            <div
+              className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-gray-800 transition-all duration-300 dark:bg-white/10 ${
+                isDark ? "left-[50%]" : "left-1"
+              }`}
+            />
+
+            <div
+              className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${
+                !isDark ? "text-yellow-400" : "text-white hover:text-gray-200"
+              }`}
+            >
+              <Sun className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+            </div>
+
+            <div
+              className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${
+                isDark ? "text-blue-400" : "text-white hover:text-gray-200"
+              }`}
+            >
+              <Moon className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+            </div>
+          </button>
         </TooltipTrigger>
         <TooltipContent
           side="bottom"

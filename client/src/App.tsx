@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Calculator,
   Eye,
+  HelpCircle,
   Info,
   MessageSquare,
   Newspaper,
@@ -625,7 +626,7 @@ function App() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="mb-6 bg-gray-900 py-4 text-white">
+      <header className="mb-6 bg-gray-900 py-4 text-white dark:border-b dark:border-white/10 dark:bg-[#011d16]">
         <div className="px-4">
           <div className="flex items-center justify-between">
             <button
@@ -635,42 +636,45 @@ function App() {
               Knap[Snack]: The Meal Planner
             </button>
             <NavigationMenu>
-              <NavigationMenuList>
+              <NavigationMenuList className="space-x-1 sm:space-x-1">
                 <NavigationMenuItem>
                   <Link to="/about" aria-label="About Knap[Snack]">
                     <Button
                       variant="ghost"
-                      size="icon"
-                      className="text-white hover:bg-transparent hover:text-gray-300"
+                      className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
                     >
                       <Info className="h-5 w-5" />
+                      <span className="hidden sm:inline">About</span>
                     </Button>
                   </Link>
                 </NavigationMenuItem>
+
                 <NavigationMenuItem>
                   <Link to="/blog" aria-label="Blog">
                     <Button
                       variant="ghost"
-                      size="icon"
-                      className="text-white hover:bg-transparent hover:text-gray-300"
+                      className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
                     >
                       <Newspaper className="h-5 w-5" />
+                      <span className="hidden sm:inline">Blog</span>
                     </Button>
                   </Link>
                 </NavigationMenuItem>
+
                 <NavigationMenuItem>
                   <a
                     href="https://github.com/ArmaanjeetSandhu/knapsnack"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-2 text-white hover:text-gray-300"
+                    className="flex items-center gap-2 rounded-md px-1 py-2 text-white transition-colors hover:text-gray-300 sm:px-4"
                     aria-label="View project on GitHub"
                   >
                     <GithubLogoIcon size={20} weight="bold" />
-                    <span className="sr-only">GitHub</span>
+                    <span className="hidden sm:inline">GitHub</span>
                   </a>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
+
+                <NavigationMenuItem className="ml-1 sm:ml-2">
                   <ThemeToggle />
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -688,7 +692,7 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
-      <footer className="mt-auto bg-gray-900 py-4 text-white">
+      <footer className="mt-auto bg-gray-900 py-4 text-white dark:border-t dark:border-white/10 dark:bg-[#011d16]">
         <div className="px-4">
           <div className="flex w-full items-center justify-between">
             <a
@@ -698,21 +702,39 @@ function App() {
               aria-label="Support this project on Buy Me a Coffee"
             >
               <img
-                src="https://img.buymeacoffee.com/button-api/?text=Support%20this%20project&emoji=&slug=armaanjeetsandhu&button_colour=ffffff&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00"
+                src="https://img.buymeacoffee.com/button-api/?text=Support%20this%20project&emoji=%E2%98%95&slug=armaanjeetsandhu&button_colour=111827&font_colour=ffffff&font_family=Bree&outline_colour=ffffff&coffee_colour=FFDD00"
                 alt="Support this project"
-                className="h-[36px] w-auto rounded-md shadow-sm"
+                className="block h-[42px] w-auto rounded-md shadow-sm dark:hidden"
+              />
+
+              <img
+                src="https://img.buymeacoffee.com/button-api/?text=Support%20this%20project&emoji=%E2%98%95&slug=armaanjeetsandhu&button_colour=141210&font_colour=ffffff&font_family=Bree&outline_colour=ffffff&coffee_colour=FFDD00"
+                alt="Support this project"
+                className="hidden h-[42px] w-auto rounded-md shadow-sm dark:block"
               />
             </a>
 
-            <Link to="/feedback" aria-label="Provide Feedback">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 text-white hover:bg-transparent hover:text-gray-300"
-              >
-                <MessageSquare className="h-5 w-5" />
-                <span className="hidden sm:inline">Feedback</span>
-              </Button>
-            </Link>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Link to="/faq" aria-label="Frequently Asked Questions">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+                >
+                  <HelpCircle className="h-5 w-5" />
+                  <span className="hidden sm:inline">FAQ</span>
+                </Button>
+              </Link>
+
+              <Link to="/feedback" aria-label="Provide Feedback">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+                >
+                  <MessageSquare className="h-5 w-5" />
+                  <span className="hidden sm:inline">Feedback</span>
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
