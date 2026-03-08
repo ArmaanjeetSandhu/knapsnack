@@ -33,6 +33,7 @@ import {
 import type { SortConfig } from "../../hooks/useSortableData";
 import handleExportCSV from "../ExportHandler";
 import { NutrientCards, NutrientTable } from "../nutrients/NutrientDisplay";
+import NutritionFactsLabel from "../nutrients/NutritionFactsLabel";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -45,6 +46,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import BlinkingDot from "../common/BlinkingDot";
 
 interface NutrientGoalsShape {
   lower_bounds?: NutrientMap;
@@ -114,6 +116,8 @@ const OptimisationResults = ({
     key: null,
     direction: "ascending",
   });
+
+  const [openFoodLabel, setOpenFoodLabel] = useState<string | null>(null);
 
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -346,9 +350,32 @@ const OptimisationResults = ({
                   </TableHeader>
                   <TableBody>
                     {sortedPortionItems.map((item, index) => (
-                      <TableRow key={index}>
+                      <TableRow
+                        key={index}
+                        className="cursor-pointer transition-colors hover:bg-muted/50"
+                        onClick={() => setOpenFoodLabel(item.food)}
+                      >
                         <TableCell className="font-medium">
-                          {item.food}
+                          <div className="flex items-center gap-2">
+                            <BlinkingDot />
+                            <span>{item.food}</span>
+                          </div>
+                          {(() => {
+                            const food = selectedFoods.find(
+                              (f) => f.description === item.food,
+                            );
+                            if (!food) return null;
+                            return (
+                              <NutritionFactsLabel
+                                foodName={item.food}
+                                servingSize={item.servingSize}
+                                servings={item.servings}
+                                nutrients={food.nutrients}
+                                isOpen={openFoodLabel === item.food}
+                                onClose={() => setOpenFoodLabel(null)}
+                              />
+                            );
+                          })()}
                         </TableCell>
                         <TableCell className="text-center">
                           {item.servingSize}
