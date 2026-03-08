@@ -360,22 +360,6 @@ const OptimisationResults = ({
                             <BlinkingDot />
                             <span>{item.food}</span>
                           </div>
-                          {(() => {
-                            const food = selectedFoods.find(
-                              (f) => f.description === item.food,
-                            );
-                            if (!food) return null;
-                            return (
-                              <NutritionFactsLabel
-                                foodName={item.food}
-                                servingSize={item.servingSize}
-                                servings={item.servings}
-                                nutrients={food.nutrients}
-                                isOpen={openFoodLabel === item.food}
-                                onClose={() => setOpenFoodLabel(null)}
-                              />
-                            );
-                          })()}
                         </TableCell>
                         <TableCell className="text-center">
                           {item.servingSize}
@@ -400,6 +384,30 @@ const OptimisationResults = ({
                   </TableBody>
                 </Table>
               </div>
+
+              {(() => {
+                if (!openFoodLabel) return null;
+
+                const portionItem = sortedPortionItems.find(
+                  (i) => i.food === openFoodLabel,
+                );
+                const food = selectedFoods.find(
+                  (f) => f.description === openFoodLabel,
+                );
+
+                if (!portionItem || !food) return null;
+
+                return (
+                  <NutritionFactsLabel
+                    foodName={portionItem.food}
+                    servingSize={portionItem.servingSize}
+                    servings={portionItem.servings}
+                    nutrients={food.nutrients}
+                    isOpen={true}
+                    onClose={() => setOpenFoodLabel(null)}
+                  />
+                );
+              })()}
             </div>
 
             <div>
