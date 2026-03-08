@@ -622,7 +622,10 @@ function App() {
         <div className="px-4">
           <div className="flex items-center justify-between">
             <button
-              onClick={() => actions.setShowLanding(true)}
+              onClick={() => {
+                actions.setShowLanding(true);
+                navigate("/");
+              }}
               className="text-left text-xl font-bold transition-colors hover:text-gray-300"
             >
               Knap[Snack]: The Meal Planner
