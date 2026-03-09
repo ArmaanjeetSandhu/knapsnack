@@ -27,6 +27,7 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
     localStorage.setItem("knapsnack_theme", newIsDark ? "dark" : "light");
+    window.dispatchEvent(new Event("knapsnack-theme-change"));
   }, [isDark]);
 
   useEffect(() => {
