@@ -34,7 +34,6 @@ export default defineConfig({
             "@radix-ui/react-tooltip",
           ],
           "animation-vendor": ["framer-motion"],
-          "math-vendor": ["katex", "react-katex"],
         },
       },
     },
