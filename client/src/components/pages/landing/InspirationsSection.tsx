@@ -45,6 +45,9 @@ const BLOGS: [string, string][] = [
 function InspirationsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const textPanelRef = useRef<HTMLDivElement>(null);
+  const prevWidthRef = useRef<number>(0);
+  const containerWidthRef = useRef<number>(1000);
+
   const [containerWidth, setContainerWidth] = useState(0);
   const [textArea, setTextArea] = useState({ width: 0, height: 0 });
   const [isMobile, setIsMobile] = useState(true);
@@ -54,11 +57,21 @@ function InspirationsSection() {
     const measure = () => {
       const md = window.innerWidth >= 768;
       setIsMobile(!md);
+
       if (containerRef.current) {
         const w = containerRef.current.offsetWidth;
         setContainerWidth(w);
-        if (x.get() > w / 2) x.set(w);
+        containerWidthRef.current = w;
+
+        const prevW = prevWidthRef.current || w;
+        const ratio = x.get() / prevW;
+
+        if (ratio > 0.5) x.set(w);
+        else x.set(0);
+
+        prevWidthRef.current = w;
       }
+
       if (textPanelRef.current) {
         const rect = textPanelRef.current.getBoundingClientRect();
         const pad = md ? 40 : 24;
@@ -68,12 +81,18 @@ function InspirationsSection() {
         });
       }
     };
+
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [x]);
 
-  const clipPathRight = useTransform(x, [0, containerWidth || 1000], [100, 0]);
+  const clipPathRight = useTransform(x, (latestX) => {
+    const w = containerWidthRef.current || 1000;
+    const progress = Math.min(Math.max(latestX / w, 0), 1);
+    return 100 - progress * 100;
+  });
+
   const clipPath = useMotionTemplate`inset(0% ${clipPathRight}% 0% 0%)`;
 
   const snapTo = (t: number) =>
