@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
+import html2canvas from "html2canvas";
+import { Download } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { adjustNutrientsForServingSize } from "../../lib/foodHelpers";
 import {
@@ -26,6 +28,8 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
   isOpen,
   onClose,
 }) => {
+  const labelRef = useRef<HTMLDivElement>(null);
+
   const perServingNutrients = adjustNutrientsForServingSize(
     nutrients,
     servingSize,
@@ -41,6 +45,24 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
   const perServingCals = calculateCalories(perServingNutrients);
   const totalServingCals = calculateCalories(totalServingNutrients);
+
+  const handleDownload = async () => {
+    if (!labelRef.current) return;
+    try {
+      const canvas = await html2canvas(labelRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+      });
+      const url = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      const safeFileName = foodName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+      link.download = `${safeFileName}_nutrition_label.png`;
+      link.href = url;
+      link.click();
+    } catch (error) {
+      console.error("Failed to download label image:", error);
+    }
+  };
 
   const renderRow = (
     label: string,
@@ -86,8 +108,16 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
     if (activeRows.length === 0) return null;
 
     return (
-      <div className="mt-2">
-        <div className="border-b-2 border-black pb-1 text-sm font-black uppercase">
+      <div>
+        <div style={{ height: 16, backgroundColor: "white" }}></div>
+        <div
+          className="border-black text-sm font-black uppercase"
+          style={{
+            borderBottomWidth: 2,
+            borderBottomStyle: "solid",
+            paddingBottom: 4,
+          }}
+        >
           {title}
         </div>
         {activeRows.map((n) => renderRow(n.name, n.key, n.unit, false, false))}
@@ -104,12 +134,42 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="border-2 border-black p-2 font-sans md:p-4">
-          <h1 className="border-b-4 border-black pb-1 text-2xl font-black tracking-tight md:text-3xl">
+        <div
+          ref={labelRef}
+          className="relative border-2 border-black bg-white p-2 font-sans md:p-4"
+        >
+          <button
+            onClick={handleDownload}
+            data-html2canvas-ignore="true"
+            className="absolute right-2 top-2 text-neutral-400 transition-colors hover:text-black focus:outline-none md:right-4 md:top-4"
+            title="Download Label as Image"
+            aria-label="Download Label as Image"
+          >
+            <Download className="h-5 w-5" />
+          </button>
+
+          <h1
+            className="border-black font-black tracking-tight"
+            style={{
+              borderBottomWidth: 4,
+              borderBottomStyle: "solid",
+              paddingBottom: 4,
+              marginBottom: 0,
+              fontSize: "1.75rem",
+            }}
+          >
             Nutrition Facts
           </h1>
 
-          <div className="border-b-2 border-black pb-2 pt-2">
+          <div
+            className="border-black"
+            style={{
+              borderBottomWidth: 2,
+              borderBottomStyle: "solid",
+              paddingTop: 8,
+              paddingBottom: 8,
+            }}
+          >
             <div className="text-lg font-semibold text-neutral-800">
               {foodName}
             </div>
@@ -128,20 +188,39 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
             </div>
           </div>
 
-          <div className="mt-2 flex justify-end pb-1 text-xs font-bold sm:text-sm">
-            <div className="flex w-1/2 justify-end space-x-2 sm:space-x-4">
+          <div
+            className="flex justify-end text-xs font-bold"
+            style={{ marginTop: 8, paddingBottom: 4 }}
+          >
+            <div className="flex w-1/2 justify-end" style={{ gap: 16 }}>
               <span className="w-20 text-right">Per Serving</span>
               <span className="w-20 text-right">Total</span>
             </div>
           </div>
 
-          <div className="border-b-2 border-black"></div>
+          <div
+            className="border-black"
+            style={{ borderBottomWidth: 2, borderBottomStyle: "solid" }}
+          ></div>
 
-          <div className="flex items-end justify-between border-b-4 border-black py-2">
+          <div
+            className="flex items-end justify-between border-black"
+            style={{
+              borderBottomWidth: 4,
+              borderBottomStyle: "solid",
+              paddingTop: 8,
+              paddingBottom: 8,
+            }}
+          >
             <div>
-              <span className="text-lg font-black md:text-xl">Calories</span>
+              <span className="font-black" style={{ fontSize: "1.15rem" }}>
+                Calories
+              </span>
             </div>
-            <div className="flex w-1/2 justify-end space-x-2 font-black sm:space-x-4 md:text-lg">
+            <div
+              className="flex w-1/2 justify-end font-black"
+              style={{ gap: 16, fontSize: "1.05rem" }}
+            >
               <span className="w-20 text-right">
                 {perServingCals.toFixed(2)}
               </span>
@@ -151,7 +230,15 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
             </div>
           </div>
 
-          <div className="border-b-2 border-black pb-1 pt-2 text-sm font-black uppercase">
+          <div style={{ height: 16, backgroundColor: "white" }}></div>
+          <div
+            className="border-black text-sm font-black uppercase"
+            style={{
+              borderBottomWidth: 2,
+              borderBottomStyle: "solid",
+              paddingBottom: 4,
+            }}
+          >
             Macronutrients
           </div>
           {renderRow("Water", "Water (mL)", "mL", false, true)}

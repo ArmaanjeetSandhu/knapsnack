@@ -10,7 +10,7 @@ import {
 } from "framer-motion";
 import FillText from "../../common/FillText";
 
-const WORDS = ["What", "Inspires", "Us"];
+const WORDS = ["WHAT", "INSPIRES", "US"];
 
 const BOOKS: [string, string, string][] = [
   [
@@ -183,7 +183,7 @@ function InspirationsSection() {
 
             <motion.div
               ref={textPanelRef}
-              className="absolute inset-0 bg-primary px-6 text-primary-foreground sm:px-8 md:px-10"
+              className="absolute inset-0 bg-primary px-6 text-white sm:px-8 md:px-10"
               style={{ clipPath }}
             >
               <div className="flex h-full w-full items-center justify-center">
