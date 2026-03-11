@@ -53,6 +53,17 @@ function InspirationsSection() {
   const [isMobile, setIsMobile] = useState(true);
   const x = useMotionValue(5000);
 
+  const [isAtRight, setIsAtRight] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = x.on("change", (latestX) => {
+      const w = containerWidthRef.current || 1000;
+      setIsAtRight(latestX > w / 2);
+    });
+
+    return () => unsubscribe();
+  }, [x]);
+
   useEffect(() => {
     const measure = () => {
       const md = window.innerWidth >= 768;
@@ -210,9 +221,32 @@ function InspirationsSection() {
               className="flex h-full w-10 items-center justify-center md:w-12"
               onClick={handleToggle}
             >
-              <div className="flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border border-border bg-background shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:border-primary/50 md:h-14 md:w-10">
+              <motion.div
+                animate={
+                  isAtRight
+                    ? {
+                        scale: [1, 1.15, 1],
+                        boxShadow: [
+                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
+                          "0px 0px 0px 12px rgba(128, 128, 128, 0.25)",
+                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
+                        ],
+                      }
+                    : {
+                        scale: 1,
+                        boxShadow: "0px 0px 0px 0px rgba(128, 128, 128, 0)",
+                      }
+                }
+                transition={
+                  isAtRight
+                    ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                    : { duration: 0.3 }
+                }
+                whileHover={{ scale: 1.25 }}
+                className="flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border border-border bg-background shadow-lg transition-colors group-hover:border-primary/50 md:h-14 md:w-10"
+              >
                 <svg
-                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary md:h-4 md:w-4"
+                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -225,7 +259,7 @@ function InspirationsSection() {
                   />
                 </svg>
                 <svg
-                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary md:h-4 md:w-4"
+                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -237,7 +271,7 @@ function InspirationsSection() {
                     d="M9 5l7 7-7 7"
                   />
                 </svg>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
