@@ -16,7 +16,7 @@ export const SquiggleLink = ({
   >
     <span className="relative z-10">{children}</span>
     <svg
-      className="absolute -bottom-1 left-0 w-full sm:-bottom-2"
+      className="absolute -bottom-2 left-0 w-full"
       height="14"
       viewBox="0 0 100 14"
       preserveAspectRatio="none"
