@@ -206,13 +206,11 @@ const FaqPage = () => {
   const faqRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
-    if (!window.location.hash) {
-      window.scrollTo(0, 0);
-    } else if (openItemIndex !== null && faqRefs.current[openItemIndex]) {
+    if (!window.location.hash) window.scrollTo(0, 0);
+    else if (openItemIndex !== null && faqRefs.current[openItemIndex])
       setTimeout(() => {
         faqRefs.current[openItemIndex]?.scrollIntoView({ behavior: "smooth" });
       }, 400);
-    }
   }, [openItemIndex]);
 
   const handleToggle = (index: number) => {
