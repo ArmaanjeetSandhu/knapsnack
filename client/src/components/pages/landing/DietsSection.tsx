@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-interface OrbitScene {
+interface OrbitSceneData {
   id: string;
   label: string;
   pathId: string;
@@ -12,7 +12,7 @@ interface OrbitScene {
   labelDelay?: number;
 }
 
-const scenes: OrbitScene[] = [
+const scenes: OrbitSceneData[] = [
   {
     id: "ticks1",
     label: "SUPPORTS",
@@ -49,7 +49,13 @@ const scenes: OrbitScene[] = [
   },
 ];
 
-function OrbitScene({ scene, index }: { scene: OrbitScene; index: number }) {
+function OrbitScene({
+  scene,
+  index,
+}: {
+  scene: OrbitSceneData;
+  index: number;
+}) {
   const isAccent = scene.textColor === "accent";
 
   return (

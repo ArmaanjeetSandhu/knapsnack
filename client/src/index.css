@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,6 +29,16 @@
     --ring: 142 76% 36%;
     --radius: 0.5rem;
     --flash-bg: rgb(34, 197, 94, 0.2);
+    --accent-blue: #2463eb;
+    --accent-green: #16a249;
+    --accent-highlight: var(--accent-blue);
+
+    --orbit-accent: #e8c547;
+    --orbit-accent-diets: var(--accent-blue);
+    --orbit-fg: #0a0a0a;
+    --orbit-ring: rgba(0, 0, 0, 0.18);
+    --orbit-tick-major: #e8c547;
+    --orbit-tick-minor: #888;
   }
 
   .dark {
@@ -52,6 +64,11 @@
     --input: 240 3.7% 15.9%;
     --ring: 142 76% 36%;
     --flash-bg: rgb(74, 222, 128, 0.35);
+    --accent-highlight: var(--accent-green);
+
+    --orbit-accent-diets: var(--accent-green);
+    --orbit-fg: #f0ebe0;
+    --orbit-ring: rgba(255, 255, 255, 0.12);
   }
 
   *::-webkit-scrollbar {
@@ -88,6 +105,27 @@
 
   .animate-soft-flash {
     animation: soft-flash 1.5s ease-in-out;
+  }
+
+  @keyframes orbitSpin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes orbitPulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.35;
+      transform: scale(1.6);
+    }
   }
 }
 
