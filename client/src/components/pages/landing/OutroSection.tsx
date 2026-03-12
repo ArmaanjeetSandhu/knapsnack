@@ -1,41 +1,10 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { ParsedText } from "../../common/ParsedText";
 
 const OutroSection = () => {
-  const passages = [
-    {
-      text: "The diet problem became one of the founding motivations for linear programming as a field.",
-      color: "text-foreground",
-    },
-    {
-      text: "When George Stigler posed it in 1945, he estimated the cheapest healthy diet by hand through heroic effort,",
-      color: "accent-highlight",
-    },
-    {
-      text: "arriving at an answer he suspected was near-optimal but couldn't prove.",
-      color: "text-muted-foreground",
-    },
-    {
-      text: "A few years later, once the simplex method existed,",
-      color: "text-foreground",
-    },
-    {
-      text: "a computer confirmed the true optimum — ",
-      color: "accent-highlight",
-    },
-    {
-      text: "and Stigler's painstaking human guess had been off by about 0.5%.",
-      color: "text-muted-foreground",
-    },
-    {
-      text: "That simplex method forms the foundation of how Knap[Snack] finds optimal diets for you today.",
-      color: "text-foreground",
-    },
-    {
-      text: "Of course the original problem was formulated for a 70kg male, with a consideration for 9 nutrients and 77 nutrients. Knap[Snack], however, is meant for everyone, with a consideration for no less than 26 nutrients, and as many foods as you like.",
-      color: "text-muted-foreground",
-    },
-  ];
+  const outroText =
+    "The diet problem became one of the founding motivations for linear programming as a field. When <acc>Stigler</acc> posed it in <acc>1945</acc>, he estimated the cheapest healthy diet by hand through heroic effort, <m>arriving at an answer he suspected was near-optimal but couldn't prove.</m> A few years later, once the <acc>simplex method</acc> existed, a computer confirmed the true optimum, and Stigler's painstaking human guess had been off by about <acc>0.5%</acc>. That simplex method forms the foundation of how Knap<acc>[Snack]</acc> finds optimal diets for you today. The original problem was formulated for a <acc>70kg</acc> male, with a consideration for <acc>9</acc> nutrients and <acc>77</acc> foods. But Knap<acc>[Snack]</acc> is meant for everyone, and takes into account no less than <acc>26</acc> <m>nutrients, with as many foods as you like.</m>";
 
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -153,22 +122,11 @@ const OutroSection = () => {
             viewport={{ once: true }}
             className="w-[55%]"
           >
-            <div ref={textRef} className="w-full">
-              {passages.map((passage, index) => (
-                <span
-                  key={index}
-                  className={`inline font-black tracking-tighter ${
-                    passage.color !== "accent-highlight" ? passage.color : ""
-                  } no-select transition-colors duration-300`}
-                  style={
-                    passage.color === "accent-highlight"
-                      ? { color: "var(--accent-highlight)" }
-                      : undefined
-                  }
-                >
-                  {passage.text}{" "}
-                </span>
-              ))}
+            <div
+              ref={textRef}
+              className="no-select w-full font-black tracking-tighter transition-colors duration-300"
+            >
+              <ParsedText text={outroText} />
             </div>
           </motion.div>
         </div>
