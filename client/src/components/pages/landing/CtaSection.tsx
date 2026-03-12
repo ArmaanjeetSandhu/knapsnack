@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+
 import { ParsedText } from "../../common/ParsedText";
 
 interface CtaSectionProps {
@@ -8,7 +9,7 @@ interface CtaSectionProps {
 
 const CtaSection = ({ onGetStarted }: CtaSectionProps) => {
   return (
-    <section className="relative flex w-full flex-col py-16 sm:py-24">
+    <section className="relative flex w-full flex-col py-4 sm:py-8">
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
