@@ -13,6 +13,7 @@ import {
 import FoodSearch from "./components/FoodSearch";
 import SelectedFoods from "./components/SelectedFoods";
 
+import BrandLogo from "./components/common/BrandLogo";
 import DropzoneOverlay from "./components/common/DropzoneOverlay";
 import Footer from "./components/common/Footer";
 import NotificationToast from "./components/common/NotificationToast";
@@ -626,9 +627,12 @@ function App() {
                 actions.setShowLanding(true);
                 navigate("/");
               }}
-              className="text-left text-xl font-bold transition-colors hover:text-gray-300"
+              className="flex items-baseline gap-[0.15em] transition-transform hover:scale-[1.02]"
             >
-              Knap[Snack]: The Meal Planner
+              <BrandLogo variant="header" />
+              <span className="hidden text-xl font-black tracking-tighter text-white sm:inline-block sm:text-2xl">
+                : The Meal Planner
+              </span>
             </button>
             <NavigationMenu>
               <NavigationMenuList className="space-x-1 sm:space-x-1">
