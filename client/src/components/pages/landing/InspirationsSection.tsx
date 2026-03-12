@@ -1,5 +1,3 @@
-import { BookOpen, Rss } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -8,7 +6,11 @@ import {
   animate,
   PanInfo,
 } from "framer-motion";
+import { BookOpen, Rss } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
 import FillText from "../../common/FillText";
+import { ParsedText } from "../../common/ParsedText";
 
 const WORDS = ["WHAT", "INSPIRES", "US"];
 
@@ -125,7 +127,7 @@ function InspirationsSection() {
   return (
     <section
       id="inspiration"
-      className="relative flex w-full flex-col items-center justify-center overflow-hidden py-16 sm:py-24"
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden py-4 sm:py-8"
     >
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
         <div className="no-select relative mx-auto h-[550px] w-full font-sans md:h-[350px]">
@@ -133,57 +135,63 @@ function InspirationsSection() {
             ref={containerRef}
             className="absolute inset-0 overflow-hidden rounded-3xl border border-border bg-card shadow-xl"
           >
-            <div className="absolute inset-0 flex flex-col justify-center bg-card py-6 pl-16 pr-6 text-card-foreground sm:py-8 sm:pl-16 sm:pr-8 md:py-10 md:pl-20 md:pr-10">
-              <h2 className="mb-6 text-xl font-bold tracking-tight text-primary md:text-2xl">
-                Media That Shaped Our Process
+            <div className="absolute inset-0 flex flex-col justify-center bg-card py-4 pl-14 pr-4 text-foreground sm:py-6 sm:pl-16 sm:pr-6 md:py-8 md:pl-20 md:pr-10">
+              <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Inspirations
+              </span>
+
+              <h2 className="mb-8 text-[clamp(1.5rem,4vw,2.5rem)] font-black leading-[0.9] tracking-tighter text-foreground">
+                <ParsedText text="<acc>Media</acc> That Shaped Our Process" />
               </h2>
-              <div className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:gap-16 lg:gap-24">
+
+              <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:gap-10">
                 <div>
-                  <div className="mb-3 flex items-center gap-2 border-b border-border pb-2 md:mb-4">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <h3 className="text-base font-semibold md:text-lg">
-                      Books
+                  <div className="mb-3 flex items-center gap-2 border-b border-foreground/20 pb-2">
+                    <BookOpen className="h-5 w-5 text-foreground" />
+                    <h3 className="text-xl font-black leading-none tracking-tighter text-foreground">
+                      <ParsedText text="<acc>Books</acc>" />
                     </h3>
                   </div>
-                  <ul className="space-y-2 md:space-y-3">
+                  <ul className="space-y-2">
                     {BOOKS.map(([href, title, author]) => (
-                      <li key={title}>
+                      <li key={title} className="leading-snug">
                         <a
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:underline"
                         >
-                          <strong className="text-sm font-medium">
-                            {title}
-                          </strong>
+                          <span className="text-base font-bold text-foreground transition-colors sm:text-lg">
+                            <ParsedText text={title} />
+                          </span>
                         </a>
-                        <span className="block text-xs text-muted-foreground md:ml-2 md:inline">
-                          {author}
+                        <span className="block text-sm font-bold text-muted-foreground md:ml-2 md:inline">
+                          <ParsedText text={`<m>${author}</m>`} />
                         </span>
                       </li>
                     ))}
                   </ul>
                 </div>
+
                 <div>
-                  <div className="mb-3 flex items-center gap-2 border-b border-border pb-2 md:mb-4">
-                    <Rss className="h-4 w-4 text-primary" />
-                    <h3 className="text-base font-semibold md:text-lg">
-                      Blogs
+                  <div className="mb-3 flex items-center gap-2 border-b border-foreground/20 pb-2">
+                    <Rss className="h-5 w-5 text-foreground" />
+                    <h3 className="text-xl font-black leading-none tracking-tighter text-foreground">
+                      <ParsedText text="<acc>Blogs</acc>" />
                     </h3>
                   </div>
-                  <ul className="space-y-2 md:space-y-3">
+                  <ul className="space-y-2">
                     {BLOGS.map(([href, title]) => (
-                      <li key={title}>
+                      <li key={title} className="leading-snug">
                         <a
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="hover:underline"
                         >
-                          <strong className="text-sm font-medium">
-                            {title}
-                          </strong>
+                          <span className="text-base font-bold text-foreground transition-colors sm:text-lg">
+                            <ParsedText text={title} />
+                          </span>
                         </a>
                       </li>
                     ))}
@@ -194,7 +202,7 @@ function InspirationsSection() {
 
             <motion.div
               ref={textPanelRef}
-              className="absolute inset-0 bg-primary px-6 text-white sm:px-8 md:px-10"
+              className="absolute inset-0 z-10 bg-primary px-6 text-white sm:px-8 md:px-10"
               style={{ clipPath }}
             >
               <div className="flex h-full w-full items-center justify-center">

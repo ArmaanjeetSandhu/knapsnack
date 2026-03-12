@@ -1,5 +1,6 @@
 import { Moon, Sun } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +16,7 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
   const [isDark, setIsDark] = useState<boolean>(() => {
     const storedTheme = localStorage.getItem("knapsnack_theme");
     if (storedTheme) return storedTheme === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return false;
   });
 
   useEffect(() => {
