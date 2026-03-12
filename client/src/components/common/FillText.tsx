@@ -32,7 +32,9 @@ function FillText({ words, width, height, isMobile }: FillTextProps) {
         y0 = Math.min(y0, bb.y);
         x1 = Math.max(x1, bb.x + bb.width);
         y1 = Math.max(y1, bb.y + bb.height);
-      } catch (_) {}
+      } catch {
+        /* getBBox() may throw in detached/hidden SVGs */
+      }
     }
     if (x0 === Infinity) return;
 
@@ -45,8 +47,10 @@ function FillText({ words, width, height, isMobile }: FillTextProps) {
   }, []);
 
   useEffect(() => {
-    setViewBox(null);
-    const id = requestAnimationFrame(() => requestAnimationFrame(doMeasure));
+    const id = requestAnimationFrame(() => {
+      setViewBox(null);
+      requestAnimationFrame(doMeasure);
+    });
     return () => cancelAnimationFrame(id);
   }, [words, width, height, isMobile, doMeasure]);
 
