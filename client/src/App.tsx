@@ -10,29 +10,25 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import FoodSearch from "./components/FoodSearch";
-import SelectedFoods from "./components/SelectedFoods";
 
 import BrandLogo from "./components/common/BrandLogo";
 import DropzoneOverlay from "./components/common/DropzoneOverlay";
 import Footer from "./components/common/Footer";
 import NotificationToast from "./components/common/NotificationToast";
 import ThemeToggle from "./components/common/ThemeToggle";
-
+import FoodSearch from "./components/FoodSearch";
 import CalculationInputEditor from "./components/forms/CalculationInputEditor";
 import PersonalInfoForm from "./components/forms/PersonalInfoForm";
-
 import BlogPage from "./components/pages/BlogPage";
 import BlogPostPage from "./components/pages/BlogPostPage";
 import ErrorPage from "./components/pages/ErrorPage";
 import FaqPage from "./components/pages/FaqPage";
 import FeedbackPage from "./components/pages/FeedbackPage";
 import LandingPage from "./components/pages/landing/LandingPage";
-
 import CalculationResults from "./components/results/CalculationResults";
 import FeasibilityAnalysis from "./components/results/FeasibilityAnalysis";
 import OptimisationResults from "./components/results/OptimisationResults";
-
+import SelectedFoods from "./components/SelectedFoods";
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { Button } from "./components/ui/button";
 import {
@@ -52,9 +48,12 @@ import {
 } from "./hooks/useAppState";
 import { useCsvImport } from "./hooks/useCsvImport";
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
-import { smoothScrollTo } from "./lib/utils";
 import { prepareOptimisationPayload } from "./lib/foodHelpers";
+import { smoothScrollTo } from "./lib/utils";
 import api from "./services/api";
+
+import type { FormData } from "./hooks/useFormWizard";
+import type { SavedBounds } from "./hooks/useNutrientBounds";
 import type {
   FoodItem,
   NutritionCalculationRequest,
@@ -62,8 +61,6 @@ import type {
   FeasibilityAnalysis as FeasibilityAnalysisType,
   NutrientMap,
 } from "./services/api";
-import type { FormData } from "./hooks/useFormWizard";
-import type { SavedBounds } from "./hooks/useNutrientBounds";
 
 const isDuplicateFood = (
   newFood: FoodItem,

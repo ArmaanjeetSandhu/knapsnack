@@ -15,19 +15,14 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { LucideIcon } from "lucide-react";
+
 import {
   MINERALS_CONFIG,
   OTHERS_CONFIG,
   VITAMINS_CONFIG,
   type NutrientConfig,
 } from "../../config/nutrientData";
-import type {
-  CalculationData,
-  SavedBounds,
-} from "../../hooks/useNutrientBounds";
 import { useNutrientBounds } from "../../hooks/useNutrientBounds";
-import type { NutrientMap } from "../../services/api";
 import {
   preventInvalidFloatChars,
   preventInvalidIntegerChars,
@@ -46,6 +41,13 @@ import {
   TableRow,
 } from "../ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+
+import type {
+  CalculationData,
+  SavedBounds,
+} from "../../hooks/useNutrientBounds";
+import type { NutrientMap } from "../../services/api";
+import type { LucideIcon } from "lucide-react";
 
 interface ProceedPayload {
   useCustomBounds: boolean;

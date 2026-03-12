@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import BlinkingDot from "../common/BlinkingDot";
+
 import {
   useNutrientDisplay,
   type DisplayNutrient,
 } from "../../hooks/useNutrientDisplay";
 import { useSortableData } from "../../hooks/useSortableData";
-import type { NutrientMap } from "../../services/api";
+import BlinkingDot from "../common/BlinkingDot";
 import NutrientInfoPopup from "../nutrients/NutrientInfoPopup";
 import { Card, CardContent } from "../ui/card";
 import {
@@ -16,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+
+import type { NutrientMap } from "../../services/api";
 
 const formatBoundValue = (
   bounds: NutrientMap | null | undefined,

@@ -6,6 +6,7 @@ import {
   Dumbbell,
   Heart,
 } from "lucide-react";
+
 import CategorisedSlider, { type Category } from "../../CategorisedSlider";
 
 interface ActivityCategory extends Category {

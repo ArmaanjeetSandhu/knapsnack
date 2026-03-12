@@ -15,6 +15,7 @@ import {
   Utensils,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
 import {
   HYDRATION_CONFIG,
   MINERALS_CONFIG,
@@ -22,15 +23,13 @@ import {
   VITAMINS_CONFIG,
   type NutrientConfig,
 } from "../../config/nutrientData";
-import type { NutrientMap, FoodItem } from "../../services/api";
-import type { OptimisationApiResult } from "../../lib/resultsHelpers";
 import {
   bankersRound,
   calculateConsistentResults,
   formatValue,
   sortItems,
 } from "../../lib/resultsHelpers";
-import type { SortConfig } from "../../hooks/useSortableData";
+import BlinkingDot from "../common/BlinkingDot";
 import handleExportCSV from "../ExportHandler";
 import { NutrientCards, NutrientTable } from "../nutrients/NutrientDisplay";
 import NutritionFactsLabel from "../nutrients/NutritionFactsLabel";
@@ -46,7 +45,10 @@ import {
   TableRow,
 } from "../ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import BlinkingDot from "../common/BlinkingDot";
+
+import type { SortConfig } from "../../hooks/useSortableData";
+import type { OptimisationApiResult } from "../../lib/resultsHelpers";
+import type { NutrientMap, FoodItem } from "../../services/api";
 
 interface NutrientGoalsShape {
   lower_bounds?: NutrientMap;

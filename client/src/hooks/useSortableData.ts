@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+
 import type { SortDirection } from "../lib/resultsHelpers";
 
 export interface SortConfig {

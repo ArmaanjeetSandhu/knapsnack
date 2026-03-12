@@ -1,4 +1,5 @@
 import { Minus, Scale, TrendingDown, TrendingUp } from "lucide-react";
+
 import CategorisedSlider, { type Category } from "../../CategorisedSlider";
 
 type CalorieCategory = Category & {

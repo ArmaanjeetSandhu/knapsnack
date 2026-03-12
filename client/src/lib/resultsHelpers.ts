@@ -1,5 +1,4 @@
-import type { NutrientMap } from "../services/api";
-import type { FoodItem } from "../services/api";
+import type { NutrientMap, FoodItem } from "../services/api";
 
 export interface OptimisationApiResult {
   food_items: string[];
@@ -93,21 +92,11 @@ export const calculateConsistentResults = (
   return { items, totals };
 };
 
-export function sortItems(
-  items: ResultItem[],
-  config: SortConfig,
-  type?: "portions",
-): ResultItem[];
-export function sortItems(
-  items: NutrientRow[],
-  config: SortConfig,
-  type?: "nutrients",
-): NutrientRow[];
-export function sortItems(
-  items: (ResultItem | NutrientRow)[],
+export const sortItems = <T extends ResultItem | NutrientRow>(
+  items: T[],
   config: SortConfig,
   type: "portions" | "nutrients" = "portions",
-): (ResultItem | NutrientRow)[] {
+): T[] => {
   if (!config.key) return items;
 
   return [...items].sort((a, b) => {
@@ -115,8 +104,8 @@ export function sortItems(
     let bValue: string | number | undefined;
 
     if (type === "portions") {
-      const ai = a as ResultItem;
-      const bi = b as ResultItem;
+      const ai = a as unknown as ResultItem;
+      const bi = b as unknown as ResultItem;
       if (config.key === "food") {
         aValue = ai.food.toLowerCase();
         bValue = bi.food.toLowerCase();
@@ -134,8 +123,8 @@ export function sortItems(
         bValue = bi.cost;
       }
     } else {
-      const ai = a as NutrientRow;
-      const bi = b as NutrientRow;
+      const ai = a as unknown as NutrientRow;
+      const bi = b as unknown as NutrientRow;
       if (config.key === "nutrient") {
         aValue = ai.name.toLowerCase();
         bValue = bi.name.toLowerCase();
@@ -153,6 +142,6 @@ export function sortItems(
     if (aValue > bValue) return config.direction === "ascending" ? 1 : -1;
     return 0;
   });
-}
+};
 
 export const formatValue = (value: number): number => value;

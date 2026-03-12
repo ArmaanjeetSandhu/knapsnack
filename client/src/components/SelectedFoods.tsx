@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, ListX, Trash2, WandSparkles } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 import {
@@ -37,6 +38,9 @@ import {
   validateMaxTwoDecimals,
 } from "../lib/utils";
 import api from "../services/api";
+
+import NotificationToast from "./common/NotificationToast";
+
 import type {
   FoodItem,
   FeasibilityAnalysis,
@@ -45,7 +49,6 @@ import type {
   OptimisationFailure,
   UserInfo,
 } from "../services/api";
-import NotificationToast from "./common/NotificationToast";
 
 const MotionTableRow = motion.create(TableRow);
 

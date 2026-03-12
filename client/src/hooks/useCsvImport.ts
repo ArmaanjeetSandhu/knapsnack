@@ -1,12 +1,14 @@
-import Papa, { type ParseConfig, type ParseError } from "papaparse";
+import Papa, { type ParseLocalConfig } from "papaparse";
+
 import { processCSVData, type CsvParseFailure } from "../lib/csvParser";
+
 import type { FoodItem } from "../services/api";
 
 type RawCsvRow = Record<string, string | undefined>;
 
 interface UseCsvImportReturn {
   handleFileDrop: (file: File | null | undefined) => void;
-  createParseConfig: (errorPrefix: string) => ParseConfig<RawCsvRow>;
+  createParseConfig: (errorPrefix: string) => ParseLocalConfig<RawCsvRow, File>;
 }
 
 export const useCsvImport = (
@@ -19,12 +21,14 @@ export const useCsvImport = (
     else onImportError?.((result as CsvParseFailure).error);
   };
 
-  const createParseConfig = (errorPrefix: string) => ({
+  const createParseConfig = (
+    errorPrefix: string,
+  ): ParseLocalConfig<RawCsvRow, File> => ({
     header: true,
     dynamicTyping: true,
     skipEmptyLines: true,
     complete: handleParseComplete,
-    error: (error: ParseError) => {
+    error: (error: Error) => {
       onImportError?.(`${errorPrefix}: ${error.message}`);
     },
   });
@@ -32,10 +36,7 @@ export const useCsvImport = (
   const handleFileDrop = (file: File | null | undefined): void => {
     if (!file) return;
     if (file.type === "text/csv" || file.name.endsWith(".csv"))
-      Papa.parse<RawCsvRow>(
-        file,
-        createParseConfig("Error reading file") as any,
-      );
+      Papa.parse<RawCsvRow>(file, createParseConfig("Error reading file"));
     else onImportError?.("Please drop a valid CSV file.");
   };
 

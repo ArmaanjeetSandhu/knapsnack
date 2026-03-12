@@ -1,8 +1,9 @@
+import { GithubLogoIcon } from "@phosphor-icons/react";
 import { Send } from "lucide-react";
 import { useState } from "react";
+
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { GithubLogoIcon } from "@phosphor-icons/react";
 
 const FeedbackPage = () => {
   const [message, setMessage] = useState("");
@@ -27,7 +28,7 @@ const FeedbackPage = () => {
         setMessage("");
         setEmail("");
       } else setStatus("error");
-    } catch (error) {
+    } catch {
       setStatus("error");
     }
   };
@@ -45,7 +46,7 @@ const FeedbackPage = () => {
               />
             </div>
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100 md:text-5xl">
-              We'd love your feedback!
+              We&apos;d love your feedback!
             </h1>
             <p className="mx-auto mb-8 max-w-md text-lg text-gray-600 dark:text-gray-400">
               Found a bug, have a feature request, or just want to share your

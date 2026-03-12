@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Papa from "papaparse";
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -20,8 +21,10 @@ import {
 import { Input } from "../components/ui/input";
 import { processCSVData, type CsvParseFailure } from "../lib/csvParser";
 import api from "../services/api";
-import type { FoodItem } from "../services/api";
+
 import NotificationToast from "./common/NotificationToast";
+
+import type { FoodItem } from "../services/api";
 
 interface VirtualisedListProps<T> {
   items: T[];
@@ -103,14 +106,11 @@ const FoodSearch = ({
     } else setSearchError((result as CsvParseFailure).error);
   };
 
-  const createParseConfig = (errorPrefix: string) => ({
+  const createParseConfig = () => ({
     header: true,
     dynamicTyping: true,
     skipEmptyLines: true,
     complete: handleParseComplete,
-    error: (error: Papa.ParseError) => {
-      setSearchError(`${errorPrefix}: ${error.message}`);
-    },
   });
 
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,7 +120,7 @@ const FoodSearch = ({
     setApiKeyError(null);
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     setLoading(true);
@@ -157,7 +157,13 @@ const FoodSearch = ({
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    Papa.parse<RawCsvRow>(file, createParseConfig("Error reading file") as any);
+
+    Papa.parse<RawCsvRow>(file, {
+      ...createParseConfig(),
+      error: (error: Error) =>
+        setSearchError(`Error reading file: ${error.message}`),
+    } as Papa.ParseLocalConfig<RawCsvRow, File>);
+
     event.target.value = "";
   };
 
@@ -169,10 +175,7 @@ const FoodSearch = ({
       if (!response.ok)
         throw new Error(`Failed to fetch sample diet (${response.status})`);
       const csvText = await response.text();
-      Papa.parse<RawCsvRow>(
-        csvText,
-        createParseConfig("Error processing sample diet"),
-      );
+      Papa.parse<RawCsvRow>(csvText, createParseConfig());
     } catch (error) {
       setSearchError(error instanceof Error ? error.message : "Unknown error");
     } finally {

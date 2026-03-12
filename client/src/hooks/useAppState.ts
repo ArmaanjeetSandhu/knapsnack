@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
+
 import type {
   FoodItem,
   FeasibilityAnalysis,
@@ -7,6 +7,7 @@ import type {
   OptimisationApiResult,
   UserInfo,
 } from "../services/api";
+import type { Dispatch, SetStateAction } from "react";
 
 export type NutrientGoals = NutritionCalculationResponse;
 export type NutrientBounds = Record<string, number>;

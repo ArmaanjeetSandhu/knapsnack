@@ -1,7 +1,7 @@
 import { NUTRIENT_HEADERS, getNutrientKey } from "../lib/csvConstants";
 import { calculateConsistentResults } from "../lib/resultsHelpers";
-import type { OptimisationApiResult } from "../services/api";
-import type { FoodItem } from "../services/api";
+
+import type { OptimisationApiResult, FoodItem  } from "../services/api";
 
 const handleExportCSV = (
   results: OptimisationApiResult,

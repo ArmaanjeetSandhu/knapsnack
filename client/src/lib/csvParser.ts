@@ -1,5 +1,5 @@
-import type { ParseResult } from "papaparse";
 import type { FoodItem, NutrientMap } from "../services/api";
+import type { ParseResult } from "papaparse";
 
 type RawCsvRow = Record<string, string | undefined>;
 

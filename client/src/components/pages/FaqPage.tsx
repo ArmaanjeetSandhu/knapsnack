@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Download, ExternalLink } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+
 import { Card, CardContent } from "../ui/card";
 
 type FaqAnswer = Array<string | React.ReactElement> | string;

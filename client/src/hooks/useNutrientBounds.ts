@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import type { ChangeEvent } from "react";
+
 import type { NutrientMap } from "../services/api";
+import type { ChangeEvent } from "react";
 
 export interface CalculationData {
   lower_bounds: NutrientMap;

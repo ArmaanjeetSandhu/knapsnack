@@ -10,7 +10,9 @@ import {
   Weight,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
 import { Button } from "../ui/button";
+
 import type { UserInfo } from "../../services/api";
 
 const quantize = (x: number): number => Math.round(x / 5) * 5;

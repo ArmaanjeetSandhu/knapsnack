@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+
 import {
   useFormWizard,
   type FormData,
@@ -8,15 +9,17 @@ import {
 } from "../../hooks/useFormWizard";
 import { preventInvalidIntegerChars } from "../../lib/utils";
 import api from "../../services/api";
-import type { ServiceLimits } from "../../services/api";
 import LoadingSpinner from "../common/LoadingSpinner";
 import NotificationToast from "../common/NotificationToast";
-import ActivitySlider from "./sliders/ActivitySlider";
-import CalorieTargetSlider from "./sliders/CalorieTargetSlider";
-import MacroRatioValidator from "./sliders/MacroRatioValidator";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+
+import ActivitySlider from "./sliders/ActivitySlider";
+import CalorieTargetSlider from "./sliders/CalorieTargetSlider";
+import MacroRatioValidator from "./sliders/MacroRatioValidator";
+
+import type { ServiceLimits } from "../../services/api";
 
 interface SelectionOption<T extends string> {
   label: string;

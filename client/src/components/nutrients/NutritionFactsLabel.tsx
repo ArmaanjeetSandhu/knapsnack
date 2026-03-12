@@ -1,14 +1,16 @@
-import React, { useRef } from "react";
 import html2canvas from "html2canvas";
 import { Download } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { adjustNutrientsForServingSize } from "../../lib/foodHelpers";
+import React, { useRef } from "react";
+
 import {
   VITAMINS_CONFIG,
   MINERALS_CONFIG,
   OTHERS_CONFIG,
   type NutrientConfig,
 } from "../../config/nutrientData";
+import { adjustNutrientsForServingSize } from "../../lib/foodHelpers";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+
 import type { NutrientMap } from "../../services/api";
 
 interface NutritionFactsLabelProps {

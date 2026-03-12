@@ -1,6 +1,6 @@
 import { AlertTriangle, Check, Info, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
-import type { FeasibilityAnalysis as FeasibilityAnalysisData } from "../../services/api";
+
 import { bankersRound } from "../../lib/resultsHelpers";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
@@ -14,6 +14,8 @@ import {
   TableRow,
 } from "../ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+
+import type { FeasibilityAnalysis as FeasibilityAnalysisData } from "../../services/api";
 
 interface FeasibilityAnalysisProps {
   feasibilityData: FeasibilityAnalysisData;

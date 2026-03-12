@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import { formatDate } from "../../lib/utils";
 import api from "../../services/api";
-import type { BlogPost } from "../../services/api";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
+
+import type { BlogPost } from "../../services/api";
 
 interface BlogPostListItem extends BlogPost {
   id?: string;
