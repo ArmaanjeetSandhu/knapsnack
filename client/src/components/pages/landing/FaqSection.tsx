@@ -1,34 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
-
-const parseText = (text: string) => {
-  const parts = text.split(/(<m>.*?<\/m>|<acc>.*?<\/acc>)/gs);
-
-  return parts.map((part, index) => {
-    if (part.startsWith("<m>")) {
-      return (
-        <span
-          key={index}
-          className="text-muted-foreground transition-colors duration-300"
-        >
-          {part.replace(/<\/?m>/g, "")}
-        </span>
-      );
-    }
-    if (part.startsWith("<acc>")) {
-      return (
-        <span
-          key={index}
-          className="transition-colors duration-300"
-          style={{ color: "var(--accent-highlight)" }}
-        >
-          {part.replace(/<\/?acc>/g, "")}
-        </span>
-      );
-    }
-    return <span key={index}>{part}</span>;
-  });
-};
+import { AlternatingMotionItem } from "../../common/AlternatingMotionItem";
+import { ParsedText } from "../../common/ParsedText";
 
 const SquiggleLink = ({
   href,
@@ -75,7 +48,7 @@ const faqs = [
       "The most effective approach combines both tools: Knap<acc>[Snack]</acc> to plan your meals, and your preferred tracker to monitor your adherence to that plan.",
     ],
   },
-    {
+  {
     question: "How are my nutritional requirements determined?",
     answer: [
       <h4
@@ -129,13 +102,11 @@ const faqs = [
       </h4>,
       'Each food item has a maximum serving size that you set. A food is either included in the meal plan or it is excluded entirely — there is no in-between. If a food is included, it must appear in at least one serving, and it cannot exceed its maximum. Foods you mark as "Must Include" are guaranteed to appear. Foods you mark as "Discrete Servings" will only appear in whole-number amounts — so you will never be told to eat 1.5 eggs.',
       <React.Fragment key="technical-link">
-        {parseText(
-          "<m>For a more technical dive into the algorithm, you can read about how it works</m> ",
-        )}
+        <ParsedText text="<m>For a more technical dive into the algorithm, you can read about how it works</m> " />
         <SquiggleLink href="https://github.com/ArmaanjeetSandhu/knapsnack?tab=readme-ov-file#how-it-works">
           here
         </SquiggleLink>
-        {parseText("<m>.</m>")}
+        <ParsedText text="<m>.</m>" />
       </React.Fragment>,
     ],
   },
@@ -143,13 +114,11 @@ const faqs = [
     question: "I take supplements. Can I include those?",
     answer: (
       <>
-        {parseText(
-          "One of Knap<acc>[Snack]</acc>'s goals is to <acc>reduce supplement dependence</acc> by optimising whole food choices, <m>but the flexibility is there if needed. We guide you through the process</m>",
-        )}{" "}
+        <ParsedText text="One of Knap<acc>[Snack]</acc>'s goals is to <acc>reduce supplement dependence</acc> by optimising whole food choices, <m>but the flexibility is there if needed. We guide you through the process</m> " />
         <SquiggleLink href="https://knapsnack-b4b10d2b0910.herokuapp.com/faq#how-do-i-include-supplements">
           here
         </SquiggleLink>
-        {parseText("<m>.</m>")}
+        <ParsedText text="<m>.</m>" />
       </>
     ),
   },
@@ -157,13 +126,11 @@ const faqs = [
     question: "Why is it called Knap<acc>[Snack]</acc>?",
     answer: (
       <>
-        {parseText("The name is a play on the classic")}{" "}
+        <ParsedText text="The name is a play on the classic " />
         <SquiggleLink href="https://en.wikipedia.org/wiki/Knapsack_problem">
           knapsack problem
-        </SquiggleLink>{" "}
-        {parseText(
-          "in computer science, <m>an optimisation challenge that, like meal planning, involves selecting the best combination of items under constraints.</m> Certain variants of the knapsack problem are solvable using linear programming, which is what Knap<acc>[Snack]</acc> uses, making it a fitting inspiration.",
-        )}
+        </SquiggleLink>
+        <ParsedText text=" in computer science, <m>an optimisation challenge that, like meal planning, involves selecting the best combination of items under constraints.</m> Certain variants of the knapsack problem are solvable using linear programming, which is what Knap<acc>[Snack]</acc> uses, making it a fitting inspiration." />
       </>
     ),
   },
@@ -188,7 +155,7 @@ const ContentRenderer = ({ content }: ContentRendererProps) => {
         {content.map((item, index) =>
           typeof item === "string" ? (
             <div key={index} className="whitespace-pre-wrap">
-              {parseText(item)}
+              <ParsedText text={item} />
             </div>
           ) : (
             React.cloneElement(item as React.ReactElement, { key: index })
@@ -198,7 +165,9 @@ const ContentRenderer = ({ content }: ContentRendererProps) => {
     );
   }
   return (
-    <div className="whitespace-pre-wrap">{parseText(content as string)}</div>
+    <div className="whitespace-pre-wrap">
+      <ParsedText text={content as string} />
+    </div>
   );
 };
 
@@ -209,31 +178,18 @@ const FaqSection = () => {
       className="relative flex min-h-screen w-full flex-col py-16 sm:py-24"
     >
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
-        <div className="flex w-full flex-col space-y-16 sm:space-y-32">
-          {faqs.map((faq, idx) => {
-            const isEven = idx % 2 === 0;
+        <div className="flex w-full flex-col space-y-8 sm:space-y-10">
+          {faqs.map((faq, idx) => (
+            <AlternatingMotionItem key={idx} index={idx}>
+              <h3 className="mb-4 text-3xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-4xl lg:text-[2rem]">
+                <ParsedText text={faq.question} />
+              </h3>
 
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className={`flex w-full max-w-4xl flex-col ${
-                  isEven ? "self-start text-left" : "self-end text-right"
-                }`}
-              >
-                <h3 className="mb-4 text-3xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-4xl lg:text-[2rem]">
-                  {parseText(faq.question)}
-                </h3>
-
-                <div className="text-xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-2xl lg:text-[1.5rem]">
-                  <ContentRenderer content={faq.answer} />
-                </div>
-              </motion.div>
-            );
-          })}
+              <div className="text-xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-2xl lg:text-[1.5rem]">
+                <ContentRenderer content={faq.answer} />
+              </div>
+            </AlternatingMotionItem>
+          ))}
         </div>
       </div>
     </section>
