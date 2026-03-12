@@ -27,3 +27,12 @@ repos:
     hooks:
       - id: prettier
         types_or: [javascript, jsx, ts, tsx, css, json]
+
+  - repo: local
+    hooks:
+      - id: eslint-import-order
+        name: ESLint import order
+        language: node
+        entry: pnpm eslint --fix
+        types_or: [javascript, jsx, ts, tsx]
+        pass_filenames: true
