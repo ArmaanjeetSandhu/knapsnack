@@ -111,9 +111,9 @@ SECURITY_HEADERS = {
 CONTENT_SECURITY_POLICY = (
     "default-src 'self'; "
     "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
-    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
+    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
     "img-src 'self' data: https://*.ctfassets.net https://img.buymeacoffee.com https://press.uchicago.edu; "
-    "font-src 'self'; "
+    "font-src 'self' https://fonts.gstatic.com; "
     "connect-src 'self' https://api.nal.usda.gov; "
     "media-src 'self'; "
     "object-src 'none'; "

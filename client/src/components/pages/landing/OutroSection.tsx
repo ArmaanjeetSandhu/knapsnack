@@ -69,12 +69,12 @@ const OutroSection = () => {
             className="relative w-[45%] shrink-0"
           >
             <div
-              className="absolute inset-0 translate-x-3 translate-y-3 border-2 border-foreground/20"
+              className="absolute inset-0 translate-x-[2.5%] translate-y-[2.5%] border-2 border-foreground/20"
               style={{ zIndex: 0 }}
             />
 
             <div
-              className="absolute inset-0 -translate-x-1 -translate-y-1 border border-foreground/10"
+              className="absolute inset-0 -translate-x-[3%] -translate-y-[3%] border border-foreground/10"
               style={{ zIndex: 0 }}
             />
 
@@ -107,10 +107,10 @@ const OutroSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.7 }}
               viewport={{ once: true }}
-              className="absolute -bottom-3 -left-3 bg-foreground px-2 py-1"
+              className="absolute -bottom-1.5 -left-1.5 flex items-center justify-center bg-foreground px-1 py-0.5 sm:-bottom-3 sm:-left-3 sm:px-2 sm:py-1"
               style={{ zIndex: 2 }}
             >
-              <span className="text-xs font-black uppercase tracking-tighter text-background">
+              <span className="text-[0.5rem] font-black uppercase leading-none tracking-tighter text-background sm:text-xs">
                 01 / George Stigler
               </span>
             </motion.div>
