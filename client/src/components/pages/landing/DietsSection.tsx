@@ -64,7 +64,7 @@ function OrbitScene({
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6, delay: index * 0.15, ease: "easeOut" }}
-      style={{ position: "relative", width: 380, height: 380, flexShrink: 0 }}
+      className="relative aspect-square w-full shrink-0 sm:aspect-auto sm:h-[380px] sm:w-[380px]"
     >
       <div
         style={{
@@ -95,6 +95,7 @@ function OrbitScene({
             />
           </defs>
           <text
+            className="no-select"
             fontFamily="'DM Mono', monospace"
             fontSize="14"
             fill={isAccent ? "var(--orbit-accent-diets)" : "var(--orbit-fg)"}
@@ -118,9 +119,10 @@ function OrbitScene({
         }}
       >
         <div
+          className="no-select"
           style={{
             fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: "3rem",
+            fontSize: "clamp(1.5rem, 8vw, 3rem)",
             letterSpacing: "0.12em",
             color: "var(--orbit-fg)",
             lineHeight: 1,
@@ -141,16 +143,16 @@ export default function DietsSection() {
         id="diets"
         className="relative flex w-full flex-col items-center justify-center overflow-hidden py-16"
       >
-        <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[1204px]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative z-10 mb-12 text-center sm:mb-16"
+            className="relative z-10 mb-12 px-4 text-center sm:mb-16 sm:px-6 lg:px-8"
           ></motion.div>
 
-          <div className="relative z-10 flex w-full flex-wrap items-center justify-center gap-0">
+          <div className="relative z-10 flex w-full flex-wrap items-center justify-center gap-0 sm:px-6 lg:px-8">
             {scenes.map((scene, i) => (
               <OrbitScene key={scene.id} scene={scene} index={i} />
             ))}
