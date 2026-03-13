@@ -1,4 +1,3 @@
-import html2canvas from "html2canvas";
 import { Download } from "lucide-react";
 import React, { useRef } from "react";
 
@@ -51,6 +50,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
   const handleDownload = async () => {
     if (!labelRef.current) return;
     try {
+      const { default: html2canvas } = await import("html2canvas");
       const isDark = document.documentElement.classList.contains("dark");
       const canvas = await html2canvas(labelRef.current, {
         scale: 2,

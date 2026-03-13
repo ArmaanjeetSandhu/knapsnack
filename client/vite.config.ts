@@ -1,9 +1,18 @@
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { defineConfig } from "vite";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    visualizer({
+      filename: "dist/stats.html",
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(
@@ -19,21 +28,25 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom"],
-          "router-vendor": ["react-router-dom"],
-          "radix-vendor": [
-            "@radix-ui/react-alert-dialog",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-label",
-            "@radix-ui/react-navigation-menu",
-            "@radix-ui/react-scroll-area",
-            "@radix-ui/react-select",
-            "@radix-ui/react-slot",
-            "@radix-ui/react-tabs",
-            "@radix-ui/react-tooltip",
-          ],
-          "animation-vendor": ["framer-motion"],
+        manualChunks(id) {
+          if (
+            id.includes("node_modules/react-dom") ||
+            id.includes("node_modules/react/")
+          )
+            return "react-vendor";
+
+          if (id.includes("node_modules/react-router")) return "router-vendor";
+
+          if (id.includes("node_modules/framer-motion"))
+            return "animation-vendor";
+
+          if (id.includes("node_modules/@radix-ui")) return "radix-vendor";
+
+          if (id.includes("node_modules/html2canvas"))
+            return "html2canvas-vendor";
+
+          if (id.includes("node_modules/tailwind-merge"))
+            return "tailwind-merge-vendor";
         },
       },
     },
