@@ -51,9 +51,10 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
   const handleDownload = async () => {
     if (!labelRef.current) return;
     try {
+      const isDark = document.documentElement.classList.contains("dark");
       const canvas = await html2canvas(labelRef.current, {
         scale: 2,
-        backgroundColor: "#ffffff",
+        backgroundColor: isDark ? "#141210" : "#ffffff",
       });
       const url = canvas.toDataURL("image/png");
       const link = document.createElement("a");
@@ -81,7 +82,9 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
     return (
       <div
-        className={`flex justify-between border-b border-neutral-400 py-1 text-sm ${indent ? "pl-4" : ""}`}
+        className={`flex justify-between border-b border-neutral-400 py-1 text-sm dark:border-neutral-600 ${
+          indent ? "pl-4" : ""
+        }`}
       >
         <span className={isBold ? "font-bold" : "font-medium"}>{label}</span>
         <div className="flex w-1/2 justify-end space-x-2 sm:space-x-4">
@@ -111,9 +114,9 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
     return (
       <div>
-        <div style={{ height: 16, backgroundColor: "white" }}></div>
+        <div className="h-4 bg-white dark:bg-[#141210]"></div>
         <div
-          className="border-black text-sm font-black uppercase"
+          className="border-black text-sm font-black uppercase dark:border-[#f2f2f2]"
           style={{
             borderBottomWidth: 2,
             borderBottomStyle: "solid",
@@ -129,7 +132,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto bg-white text-black dark:bg-white dark:text-black sm:max-w-lg [&>button]:hidden">
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto bg-white text-black dark:bg-[#141210] dark:text-[#f2f2f2] sm:max-w-lg [&>button]:hidden">
         <DialogHeader>
           <DialogTitle className="sr-only">
             Nutrition Facts for {foodName}
@@ -138,12 +141,12 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
         <div
           ref={labelRef}
-          className="relative border-2 border-black bg-white p-2 font-sans md:p-4"
+          className="relative border-2 border-black bg-white p-2 font-sans dark:border-[#f2f2f2] dark:bg-[#141210] md:p-4"
         >
           <button
             onClick={handleDownload}
             data-html2canvas-ignore="true"
-            className="absolute right-2 top-2 text-neutral-400 transition-colors hover:text-black focus:outline-none md:right-4 md:top-4"
+            className="absolute right-2 top-2 text-neutral-400 transition-colors hover:text-black focus:outline-none dark:hover:text-[#f2f2f2] md:right-4 md:top-4"
             title="Download Label as Image"
             aria-label="Download Label as Image"
           >
@@ -151,7 +154,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
           </button>
 
           <h1
-            className="border-black font-black tracking-tight"
+            className="border-black font-black tracking-tight dark:border-[#f2f2f2]"
             style={{
               borderBottomWidth: 4,
               borderBottomStyle: "solid",
@@ -164,7 +167,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
           </h1>
 
           <div
-            className="border-black"
+            className="border-black dark:border-[#f2f2f2]"
             style={{
               borderBottomWidth: 2,
               borderBottomStyle: "solid",
@@ -172,7 +175,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
               paddingBottom: 8,
             }}
           >
-            <div className="text-lg font-semibold text-neutral-800">
+            <div className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
               {foodName}
             </div>
 
@@ -201,12 +204,12 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
           </div>
 
           <div
-            className="border-black"
+            className="border-black dark:border-[#f2f2f2]"
             style={{ borderBottomWidth: 2, borderBottomStyle: "solid" }}
           ></div>
 
           <div
-            className="flex items-end justify-between border-black"
+            className="flex items-end justify-between border-black dark:border-[#f2f2f2]"
             style={{
               borderBottomWidth: 4,
               borderBottomStyle: "solid",
@@ -232,9 +235,9 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
             </div>
           </div>
 
-          <div style={{ height: 16, backgroundColor: "white" }}></div>
+          <div className="h-4 bg-white dark:bg-[#141210]"></div>
           <div
-            className="border-black text-sm font-black uppercase"
+            className="border-black text-sm font-black uppercase dark:border-[#f2f2f2]"
             style={{
               borderBottomWidth: 2,
               borderBottomStyle: "solid",
@@ -247,7 +250,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
           {renderRow("Total Fat", "fats", "g", false, true)}
           {renderRow("Saturated Fat", "saturated_fats", "g", true, false)}
           {renderRow("Total Carbohydrate", "carbohydrate", "g", false, true)}
-          {renderRow("Dietary Fiber", "fibre", "g", true, false)}
+          {renderRow("Dietary Fibre", "fibre", "g", true, false)}
           {renderRow("Protein", "protein", "g", false, true)}
 
           {renderSection("Vitamins", VITAMINS_CONFIG)}

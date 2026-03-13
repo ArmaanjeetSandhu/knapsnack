@@ -1,6 +1,6 @@
 import { GithubLogoIcon } from "@phosphor-icons/react";
 import { Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -11,6 +11,10 @@ const FeedbackPage = () => {
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
