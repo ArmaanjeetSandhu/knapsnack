@@ -22,6 +22,7 @@ from flask import (
     send_file,
     send_from_directory,
 )
+from flask_compress import Compress
 from flask_cors import CORS
 
 from server.config import (
@@ -64,6 +65,20 @@ static_folder = os.path.abspath(
 app = Flask(__name__, static_folder=static_folder)
 CORS(app)
 mimetypes.add_type("video/mp4", ".mp4")
+
+app.config["COMPRESS_REGISTER"] = True
+app.config["COMPRESS_MIMETYPES"] = [
+    "text/html",
+    "text/css",
+    "text/javascript",
+    "application/javascript",
+    "application/json",
+    "application/xml",
+    "image/svg+xml",
+]
+app.config["COMPRESS_LEVEL"] = 6
+app.config["COMPRESS_MIN_SIZE"] = 500
+Compress(app)
 
 ResponseType = Union[Response, Tuple[Response, int], Tuple[str, int]]
 

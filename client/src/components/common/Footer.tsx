@@ -17,11 +17,15 @@ export default function Footer() {
             <img
               src="https://img.buymeacoffee.com/button-api/?text=Support%20this%20project&emoji=%E2%98%95&slug=armaanjeetsandhu&button_colour=111827&font_colour=ffffff&font_family=Bree&outline_colour=ffffff&coffee_colour=FFDD00"
               alt="Support this project"
+              width="210"
+              height="42"
               className="block h-[42px] w-auto rounded-md shadow-sm dark:hidden"
             />
             <img
               src="https://img.buymeacoffee.com/button-api/?text=Support%20this%20project&emoji=%E2%98%95&slug=armaanjeetsandhu&button_colour=141210&font_colour=ffffff&font_family=Bree&outline_colour=ffffff&coffee_colour=FFDD00"
               alt="Support this project"
+              width="210"
+              height="42"
               className="hidden h-[42px] w-auto rounded-md shadow-sm dark:block"
             />
           </a>

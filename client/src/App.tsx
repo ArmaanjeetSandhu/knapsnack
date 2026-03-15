@@ -1,7 +1,14 @@
 import { GithubLogoIcon } from "@phosphor-icons/react";
 import { AnimatePresence } from "framer-motion";
 import { ArrowLeft, Calculator, Eye, Newspaper, RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Link,
   Route,
@@ -10,17 +17,17 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-
 import BrandLogo from "./components/common/BrandLogo";
 import DropzoneOverlay from "./components/common/DropzoneOverlay";
 import Footer from "./components/common/Footer";
+import LoadingSpinner from "./components/common/LoadingSpinner";
 import NotificationToast from "./components/common/NotificationToast";
 import ThemeToggle from "./components/common/ThemeToggle";
 import FoodSearch from "./components/FoodSearch";
 import CalculationInputEditor from "./components/forms/CalculationInputEditor";
 import PersonalInfoForm from "./components/forms/PersonalInfoForm";
-import BlogPage from "./components/pages/BlogPage";
-import BlogPostPage from "./components/pages/BlogPostPage";
+const BlogPage = lazy(() => import("./components/pages/BlogPage"));
+const BlogPostPage = lazy(() => import("./components/pages/BlogPostPage"));
 import ErrorPage from "./components/pages/ErrorPage";
 import FaqPage from "./components/pages/FaqPage";
 import FeedbackPage from "./components/pages/FeedbackPage";
@@ -672,8 +679,22 @@ function App() {
       </header>
       <main className="mb-8 flex-grow px-4">
         <Routes>
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route
+            path="/blog"
+            element={
+              <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+                <BlogPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/blog/:slug"
+            element={
+              <Suspense fallback={<LoadingSpinner message="Loading post..." />}>
+                <BlogPostPage />
+              </Suspense>
+            }
+          />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/" element={mainPlanner} />
