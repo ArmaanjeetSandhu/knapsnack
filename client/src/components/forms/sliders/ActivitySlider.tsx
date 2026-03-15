@@ -51,7 +51,7 @@ const categories: ActivityCategory[] = [
     name: "Extremely Active",
     icon: Award,
     baseColor: "red",
-    description: "Competitive athletes, heavy manual laborers",
+    description: "Competitive athletes, heavy manual labourers",
     min: 2.0,
     max: 2.4,
   },
