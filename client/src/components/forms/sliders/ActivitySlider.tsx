@@ -18,7 +18,7 @@ const categories: ActivityCategory[] = [
   {
     name: "Sedentary",
     icon: Coffee,
-    baseColor: "gray",
+    baseColour: "gray",
     description: "Office workers, drivers",
     min: 1.2,
     max: 1.4,
@@ -26,7 +26,7 @@ const categories: ActivityCategory[] = [
   {
     name: "Light Activity",
     icon: Briefcase,
-    baseColor: "green",
+    baseColour: "green",
     description: "Teachers, retail workers",
     min: 1.4,
     max: 1.6,
@@ -34,7 +34,7 @@ const categories: ActivityCategory[] = [
   {
     name: "Moderate Activity",
     icon: Activity,
-    baseColor: "blue",
+    baseColour: "blue",
     description: "Construction workers, waiters",
     min: 1.6,
     max: 1.8,
@@ -42,7 +42,7 @@ const categories: ActivityCategory[] = [
   {
     name: "Very Active",
     icon: Dumbbell,
-    baseColor: "purple",
+    baseColour: "purple",
     description: "Athletes, dancers",
     min: 1.8,
     max: 2.0,
@@ -50,7 +50,7 @@ const categories: ActivityCategory[] = [
   {
     name: "Extremely Active",
     icon: Award,
-    baseColor: "red",
+    baseColour: "red",
     description: "Competitive athletes, heavy manual labourers",
     min: 2.0,
     max: 2.4,
@@ -67,10 +67,6 @@ const getCurrentCategory = (
   if (val < 2.0) return cats[3];
   return cats[4];
 };
-
-const isCategoryActive = (category: ActivityCategory, val: number): boolean =>
-  (val >= category.min && val < category.max) ||
-  (val === 2.4 && category.max === 2.4);
 
 const getDetailText = (category: ActivityCategory): string =>
   `Range: ${category.min.toFixed(1)} - ${category.max.toFixed(1)}`;
@@ -99,9 +95,6 @@ const ActivitySlider = ({
     categories={categories}
     getCurrentCategory={(val, cats) =>
       getCurrentCategory(val, cats as ActivityCategory[])
-    }
-    isCategoryActive={(cat, val) =>
-      isCategoryActive(cat as ActivityCategory, val)
     }
     getDetailText={(cat) => getDetailText(cat as ActivityCategory)}
     formatValue={(val) => val.toFixed(1)}

@@ -61,6 +61,7 @@ interface PersonalInfoFormProps {
 
 const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
   const [showSmokingHelp, setShowSmokingHelp] = useState(false);
+  const [showCaloricHelp, setShowCaloricHelp] = useState(false);
   const [limits, setLimits] = useState<ServiceLimits | null>(null);
   const [configError, setConfigError] = useState(false);
 
@@ -238,7 +239,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
             Do you smoke?
             <button
               type="button"
-              className="cursor-help"
+              className="translate-y-0.5 cursor-help"
               onClick={(e) => {
                 e.preventDefault();
                 setShowSmokingHelp((prev) => !prev);
@@ -257,6 +258,38 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
               >
                 Knap[Snack] adjusts your vitamin C requirements to account for
                 the increased oxidative stress associated with smoking.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+    if (currentStep === 6) {
+      return (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            What&apos;s your caloric goal?
+            <button
+              type="button"
+              className="translate-y-0.5 cursor-help"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowCaloricHelp((prev) => !prev);
+              }}
+            >
+              <HelpCircle className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+            </button>
+          </div>
+          <AnimatePresence>
+            {showCaloricHelp && (
+              <motion.p
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="text-base font-normal text-muted-foreground"
+              >
+                What percentage of the calories you burn daily do you plan to
+                consume every day?
               </motion.p>
             )}
           </AnimatePresence>

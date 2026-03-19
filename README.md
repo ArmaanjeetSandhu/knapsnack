@@ -6,7 +6,7 @@ Knap<span style="color:#1463eb">[Snack]</span> is a tool that helps you create p
 
 ## How It Works
 
-Under the hood, Knap<span style="color:#1463eb">[Snack]</span> uses an optimisation algorithm called mixed-integer linear programming (MILP). Here's the math:
+Under the hood, Knap<span style="color:#1463eb">[Snack]</span> uses an optimisation algorithm called mixed-integer linear programming (MILP). Here's the maths:
 
 ### Objective
 

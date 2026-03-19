@@ -1,34 +1,34 @@
 import { type ComponentType, useEffect, useRef, useState } from "react";
 
-type Color = "gray" | "green" | "blue" | "purple" | "red" | "orange";
+type Colour = "gray" | "green" | "blue" | "purple" | "red" | "orange";
 
-interface ColorClasses {
+interface ColourClasses {
   text: string;
   bg: string;
   border: string;
   bgOpacity: string;
 }
 
-const COLORS: Color[] = ["gray", "green", "blue", "purple", "red", "orange"];
+const COLOURS: Colour[] = ["gray", "green", "blue", "purple", "red", "orange"];
 
-const COLOR_MAP = COLORS.reduce<Record<Color, ColorClasses>>(
-  (acc, color) => {
-    acc[color] = {
-      text: `text-${color}-500 dark:text-${color}-400`,
-      bg: `bg-${color}-500 dark:bg-${color}-400`,
-      border: `border-${color}-500 dark:border-${color}-400`,
-      bgOpacity: `bg-${color}-500/20 dark:bg-${color}-400/20`,
+const COLOUR_MAP = COLOURS.reduce<Record<Colour, ColourClasses>>(
+  (acc, colour) => {
+    acc[colour] = {
+      text: `text-${colour}-500 dark:text-${colour}-400`,
+      bg: `bg-${colour}-500 dark:bg-${colour}-400`,
+      border: `border-${colour}-500 dark:border-${colour}-400`,
+      bgOpacity: `bg-${colour}-500/20 dark:bg-${colour}-400/20`,
     };
     return acc;
   },
-  {} as Record<Color, ColorClasses>,
+  {} as Record<Colour, ColourClasses>,
 );
 
 export interface Category {
   name: string;
   description: string;
   icon: ComponentType<{ className?: string }>;
-  baseColor: Color;
+  baseColour: Colour;
   [key: string]: unknown;
 }
 
@@ -43,7 +43,6 @@ export interface CategorisedSliderProps {
   categories: Category[];
   gradientClass: string;
   getCurrentCategory: (value: number, categories: Category[]) => Category;
-  isCategoryActive: (cat: Category, value: number) => boolean;
   getDetailText: (cat: Category, value: number) => React.ReactNode;
   formatValue?: (value: number) => string;
   labels?: [string, string];
@@ -61,7 +60,6 @@ const CategorisedSlider = ({
   categories,
   gradientClass,
   getCurrentCategory,
-  isCategoryActive,
   getDetailText,
   formatValue,
   labels,
@@ -70,8 +68,8 @@ const CategorisedSlider = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const getColorClasses = (baseColor: string): ColorClasses =>
-    COLOR_MAP[baseColor as Color] ?? COLOR_MAP.gray;
+  const getColourClasses = (baseColour: string): ColourClasses =>
+    COLOUR_MAP[baseColour as Colour] ?? COLOUR_MAP.gray;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(parseFloat(e.target.value));
@@ -90,14 +88,14 @@ const CategorisedSlider = ({
 
   const currentCategory = getCurrentCategory(value, categories);
   const progress = ((value - min) / (max - min)) * 100;
-  const currentColorClasses = getColorClasses(currentCategory.baseColor);
+  const currentColourClasses = getColourClasses(currentCategory.baseColour);
   const CategoryIcon = currentCategory.icon;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          {Icon && <Icon className={`h-5 w-5 ${currentColorClasses.text}`} />}
+          {Icon && <Icon className={`h-5 w-5 ${currentColourClasses.text}`} />}
           <h3 className="text-sm font-medium text-foreground">{title}</h3>
         </div>
         <span className="text-lg font-bold text-foreground">
@@ -132,17 +130,19 @@ const CategorisedSlider = ({
         className={`transform transition-all duration-300 ${isAnimating ? "scale-105" : "scale-100"}`}
       >
         <div
-          className={`rounded-lg border bg-card p-4 dark:bg-card ${currentColorClasses.border} shadow-sm`}
+          className={`rounded-lg border bg-card p-4 dark:bg-card ${currentColourClasses.border} shadow-sm`}
         >
           <div className="flex items-center space-x-3">
             <div
-              className={`rounded-full p-2 ${currentColorClasses.bgOpacity}`}
+              className={`rounded-full p-2 ${currentColourClasses.bgOpacity}`}
             >
-              <CategoryIcon className={`h-5 w-5 ${currentColorClasses.text}`} />
+              <CategoryIcon
+                className={`h-5 w-5 ${currentColourClasses.text}`}
+              />
             </div>
             <div>
               <h4
-                className={`text-base font-semibold ${currentColorClasses.text}`}
+                className={`text-base font-semibold ${currentColourClasses.text}`}
               >
                 {currentCategory.name}
               </h4>
@@ -155,27 +155,6 @@ const CategorisedSlider = ({
             {getDetailText(currentCategory, value)}
           </div>
         </div>
-      </div>
-
-      <div
-        className="grid gap-2"
-        style={{
-          gridTemplateColumns: `repeat(${categories.length}, minmax(0, 1fr))`,
-        }}
-      >
-        {categories.map((cat) => {
-          const colorClasses = getColorClasses(cat.baseColor);
-          return (
-            <div
-              key={cat.name}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                isCategoryActive(cat, value)
-                  ? colorClasses.bg
-                  : "bg-gray-200 dark:bg-gray-700"
-              }`}
-            />
-          );
-        })}
       </div>
     </div>
   );

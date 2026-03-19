@@ -10,19 +10,19 @@ const categories: CalorieCategory[] = [
   {
     name: "Calorie Deficit",
     icon: TrendingDown,
-    baseColor: "orange",
+    baseColour: "orange",
     description: "Fat loss, cutting phase",
   },
   {
     name: "Maintenance",
     icon: Minus,
-    baseColor: "green",
+    baseColour: "green",
     description: "Weight maintenance",
   },
   {
     name: "Calorie Surplus",
     icon: TrendingUp,
-    baseColor: "blue",
+    baseColour: "blue",
     description: "Muscle gain, bulking phase",
   },
 ];
@@ -34,19 +34,6 @@ const getCurrentCategory = (
   if (val < 100) return cats[0];
   if (val === 100) return cats[1];
   return cats[2];
-};
-
-const isCategoryActive = (category: CalorieCategory, val: number): boolean => {
-  switch (category.name) {
-    case "Calorie Deficit":
-      return val < 100;
-    case "Maintenance":
-      return val === 100;
-    case "Calorie Surplus":
-      return val > 100;
-    default:
-      return false;
-  }
 };
 
 const getDetailText = (category: CalorieCategory): string => {
@@ -80,9 +67,6 @@ const CalorieTargetSlider = ({
     categories={categories}
     getCurrentCategory={
       getCurrentCategory as (val: number, cats: Category[]) => Category
-    }
-    isCategoryActive={
-      isCategoryActive as (cat: Category, val: number) => boolean
     }
     getDetailText={getDetailText as (cat: Category, val: number) => string}
     formatValue={(val) => `${val}%`}
