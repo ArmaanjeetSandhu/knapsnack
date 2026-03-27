@@ -612,7 +612,21 @@ function App() {
   if (showLanding && location.pathname === "/")
     return (
       <LandingPage
-        onGetStarted={() => actions.setShowLanding(false)}
+        onGetStarted={() => {
+          actions.setShowLanding(false);
+
+          setTimeout(() => {
+            if (!state.nutrientGoals)
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            else if (
+              !state.showCalculationResults &&
+              !state.optimisationResults &&
+              !feasibilityResults
+            )
+              scrollToFoodSelection(state.selectedFoods.length > 0);
+            else window.scrollTo({ top: 0, behavior: "smooth" });
+          }, 100);
+        }}
         hasExistingSession={!!nutrientGoals}
         onStartOver={() => {
           handleReset();
