@@ -11,8 +11,7 @@ const features = [
   {
     id: "02",
     title: "<acc>Completely</acc> Free",
-    description:
-      "<m>As in “free speech” <i>and</i> “free beer”</m>",
+    description: "<m>As in “free speech” <i>and</i> “free beer”</m>",
   },
   {
     id: "03",
@@ -53,7 +52,7 @@ const FeaturesSection = () => {
             return (
               <AlternatingMotionItem key={feature.id} index={idx}>
                 <div
-                  className={`group flex flex-col border-b border-muted py-2 transition-colors duration-500 last:border-b-0 hover:bg-foreground/[0.02] sm:py-4 ${
+                  className={`group flex flex-col border-b border-muted py-2 transition-colors duration-500 last:border-b-0 sm:py-4 ${
                     isRightAligned
                       ? "items-end text-right"
                       : "items-start text-left"
