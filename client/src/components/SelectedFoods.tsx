@@ -1,5 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, ListX, Trash2, WandSparkles } from "lucide-react";
+import {
+  Check,
+  Download,
+  ListX,
+  Trash2,
+  Undo2,
+  WandSparkles,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Alert, AlertDescription } from "../components/ui/alert";
@@ -79,6 +86,10 @@ const SelectedFoods = ({
   const [error, setError] = useState<string | null>(null);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [showInputErrorDialog, setShowInputErrorDialog] = useState(false);
+  const [batchPrice, setBatchPrice] = useState("");
+  const [batchServing, setBatchServing] = useState("");
+  const [batchMax, setBatchMax] = useState("");
+  const [previousFoods, setPreviousFoods] = useState<FoodItem[] | null>(null);
   const [flashingFoods, setFlashingFoods] = useState<Array<string | number>>(
     [],
   );
@@ -151,21 +162,55 @@ const SelectedFoods = ({
   }, [lastAddedIds]);
 
   const handleRemoveFood = (fdcId: string | number) => {
+    setPreviousFoods(null);
     onFoodsUpdate(foods.filter((food) => food.fdcId !== fdcId));
   };
 
-  const handleClearAll = () => onFoodsUpdate([]);
+  const handleClearAll = () => {
+    setPreviousFoods(null);
+    onFoodsUpdate([]);
+  };
 
   const handleInputChange = (
     fdcId: string | number,
     field: keyof FoodItem,
     value: unknown,
   ) => {
+    setPreviousFoods(null);
     onFoodsUpdate(
       foods.map((food) =>
         food.fdcId === fdcId ? { ...food, [field]: value } : food,
       ),
     );
+  };
+
+  const isUndoState =
+    !batchPrice && !batchServing && !batchMax && previousFoods !== null;
+
+  const handleBatchAction = () => {
+    if (isUndoState && previousFoods) {
+      onFoodsUpdate(previousFoods);
+      setPreviousFoods(null);
+      return;
+    }
+
+    if (!batchPrice && !batchServing && !batchMax) return;
+
+    setPreviousFoods(foods);
+
+    const updatedFoods = foods.map((food) => {
+      const updated = { ...food };
+      if (batchPrice !== "") updated.price = batchPrice;
+      if (batchServing !== "") updated.servingSize = batchServing;
+      if (batchMax !== "") updated.maxServing = batchMax;
+      return updated;
+    });
+
+    onFoodsUpdate(updatedFoods);
+
+    setBatchPrice("");
+    setBatchServing("");
+    setBatchMax("");
   };
 
   const handleOptimise = async () => {
@@ -494,6 +539,77 @@ const SelectedFoods = ({
                         </TableHead>
                         <TableHead className="no-select w-[100px]">
                           Actions
+                        </TableHead>
+                      </TableRow>
+                      <TableRow className="bg-muted/30">
+                        <TableHead
+                          colSpan={3}
+                          className="border-b text-right align-middle text-xs font-medium italic text-muted-foreground"
+                        >
+                          Apply to all items &rarr;
+                        </TableHead>
+                        <TableHead className="border-b pb-2 pt-2">
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={batchPrice}
+                            onKeyDown={preventInvalidFloatChars}
+                            onChange={(e) => {
+                              if (validateMaxTwoDecimals(e.target.value))
+                                setBatchPrice(e.target.value);
+                            }}
+                            className="w-[100px] font-normal text-foreground"
+                          />
+                        </TableHead>
+                        <TableHead className="border-b pb-2 pt-2">
+                          <Input
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={batchServing}
+                            onKeyDown={preventInvalidIntegerChars}
+                            onChange={(e) => setBatchServing(e.target.value)}
+                            className="w-[100px] font-normal text-foreground"
+                          />
+                        </TableHead>
+                        <TableHead className="border-b pb-2 pt-2">
+                          <Input
+                            type="number"
+                            step="1"
+                            min="0"
+                            value={batchMax}
+                            onKeyDown={preventInvalidIntegerChars}
+                            onChange={(e) => setBatchMax(e.target.value)}
+                            className="w-[100px] font-normal text-foreground"
+                          />
+                        </TableHead>
+                        <TableHead className="border-b pb-2 pt-2">
+                          <Button
+                            variant={isUndoState ? "secondary" : "default"}
+                            size="sm"
+                            onClick={handleBatchAction}
+                            disabled={
+                              !batchPrice &&
+                              !batchServing &&
+                              !batchMax &&
+                              !previousFoods
+                            }
+                            title={
+                              isUndoState ? "Undo batch apply" : "Apply to all"
+                            }
+                          >
+                            {isUndoState ? (
+                              <Undo2 className="h-4 w-4" />
+                            ) : (
+                              <Check className="h-4 w-4" />
+                            )}
+                            <span className="sr-only">
+                              {isUndoState
+                                ? "Undo batch apply"
+                                : "Apply to all"}
+                            </span>
+                          </Button>
                         </TableHead>
                       </TableRow>
                     </TableHeader>
