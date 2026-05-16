@@ -4,8 +4,8 @@ interface AppConfig {
 
 const config: AppConfig = {
   apiUrl:
-    window.location.hostname !== "localhost"
-      ? `${window.location.origin}/api`
+    globalThis.location.hostname !== "localhost"
+      ? `${globalThis.location.origin}/api`
       : "http://localhost:5000/api",
 };
 

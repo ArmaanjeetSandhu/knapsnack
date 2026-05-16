@@ -96,8 +96,8 @@ function InspirationsSection() {
     };
 
     measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    globalThis.addEventListener("resize", measure);
+    return () => globalThis.removeEventListener("resize", measure);
   }, [x]);
 
   const clipPathRight = useTransform(x, (latestX) => {

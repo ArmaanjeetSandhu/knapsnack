@@ -42,8 +42,8 @@ const LandingPage = ({
       if (focused && focused.tagName === "BUTTON") return;
       onGetStarted();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
   }, [onGetStarted]);
 
   useEffect(() => {

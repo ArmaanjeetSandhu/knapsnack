@@ -340,8 +340,8 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       }
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
+    globalThis.addEventListener("keydown", handleKeyPress);
+    return () => globalThis.removeEventListener("keydown", handleKeyPress);
   }, [handleNext, handlePrevious, currentStep, formData]);
 
   if (!limits && !configError)

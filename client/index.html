@@ -52,14 +52,14 @@
         const stored = localStorage.getItem("knapsnack_theme");
         const isDark = stored
           ? stored === "dark"
-          : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          : globalThis.matchMedia("(prefers-color-scheme: dark)").matches;
         document.getElementById("favicon").href = isDark
           ? ICON_DARK
           : ICON_LIGHT;
       }
 
       updateFavicon();
-      window.addEventListener("knapsnack-theme-change", updateFavicon);
+      globalThis.addEventListener("knapsnack-theme-change", updateFavicon);
     </script>
 
     <link rel="preconnect" href="https://api.nal.usda.gov" crossorigin />

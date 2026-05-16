@@ -198,7 +198,7 @@ const createSlug = (text: string): string =>
 
 const FaqPage = () => {
   const [openItemIndex, setOpenItemIndex] = useState<number | null>(() => {
-    const hash = window.location.hash.slice(1);
+    const hash = globalThis.location.hash.slice(1);
     if (!hash) return null;
     const index = faqs.findIndex((faq) => createSlug(faq.question) === hash);
     return index !== -1 ? index : null;
@@ -207,7 +207,7 @@ const FaqPage = () => {
   const faqRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   useEffect(() => {
-    if (!window.location.hash) window.scrollTo(0, 0);
+    if (!globalThis.location.hash) globalThis.scrollTo(0, 0);
     else if (openItemIndex !== null && faqRefs.current[openItemIndex])
       setTimeout(() => {
         faqRefs.current[openItemIndex]?.scrollIntoView({ behavior: "smooth" });
@@ -218,16 +218,16 @@ const FaqPage = () => {
     const isOpening = openItemIndex !== index;
     setOpenItemIndex(isOpening ? index : null);
     if (isOpening)
-      window.history.replaceState(
+      globalThis.history.replaceState(
         null,
         "",
         `#${createSlug(faqs[index].question)}`,
       );
     else
-      window.history.replaceState(
+      globalThis.history.replaceState(
         null,
         "",
-        window.location.pathname + window.location.search,
+        globalThis.location.pathname + globalThis.location.search,
       );
   };
 

@@ -202,18 +202,18 @@ export default function CalculationInputEditor({
 
   function stopDrag() {
     dragMode.current = null;
-    window.removeEventListener("pointermove", handlePointerMove);
-    window.removeEventListener("pointerup", stopDrag);
-    window.removeEventListener("pointercancel", stopDrag);
+    globalThis.removeEventListener("pointermove", handlePointerMove);
+    globalThis.removeEventListener("pointerup", stopDrag);
+    globalThis.removeEventListener("pointercancel", stopDrag);
   }
 
   function startDrag(mode: DragMode, e: React.PointerEvent) {
     e.preventDefault();
     (e.currentTarget as HTMLElement).focus();
     dragMode.current = mode;
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", stopDrag);
-    window.addEventListener("pointercancel", stopDrag);
+    globalThis.addEventListener("pointermove", handlePointerMove);
+    globalThis.addEventListener("pointerup", stopDrag);
+    globalThis.addEventListener("pointercancel", stopDrag);
   }
 
   function handleKeyDown(e: React.KeyboardEvent, mode: DragMode) {
