@@ -65,9 +65,9 @@ export const calculateConsistentResults = (
       const food = selectedFoods.find((f) => f.description === foodName);
       if (!food) return null;
 
-      const servingSize = parseFloat(String(food.servingSize)) || 100;
+      const servingSize = Number.parseFloat(String(food.servingSize)) || 100;
       const totalServing = roundedServings * servingSize;
-      const price = parseFloat(String(food.price ?? 0)) || 0;
+      const price = Number.parseFloat(String(food.price ?? 0)) || 0;
       const cost = roundedServings * price;
       totals.cost += cost;
 

@@ -117,10 +117,11 @@ const SelectedFoods = ({
   const getFoodSortValue = useCallback(
     (food: FoodItem, key: string): string | number => {
       if (key === "food") return food.description.toLowerCase();
-      if (key === "price") return parseFloat(String(food.price)) || 0;
+      if (key === "price") return Number.parseFloat(String(food.price)) || 0;
       if (key === "servingSize")
-        return parseFloat(String(food.servingSize)) || 0;
-      if (key === "maxServing") return parseFloat(String(food.maxServing)) || 0;
+        return Number.parseFloat(String(food.servingSize)) || 0;
+      if (key === "maxServing")
+        return Number.parseFloat(String(food.maxServing)) || 0;
       return 0;
     },
     [],
@@ -217,14 +218,14 @@ const SelectedFoods = ({
     const invalidFoods = foods.filter(
       (food) =>
         food.price === "" ||
-        parseFloat(String(food.price)) < 0 ||
+        Number.parseFloat(String(food.price)) < 0 ||
         !food.servingSize ||
-        parseFloat(String(food.servingSize)) <= 0 ||
+        Number.parseFloat(String(food.servingSize)) <= 0 ||
         (food.maxServing !== "" &&
-          (isNaN(parseFloat(String(food.maxServing))) ||
-            parseFloat(String(food.maxServing)) <= 0 ||
-            parseFloat(String(food.maxServing)) <
-              parseFloat(String(food.servingSize)))),
+          (Number.isNaN(Number.parseFloat(String(food.maxServing))) ||
+            Number.parseFloat(String(food.maxServing)) <= 0 ||
+            Number.parseFloat(String(food.maxServing)) <
+              Number.parseFloat(String(food.servingSize)))),
     );
 
     if (invalidFoods.length > 0) {

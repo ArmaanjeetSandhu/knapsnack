@@ -72,7 +72,7 @@ const CategorisedSlider = ({
     COLOUR_MAP[baseColour as Colour] ?? COLOUR_MAP.gray;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(parseFloat(e.target.value));
+    onChange(Number.parseFloat(e.target.value));
     setIsAnimating(true);
   };
 

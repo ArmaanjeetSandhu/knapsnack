@@ -208,7 +208,7 @@ const OptimisationResults = ({
   ] as const;
 
   const allPricesZero = selectedFoods.every(
-    (food) => !parseFloat(String(food.price ?? 0)),
+    (food) => !Number.parseFloat(String(food.price ?? 0)),
   );
 
   return (

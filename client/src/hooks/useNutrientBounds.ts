@@ -127,7 +127,9 @@ export function useNutrientBounds(
   });
 
   const isEmpty = (val: string | number | undefined): boolean =>
-    val === "" || val === undefined || (typeof val === "number" && isNaN(val));
+    val === "" ||
+    val === undefined ||
+    (typeof val === "number" && Number.isNaN(val));
 
   const validateBounds = (
     nutrientKey: string,
@@ -166,10 +168,10 @@ export function useNutrientBounds(
     value: string | number,
     key: string,
   ): boolean => {
-    const val = parseFloat(String(value));
+    const val = Number.parseFloat(String(value));
     let error: string | null = null;
 
-    if (isNaN(val) || value === "") {
+    if (Number.isNaN(val) || value === "") {
       error = "Must be a positive number";
     } else if (calculationData) {
       const fmt = (v?: number) =>
@@ -199,12 +201,12 @@ export function useNutrientBounds(
     boundsType: BoundsType,
     value: string,
   ): void => {
-    const numValue = parseFloat(value);
+    const numValue = Number.parseFloat(value);
     setBounds((prev) => ({
       ...prev,
       [boundsType]: {
         ...prev[boundsType],
-        [nutrientKey]: isNaN(numValue) ? "" : numValue,
+        [nutrientKey]: Number.isNaN(numValue) ? "" : numValue,
       },
     }));
     validateBounds(nutrientKey, boundsType, numValue);
@@ -295,7 +297,7 @@ export function useNutrientBounds(
     const valString = editingValues[target];
     if (!validateInput(target, valString, key)) return;
 
-    const val = parseFloat(String(valString));
+    const val = Number.parseFloat(String(valString));
     const newLower =
       boundType === "lower" ? { ...bounds.lower, [key]: val } : bounds.lower;
     const newUpper =

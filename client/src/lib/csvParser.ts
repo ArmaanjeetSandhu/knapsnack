@@ -17,8 +17,8 @@ export type CsvParseResult = CsvParseSuccess | CsvParseFailure;
 
 const num = (value: string | undefined): number => {
   if (value === undefined || value === "") return 0;
-  const parsed = parseFloat(value);
-  return isNaN(parsed) ? 0 : parsed;
+  const parsed = Number.parseFloat(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
 };
 
 const firstDefined = (row: RawCsvRow, ...keys: string[]): string | undefined =>

@@ -86,7 +86,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       {
         title: "How old are you?",
         validate: (value: unknown) => {
-          const age = parseInt(String(value));
+          const age = Number.parseInt(String(value));
           if (!value || age < limits.AGE_MIN || age > limits.AGE_MAX)
             return `Age must be between ${limits.AGE_MIN} and ${limits.AGE_MAX}`;
           return null;
@@ -95,7 +95,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       {
         title: "What's your weight in kilograms?",
         validate: (value: unknown) => {
-          const weight = parseInt(String(value));
+          const weight = Number.parseInt(String(value));
           if (
             !value ||
             weight < limits.WEIGHT_MIN ||
@@ -108,7 +108,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       {
         title: "And your height in centimeters?",
         validate: (value: unknown) => {
-          const height = parseInt(String(value));
+          const height = Number.parseInt(String(value));
           if (
             !value ||
             height < limits.HEIGHT_MIN ||

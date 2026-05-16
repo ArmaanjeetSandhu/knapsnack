@@ -86,7 +86,7 @@ const ActivitySlider = ({ value, onChange, autoFocus }: SimpleSliderProps) => {
             max="2.4"
             step="0.1"
             value={value}
-            onChange={(e) => onChange(parseFloat(e.target.value))}
+            onChange={(e) => onChange(Number.parseFloat(e.target.value))}
             className="absolute inset-0 h-3 w-full cursor-pointer opacity-0"
           />
         </div>
@@ -134,7 +134,7 @@ const CalorieTargetSlider = ({
             max="125"
             step="5"
             value={value}
-            onChange={(e) => onChange(parseFloat(e.target.value))}
+            onChange={(e) => onChange(Number.parseFloat(e.target.value))}
             className="absolute inset-0 h-3 w-full cursor-pointer opacity-0"
           />
         </div>

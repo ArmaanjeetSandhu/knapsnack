@@ -33,8 +33,8 @@ export const prepareOptimisationPayload = (
   useFakeCosts: boolean = false,
 ): OptimisationRequestPayload => {
   const selected_foods = foods.map((food) => {
-    const servingSize = parseFloat(String(food.servingSize)) || 100;
-    let price = parseFloat(String(food.price ?? 0));
+    const servingSize = Number.parseFloat(String(food.servingSize)) || 100;
+    let price = Number.parseFloat(String(food.price ?? 0));
 
     if (useFakeCosts && price === 0)
       price = Math.random() * (0.001 - 0.00001) + 0.00001;
@@ -44,7 +44,7 @@ export const prepareOptimisationPayload = (
       description: food.description,
       price: price,
       servingSize,
-      maxServing: parseFloat(String(food.maxServing ?? 0)),
+      maxServing: Number.parseFloat(String(food.maxServing ?? 0)),
       requires_integer_servings: !!food.integerServings,
       must_include: !!food.mustInclude,
       nutrients: adjustNutrientsForServingSize(food.nutrients, servingSize),
@@ -64,7 +64,7 @@ export const prepareOptimisationPayload = (
   return {
     selected_foods,
     nutrient_goals,
-    age: parseInt(String(userInfo.age), 10),
+    age: Number.parseInt(String(userInfo.age), 10),
     gender: userInfo.gender,
     smokingStatus: userInfo.smokingStatus,
   };
@@ -84,7 +84,7 @@ export const exportSelectedFoodsToCSV = (foods: FoodItem[]): void => {
   let csvContent = headers.join(",") + "\n";
 
   foods.forEach((food) => {
-    const servingSize = parseFloat(String(food.servingSize)) || 100;
+    const servingSize = Number.parseFloat(String(food.servingSize)) || 100;
     const adjustedNutrients = adjustNutrientsForServingSize(
       food.nutrients,
       servingSize,
