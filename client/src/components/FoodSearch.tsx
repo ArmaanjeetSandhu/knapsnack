@@ -301,7 +301,7 @@ const FoodSearch = ({
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                       1
-                    </span>
+                    </span>{" "}
                     Quick Start
                   </h3>
                   <p className="mb-3 text-sm text-muted-foreground">
@@ -337,7 +337,7 @@ const FoodSearch = ({
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                       2
-                    </span>
+                    </span>{" "}
                     Import from CSV
                   </h3>
                   <p className="mb-3 text-sm text-muted-foreground">
@@ -377,7 +377,7 @@ const FoodSearch = ({
                 <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     3
-                  </span>
+                  </span>{" "}
                   Search Database
                 </h3>
 

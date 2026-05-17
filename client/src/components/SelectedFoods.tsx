@@ -880,8 +880,8 @@ const SelectedFoods = ({
                 <span className="font-medium text-muted-foreground">
                   Max Serving
                 </span>
-                , if specified, is greater than 0 and not less than the serving
-                size
+                {""}, if specified, is greater than 0 and not less than the
+                serving size
               </li>
             </ul>
           </div>

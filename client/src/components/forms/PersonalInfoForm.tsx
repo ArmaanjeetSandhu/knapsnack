@@ -236,7 +236,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       return (
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            Do you smoke?
+            <span>Do you smoke?</span>
             <button
               type="button"
               className="translate-y-0.5 cursor-help"
@@ -268,7 +268,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       return (
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            What&apos;s your caloric goal?
+            <span>What&apos;s your caloric goal?</span>
             <button
               type="button"
               className="translate-y-0.5 cursor-help"
