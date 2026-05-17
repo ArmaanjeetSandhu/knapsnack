@@ -27,10 +27,10 @@ import NotificationToast from "./common/NotificationToast";
 import type { FoodItem } from "../services/api";
 
 interface VirtualisedListProps<T> {
-  items: T[];
-  height: number;
-  itemHeight: number;
-  renderItem: (item: T) => React.ReactNode;
+  readonly items: T[];
+  readonly height: number;
+  readonly itemHeight: number;
+  readonly renderItem: (item: T) => React.ReactNode;
 }
 
 function VirtualisedList<T>({

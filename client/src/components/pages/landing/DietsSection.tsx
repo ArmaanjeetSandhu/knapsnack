@@ -53,8 +53,8 @@ function OrbitScene({
   scene,
   index,
 }: {
-  scene: OrbitSceneData;
-  index: number;
+  readonly scene: OrbitSceneData;
+  readonly index: number;
 }) {
   const isAccent = scene.textColor === "accent";
 

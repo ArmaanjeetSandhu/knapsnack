@@ -147,9 +147,9 @@ const CalorieTargetSlider = ({
 };
 
 interface CalculationInputEditorProps {
-  initialData: UserInfo | null;
-  onSave: (data: UserInfo) => void;
-  onCancel: () => void;
+  readonly initialData: UserInfo | null;
+  readonly onSave: (data: UserInfo) => void;
+  readonly onCancel: () => void;
 }
 
 export default function CalculationInputEditor({
@@ -479,14 +479,14 @@ export default function CalculationInputEditor({
 }
 
 interface SimpleRangeRowProps {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  onChange: (v: number) => void;
-  display: string;
+  readonly icon: React.ReactNode;
+  readonly label: string;
+  readonly value: number;
+  readonly min: number;
+  readonly max: number;
+  readonly step: number;
+  readonly onChange: (v: number) => void;
+  readonly display: string;
 }
 
 function SimpleRangeRow({
@@ -535,15 +535,15 @@ function SimpleRangeRow({
 }
 
 interface MacroSegmentProps {
-  width: number;
-  left: number;
-  colorClass: string;
-  isRoundedLeft?: boolean;
-  isRoundedRight?: boolean;
-  label: string;
-  show: boolean;
-  externalLeft: string;
-  externalOffset?: string;
+  readonly width: number;
+  readonly left: number;
+  readonly colorClass: string;
+  readonly isRoundedLeft?: boolean;
+  readonly isRoundedRight?: boolean;
+  readonly label: string;
+  readonly show: boolean;
+  readonly externalLeft: string;
+  readonly externalOffset?: string;
 }
 
 function MacroSegment({

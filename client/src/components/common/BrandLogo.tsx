@@ -5,7 +5,7 @@ const knapLetters = ["K", "n", "a", "p"];
 const snackLetters = ["[", "S", "n", "a", "c", "k", "]"];
 
 interface BrandLogoProps {
-  variant?: "header" | "landing";
+  readonly variant?: "header" | "landing";
 }
 
 export default function BrandLogo({ variant = "header" }: BrandLogoProps) {

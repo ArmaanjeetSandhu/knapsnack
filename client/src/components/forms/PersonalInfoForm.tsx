@@ -27,9 +27,9 @@ interface SelectionOption<T extends string> {
 }
 
 interface SelectionGroupProps<T extends string> {
-  options: SelectionOption<T>[];
-  value: T;
-  onChange: (value: T) => void;
+  readonly options: SelectionOption<T>[];
+  readonly value: T;
+  readonly onChange: (value: T) => void;
 }
 
 function SelectionGroup<T extends string>({

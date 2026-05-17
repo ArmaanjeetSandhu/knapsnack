@@ -6,10 +6,10 @@ const CAP_BOTTOM = 0.01;
 const PAD = 0.14;
 
 interface FillTextProps {
-  words: string[];
-  width: number;
-  height: number;
-  isMobile: boolean;
+  readonly words: string[];
+  readonly width: number;
+  readonly height: number;
+  readonly isMobile: boolean;
 }
 
 function FillText({ words, width, height, isMobile }: FillTextProps) {
