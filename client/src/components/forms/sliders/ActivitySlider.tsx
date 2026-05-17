@@ -45,7 +45,7 @@ const categories: ActivityCategory[] = [
     baseColour: "purple",
     description: "Athletes, dancers",
     min: 1.8,
-    max: 2.0,
+    max: 2,
   },
   {
     name: "Extremely Active",

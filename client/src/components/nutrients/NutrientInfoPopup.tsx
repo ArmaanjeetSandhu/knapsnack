@@ -293,7 +293,6 @@ interface NutrientInfoPopupProps {
   rda?: number;
   ul?: number;
   unit: string;
-  amount?: number;
 }
 
 const NutrientInfoPopup = ({

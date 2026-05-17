@@ -726,7 +726,7 @@ const CalculationResults = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => actions.setCustomisingBounds(true)}
+                        onClick={() => actions.startCustomising()}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

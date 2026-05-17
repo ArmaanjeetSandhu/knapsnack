@@ -95,11 +95,13 @@ const prepareCalculationData = (
 });
 
 interface ActionButtonsProps {
-  className?: string;
-  storedResults: OptimisationResultsState | null;
-  nutrientGoals: ReturnType<typeof useAppState>["state"]["nutrientGoals"];
-  onViewPreviousResults: () => void;
-  onViewCalculationResults: () => void;
+  readonly className?: string;
+  readonly storedResults: OptimisationResultsState | null;
+  readonly nutrientGoals: ReturnType<
+    typeof useAppState
+  >["state"]["nutrientGoals"];
+  readonly onViewPreviousResults: () => void;
+  readonly onViewCalculationResults: () => void;
 }
 
 function ActionButtons({

@@ -39,7 +39,7 @@ const LandingPage = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Enter") return;
       const focused = document.activeElement as HTMLElement | null;
-      if (focused && focused.tagName === "BUTTON") return;
+      if (focused?.tagName === "BUTTON") return;
       onGetStarted();
     };
     globalThis.addEventListener("keydown", handleKeyDown);

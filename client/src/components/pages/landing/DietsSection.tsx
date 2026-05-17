@@ -138,27 +138,25 @@ function OrbitScene({
 
 export default function DietsSection() {
   return (
-    <>
-      <section
-        id="diets"
-        className="relative flex w-full flex-col items-center justify-center overflow-hidden py-16"
-      >
-        <div className="mx-auto w-full max-w-[1204px]">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10 mb-12 px-4 text-center sm:mb-16 sm:px-6 lg:px-8"
-          ></motion.div>
+    <section
+      id="diets"
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden py-16"
+    >
+      <div className="mx-auto w-full max-w-[1204px]">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 mb-12 px-4 text-center sm:mb-16 sm:px-6 lg:px-8"
+        ></motion.div>
 
-          <div className="relative z-10 flex w-full flex-wrap items-center justify-center gap-0 sm:px-6 lg:px-8">
-            {scenes.map((scene, i) => (
-              <OrbitScene key={scene.id} scene={scene} index={i} />
-            ))}
-          </div>
+        <div className="relative z-10 flex w-full flex-wrap items-center justify-center gap-0 sm:px-6 lg:px-8">
+          {scenes.map((scene, i) => (
+            <OrbitScene key={scene.id} scene={scene} index={i} />
+          ))}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

@@ -44,7 +44,7 @@ export interface NutrientBoundsState {
 }
 
 export interface NutrientBoundsActions {
-  setCustomisingBounds: (value: boolean) => void;
+  startCustomising: () => void;
   handleBoundChange: (
     nutrientKey: string,
     boundsType: BoundsType,
@@ -378,10 +378,7 @@ export function useNutrientBounds(
       editingValues,
     },
     actions: {
-      setCustomisingBounds: (value: boolean) => {
-        if (value) startCustomising();
-        else handleCancel();
-      },
+      startCustomising,
       handleBoundChange,
       startEditing,
       cancelEditing,
