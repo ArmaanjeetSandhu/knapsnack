@@ -115,6 +115,6 @@ export const exportSelectedFoodsToCSV = (foods: FoodItem[]): void => {
   link.setAttribute("download", "selected_foods.csv");
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  link.remove();
   URL.revokeObjectURL(url);
 };

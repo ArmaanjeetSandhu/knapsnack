@@ -56,7 +56,7 @@ const handleExportCSV = (
   link.setAttribute("download", "diet_plan.csv");
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  link.remove();
   URL.revokeObjectURL(url);
 };
 
