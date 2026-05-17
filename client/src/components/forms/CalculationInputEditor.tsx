@@ -248,6 +248,18 @@ export default function CalculationInputEditor({
 
   const isLeftAligned = fat < 10;
 
+  let carbsExternalOffset: string | undefined;
+  if (carbs < 15) {
+    if (protein < 15) carbsExternalOffset = "mt-8";
+    else carbsExternalOffset = "mt-2";
+  }
+
+  let fatExternalOffset: string | undefined;
+  if (fat < 15) {
+    if (carbs < 15 && protein >= 15) fatExternalOffset = "mt-8";
+    else fatExternalOffset = "mt-2";
+  }
+
   return (
     <div className="no-select space-y-5 p-4">
       <div className="flex flex-col gap-4 sm:flex-row">
@@ -402,9 +414,7 @@ export default function CalculationInputEditor({
             label={`C : ${carbs}%`}
             show={carbs >= 15}
             externalLeft={`${protein + carbs / 2}%`}
-            externalOffset={
-              carbs < 15 ? (protein < 15 ? "mt-8" : "mt-2") : undefined
-            }
+            externalOffset={carbsExternalOffset}
           />
           <MacroSegment
             width={fat}
@@ -414,13 +424,7 @@ export default function CalculationInputEditor({
             label={`F : ${fat}%`}
             show={fat >= 15}
             externalLeft={`${protein + carbs + fat / 2}%`}
-            externalOffset={
-              fat < 15
-                ? carbs < 15 && protein >= 15
-                  ? "mt-8"
-                  : "mt-2"
-                : undefined
-            }
+            externalOffset={fatExternalOffset}
           />
 
           <div

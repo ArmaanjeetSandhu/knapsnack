@@ -45,8 +45,8 @@ export const bankersRound = (num: number, decimalPlaces = 0): number => {
   const i = Math.floor(n);
   const f = n - i;
   const e = 1e-8;
-  const r =
-    f > 0.5 - e && f < 0.5 + e ? (i % 2 === 0 ? i : i + 1) : Math.round(n);
+  const roundedToEven = i % 2 === 0 ? i : i + 1;
+  const r = f > 0.5 - e && f < 0.5 + e ? roundedToEven : Math.round(n);
   return decimalPlaces ? r / m : r;
 };
 

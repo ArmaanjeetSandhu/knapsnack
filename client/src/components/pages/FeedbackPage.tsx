@@ -37,6 +37,10 @@ const FeedbackPage = () => {
     }
   };
 
+  let buttonText = "Send Feedback";
+  if (status === "loading") buttonText = "Sending...";
+  else if (status === "success") buttonText = "Sent Successfully!";
+
   return (
     <div className="flex justify-center px-4">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-stretch gap-8 md:flex-row md:gap-16 lg:gap-24">
@@ -132,11 +136,7 @@ const FeedbackPage = () => {
                   className="flex h-12 w-full items-center gap-2 text-base"
                   disabled={status === "loading" || status === "success"}
                 >
-                  {status === "loading"
-                    ? "Sending..."
-                    : status === "success"
-                      ? "Sent Successfully!"
-                      : "Send Feedback"}
+                  {buttonText}
                   {status !== "loading" && status !== "success" && (
                     <Send className="h-4 w-4" />
                   )}

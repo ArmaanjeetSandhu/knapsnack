@@ -425,17 +425,16 @@ function App() {
     if (!showCalculationResults) scrollToFoodSelection(hasSelectedFoods);
   }, [showCalculationResults, hasSelectedFoods, scrollToFoodSelection]);
 
-  const effectiveNutrientGoals = nutrientGoals
-    ? useCustomBounds
-      ? {
-          ...nutrientGoals,
-          lower_bounds: (adjustedLowerBounds ??
-            nutrientGoals.lower_bounds) as NutrientMap,
-          upper_bounds: (adjustedUpperBounds ??
-            nutrientGoals.upper_bounds) as NutrientMap,
-        }
-      : nutrientGoals
-    : null;
+  let effectiveNutrientGoals = nutrientGoals ?? null;
+  if (nutrientGoals && useCustomBounds) {
+    effectiveNutrientGoals = {
+      ...nutrientGoals,
+      lower_bounds: (adjustedLowerBounds ??
+        nutrientGoals.lower_bounds) as NutrientMap,
+      upper_bounds: (adjustedUpperBounds ??
+        nutrientGoals.upper_bounds) as NutrientMap,
+    };
+  }
 
   const actionButtonsProps: ActionButtonsProps = {
     storedResults,
