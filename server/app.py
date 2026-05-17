@@ -100,7 +100,7 @@ def add_security_headers(response: Response) -> Response:
     return response
 
 
-@app.route("/robots.txt")
+@app.route("/robots.txt", methods=["GET"])
 def robots() -> Response:
     """Serve robots.txt file"""
     response = make_response(
@@ -116,7 +116,7 @@ Sitemap: https://knapsnack-b4b10d2b0910.herokuapp.com/sitemap.xml
     return response
 
 
-@app.route("/sitemap.xml")
+@app.route("/sitemap.xml", methods=["GET"])
 def sitemap() -> Response:
     """Generate a simple sitemap"""
     host_url = request.host_url.rstrip("/")
@@ -133,7 +133,7 @@ def sitemap() -> Response:
     return response
 
 
-@app.route("/.well-known/security.txt")
+@app.route("/.well-known/security.txt", methods=["GET"])
 def security_txt() -> Response:
     """Serve security.txt file"""
     expires_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -434,8 +434,8 @@ def feedback_api() -> ResponseType:
         )
 
 
-@app.route("/", defaults={"path": ""})
-@app.route("/<path:path>")
+@app.route("/", defaults={"path": ""}, methods=["GET"])
+@app.route("/<path:path>", methods=["GET"])
 def serve(path: str) -> Union[Response, Tuple[str, int]]:
     """Serve static files or fallback to index.html for SPA routing."""
     static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
@@ -453,4 +453,4 @@ def serve(path: str) -> Union[Response, Tuple[str, int]]:
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", DEFAULT_PORT))
     debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() in ["true", "1"]
-    app.run(host="0.0.0.0", port=port, debug=debug_mode)
+    app.run(host="127.0.0.1", port=port, debug=debug_mode)
