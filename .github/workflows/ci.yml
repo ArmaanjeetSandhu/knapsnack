@@ -21,19 +21,19 @@ jobs:
         run: uv python install
 
       - name: Install dependencies
-        run: uv sync --frozen
+        run: uv sync --frozen --no-build
 
       - name: Ruff — check formatting
-        run: uv run ruff format --check .
+        run: uv run --frozen --no-build ruff format --check .
 
       - name: Ruff — lint
-        run: uv run ruff check .
+        run: uv run --frozen --no-build ruff check .
 
       - name: Mypy
-        run: uv run mypy --strict server/
+        run: uv run --frozen --no-build mypy --strict server/
 
       - name: Pyright
-        run: uv run pyright server/
+        run: uv run --frozen --no-build pyright server/
 
   client-lint:
     name: ESLint
@@ -53,7 +53,7 @@ jobs:
           cache-dependency-path: client/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
         working-directory: client
 
       - name: ESLint
