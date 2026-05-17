@@ -210,10 +210,10 @@ def search_food_api() -> ResponseType:
 
         return jsonify({"results": search_results})
     except requests.exceptions.RequestException as e:
-        app.logger.error(f"API request failed: {str(e)}")
+        app.logger.exception(f"API request failed: {str(e)}")
         return create_error_response("API request failed", status_code=500)
     except Exception as e:
-        app.logger.error(f"An error occurred: {str(e)}")
+        app.logger.exception(f"An error occurred: {str(e)}")
         return create_error_response("An internal error has occurred", status_code=500)
 
 
@@ -263,13 +263,13 @@ def calculate_api() -> ResponseType:
         return jsonify(result)
 
     except KeyError as e:
-        app.logger.error(f"Missing required field: {str(e)}")
+        app.logger.exception(f"Missing required field: {str(e)}")
         return create_error_response(f"A required field is missing: {str(e)}")
     except ValueError as e:
-        app.logger.error(f"Invalid value: {str(e)}")
+        app.logger.exception(f"Invalid value: {str(e)}")
         return create_error_response(f"An invalid value was provided: {str(e)}")
     except Exception as e:
-        app.logger.error(f"Error occurred: {str(e)}")
+        app.logger.exception(f"Error occurred: {str(e)}")
         return create_error_response(
             "An internal server error has occurred.", status_code=500
         )
@@ -382,7 +382,9 @@ def optimise_api() -> ResponseType:
         )
 
     except Exception as e:
-        app.logger.error(f"Error occurred during optimisation: {str(e)}", exc_info=True)
+        app.logger.exception(
+            f"Error occurred during optimisation: {str(e)}", exc_info=True
+        )
         return create_error_response(
             "An internal error has occurred. Please try again later.", status_code=500
         )
@@ -405,7 +407,7 @@ def feedback_api() -> ResponseType:
         smtp_pass = os.environ.get("SMTP_PASS")
 
         if not smtp_user or not smtp_pass:
-            app.logger.error("SMTP credentials not configured.")
+            app.logger.exception("SMTP credentials not configured.")
             return create_error_response(
                 "Email sending is not configured on the server.", status_code=500
             )
@@ -426,7 +428,7 @@ def feedback_api() -> ResponseType:
         return jsonify({"success": True, "message": "Feedback sent successfully."})
 
     except Exception as e:
-        app.logger.error(f"Failed to send feedback email: {str(e)}", exc_info=True)
+        app.logger.exception(f"Failed to send feedback email: {str(e)}", exc_info=True)
         return create_error_response(
             "An internal error has occurred while sending feedback", status_code=500
         )
