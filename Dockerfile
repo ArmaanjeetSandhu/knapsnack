@@ -6,7 +6,7 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 COPY client/package.json client/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY client/ ./
 COPY client/public/ ./public/
@@ -16,11 +16,10 @@ FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libbrotli-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN useradd -m -u 1000 appuser && \
-    mkdir -p /app && \
-    chown -R appuser:appuser /app
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -m -u 1000 appuser \
+    && mkdir -p /app \
+    && chown -R appuser:appuser /app
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
@@ -32,16 +31,18 @@ COPY --from=frontend-builder /app/client/public /app/client/dist
 COPY server/ /app/server/
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-cache
+RUN uv sync --frozen --no-dev --no-cache --no-build
 
 COPY server/nutrient-databases /app/server/nutrient-databases
-
-RUN chown -R appuser:appuser /app
+COPY run.sh /app/run.sh
+RUN chmod +x /app/run.sh \
+    && chown -R appuser:appuser /app
 
 USER appuser
 
 ENV FLASK_APP=server/app.py
 ENV FLASK_ENV=production
 ENV PYTHONUNBUFFERED=1
+ENV PATH="/app/.venv/bin:$PATH"
 
-CMD uv run --no-sync gunicorn --bind 0.0.0.0:$PORT server.app:app
+CMD ["/app/run.sh"]
