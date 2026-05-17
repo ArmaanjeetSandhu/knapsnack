@@ -86,7 +86,7 @@ const CalculationResults = ({
 }: CalculationResultsProps) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] =
     useState<NutrientDisplayMode>(() =>
-      typeof window !== "undefined" && window.innerWidth < 768
+      globalThis.window !== undefined && globalThis.window.innerWidth < 768
         ? "cards"
         : "table",
     );

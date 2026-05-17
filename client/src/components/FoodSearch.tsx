@@ -238,7 +238,7 @@ const FoodSearch = ({
           whileTap={{ scale: added ? 1 : 0.95 }}
         >
           <Button
-            variant={added ? "secondary" : "secondary"}
+            variant="secondary"
             size="sm"
             onClick={() => !added && handleFoodAdd(food)}
             disabled={added}
