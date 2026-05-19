@@ -186,10 +186,10 @@ def optimise_diet(
     """
     Find optimal diet by trying different overflow percentages.
     """
-    overflow_percentages = list(range(0, 11))
+    overflow_percentages = range(0, 11)
     nutrients = ["protein", "carbohydrate", "fats"]
 
-    all_combinations = list(product(overflow_percentages, repeat=len(nutrients)))
+    all_combinations = product(overflow_percentages, repeat=len(nutrients))
     sorted_combinations = sorted(all_combinations, key=sum)
 
     for combo in sorted_combinations:
@@ -326,9 +326,7 @@ def format_optimisation_result(
         values = [(food["nutrients"].get(nutrient) or 0) for food in selected_foods]
         nutrient_totals[nutrient] = float(np.sum(servings * values))
 
-    overflow_by_nutrient = {
-        nutrient: percent for nutrient, percent in zip(nutrients, overflow_percentages)
-    }
+    overflow_by_nutrient = dict(zip(nutrients, overflow_percentages))
 
     return {
         "food_items": food_items,
