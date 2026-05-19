@@ -67,13 +67,13 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
 
             <div
               className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${
-                !isDark
+                isDark
                   ? isLanding
-                    ? "text-amber-500"
-                    : "text-yellow-400"
-                  : isLanding
                     ? "text-muted-foreground hover:text-foreground"
                     : "text-white hover:text-gray-200"
+                  : isLanding
+                    ? "text-amber-500"
+                    : "text-yellow-400"
               }`}
             >
               <Sun className="h-3.5 w-3.5 sm:h-5 sm:w-5" />

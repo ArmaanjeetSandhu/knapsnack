@@ -206,7 +206,7 @@ const FaqPage = () => {
     const hash = globalThis.location.hash.slice(1);
     if (!hash) return null;
     const index = faqs.findIndex((faq) => createSlug(faq.question) === hash);
-    return index !== -1 ? index : null;
+    return index === -1 ? null : index;
   });
 
   const faqRefs = useRef<Array<HTMLDivElement | null>>([]);

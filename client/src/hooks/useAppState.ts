@@ -35,7 +35,7 @@ type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
 function readStorage<T>(key: StorageKey, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
-    return raw !== null ? (JSON.parse(raw) as T) : fallback;
+    return raw === null ? fallback : (JSON.parse(raw) as T);
   } catch {
     return fallback;
   }

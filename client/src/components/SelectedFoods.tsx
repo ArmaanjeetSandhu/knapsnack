@@ -151,7 +151,7 @@ const SelectedFoods = ({
       const itemIndex = sortedFoodsRef.current.findIndex(
         (f) => f.fdcId === firstNewId,
       );
-      const scrollDelay = itemIndex !== -1 ? 100 + itemIndex * 20 : 200;
+      const scrollDelay = itemIndex === -1 ? 200 : 100 + itemIndex * 20;
 
       setTimeout(() => {
         setFlashingFoods(lastAddedIds);

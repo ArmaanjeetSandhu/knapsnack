@@ -314,7 +314,7 @@ export default function CalculationInputEditor({
           >
             <div
               className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
-                !smoker ? "left-1" : "left-[50%]"
+                smoker ? "left-[50%]" : "left-1"
               }`}
             />
             <button
@@ -323,9 +323,9 @@ export default function CalculationInputEditor({
                 setSmoker(false);
               }}
               className={`z-10 flex flex-1 items-center justify-center gap-2 rounded-full transition-colors duration-300 ${
-                !smoker
-                  ? "text-green-600 dark:text-green-400"
-                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                smoker
+                  ? "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  : "text-green-600 dark:text-green-400"
               }`}
             >
               <CigaretteOff className="h-5 w-5" />

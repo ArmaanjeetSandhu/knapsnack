@@ -141,14 +141,14 @@ export const NutrientTable = ({
                   {showBounds && (
                     <>
                       <TableCell className="text-right">
-                        {lowerBounds?.[key] != null
-                          ? lowerBounds[key].toLocaleString()
-                          : "N/A"}
+                        {lowerBounds?.[key] == null
+                          ? "N/A"
+                          : lowerBounds[key].toLocaleString()}
                       </TableCell>
                       <TableCell className="text-right">
-                        {upperBounds?.[key] != null
-                          ? upperBounds[key].toLocaleString()
-                          : "N/A"}
+                        {upperBounds?.[key] == null
+                          ? "N/A"
+                          : upperBounds[key].toLocaleString()}
                       </TableCell>
                     </>
                   )}

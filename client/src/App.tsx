@@ -483,117 +483,45 @@ function App() {
         </DialogContent>
       </Dialog>
 
-      {!nutrientGoals ? (
-        <div className="mx-auto max-w-4xl">
-          <PersonalInfoForm onSubmit={handleFormSubmit} />
-        </div>
-      ) : showCalculationResults ? (
-        <div className="mx-auto w-full scroll-mt-4" ref={calculationResultsRef}>
-          {hasVisitedFoodSelection && (
-            <div className="mb-4">
-              <Button
-                onClick={() => handleHideCalculationResults()}
-                variant="outline"
-                className="w-full"
-              >
-                <ArrowLeft className="mr-2 h-5 w-5" />
-                Back to Food Selection
-              </Button>
-            </div>
-          )}
-          <CalculationResults
-            calculationData={nutrientGoals}
-            onProceed={handleHideCalculationResults}
-            onRecalculate={() => setIsEditModalOpen(true)}
-            savedBounds={{
-              useCustomBounds,
-              adjustedLowerBounds: adjustedLowerBounds ?? {},
-              adjustedUpperBounds: adjustedUpperBounds ?? {},
-            }}
-          />
-        </div>
-      ) : (
-        <>
-          {!optimisationResults &&
-            !feasibilityResults &&
-            !showCalculationResults && (
-              <ActionButtons {...actionButtonsProps} className="mb-4" />
+      {nutrientGoals ? (
+        showCalculationResults ? (
+          <div
+            className="mx-auto w-full scroll-mt-4"
+            ref={calculationResultsRef}
+          >
+            {hasVisitedFoodSelection && (
+              <div className="mb-4">
+                <Button
+                  onClick={() => handleHideCalculationResults()}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Back to Food Selection
+                </Button>
+              </div>
             )}
-
-          {optimisationResults && (
-            <div className="mb-4">
-              <Button
-                onClick={handleHideResults}
-                variant="outline"
-                className="w-full"
-              >
-                <RefreshCw className="mr-2 h-5 w-5" />
-                Modify Foods
-              </Button>
-            </div>
-          )}
-
-          {!optimisationResults && !feasibilityResults && (
-            <>
-              <div ref={foodSearchRef} className="scroll-mt-4">
-                <FoodSearch
-                  onFoodSelect={handleFoodSelect}
-                  onFoodsImport={handleFoodsImport}
-                  selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
-                />
-              </div>
-              <div ref={selectedFoodsRef} className="scroll-mt-4">
-                <SelectedFoods
-                  foods={selectedFoods}
-                  onFoodsUpdate={actions.setSelectedFoods}
-                  nutrientGoals={effectiveNutrientGoals}
-                  userInfo={userInfo}
-                  onOptimisationResults={handleOptimisationSuccess}
-                  onFeasibilityResults={handleFeasibilityResults}
-                  notification={notification}
-                  onNotificationClear={() => setNotification(null)}
-                  lastAddedIds={lastAddedIds}
-                />
-              </div>
-              {useCustomBounds && (
-                <Alert className="mt-4">
-                  <AlertDescription>
-                    Using custom nutrient bounds for optimisation. Visit
-                    &quot;View Nutrition Requirements&quot; to adjust them.
-                  </AlertDescription>
-                </Alert>
+            <CalculationResults
+              calculationData={nutrientGoals}
+              onProceed={handleHideCalculationResults}
+              onRecalculate={() => setIsEditModalOpen(true)}
+              savedBounds={{
+                useCustomBounds,
+                adjustedLowerBounds: adjustedLowerBounds ?? {},
+                adjustedUpperBounds: adjustedUpperBounds ?? {},
+              }}
+            />
+          </div>
+        ) : (
+          <>
+            {!optimisationResults &&
+              !feasibilityResults &&
+              !showCalculationResults && (
+                <ActionButtons {...actionButtonsProps} className="mb-4" />
               )}
-              {!showCalculationResults && (
-                <ActionButtons {...actionButtonsProps} className="mt-6" />
-              )}
-            </>
-          )}
 
-          {feasibilityResults && (
-            <div ref={feasibilityResultsRef} className="scroll-mt-4">
-              <ActionButtons {...actionButtonsProps} className="mb-4" />
-              <FeasibilityAnalysis
-                feasibilityData={feasibilityResults}
-                onGoBack={handleHideFeasibilityResults}
-              />
-              <ActionButtons {...actionButtonsProps} className="mt-6" />
-            </div>
-          )}
-
-          {optimisationResults && (
-            <>
-              <OptimisationResults
-                results={optimisationResults}
-                selectedFoods={snapshotFoods}
-                nutrientGoals={effectiveNutrientGoals}
-                onGenerateAlternative={handleGenerateAlternativePlan}
-                onPreviousPlan={handlePreviousPlan}
-                onNextPlan={handleNextPlan}
-                hasPrevious={currentPlanIndex > 0}
-                hasNext={currentPlanIndex < planHistory.length - 1}
-                isGenerating={isGeneratingAlternative}
-              />
-              <div className="mt-6">
+            {optimisationResults && (
+              <div className="mb-4">
                 <Button
                   onClick={handleHideResults}
                   variant="outline"
@@ -603,9 +531,86 @@ function App() {
                   Modify Foods
                 </Button>
               </div>
-            </>
-          )}
-        </>
+            )}
+
+            {!optimisationResults && !feasibilityResults && (
+              <>
+                <div ref={foodSearchRef} className="scroll-mt-4">
+                  <FoodSearch
+                    onFoodSelect={handleFoodSelect}
+                    onFoodsImport={handleFoodsImport}
+                    selectedFoodIds={selectedFoods.map((food) => food.fdcId)}
+                  />
+                </div>
+                <div ref={selectedFoodsRef} className="scroll-mt-4">
+                  <SelectedFoods
+                    foods={selectedFoods}
+                    onFoodsUpdate={actions.setSelectedFoods}
+                    nutrientGoals={effectiveNutrientGoals}
+                    userInfo={userInfo}
+                    onOptimisationResults={handleOptimisationSuccess}
+                    onFeasibilityResults={handleFeasibilityResults}
+                    notification={notification}
+                    onNotificationClear={() => setNotification(null)}
+                    lastAddedIds={lastAddedIds}
+                  />
+                </div>
+                {useCustomBounds && (
+                  <Alert className="mt-4">
+                    <AlertDescription>
+                      Using custom nutrient bounds for optimisation. Visit
+                      &quot;View Nutrition Requirements&quot; to adjust them.
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {!showCalculationResults && (
+                  <ActionButtons {...actionButtonsProps} className="mt-6" />
+                )}
+              </>
+            )}
+
+            {feasibilityResults && (
+              <div ref={feasibilityResultsRef} className="scroll-mt-4">
+                <ActionButtons {...actionButtonsProps} className="mb-4" />
+                <FeasibilityAnalysis
+                  feasibilityData={feasibilityResults}
+                  onGoBack={handleHideFeasibilityResults}
+                />
+                <ActionButtons {...actionButtonsProps} className="mt-6" />
+              </div>
+            )}
+
+            {optimisationResults && (
+              <>
+                <OptimisationResults
+                  results={optimisationResults}
+                  selectedFoods={snapshotFoods}
+                  nutrientGoals={effectiveNutrientGoals}
+                  onGenerateAlternative={handleGenerateAlternativePlan}
+                  onPreviousPlan={handlePreviousPlan}
+                  onNextPlan={handleNextPlan}
+                  hasPrevious={currentPlanIndex > 0}
+                  hasNext={currentPlanIndex < planHistory.length - 1}
+                  isGenerating={isGeneratingAlternative}
+                />
+                <div className="mt-6">
+                  <Button
+                    onClick={handleHideResults}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <RefreshCw className="mr-2 h-5 w-5" />
+                    Modify Foods
+                  </Button>
+                </div>
+              </>
+            )}
+          </>
+        )
+      ) : (
+        <div className="mx-auto max-w-4xl">
+          <PersonalInfoForm onSubmit={handleFormSubmit} />
+        </div>
       )}
     </div>
   );

@@ -102,7 +102,7 @@ export const exportSelectedFoodsToCSV = (foods: FoodItem[]): void => {
     headers.slice(6).forEach((header) => {
       const key = getNutrientKey(header);
       const value = adjustedNutrients[key];
-      row.push(value !== undefined ? value.toFixed(2) : "");
+      row.push(value === undefined ? "" : value.toFixed(2));
     });
 
     csvContent += row.join(",") + "\n";
