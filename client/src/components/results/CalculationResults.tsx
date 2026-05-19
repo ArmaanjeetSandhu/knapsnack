@@ -279,7 +279,7 @@ const CalculationResults = ({
           <div className="grid gap-6 md:grid-cols-3">
             {mainMetrics.map((metric, index) => (
               <motion.div
-                key={index}
+                key={metric.label}
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
@@ -341,7 +341,7 @@ const CalculationResults = ({
 
                 return (
                   <motion.div
-                    key={index}
+                    key={macro.label}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{

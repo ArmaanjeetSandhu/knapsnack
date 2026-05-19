@@ -131,12 +131,13 @@ const parseText = (text: string): React.ReactNode[] => {
   const regex = /(\[\[.*?\]\]|https?:\/\/\S+)/g;
   return text.split(regex).map((part, index) => {
     if (!part) return null;
+    const partKey = `${part.substring(0, 10)}-${index}`;
 
     if (part.startsWith("[[") && part.endsWith("]]")) {
       const linkText = part.slice(2, -2);
       return (
         <a
-          key={index}
+          key={linkText}
           href={LINK_MAP[linkText]}
           target="_blank"
           rel="noopener noreferrer"
@@ -150,7 +151,7 @@ const parseText = (text: string): React.ReactNode[] => {
     if (part.startsWith("http")) {
       return (
         <a
-          key={index}
+          key={part}
           href={part}
           target="_blank"
           rel="noopener noreferrer"
@@ -161,7 +162,7 @@ const parseText = (text: string): React.ReactNode[] => {
         </a>
       );
     }
-    return <span key={index}>{part}</span>;
+    return <span key={partKey}>{part}</span>;
   });
 };
 
@@ -173,15 +174,19 @@ const ContentRenderer = ({ content }: ContentRendererProps) => {
   if (Array.isArray(content)) {
     return (
       <div className="prose-p:my-0 space-y-2">
-        {content.map((item, index) =>
-          typeof item === "string" ? (
-            <div key={index} className="whitespace-pre-wrap">
+        {content.map((item, index) => {
+          const itemKey =
+            typeof item === "string"
+              ? item.substring(0, 30)
+              : item.key || `jsx-${index}`;
+          return typeof item === "string" ? (
+            <div key={itemKey} className="whitespace-pre-wrap">
               {parseText(item)}
             </div>
           ) : (
-            React.cloneElement(item, { key: index })
-          ),
-        )}
+            React.cloneElement(item, { key: itemKey })
+          );
+        })}
       </div>
     );
   }
@@ -242,7 +247,7 @@ const FaqPage = () => {
           <div className="w-full">
             {faqs.map((faq, index) => (
               <div
-                key={index}
+                key={faq.question}
                 ref={(el) => {
                   faqRefs.current[index] = el;
                 }}

@@ -5,12 +5,14 @@ type TagName = "m" | "acc" | "i";
 interface TextNode {
   type: "text";
   content: string;
+  key: string;
 }
 
 interface TagNode {
   type: "tag";
   tag: TagName;
   children: Node[];
+  key: string;
 }
 
 type Node = TextNode | TagNode;
@@ -27,28 +29,33 @@ function parseNodes(text: string): Node[] {
     const [full, tag, inner] = match;
     const offset = match.index!;
 
-    if (offset > lastIndex)
-      nodes.push({ type: "text", content: text.slice(lastIndex, offset) });
+    if (offset > lastIndex) {
+      const content = text.slice(lastIndex, offset);
+      nodes.push({ type: "text", content, key: `text-${offset}` });
+    }
 
     nodes.push({
       type: "tag",
       tag: tag as TagName,
       children: parseNodes(inner),
+      key: `tag-${offset}-${tag}`,
     });
 
     lastIndex = offset + full.length;
   }
 
-  if (lastIndex < text.length)
-    nodes.push({ type: "text", content: text.slice(lastIndex) });
+  if (lastIndex < text.length) {
+    const content = text.slice(lastIndex);
+    nodes.push({ type: "text", content, key: `text-${lastIndex}` });
+  }
 
   return nodes;
 }
 
 function renderNodes(nodes: Node[]): React.ReactNode {
-  return nodes.map((node, index) => {
+  return nodes.map((node) => {
     if (node.type === "text")
-      return <React.Fragment key={index}>{node.content}</React.Fragment>;
+      return <React.Fragment key={node.key}>{node.content}</React.Fragment>;
 
     const children = renderNodes(node.children);
 
@@ -56,7 +63,7 @@ function renderNodes(nodes: Node[]): React.ReactNode {
       case "m":
         return (
           <span
-            key={index}
+            key={node.key}
             className="text-muted-foreground transition-colors duration-300"
           >
             {children}
@@ -65,7 +72,7 @@ function renderNodes(nodes: Node[]): React.ReactNode {
       case "acc":
         return (
           <span
-            key={index}
+            key={node.key}
             className="transition-colors duration-300"
             style={{ color: "var(--accent-highlight)" }}
           >
@@ -74,7 +81,7 @@ function renderNodes(nodes: Node[]): React.ReactNode {
         );
       case "i":
         return (
-          <em key={index} className="transition-colors duration-300">
+          <em key={node.key} className="transition-colors duration-300">
             {children}
           </em>
         );

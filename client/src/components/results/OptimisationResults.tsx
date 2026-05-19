@@ -81,8 +81,8 @@ interface MacroNutrient {
 
 const SimpleNutrientCards = ({ nutrients }: { nutrients: MacroNutrient[] }) => (
   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-    {nutrients.map((nutrient, index) => (
-      <Card key={index}>
+    {nutrients.map((nutrient) => (
+      <Card key={nutrient.name}>
         <CardContent className="pt-6">
           <h4 className="text-sm font-medium text-muted-foreground">
             {nutrient.name}
@@ -351,9 +351,9 @@ const OptimisationResults = ({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedPortionItems.map((item, index) => (
+                    {sortedPortionItems.map((item) => (
                       <TableRow
-                        key={index}
+                        key={item.food}
                         className="cursor-pointer transition-colors hover:bg-muted/50"
                         onClick={() => setOpenFoodLabel(item.food)}
                       >
@@ -418,8 +418,8 @@ const OptimisationResults = ({
                 Macronutrient Profile
               </h3>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {macronutrients.map((macro, index) => (
-                  <Card key={index}>
+                {macronutrients.map((macro) => (
+                  <Card key={macro.name}>
                     <CardContent className="pt-6">
                       <h4 className="text-sm font-medium text-muted-foreground">
                         {macro.name}

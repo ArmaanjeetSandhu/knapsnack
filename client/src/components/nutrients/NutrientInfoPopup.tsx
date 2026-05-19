@@ -276,8 +276,8 @@ const SymptomList = ({
   <div>
     <h3 className={`mb-3 text-lg font-semibold ${headerClassName}`}>{title}</h3>
     <ul className="space-y-2">
-      {symptoms.map((symptom, index) => (
-        <li key={index} className="flex items-center gap-2 text-sm">
+      {symptoms.map((symptom) => (
+        <li key={symptom} className="flex items-center gap-2 text-sm">
           <span className={`h-1.5 w-1.5 rounded-full ${dotClassName}`} />
           {symptom}
         </li>
@@ -353,9 +353,9 @@ const NutrientInfoPopup = ({
           <div>
             <h3 className="mb-3 text-lg font-semibold">Common Food Sources</h3>
             <div className="grid gap-2">
-              {info.sources.map((source, index) => (
+              {info.sources.map((source) => (
                 <div
-                  key={index}
+                  key={source}
                   className="flex items-center gap-3 rounded-lg border bg-card p-3"
                 >
                   <Info className="h-4 w-4 text-blue-500" />

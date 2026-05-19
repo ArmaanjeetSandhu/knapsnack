@@ -119,11 +119,11 @@ export const NutrientTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedNutrients.map((nutrient, index) => {
+            {sortedNutrients.map((nutrient) => {
               const key = nutrient.key;
               return (
                 <TableRow
-                  key={index}
+                  key={key}
                   className="cursor-pointer transition-colors hover:bg-muted/50"
                   onClick={() => handleNutrientClick(nutrient)}
                 >
@@ -196,11 +196,11 @@ export const NutrientCards = ({
   return (
     <>
       <div className="mt-3 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {nutrients.map((nutrient, index) => {
+        {nutrients.map((nutrient) => {
           const key = nutrient.key;
           return (
             <Card
-              key={index}
+              key={key}
               className="cursor-pointer transition-all duration-200 hover:shadow-md"
               onClick={() => handleNutrientClick(nutrient)}
             >

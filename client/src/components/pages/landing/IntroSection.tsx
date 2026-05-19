@@ -40,9 +40,9 @@ const paragraphs: React.ReactNode[] = [
   "Knap<acc>[Snack]</acc> is designed for everyone who cares about nutrition.",
 
   "<acc>Individuals</acc> who want to <m>build personal meal plans that are both nutritionally complete and as affordable as possible</m>",
-  
+
   "<acc>Nutritionists</acc> and <acc>dietitians</acc> who want to <m>generate evidence-based plans for their clients without hours of manual calculation</m>",
-  
+
   "<acc>Public health researchers</acc> and <acc>policymakers</acc> who want to <m>model dietary inventions and food costs for entire communities</m>",
 ];
 
@@ -55,17 +55,23 @@ const IntroSection = () => {
     >
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
         <div className="flex w-full flex-col space-y-8 sm:space-y-10">
-          {paragraphs.map((paragraph, idx) => (
-            <AlternatingMotionItem key={idx} index={idx}>
-              <div className="no-select whitespace-pre-wrap text-4xl font-black leading-[0.8] tracking-tighter text-foreground transition-colors duration-300 sm:text-6xl md:text-8xl lg:text-[2rem]">
-                {typeof paragraph === "string" ? (
-                  <ParsedText text={paragraph} />
-                ) : (
-                  paragraph
-                )}
-              </div>
-            </AlternatingMotionItem>
-          ))}
+          {paragraphs.map((paragraph, idx) => {
+            const itemKey =
+              typeof paragraph === "string"
+                ? paragraph.slice(0, 32)
+                : "stigler-link";
+            return (
+              <AlternatingMotionItem key={itemKey} index={idx}>
+                <div className="no-select whitespace-pre-wrap text-4xl font-black leading-[0.8] tracking-tighter text-foreground transition-colors duration-300 sm:text-6xl md:text-8xl lg:text-[2rem]">
+                  {typeof paragraph === "string" ? (
+                    <ParsedText text={paragraph} />
+                  ) : (
+                    paragraph
+                  )}
+                </div>
+              </AlternatingMotionItem>
+            );
+          })}
         </div>
       </div>
     </section>

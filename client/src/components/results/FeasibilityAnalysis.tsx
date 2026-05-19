@@ -160,13 +160,13 @@ const FeasibilityAnalysis = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lowerBoundIssues.map((issue, index) => {
+              {lowerBoundIssues.map((issue) => {
                 const required = bankersRound(issue.required, 1);
                 const achievable = bankersRound(issue.achievable, 2);
                 const shortfall = bankersRound(required - achievable, 2);
                 const shortfallPct = bankersRound(issue.shortfallPercentage, 2);
                 return (
-                  <TableRow key={index}>
+                  <TableRow key={issue.nutrient}>
                     <TableCell className="font-medium">
                       {formatNutrientName(issue.nutrient)}
                     </TableCell>
@@ -220,13 +220,13 @@ const FeasibilityAnalysis = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {upperBoundIssues.map((issue, index) => {
+              {upperBoundIssues.map((issue) => {
                 const limit = bankersRound(issue.limit, 1);
                 const minimum = bankersRound(issue.minimum, 2);
                 const excess = bankersRound(minimum - limit, 2);
                 const excessPct = bankersRound(issue.excessPercentage, 2);
                 return (
-                  <TableRow key={index}>
+                  <TableRow key={`${issue.nutrient}-${issue.foodItem}`}>
                     <TableCell className="font-medium">
                       {formatNutrientName(issue.nutrient)}
                     </TableCell>

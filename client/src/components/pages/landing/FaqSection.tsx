@@ -155,13 +155,15 @@ const ContentRenderer = ({ content }: ContentRendererProps) => {
   if (Array.isArray(content)) {
     return (
       <div className="space-y-4 sm:space-y-6">
-        {content.map((item, index) =>
+        {content.map((item) =>
           typeof item === "string" ? (
-            <div key={index} className="whitespace-pre-wrap">
+            <div key={item} className="whitespace-pre-wrap">
               <ParsedText text={item} />
             </div>
           ) : (
-            React.cloneElement(item as React.ReactElement, { key: index })
+            React.cloneElement(item as React.ReactElement, {
+              key: (item as React.ReactElement).key,
+            })
           ),
         )}
       </div>
@@ -200,7 +202,7 @@ const FaqSection = () => {
             const isRightAligned = idx % 2 !== 0;
 
             return (
-              <AlternatingMotionItem key={idx} index={idx}>
+              <AlternatingMotionItem key={faq.question} index={idx}>
                 <div
                   ref={(el) => {
                     faqRefs.current[idx] = el;

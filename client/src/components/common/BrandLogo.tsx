@@ -1,8 +1,22 @@
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useEffect } from "react";
 
-const knapLetters = ["K", "n", "a", "p"];
-const snackLetters = ["[", "S", "n", "a", "c", "k", "]"];
+const knapLetters = [
+  { char: "K", id: "knap-K" },
+  { char: "n", id: "knap-n" },
+  { char: "a", id: "knap-a" },
+  { char: "p", id: "knap-p" },
+];
+
+const snackLetters = [
+  { char: "[", id: "snack-[" },
+  { char: "S", id: "snack-S" },
+  { char: "n", id: "snack-n" },
+  { char: "a", id: "snack-a" },
+  { char: "c", id: "snack-c" },
+  { char: "k", id: "snack-k" },
+  { char: "]", id: "snack-]" },
+];
 
 interface BrandLogoProps {
   readonly variant?: "header" | "landing";
@@ -24,8 +38,8 @@ export default function BrandLogo({ variant = "header" }: BrandLogoProps) {
   return (
     <div className="flex flex-wrap items-baseline justify-center gap-x-[0.02em]">
       <span className="flex items-baseline">
-        {knapLetters.map((char, i) => (
-          <div key={i} className="overflow-hidden">
+        {knapLetters.map(({ char, id }, i) => (
+          <div key={id} className="overflow-hidden">
             <motion.span
               initial={{ y: "110%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
@@ -43,8 +57,8 @@ export default function BrandLogo({ variant = "header" }: BrandLogoProps) {
       </span>
 
       <span className="relative flex items-baseline overflow-visible">
-        {snackLetters.map((char, i) => (
-          <div key={i} className="overflow-hidden">
+        {snackLetters.map(({ char, id }, i) => (
+          <div key={id} className="overflow-hidden">
             <motion.span
               initial={{ y: "110%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
