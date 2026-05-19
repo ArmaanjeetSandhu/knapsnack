@@ -122,16 +122,18 @@ CONTENT_SECURITY_POLICY = (
     "frame-ancestors 'none';"
 )
 
+CACHE_IMMUTABLE = "public, max-age=31536000, immutable"
+
 CACHE_CONTROL_SETTINGS = {
     "text/html": "public, max-age=300",
     "application/json": "public, max-age=60",
-    "text/css": "public, max-age=31536000, immutable",
-    "application/javascript": "public, max-age=31536000, immutable",
-    "image/svg+xml": "public, max-age=31536000, immutable",
-    "image/jpeg": "public, max-age=31536000, immutable",
-    "image/png": "public, max-age=31536000, immutable",
-    "image/gif": "public, max-age=31536000, immutable",
-    "image/webp": "public, max-age=31536000, immutable",
-    "video/mp4": "public, max-age=31536000, immutable",
+    "text/css": CACHE_IMMUTABLE,
+    "application/javascript": CACHE_IMMUTABLE,
+    "image/svg+xml": CACHE_IMMUTABLE,
+    "image/jpeg": CACHE_IMMUTABLE,
+    "image/png": CACHE_IMMUTABLE,
+    "image/gif": CACHE_IMMUTABLE,
+    "image/webp": CACHE_IMMUTABLE,
+    "video/mp4": CACHE_IMMUTABLE,
     "default": "public, max-age=86400",
 }

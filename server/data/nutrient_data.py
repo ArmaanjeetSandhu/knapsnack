@@ -19,6 +19,10 @@ from server.config import (
     VITAMINS_UL_EXCLUDE,
 )
 
+LIFE_STAGE_GROUP_COL = "Life-Stage Group"
+TOTAL_WATER_COL = "Total Water (L)"
+MAGNESIUM_COL = "Magnesium (mg)"
+
 
 def remove_excluded_age_groups(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -31,7 +35,7 @@ def remove_excluded_age_groups(df: pd.DataFrame) -> pd.DataFrame:
         DataFrame with excluded age groups removed
     """
     df_any = cast(Any, df)
-    raw_mask = df_any["Life-Stage Group"].str.contains(
+    raw_mask = df_any[LIFE_STAGE_GROUP_COL].str.contains(
         "|".join(EXCLUDED_AGE_GROUPS), na=False
     )
     mask = cast("pd.Series[bool]", raw_mask)
@@ -110,11 +114,11 @@ def get_nutrient_bounds(
     elements_ul = load_process_nutrient_data("elements-ULs.csv", ELEMENTS_UL_EXCLUDE)
     macros_rda = load_process_nutrient_data("macros-RDAs.csv", MACROS_RDA_EXCLUDE)
 
-    vitamin_lower = vitamins_rda[vitamins_rda["Life-Stage Group"] == age_group]
-    element_lower = elements_rda[elements_rda["Life-Stage Group"] == age_group]
-    macro_lower = macros_rda[macros_rda["Life-Stage Group"] == age_group]
-    vitamin_upper = vitamins_ul[vitamins_ul["Life-Stage Group"] == age_group]
-    element_upper = elements_ul[elements_ul["Life-Stage Group"] == age_group]
+    vitamin_lower = vitamins_rda[vitamins_rda[LIFE_STAGE_GROUP_COL] == age_group]
+    element_lower = elements_rda[elements_rda[LIFE_STAGE_GROUP_COL] == age_group]
+    macro_lower = macros_rda[macros_rda[LIFE_STAGE_GROUP_COL] == age_group]
+    vitamin_upper = vitamins_ul[vitamins_ul[LIFE_STAGE_GROUP_COL] == age_group]
+    element_upper = elements_ul[elements_ul[LIFE_STAGE_GROUP_COL] == age_group]
 
     if (
         vitamin_lower.empty
@@ -138,8 +142,8 @@ def get_nutrient_bounds(
     lower_bounds = pd.concat(lower_series_list)
     upper_bounds = pd.concat(upper_series_list)
 
-    lower_bounds = lower_bounds.drop("Life-Stage Group")
-    upper_bounds = upper_bounds.drop("Life-Stage Group")
+    lower_bounds = lower_bounds.drop(LIFE_STAGE_GROUP_COL)
+    upper_bounds = upper_bounds.drop(LIFE_STAGE_GROUP_COL)
 
     pd_any: Any = pd
     safe_to_numeric = cast("Callable[[Any, str], pd.Series[Any]]", pd_any.to_numeric)
@@ -147,17 +151,15 @@ def get_nutrient_bounds(
     lower_bounds = safe_to_numeric(lower_bounds, "coerce")
     upper_bounds = safe_to_numeric(upper_bounds, "coerce")
 
-    if "Total Water (L)" in lower_bounds:
-        lower_bounds["Water (mL)"] = lower_bounds["Total Water (L)"] * 1000
-        lower_bounds = lower_bounds.drop("Total Water (L)")
+    if TOTAL_WATER_COL in lower_bounds:
+        lower_bounds["Water (mL)"] = lower_bounds[TOTAL_WATER_COL] * 1000
+        lower_bounds = lower_bounds.drop(TOTAL_WATER_COL)
 
     for nutrient in ["Folate (µg)", "Niacin (mg)", "Vitamin E (mg)"]:
         if pd.notna(upper_bounds[nutrient]) and pd.notna(lower_bounds[nutrient]):
             upper_bounds[nutrient] += lower_bounds[nutrient]
 
-    if pd.notna(upper_bounds["Magnesium (mg)"]) and pd.notna(
-        lower_bounds["Magnesium (mg)"]
-    ):
-        upper_bounds["Magnesium (mg)"] += lower_bounds["Magnesium (mg)"]
+    if pd.notna(upper_bounds[MAGNESIUM_COL]) and pd.notna(lower_bounds[MAGNESIUM_COL]):
+        upper_bounds[MAGNESIUM_COL] += lower_bounds[MAGNESIUM_COL]
 
     return lower_bounds, upper_bounds

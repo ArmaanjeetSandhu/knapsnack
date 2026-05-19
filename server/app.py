@@ -81,6 +81,7 @@ app.config["COMPRESS_MIN_SIZE"] = 500
 Compress(app)
 
 ResponseType = Union[Response, Tuple[Response, int], Tuple[str, int]]
+ERR_NO_JSON = "No JSON data provided or Content-Type not set to application/json"
 
 
 @app.after_request
@@ -193,9 +194,7 @@ def search_food_api() -> ResponseType:
     try:
         data = request.json
         if data is None:
-            return create_error_response(
-                "No JSON data provided or Content-Type not set to application/json"
-            )
+            return create_error_response(ERR_NO_JSON)
 
         search_term = data.get("query")
         api_key = data.get("api_key")
@@ -225,9 +224,7 @@ def calculate_api() -> ResponseType:
         app.logger.debug(f"Received calculation request with data: {data}")
 
         if data is None:
-            return create_error_response(
-                "No JSON data provided or Content-Type not set to application/json"
-            )
+            return create_error_response(ERR_NO_JSON)
 
         is_valid, validation_errors = validate_input_parameters(
             data, AGE_MIN, AGE_MAX, WEIGHT_MIN, WEIGHT_MAX, HEIGHT_MIN, HEIGHT_MAX
@@ -283,9 +280,7 @@ def optimise_api() -> ResponseType:
         app.logger.debug("Received optimisation request")
 
         if data is None:
-            return create_error_response(
-                "No JSON data provided or Content-Type not set to application/json"
-            )
+            return create_error_response(ERR_NO_JSON)
 
         nutrient_goals = data["nutrient_goals"]
         selected_foods_data = data["selected_foods"]
