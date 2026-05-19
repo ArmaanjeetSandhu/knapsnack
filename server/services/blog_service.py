@@ -70,7 +70,7 @@ def extract_first_image(content: Any) -> Optional[str]:
         return None
 
     if isinstance(content, str):
-        match = re.search(r"!\[.*?\]\((.*?)\)", content)
+        match = re.search(r"!\[[^\]]*\]\(([^)]*)\)", content)
         if match:
             url = match.group(1)
             if url.startswith("//"):

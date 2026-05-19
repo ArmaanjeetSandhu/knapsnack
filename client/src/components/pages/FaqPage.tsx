@@ -128,7 +128,7 @@ const LINK_MAP: Record<string, string> = {
 };
 
 const parseText = (text: string): React.ReactNode[] => {
-  const regex = /(\[\[.*?\]\]|https?:\/\/\S+)/g;
+  const regex = /(\[\[[^\]]*\]\]|https?:\/\/\S+)/g;
   return text.split(regex).map((part, index) => {
     if (!part) return null;
     const partKey = `${part.substring(0, 10)}-${index}`;
