@@ -63,7 +63,18 @@ static_folder = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "client", "dist")
 )
 app = Flask(__name__, static_folder=static_folder)
-CORS(app)
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "https://knapsnack-b4b10d2b0910.herokuapp.com",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+            ]
+        }
+    },
+)
 mimetypes.add_type("video/mp4", ".mp4")
 
 app.config["COMPRESS_REGISTER"] = True
