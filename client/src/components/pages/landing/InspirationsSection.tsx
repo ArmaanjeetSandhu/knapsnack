@@ -131,6 +131,79 @@ function InspirationsSection() {
     >
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
         <div className="no-select relative mx-auto h-[550px] w-full font-sans md:h-[350px]">
+          <motion.div
+            className="group absolute bottom-0 top-0 z-20 -ml-5 flex cursor-ew-resize items-center justify-center md:-ml-6"
+            style={{ x }}
+            drag="x"
+            dragConstraints={{ left: 0, right: containerWidth }}
+            dragElastic={0}
+            dragMomentum={false}
+            onDragEnd={handleDragEnd}
+          >
+            <button
+              type="button"
+              aria-label="Toggle inspiration panel"
+              className="group/btn flex h-full w-10 cursor-pointer items-center justify-center focus:outline-none md:w-12"
+              onClick={handleToggle}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowLeft") snapTo(0);
+                if (e.key === "ArrowRight") snapTo(containerWidth);
+              }}
+            >
+              <motion.div
+                animate={
+                  isAtRight
+                    ? {
+                        scale: [1, 1.15, 1],
+                        boxShadow: [
+                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
+                          "0px 0px 0px 12px rgba(128, 128, 128, 0.25)",
+                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
+                        ],
+                      }
+                    : {
+                        scale: 1,
+                        boxShadow: "0px 0px 0px 0px rgba(128, 128, 128, 0)",
+                      }
+                }
+                transition={
+                  isAtRight
+                    ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                    : { duration: 0.3 }
+                }
+                whileHover={{ scale: 1.25 }}
+                className="flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border border-border bg-background shadow-lg transition-colors group-hover:border-primary/50 group-focus-visible/btn:ring-2 group-focus-visible/btn:ring-primary group-focus-visible/btn:ring-offset-2 md:h-14 md:w-10"
+              >
+                <svg
+                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <svg
+                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </motion.div>
+            </button>
+          </motion.div>
+
           <div
             ref={containerRef}
             className="absolute inset-0 overflow-hidden rounded-3xl border border-border bg-card shadow-xl"
@@ -215,73 +288,6 @@ function InspirationsSection() {
               </div>
             </motion.div>
           </div>
-
-          <motion.div
-            className="group absolute bottom-0 top-0 z-20 -ml-5 flex cursor-ew-resize items-center justify-center md:-ml-6"
-            style={{ x }}
-            drag="x"
-            dragConstraints={{ left: 0, right: containerWidth }}
-            dragElastic={0}
-            dragMomentum={false}
-            onDragEnd={handleDragEnd}
-          >
-            <div
-              className="flex h-full w-10 items-center justify-center md:w-12"
-              onClick={handleToggle}
-            >
-              <motion.div
-                animate={
-                  isAtRight
-                    ? {
-                        scale: [1, 1.15, 1],
-                        boxShadow: [
-                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                          "0px 0px 0px 12px rgba(128, 128, 128, 0.25)",
-                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                        ],
-                      }
-                    : {
-                        scale: 1,
-                        boxShadow: "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                      }
-                }
-                transition={
-                  isAtRight
-                    ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-                    : { duration: 0.3 }
-                }
-                whileHover={{ scale: 1.25 }}
-                className="flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border border-border bg-background shadow-lg transition-colors group-hover:border-primary/50 md:h-14 md:w-10"
-              >
-                <svg
-                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={3}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <svg
-                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={3}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </motion.div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>

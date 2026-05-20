@@ -52,7 +52,7 @@ const categories: ActivityCategory[] = [
     icon: Award,
     baseColour: "red",
     description: "Competitive athletes, heavy manual labourers",
-    min: 2.0,
+    min: 2,
     max: 2.4,
   },
 ];
@@ -64,7 +64,7 @@ const getCurrentCategory = (
   if (val < 1.4) return cats[0];
   if (val < 1.6) return cats[1];
   if (val < 1.8) return cats[2];
-  if (val < 2.0) return cats[3];
+  if (val < 2) return cats[3];
   return cats[4];
 };
 
