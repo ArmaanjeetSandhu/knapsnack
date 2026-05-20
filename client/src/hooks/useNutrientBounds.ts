@@ -256,7 +256,7 @@ export function useNutrientBounds(
     if (defaultValue !== undefined) {
       setEditingValues((prev) => ({
         ...prev,
-        [target]: defaultValue as number,
+        [target]: defaultValue,
       }));
       const key = EDITABLE_TARGET_KEY_MAP[target];
       if (key) validateInput(target, defaultValue, key);

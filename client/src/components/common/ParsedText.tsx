@@ -27,9 +27,9 @@ function parseNodes(text: string): Node[] {
 
   for (const match of text.matchAll(regex)) {
     const [full, tag, inner] = match;
-    const offset = match.index!;
+    const offset = match.index;
 
-    if (offset > lastIndex) {
+    if (offset !== undefined && offset > lastIndex) {
       const content = text.slice(lastIndex, offset);
       nodes.push({ type: "text", content, key: `text-${offset}` });
     }

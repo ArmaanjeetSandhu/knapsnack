@@ -23,7 +23,7 @@ const BlogPage = () => {
     const fetchPosts = async () => {
       try {
         const data = await api.getBlogPosts();
-        setPosts(data as BlogPostListItem[]);
+        setPosts(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load posts");
       } finally {

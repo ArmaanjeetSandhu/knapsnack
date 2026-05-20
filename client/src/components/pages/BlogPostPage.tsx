@@ -101,7 +101,7 @@ const BlogPostPage = () => {
     const fetchPost = async () => {
       try {
         const data = await api.getBlogPost(slug);
-        setPost(data as BlogPostDetail);
+        setPost(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load post");
       } finally {

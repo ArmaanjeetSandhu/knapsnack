@@ -1,6 +1,6 @@
 import Papa, { type ParseLocalConfig } from "papaparse";
 
-import { processCSVData, type CsvParseFailure } from "../lib/csvParser";
+import { processCSVData } from "../lib/csvParser";
 
 import type { FoodItem } from "../services/api";
 
@@ -18,7 +18,7 @@ export const useCsvImport = (
   const handleParseComplete = (results: Papa.ParseResult<RawCsvRow>): void => {
     const result = processCSVData(results);
     if (result.success) onImportSuccess(result.data);
-    else onImportError?.((result as CsvParseFailure).error);
+    else onImportError?.(result.error);
   };
 
   const createParseConfig = (

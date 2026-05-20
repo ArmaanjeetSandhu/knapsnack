@@ -53,7 +53,6 @@ import type {
   FeasibilityAnalysis,
   NutritionCalculationResponse,
   OptimisationApiResult,
-  OptimisationFailure,
   UserInfo,
 } from "../services/api";
 
@@ -247,7 +246,7 @@ const SelectedFoods = ({
 
       if (result.success) onOptimisationResults(result.result);
       else {
-        const failure = result as OptimisationFailure;
+        const failure = result;
         if (failure.feasibilityAnalysis?.isFeasible) setShowErrorDialog(true);
         else if (failure.feasibilityAnalysis)
           onFeasibilityResults(failure.feasibilityAnalysis);

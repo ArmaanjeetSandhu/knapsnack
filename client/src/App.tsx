@@ -66,7 +66,6 @@ import type {
   NutritionCalculationRequest,
   UserInfo,
   FeasibilityAnalysis as FeasibilityAnalysisType,
-  NutrientMap,
 } from "./services/api";
 
 const isDuplicateFood = (
@@ -186,7 +185,7 @@ function App() {
           carbohydrate: formData.macroRatios?.carbs ?? 0,
           fats: formData.macroRatios?.fat ?? 0,
         },
-      } as UserInfo);
+      });
       setLastAddedIds([]);
       actions.setShowCalculationResults(true);
       setError(null);
@@ -431,10 +430,8 @@ function App() {
   if (nutrientGoals && useCustomBounds) {
     effectiveNutrientGoals = {
       ...nutrientGoals,
-      lower_bounds: (adjustedLowerBounds ??
-        nutrientGoals.lower_bounds) as NutrientMap,
-      upper_bounds: (adjustedUpperBounds ??
-        nutrientGoals.upper_bounds) as NutrientMap,
+      lower_bounds: adjustedLowerBounds ?? nutrientGoals.lower_bounds,
+      upper_bounds: adjustedUpperBounds ?? nutrientGoals.upper_bounds,
     };
   }
 

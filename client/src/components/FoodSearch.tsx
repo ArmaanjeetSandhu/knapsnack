@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { processCSVData, type CsvParseFailure } from "../lib/csvParser";
+import { processCSVData } from "../lib/csvParser";
 import api from "../services/api";
 
 import NotificationToast from "./common/NotificationToast";
@@ -103,7 +103,7 @@ const FoodSearch = ({
     if (result.success) {
       onFoodsImport(result.data);
       setSearchError(null);
-    } else setSearchError((result as CsvParseFailure).error);
+    } else setSearchError(result.error);
   };
 
   const createParseConfig = () => ({
