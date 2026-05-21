@@ -273,37 +273,42 @@ export default function CalculationInputEditor({
                 gender === "male" ? "left-1" : "left-[50%]"
               }`}
             />
-            {(["male", "female"] as const).map((g) => (
-              <button
-                key={g}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setGender(g);
-                }}
-                className={`z-10 flex flex-1 items-center justify-center gap-2 rounded-full transition-colors duration-300 ${
-                  gender === g
-                    ? g === "male"
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-pink-600 dark:text-pink-400"
-                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
-              >
-                {g === "male" ? (
-                  <GenderMaleIcon
-                    weight={gender === "male" ? "bold" : "regular"}
-                    className="h-5 w-5"
-                  />
-                ) : (
-                  <GenderFemaleIcon
-                    weight={gender === "female" ? "bold" : "regular"}
-                    className="h-5 w-5"
-                  />
-                )}
-                <span className="font-medium">
-                  {g === "male" ? "Male" : "Female"}
-                </span>
-              </button>
-            ))}
+            {(["male", "female"] as const).map((g) => {
+              const activeColorClass =
+                g === "male"
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-pink-600 dark:text-pink-400";
+
+              return (
+                <button
+                  key={g}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setGender(g);
+                  }}
+                  className={`z-10 flex flex-1 items-center justify-center gap-2 rounded-full transition-colors duration-300 ${
+                    gender === g
+                      ? activeColorClass
+                      : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  }`}
+                >
+                  {g === "male" ? (
+                    <GenderMaleIcon
+                      weight={gender === "male" ? "bold" : "regular"}
+                      className="h-5 w-5"
+                    />
+                  ) : (
+                    <GenderFemaleIcon
+                      weight={gender === "female" ? "bold" : "regular"}
+                      className="h-5 w-5"
+                    />
+                  )}
+                  <span className="font-medium">
+                    {g === "male" ? "Male" : "Female"}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
