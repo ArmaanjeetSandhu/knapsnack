@@ -95,15 +95,7 @@ const faqs = [
   {
     question: "This seems like overkill!",
     answer: [
-      "Fair point. And you’re right, it is! You’ll notice Knap<acc>[Snack]</acc> meal plans are precise down to the hundredth of a gram. But those granular numbers <m>aren't really meant to be followed to the letter.</m> We don’t expect you to weigh out <acc>118.4g</acc> of banana or <acc>27.3g</acc> of almonds.",
-      "The precision is there because seeing exact quantities is what <m>trains your sense of proportion</m> in the first place. Once you've seen that your plan calls for roughly one medium banana and a handful of almonds, you start to internalise what <acc>“enough carb”</acc> or <acc>“enough healthy fat”</acc> actually looks like on a plate — <m>no scale required.</m>",
-      <div key="overkill-1" className="whitespace-pre-wrap">
-        <ParsedText text="The real goal, <m>in other words,</m> is not to turn you into an " />
-        <SquiggleLink href="https://en.wikipedia.org/wiki/Orthorexia_nervosa">
-          <ParsedText text="<acc>orthorexic</acc>" />
-        </SquiggleLink>
-        <ParsedText text=", but to give you a reference point precise enough to be genuinely useful, one you can  translate into practical, real-world amounts and carry with you <m>long after you've closed the app.</m>" />
-      </div>,
+      "Fair point. And you’re right, it is! You’ll notice Knap<acc>[Snack]</acc> meal plans are precise down to the hundredth of a gram. But those granular numbers aren't really meant to be followed to the letter. The precision exists simply to <m>train your sense of proportion.</m> Once you've honed that intuition, you can wean off the scale entirely.",
     ],
   },
   {
