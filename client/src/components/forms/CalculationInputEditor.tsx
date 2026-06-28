@@ -264,10 +264,7 @@ export default function CalculationInputEditor({
     <div className="no-select space-y-5 p-4">
       <div className="flex flex-col gap-4 sm:flex-row">
         <div className="flex-1">
-          <div
-            onClick={() => setGender("male")}
-            className="no-select relative flex h-12 w-full cursor-pointer rounded-full bg-gray-100 p-1 dark:bg-gray-800"
-          >
+          <div className="no-select relative flex h-12 w-full cursor-pointer rounded-full bg-gray-100 p-1 dark:bg-gray-800">
             <div
               className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
                 gender === "male" ? "left-1" : "left-[50%]"
@@ -313,10 +310,7 @@ export default function CalculationInputEditor({
         </div>
 
         <div className="flex-1">
-          <div
-            onClick={() => setSmoker(false)}
-            className="no-select relative flex h-12 w-full cursor-pointer rounded-full bg-gray-100 p-1 dark:bg-gray-800"
-          >
+          <div className="no-select relative flex h-12 w-full cursor-pointer rounded-full bg-gray-100 p-1 dark:bg-gray-800">
             <div
               className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
                 smoker ? "left-[50%]" : "left-1"

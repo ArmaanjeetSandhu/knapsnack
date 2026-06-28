@@ -24,11 +24,12 @@ export const useSortableData = <T>(
   );
 
   const sortedItems = useMemo(() => {
-    if (!sortConfig.key) return [...items];
+    const key = sortConfig.key;
+    if (!key) return [...items];
 
     return [...items].sort((a, b) => {
-      const aValue = getSortValue(a, sortConfig.key!);
-      const bValue = getSortValue(b, sortConfig.key!);
+      const aValue = getSortValue(a, key);
+      const bValue = getSortValue(b, key);
 
       if (aValue < bValue) return sortConfig.direction === "ascending" ? -1 : 1;
       if (aValue > bValue) return sortConfig.direction === "ascending" ? 1 : -1;
