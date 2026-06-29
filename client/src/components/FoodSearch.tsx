@@ -76,14 +76,19 @@ interface FoodSearchProps {
 
 type RawCsvRow = Record<string, string | undefined>;
 
+const USDA_API_KEY_PATTERN = /^[A-Za-z0-9]{40}$/;
+
+const isValidApiKey = (key: string): boolean => key === "DEMO_KEY" || USDA_API_KEY_PATTERN.test(key)
+
 const FoodSearch = ({
   onFoodSelect,
   onFoodsImport,
   selectedFoodIds,
 }: FoodSearchProps) => {
-  const [apiKey, setApiKey] = useState(
-    () => localStorage.getItem("usda_api_key") ?? "",
-  );
+  const [apiKey, setApiKey] = useState(() => {
+    const stored = localStorage.getItem("usda_api_key") ?? "";
+    return isValidApiKey(stored) ? stored : "";
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<FoodItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -116,8 +121,15 @@ const FoodSearch = ({
   const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newKey = e.target.value;
     setApiKey(newKey);
-    localStorage.setItem("usda_api_key", newKey);
-    setApiKeyError(null);
+    if (USDA_API_KEY_PATTERN.test(newKey) || newKey === "DEMO_KEY") {
+      localStorage.setItem("usda_api_key", newKey);
+      setApiKeyError(null);
+    } else {
+      localStorage.removeItem("usda_api_key");
+      setApiKeyError(
+        newKey ? "Enter a valid USDA API key (40 alphanumeric characters)." : null,
+      );
+    }
   };
 
   const handleSearch = async (e: React.SyntheticEvent) => {
