@@ -34,14 +34,14 @@ const faqs = [
     answer: [
       <h4
         key="macros"
-        className="mb-2 mt-2 text-2xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
+        className="text-foreground mt-2 mb-2 text-2xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
       >
         <ParsedText text="<acc>Macronutrients</acc>" />
       </h4>,
       "Knap<acc>[Snack]</acc> uses the <acc>Mifflin-St. Jeor</acc> equation to calculate your <acc>BMR</acc> (Basal Metabolic Rate), which estimates the number of calories your body burns at rest. Then, based on your activity level, your <acc>TDEE</acc> (Total Daily Energy Expenditure) is calculated. Depending on your health goals, you choose a target intake between <acc>75%</acc> and <acc>125%</acc> of your <acc>TDEE</acc>. <m>This becomes your daily caloric goal.</m> Finally, you customise how you distribute those calories across <acc>fats</acc>, <acc>carbohydrates</acc>, and <acc>protein</acc>.",
       <h4
         key="micros"
-        className="mb-2 mt-8 text-2xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
+        className="text-foreground mt-8 mb-2 text-2xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
       >
         <ParsedText text="<acc>Micronutrients</acc>" />
       </h4>,
@@ -54,14 +54,14 @@ const faqs = [
       "At its core, Knap<acc>[Snack]</acc> is a cost-minimisation engine.",
       <h4
         key="hitting-targets"
-        className="mb-2 mt-2 text-2xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
+        className="text-foreground mt-2 mb-2 text-2xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
       >
         <ParsedText text="<acc>Hitting your nutritional targets</acc>" />
       </h4>,
       "Every essential nutrient has a <acc>recommended daily amount</acc> (RDA) — a floor that your diet needs to clear. Some nutrients also have an <acc>upper tolerable limit</acc> (UL), a ceiling you should stay under. Knap<acc>[Snack]</acc> treats both of these as hard rules: <m>the optimiser will only accept meal plans that stay within those bounds across every nutrient it tracks.</m>",
       <h4
         key="distributing-calories"
-        className="mb-2 mt-2 text-2xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
+        className="text-foreground mt-2 mb-2 text-2xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
       >
         <ParsedText text="<acc>Distributing your calories</acc>" />
       </h4>,
@@ -69,7 +69,7 @@ const faqs = [
       "<m>Two additional rules apply regardless of your preferences.</m> <acc>Fibre</acc> is held to at least <acc>14</acc> grams per <acc>1,000</acc> calories, in line with evidence-based dietary guidance. And <acc>saturated fat</acc> is capped at <acc>10%</acc> of your total calorie goal.",
       <h4
         key="staying-close"
-        className="mb-2 mt-2 text-2xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
+        className="text-foreground mt-2 mb-2 text-2xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
       >
         <ParsedText text="<acc>Staying close to your macro targets</acc>" />
       </h4>,
@@ -78,7 +78,7 @@ const faqs = [
       "Because cost-minimisation and macro-accuracy are both goals, Knap<acc>[Snack]</acc> systematically explores combinations of those allowable deviation percentages, <m>prioritising solutions that stay as close to your targets as possible while still being cost-effective.</m>",
       <h4
         key="controlling-portions"
-        className="mb-2 mt-8 text-2xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
+        className="text-foreground mt-8 mb-2 text-2xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-3xl lg:text-[1.75rem]"
       >
         <ParsedText text="<acc>Controlling portions and food inclusion</acc>" />
       </h4>,
@@ -132,9 +132,7 @@ const faqs = [
 ];
 
 type FaqAnswer =
-  | Array<string | React.ReactElement>
-  | string
-  | React.ReactElement;
+  Array<string | React.ReactElement> | string | React.ReactElement;
 
 interface ContentRendererProps {
   content: FaqAnswer;
@@ -199,7 +197,7 @@ const FaqSection = () => {
                   ref={(el) => {
                     faqRefs.current[idx] = el;
                   }}
-                  className="scroll-mt-24 border-b border-muted pb-6 last:border-b-0"
+                  className="border-muted scroll-mt-24 border-b pb-6 last:border-b-0"
                 >
                   <button
                     onClick={() => handleToggle(idx)}
@@ -209,7 +207,7 @@ const FaqSection = () => {
                         : "flex-row text-left"
                     }`}
                   >
-                    <h3 className="mb-4 text-3xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 group-hover:opacity-80 sm:text-4xl lg:text-[2rem]">
+                    <h3 className="text-foreground mb-4 text-3xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 group-hover:opacity-80 sm:text-4xl lg:text-[2rem]">
                       <ParsedText text={faq.question} />
                     </h3>
                     <motion.div
@@ -219,7 +217,7 @@ const FaqSection = () => {
                         isRightAligned ? "mr-4" : "ml-4"
                       }`}
                     >
-                      <ChevronDown className="h-8 w-8 text-foreground" />
+                      <ChevronDown className="text-foreground h-8 w-8" />
                     </motion.div>
                   </button>
 
@@ -249,7 +247,7 @@ const FaqSection = () => {
                         className="overflow-hidden"
                       >
                         <div
-                          className={`pb-4 text-xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-2xl lg:text-[1.5rem] ${
+                          className={`text-foreground pb-4 text-xl leading-[0.9] font-black tracking-tighter transition-colors duration-300 sm:text-2xl lg:text-[1.5rem] ${
                             isRightAligned ? "text-right" : "text-left"
                           }`}
                         >

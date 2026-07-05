@@ -132,7 +132,7 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto bg-white text-black dark:bg-[#141210] dark:text-[#f2f2f2] sm:max-w-lg [&>button]:hidden">
+      <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto bg-white text-black sm:max-w-lg dark:bg-[#141210] dark:text-[#f2f2f2] [&>button]:hidden">
         <DialogHeader>
           <DialogTitle className="sr-only">
             Nutrition Facts for {foodName}
@@ -141,12 +141,12 @@ const NutritionFactsLabel: React.FC<NutritionFactsLabelProps> = ({
 
         <div
           ref={labelRef}
-          className="relative border-2 border-black bg-white p-2 font-sans dark:border-[#f2f2f2] dark:bg-[#141210] md:p-4"
+          className="relative border-2 border-black bg-white p-2 font-sans md:p-4 dark:border-[#f2f2f2] dark:bg-[#141210]"
         >
           <button
             onClick={handleDownload}
             data-html2canvas-ignore="true"
-            className="absolute right-2 top-2 text-neutral-400 transition-colors hover:text-black focus:outline-none dark:hover:text-[#f2f2f2] md:right-4 md:top-4"
+            className="absolute top-2 right-2 text-neutral-400 transition-colors hover:text-black focus:outline-none md:top-4 md:right-4 dark:hover:text-[#f2f2f2]"
             title="Download Label as Image"
             aria-label="Download Label as Image"
           >

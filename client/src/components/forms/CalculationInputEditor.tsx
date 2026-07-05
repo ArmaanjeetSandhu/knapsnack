@@ -90,7 +90,7 @@ const ActivitySlider = ({ value, onChange, autoFocus }: SimpleSliderProps) => {
             className="absolute inset-0 h-3 w-full cursor-pointer opacity-0"
           />
         </div>
-        <span className="w-[80px] shrink-0 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
+        <span className="w-[80px] shrink-0 text-right text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">
           {value.toFixed(1)}
         </span>
       </div>
@@ -138,7 +138,7 @@ const CalorieTargetSlider = ({
             className="absolute inset-0 h-3 w-full cursor-pointer opacity-0"
           />
         </div>
-        <span className="w-[80px] shrink-0 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
+        <span className="w-[80px] shrink-0 text-right text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">
           {value}%
         </span>
       </div>
@@ -266,7 +266,7 @@ export default function CalculationInputEditor({
         <div className="flex-1">
           <div className="no-select relative flex h-12 w-full cursor-pointer rounded-full bg-gray-100 p-1 dark:bg-gray-800">
             <div
-              className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
                 gender === "male" ? "left-1" : "left-[50%]"
               }`}
             />
@@ -312,7 +312,7 @@ export default function CalculationInputEditor({
         <div className="flex-1">
           <div className="no-select relative flex h-12 w-full cursor-pointer rounded-full bg-gray-100 p-1 dark:bg-gray-800">
             <div
-              className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full bg-white shadow-sm transition-all duration-300 dark:bg-gray-600 ${
                 smoker ? "left-[50%]" : "left-1"
               }`}
             />
@@ -525,7 +525,7 @@ function SimpleRangeRow({
             className="absolute inset-0 h-3 w-full cursor-pointer opacity-0"
           />
         </div>
-        <span className="w-[80px] shrink-0 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
+        <span className="w-[80px] shrink-0 text-right text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-100">
           {display}
         </span>
       </div>
@@ -565,14 +565,14 @@ function MacroSegment({
         style={{ left: `${left}%`, width: `${width}%` }}
       >
         {show && (
-          <span className="no-select whitespace-nowrap text-xs font-bold text-white">
+          <span className="no-select text-xs font-bold whitespace-nowrap text-white">
             {label}
           </span>
         )}
       </div>
       {!show && externalOffset !== undefined && (
         <span
-          className={`no-select absolute top-full -translate-x-1/2 whitespace-nowrap text-xs font-bold text-gray-900 dark:text-gray-100 ${externalOffset}`}
+          className={`no-select absolute top-full -translate-x-1/2 text-xs font-bold whitespace-nowrap text-gray-900 dark:text-gray-100 ${externalOffset}`}
           style={{ left: externalLeft }}
         >
           {label}

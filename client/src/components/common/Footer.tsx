@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="mt-auto bg-gray-900 py-4 text-white dark:border-t dark:border-white/10 dark:bg-[#011d16]">
       <div className="px-4">
-        <div className="flex w-full items-center justify-between no-select">
+        <div className="no-select flex w-full items-center justify-between">
           <a
             href="https://www.buymeacoffee.com/armaanjeetsandhu"
             target="_blank"

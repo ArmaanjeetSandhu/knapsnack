@@ -75,7 +75,7 @@ const FeasibilityAnalysis = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {isLowerBoundsFeasible
                 ? "All minimum nutrient requirements can be met."
                 : `${lowerBoundIssues.length} nutrient(s) cannot meet minimum requirements.`}
@@ -109,7 +109,7 @@ const FeasibilityAnalysis = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {isUpperBoundsFeasible
                 ? "No maximum nutrient limits are exceeded."
                 : `${upperBoundIssues.length} nutrient(s) exceed maximum limits.`}
@@ -252,7 +252,7 @@ const FeasibilityAnalysis = ({
 
   return (
     <Card className="mb-6 shadow-lg">
-      <CardHeader className="rounded-t-lg bg-primary">
+      <CardHeader className="bg-primary rounded-t-lg">
         <CardTitle className="text-white">Feasibility Analysis</CardTitle>
       </CardHeader>
       <CardContent className="p-6">

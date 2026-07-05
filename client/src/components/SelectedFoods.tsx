@@ -418,7 +418,7 @@ const SelectedFoods = ({
   return (
     <>
       <Card className="mb-6 shadow-lg">
-        <CardHeader className="rounded-t-lg bg-primary">
+        <CardHeader className="bg-primary rounded-t-lg">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-white">
               Selected Foods
@@ -429,7 +429,7 @@ const SelectedFoods = ({
                   variant="secondary"
                   size="sm"
                   onClick={handleClearAll}
-                  className="flex items-center gap-2 transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                  className="hover:bg-destructive hover:text-destructive-foreground flex items-center gap-2 transition-colors"
                 >
                   <ListX className="h-4 w-4" />
                   Clear All
@@ -515,25 +515,25 @@ const SelectedFoods = ({
                         </TableHead>
                         <TableHead
                           onClick={() => requestSort("food")}
-                          className="no-select cursor-pointer transition-colors hover:bg-muted/50"
+                          className="no-select hover:bg-muted/50 cursor-pointer transition-colors"
                         >
                           Food Item{getSortIcon("food")}
                         </TableHead>
                         <TableHead
                           onClick={() => requestSort("price")}
-                          className="no-select cursor-pointer transition-colors hover:bg-muted/50"
+                          className="no-select hover:bg-muted/50 cursor-pointer transition-colors"
                         >
                           Price Per Serving{getSortIcon("price")}
                         </TableHead>
                         <TableHead
                           onClick={() => requestSort("servingSize")}
-                          className="no-select cursor-pointer transition-colors hover:bg-muted/50"
+                          className="no-select hover:bg-muted/50 cursor-pointer transition-colors"
                         >
                           Serving Size (g){getSortIcon("servingSize")}
                         </TableHead>
                         <TableHead
                           onClick={() => requestSort("maxServing")}
-                          className="no-select cursor-pointer transition-colors hover:bg-muted/50"
+                          className="no-select hover:bg-muted/50 cursor-pointer transition-colors"
                         >
                           Max Serving (g){getSortIcon("maxServing")}
                         </TableHead>
@@ -544,11 +544,11 @@ const SelectedFoods = ({
                       <TableRow className="bg-muted/30">
                         <TableHead
                           colSpan={3}
-                          className="border-b text-right align-middle text-xs font-medium italic text-muted-foreground"
+                          className="text-muted-foreground border-b text-right align-middle text-xs font-medium italic"
                         >
                           Apply to all items &rarr;
                         </TableHead>
-                        <TableHead className="border-b pb-2 pt-2">
+                        <TableHead className="border-b pt-2 pb-2">
                           <Input
                             type="number"
                             step="0.01"
@@ -559,10 +559,10 @@ const SelectedFoods = ({
                               if (validateMaxTwoDecimals(e.target.value))
                                 setBatchPrice(e.target.value);
                             }}
-                            className="w-[100px] font-normal text-foreground"
+                            className="text-foreground w-[100px] font-normal"
                           />
                         </TableHead>
-                        <TableHead className="border-b pb-2 pt-2">
+                        <TableHead className="border-b pt-2 pb-2">
                           <Input
                             type="number"
                             step="1"
@@ -570,10 +570,10 @@ const SelectedFoods = ({
                             value={batchServing}
                             onKeyDown={preventInvalidIntegerChars}
                             onChange={(e) => setBatchServing(e.target.value)}
-                            className="w-[100px] font-normal text-foreground"
+                            className="text-foreground w-[100px] font-normal"
                           />
                         </TableHead>
-                        <TableHead className="border-b pb-2 pt-2">
+                        <TableHead className="border-b pt-2 pb-2">
                           <Input
                             type="number"
                             step="1"
@@ -581,10 +581,10 @@ const SelectedFoods = ({
                             value={batchMax}
                             onKeyDown={preventInvalidIntegerChars}
                             onChange={(e) => setBatchMax(e.target.value)}
-                            className="w-[100px] font-normal text-foreground"
+                            className="text-foreground w-[100px] font-normal"
                           />
                         </TableHead>
-                        <TableHead className="border-b pb-2 pt-2">
+                        <TableHead className="border-b pt-2 pb-2">
                           <Button
                             variant={isUndoState ? "secondary" : "default"}
                             size="sm"
@@ -638,7 +638,7 @@ const SelectedFoods = ({
                               <div className="flex h-full items-center justify-center pt-2">
                                 <input
                                   type="checkbox"
-                                  className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-primary"
+                                  className="accent-primary h-4 w-4 cursor-pointer rounded border-gray-300"
                                   checked={!!food.integerServings}
                                   onChange={(e) =>
                                     handleInputChange(
@@ -655,7 +655,7 @@ const SelectedFoods = ({
                               <div className="flex h-full items-center justify-center pt-2">
                                 <input
                                   type="checkbox"
-                                  className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-primary"
+                                  className="accent-primary h-4 w-4 cursor-pointer rounded border-gray-300"
                                   checked={!!food.mustInclude}
                                   onChange={(e) =>
                                     handleInputChange(
@@ -763,7 +763,7 @@ const SelectedFoods = ({
                 </div>
                 <div className="mt-6">
                   <Button
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 w-full"
                     size="lg"
                     onClick={handleOptimise}
                     disabled={loading}
@@ -804,7 +804,7 @@ const SelectedFoods = ({
       <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="mt-2 flex items-center gap-2 text-destructive">
+            <DialogTitle className="text-destructive mt-2 flex items-center gap-2">
               Oops!
             </DialogTitle>
             <DialogDescription className="pt-2 text-left">
@@ -818,7 +818,7 @@ const SelectedFoods = ({
             <h4 className="mb-2 font-semibold">
               Here&apos;s what usually helps:
             </h4>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+            <ul className="text-muted-foreground list-disc space-y-2 pl-5 text-sm">
               <li>Adding more variety to your food list</li>
               <li>
                 Increasing max serving sizes if you&apos;ve set them too low
@@ -829,13 +829,13 @@ const SelectedFoods = ({
               </li>
               <li>
                 Marking fewer foods for{" "}
-                <span className="font-medium text-muted-foreground">
+                <span className="text-muted-foreground font-medium">
                   Discrete Servings
                 </span>
               </li>
               <li>
                 Marking fewer foods as{" "}
-                <span className="font-medium text-muted-foreground">
+                <span className="text-muted-foreground font-medium">
                   Must Include
                 </span>
               </li>
@@ -853,7 +853,7 @@ const SelectedFoods = ({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="mt-2 flex items-center gap-2 text-destructive">
+            <DialogTitle className="text-destructive mt-2 flex items-center gap-2">
               Not so fast!
             </DialogTitle>
             <DialogDescription className="pt-2 text-left">
@@ -862,21 +862,21 @@ const SelectedFoods = ({
           </DialogHeader>
           <div className="py-4">
             <h4 className="mb-2 font-semibold">Please verify the following:</h4>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+            <ul className="text-muted-foreground list-disc space-y-2 pl-5 text-sm">
               <li>
-                <span className="font-medium text-muted-foreground">
+                <span className="text-muted-foreground font-medium">
                   Price Per Serving
                 </span>{" "}
                 is specified and not negative
               </li>
               <li>
-                <span className="font-medium text-muted-foreground">
+                <span className="text-muted-foreground font-medium">
                   Serving Size
                 </span>{" "}
                 is specified and greater than 0
               </li>
               <li>
-                <span className="font-medium text-muted-foreground">
+                <span className="text-muted-foreground font-medium">
                   Max Serving
                 </span>
                 {""}, if specified, is greater than 0 and not less than the

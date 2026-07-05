@@ -57,10 +57,10 @@ const INTEGER_FIELD_MAX_LENGTH = 16;
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
-const sanitizeIntegerField = (value: unknown): string =>
-  String(value ?? "")
-    .replace(/\D/g, "")
-    .slice(0, INTEGER_FIELD_MAX_LENGTH);
+const sanitizeIntegerField = (value: unknown): string => {
+  if (typeof value !== "string" && typeof value !== "number") return "";
+  return String(value).replace(/\D/g, "").slice(0, INTEGER_FIELD_MAX_LENGTH);
+};
 
 const sanitizeNumber = (
   value: unknown,

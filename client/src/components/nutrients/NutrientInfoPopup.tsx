@@ -317,7 +317,7 @@ const NutrientInfoPopup = ({
               <DialogTitle className="text-left text-2xl">
                 {info.displayName ?? nutrientName}
               </DialogTitle>
-              <span className="mt-1 block text-left text-sm font-medium leading-tight text-muted-foreground">
+              <span className="text-muted-foreground mt-1 block text-left text-sm leading-tight font-medium">
                 {info.category}
               </span>
               <DialogDescription className="mt-2 text-left">
@@ -329,7 +329,7 @@ const NutrientInfoPopup = ({
 
         <div className="mt-6 space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border bg-card p-4">
+            <div className="bg-card rounded-lg border p-4">
               <div className="mb-2 flex items-center gap-2 text-green-600 dark:text-green-400">
                 <Check className="h-5 w-5" />
                 <h3 className="font-semibold">Recommended Daily Allowance</h3>
@@ -339,7 +339,7 @@ const NutrientInfoPopup = ({
               </p>
             </div>
 
-            <div className="rounded-lg border bg-card p-4">
+            <div className="bg-card rounded-lg border p-4">
               <div className="mb-2 flex items-center gap-2 text-yellow-600 dark:text-yellow-400">
                 <CircleAlert className="h-5 w-5" />
                 <h3 className="font-semibold">Tolerable Upper Intake Level</h3>
@@ -356,7 +356,7 @@ const NutrientInfoPopup = ({
               {info.sources.map((source) => (
                 <div
                   key={source}
-                  className="flex items-center gap-3 rounded-lg border bg-card p-3"
+                  className="bg-card flex items-center gap-3 rounded-lg border p-3"
                 >
                   <Info className="h-4 w-4 text-blue-500" />
                   {source}

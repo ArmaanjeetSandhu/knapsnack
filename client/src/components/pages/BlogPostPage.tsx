@@ -20,7 +20,7 @@ const renderOptions: Options = {
     [MARKS.ITALIC]: (text) => <span className="italic">{text}</span>,
     [MARKS.UNDERLINE]: (text) => <span className="underline">{text}</span>,
     [MARKS.CODE]: (text) => (
-      <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">
+      <code className="bg-muted rounded px-1.5 py-0.5 font-mono text-sm">
         {text}
       </code>
     ),
@@ -37,15 +37,15 @@ const renderOptions: Options = {
         <img
           src={fields.file.url}
           alt={fields.title ?? "Blog image"}
-          className="my-8 h-auto w-full rounded-lg border border-border"
+          className="border-border my-8 h-auto w-full rounded-lg border"
         />
       );
     },
     [BLOCKS.HEADING_2]: (_node, children) => (
-      <h2 className="mb-4 mt-8 text-3xl font-bold">{children}</h2>
+      <h2 className="mt-8 mb-4 text-3xl font-bold">{children}</h2>
     ),
     [BLOCKS.HEADING_3]: (_node, children) => (
-      <h3 className="mb-3 mt-6 text-2xl font-bold">{children}</h3>
+      <h3 className="mt-6 mb-3 text-2xl font-bold">{children}</h3>
     ),
     [BLOCKS.PARAGRAPH]: (_node, children) => (
       <p className="mb-4 leading-relaxed">{children}</p>
@@ -60,30 +60,30 @@ const renderOptions: Options = {
       <li className="pl-1">{children}</li>
     ),
     [BLOCKS.QUOTE]: (_node, children) => (
-      <blockquote className="my-6 rounded-r-lg border-l-4 border-primary bg-muted/30 py-1 pl-4 italic text-muted-foreground">
+      <blockquote className="border-primary bg-muted/30 text-muted-foreground my-6 rounded-r-lg border-l-4 py-1 pl-4 italic">
         {children}
       </blockquote>
     ),
-    [BLOCKS.HR]: () => <hr className="my-8 border-border" />,
+    [BLOCKS.HR]: () => <hr className="border-border my-8" />,
     [BLOCKS.TABLE]: (_node, children) => (
-      <div className="my-8 overflow-x-auto rounded-lg border border-border">
+      <div className="border-border my-8 overflow-x-auto rounded-lg border">
         <table className="w-full text-left text-sm">
           <tbody>{children}</tbody>
         </table>
       </div>
     ),
     [BLOCKS.TABLE_ROW]: (_node, children) => (
-      <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/50">
+      <tr className="border-border hover:bg-muted/50 border-b transition-colors last:border-0">
         {children}
       </tr>
     ),
     [BLOCKS.TABLE_HEADER_CELL]: (_node, children) => (
-      <th className="border-r border-border bg-muted px-4 py-3 font-medium text-muted-foreground last:border-0">
+      <th className="border-border bg-muted text-muted-foreground border-r px-4 py-3 font-medium last:border-0">
         {children}
       </th>
     ),
     [BLOCKS.TABLE_CELL]: (_node, children) => (
-      <td className="border-r border-border px-4 py-3 last:border-0">
+      <td className="border-border border-r px-4 py-3 last:border-0">
         {children}
       </td>
     ),
@@ -120,7 +120,7 @@ const BlogPostPage = () => {
       <h1 className="mb-4 text-4xl font-extrabold tracking-tight lg:text-5xl">
         {post.title}
       </h1>
-      <div className="mb-8 text-lg text-muted-foreground">
+      <div className="text-muted-foreground mb-8 text-lg">
         <p>{formatDate(post.published_date ?? post.publishedAt)}</p>
       </div>
       <div className="prose dark:prose-invert max-w-none">

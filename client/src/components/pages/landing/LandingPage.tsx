@@ -63,8 +63,8 @@ const LandingPage = ({
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden scroll-smooth bg-background font-sans text-foreground">
-      <div className="fixed right-4 top-4 z-50 sm:right-6 sm:top-6">
+    <div className="bg-background text-foreground min-h-screen overflow-x-hidden scroll-smooth font-sans">
+      <div className="fixed top-4 right-4 z-50 sm:top-6 sm:right-6">
         <ThemeToggle variant="landing" />
       </div>
 
@@ -82,7 +82,7 @@ const LandingPage = ({
                   delay: 0.9,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="no-select text-lg text-muted-foreground sm:text-xl md:text-2xl"
+                className="no-select text-muted-foreground text-lg sm:text-xl md:text-2xl"
               >
                 The Cost-Optimised Meal Planner
               </motion.p>
@@ -109,14 +109,14 @@ const LandingPage = ({
                     data-startover-zone
                   >
                     {confirmingStartOver && (
-                      <div className="absolute bottom-full left-1/2 z-10 mb-3 -translate-x-1/2 sm:bottom-auto sm:left-full sm:top-1/2 sm:ml-4 sm:-translate-y-1/2 sm:translate-x-0">
+                      <div className="absolute bottom-full left-1/2 z-10 mb-3 -translate-x-1/2 sm:top-1/2 sm:bottom-auto sm:left-full sm:ml-4 sm:translate-x-0 sm:-translate-y-1/2">
                         <motion.div
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className="relative w-[280px] rounded-xl border border-border bg-card px-4 py-3 text-left text-sm text-card-foreground shadow-xl sm:w-72"
+                          className="border-border bg-card text-card-foreground relative w-[280px] rounded-xl border px-4 py-3 text-left text-sm shadow-xl sm:w-72"
                         >
-                          <div className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[2px] border-b border-r border-border bg-card sm:hidden" />
-                          <div className="absolute -left-1.5 top-1/2 hidden h-3 w-3 -translate-y-1/2 rotate-45 rounded-[2px] border-b border-l border-border bg-card sm:block" />
+                          <div className="border-border bg-card absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[2px] border-r border-b sm:hidden" />
+                          <div className="border-border bg-card absolute top-1/2 -left-1.5 hidden h-3 w-3 -translate-y-1/2 rotate-45 rounded-[2px] border-b border-l sm:block" />
                           <div className="relative z-10 flex gap-2">
                             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
                             <p>
@@ -163,7 +163,7 @@ const LandingPage = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.3, duration: 1 }}
-          className="absolute bottom-6 flex flex-col items-center text-muted-foreground transition-colors hover:text-foreground sm:bottom-10"
+          className="text-muted-foreground hover:text-foreground absolute bottom-6 flex flex-col items-center transition-colors sm:bottom-10"
         >
           <span className="no-select mb-2 text-xs font-medium sm:text-sm">
             Learn More

@@ -141,7 +141,7 @@ const parseText = (text: string): React.ReactNode[] => {
           href={LINK_MAP[linkText]}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-primary underline"
+          className="text-primary inline-flex items-center gap-1 underline"
         >
           {linkText}
           <ExternalLink className="h-3 w-3" />
@@ -155,7 +155,7 @@ const parseText = (text: string): React.ReactNode[] => {
           href={part}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-primary underline"
+          className="text-primary inline-flex items-center gap-1 underline"
         >
           {part}
           <ExternalLink className="h-3 w-3" />
@@ -282,7 +282,7 @@ const FaqPage = () => {
                       }}
                       className="overflow-hidden"
                     >
-                      <div className="pb-4 pt-0 leading-relaxed text-muted-foreground">
+                      <div className="text-muted-foreground pt-0 pb-4 leading-relaxed">
                         <ContentRenderer content={faq.answer} />
                       </div>
                     </motion.section>
@@ -297,7 +297,7 @@ const FaqPage = () => {
               Have more questions?{" "}
               <Link
                 to="/feedback"
-                className="text-primary underline hover:text-primary/80"
+                className="text-primary hover:text-primary/80 underline"
               >
                 Send us a message!
               </Link>

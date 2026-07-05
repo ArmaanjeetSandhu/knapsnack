@@ -50,15 +50,15 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
         <TooltipTrigger asChild>
           <button
             onClick={toggleTheme}
-            className={`no-select relative flex h-8 w-14 cursor-pointer rounded-full p-1 outline-none transition-all focus-visible:ring-2 sm:h-10 sm:w-20 ${
+            className={`no-select relative flex h-8 w-14 cursor-pointer rounded-full p-1 transition-all outline-none focus-visible:ring-2 sm:h-10 sm:w-20 ${
               isLanding
-                ? "border border-border bg-muted/50 shadow-inner focus-visible:ring-primary dark:border-white/10 dark:bg-[#011d16]/80"
+                ? "border-border bg-muted/50 focus-visible:ring-primary border shadow-inner dark:border-white/10 dark:bg-[#011d16]/80"
                 : "border border-gray-700 bg-gray-900 focus-visible:ring-blue-500 dark:border-white/10 dark:bg-[#011d16]"
             }`}
             aria-label="Toggle theme"
           >
             <div
-              className={`absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 dark:bg-white/10 ${
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 dark:bg-white/10 ${
                 isLanding
                   ? `bg-background shadow-sm ${isDark ? "left-[calc(50%+2px)]" : "left-1"}`
                   : `bg-gray-800 ${isDark ? "left-[50%]" : "left-1"}`
@@ -99,11 +99,11 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
           align="center"
           className={
             isLanding
-              ? "border border-gray-200 bg-card text-card-foreground dark:border-border"
+              ? "bg-card text-card-foreground dark:border-border border border-gray-200"
               : "border border-gray-200 dark:border-gray-800"
           }
         >
-          <p className="flex items-center text-xs font-medium leading-none">
+          <p className="flex items-center text-xs leading-none font-medium">
             <span>Ctrl (or&nbsp;</span>
             <span className="-translate-y-[1px] text-xl">⌘</span>
             <span className="ml-[1px]">) + \</span>

@@ -62,7 +62,7 @@ const IntroSection = () => {
                 : "stigler-link";
             return (
               <AlternatingMotionItem key={itemKey} index={idx}>
-                <div className="no-select whitespace-pre-wrap text-4xl font-black leading-[0.8] tracking-tighter text-foreground transition-colors duration-300 sm:text-6xl md:text-8xl lg:text-[2rem]">
+                <div className="no-select text-foreground text-4xl leading-[0.8] font-black tracking-tighter whitespace-pre-wrap transition-colors duration-300 sm:text-6xl md:text-8xl lg:text-[2rem]">
                   {typeof paragraph === "string" ? (
                     <ParsedText text={paragraph} />
                   ) : (

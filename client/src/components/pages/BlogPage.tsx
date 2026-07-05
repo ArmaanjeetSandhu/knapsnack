@@ -50,7 +50,7 @@ const BlogPage = () => {
               state={{ from: "blog" }}
               className="block hover:no-underline"
             >
-              <Card className="overflow-hidden transition-colors hover:border-primary">
+              <Card className="hover:border-primary overflow-hidden transition-colors">
                 {post.thumbnail && (
                   <div className="h-60 w-full overflow-hidden">
                     <img

@@ -44,7 +44,7 @@ const FeedbackPage = () => {
   return (
     <div className="flex justify-center px-4">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-stretch gap-8 md:flex-row md:gap-16 lg:gap-24">
-        <div className="flex w-full flex-col justify-between pb-6 pt-2 text-center md:w-5/12 md:pb-8 lg:pb-10">
+        <div className="flex w-full flex-col justify-between pt-2 pb-6 text-center md:w-5/12 md:pb-8 lg:pb-10">
           <div className="flex flex-col items-center">
             <div className="mb-6 flex justify-center">
               <img
@@ -53,7 +53,7 @@ const FeedbackPage = () => {
                 className="h-auto w-32 rounded-lg object-contain md:w-40"
               />
             </div>
-            <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100 md:text-5xl">
+            <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-5xl dark:text-gray-100">
               We&apos;d love your feedback!
             </h1>
             <p className="mx-auto mb-8 max-w-md text-lg text-gray-600 dark:text-gray-400">
@@ -81,7 +81,7 @@ const FeedbackPage = () => {
         </div>
 
         <div className="flex w-full flex-col md:w-6/12">
-          <div className="flex h-full w-full flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-950/50 md:p-8 lg:p-10">
+          <div className="flex h-full w-full flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8 lg:p-10 dark:border-gray-800 dark:bg-gray-950/50">
             <h2 className="mb-6 text-2xl font-semibold text-gray-900 dark:text-gray-100">
               Send a quick message
             </h2>
@@ -122,7 +122,7 @@ const FeedbackPage = () => {
                 <textarea
                   id="message"
                   required
-                  className="flex w-full flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex w-full flex-1 resize-none rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder="Tell us what you think..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}

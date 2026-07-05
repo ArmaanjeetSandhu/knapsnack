@@ -48,7 +48,7 @@ export default function BrandLogo({ variant = "header" }: BrandLogoProps) {
                 delay: 0.1 + i * 0.06,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className={`no-select inline-block font-black leading-[0.85] tracking-tighter ${textClass}`}
+              className={`no-select inline-block leading-[0.85] font-black tracking-tighter ${textClass}`}
             >
               {char}
             </motion.span>
@@ -67,7 +67,7 @@ export default function BrandLogo({ variant = "header" }: BrandLogoProps) {
                 delay: 0.32 + i * 0.06,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className={`no-select inline-block font-black leading-[0.85] tracking-tighter ${textClass}`}
+              className={`no-select inline-block leading-[0.85] font-black tracking-tighter ${textClass}`}
               style={{ color: "var(--accent-highlight)" }}
             >
               {char}

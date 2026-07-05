@@ -84,7 +84,7 @@ const SimpleNutrientCards = ({ nutrients }: { nutrients: MacroNutrient[] }) => (
     {nutrients.map((nutrient) => (
       <Card key={nutrient.name}>
         <CardContent className="pt-6">
-          <h4 className="text-sm font-medium text-muted-foreground">
+          <h4 className="text-muted-foreground text-sm font-medium">
             {nutrient.name}
           </h4>
           <p className="mt-2 text-2xl font-bold">
@@ -230,7 +230,7 @@ const OptimisationResults = ({
                         <Currency className="h-8 w-8 text-green-500 dark:text-green-400" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
+                        <p className="text-muted-foreground text-sm font-medium">
                           Total Cost
                         </p>
                         <p className="text-2xl font-bold">
@@ -249,7 +249,7 @@ const OptimisationResults = ({
                         <AlertTriangle className="h-8 w-8 text-yellow-500 dark:text-yellow-400" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
+                        <p className="text-muted-foreground text-sm font-medium">
                           Total Overflow
                         </p>
                         <p className="text-2xl font-bold">{totalOverflow}%</p>
@@ -270,7 +270,7 @@ const OptimisationResults = ({
                   ([nutrient, percentage]) => (
                     <Card key={nutrient}>
                       <CardContent className="pt-6">
-                        <h4 className="text-sm font-medium text-muted-foreground">
+                        <h4 className="text-muted-foreground text-sm font-medium">
                           {nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}
                         </h4>
                         <p className="mt-2 text-2xl font-bold">{percentage}%</p>
@@ -322,29 +322,29 @@ const OptimisationResults = ({
                         <TableHead
                           key={key}
                           onClick={() => handlePortionsSort(key)}
-                          className="no-select cursor-pointer transition-colors hover:bg-muted/50"
+                          className="no-select hover:bg-muted/50 cursor-pointer transition-colors"
                         >
                           {label}
                           {getSortIcon(key)}
                         </TableHead>
                       ))}
-                      <TableHead className="w-8 text-center text-muted-foreground" />
+                      <TableHead className="text-muted-foreground w-8 text-center" />
                       <TableHead
                         onClick={() => handlePortionsSort("servings")}
-                        className="no-select cursor-pointer text-center transition-colors hover:bg-muted/50"
+                        className="no-select hover:bg-muted/50 cursor-pointer text-center transition-colors"
                       >
                         No. of Servings{getSortIcon("servings")}
                       </TableHead>
-                      <TableHead className="w-8 text-center text-muted-foreground" />
+                      <TableHead className="text-muted-foreground w-8 text-center" />
                       <TableHead
                         onClick={() => handlePortionsSort("totalServing")}
-                        className="no-select cursor-pointer text-center transition-colors hover:bg-muted/50"
+                        className="no-select hover:bg-muted/50 cursor-pointer text-center transition-colors"
                       >
                         Total Serving (g){getSortIcon("totalServing")}
                       </TableHead>
                       <TableHead
                         onClick={() => handlePortionsSort("cost")}
-                        className="no-select cursor-pointer text-center transition-colors hover:bg-muted/50"
+                        className="no-select hover:bg-muted/50 cursor-pointer text-center transition-colors"
                       >
                         Cost{getSortIcon("cost")}
                       </TableHead>
@@ -354,7 +354,7 @@ const OptimisationResults = ({
                     {sortedPortionItems.map((item) => (
                       <TableRow
                         key={item.food}
-                        className="cursor-pointer transition-colors hover:bg-muted/50"
+                        className="hover:bg-muted/50 cursor-pointer transition-colors"
                         onClick={() => setOpenFoodLabel(item.food)}
                       >
                         <TableCell className="font-medium">
@@ -366,13 +366,13 @@ const OptimisationResults = ({
                         <TableCell className="text-center">
                           {item.servingSize}
                         </TableCell>
-                        <TableCell className="text-center text-sm text-muted-foreground opacity-70">
+                        <TableCell className="text-muted-foreground text-center text-sm opacity-70">
                           ×
                         </TableCell>
                         <TableCell className="text-center">
                           {item.servings}
                         </TableCell>
-                        <TableCell className="text-center text-sm text-muted-foreground opacity-70">
+                        <TableCell className="text-muted-foreground text-center text-sm opacity-70">
                           =
                         </TableCell>
                         <TableCell className="text-center">
@@ -421,7 +421,7 @@ const OptimisationResults = ({
                 {macronutrients.map((macro) => (
                   <Card key={macro.name}>
                     <CardContent className="pt-6">
-                      <h4 className="text-sm font-medium text-muted-foreground">
+                      <h4 className="text-muted-foreground text-sm font-medium">
                         {macro.name}
                       </h4>
                       <p className="mt-2 text-2xl font-bold">

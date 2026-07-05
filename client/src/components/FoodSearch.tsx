@@ -78,7 +78,8 @@ type RawCsvRow = Record<string, string | undefined>;
 
 const USDA_API_KEY_PATTERN = /^[A-Za-z0-9]{40}$/;
 
-const isValidApiKey = (key: string): boolean => key === "DEMO_KEY" || USDA_API_KEY_PATTERN.test(key)
+const isValidApiKey = (key: string): boolean =>
+  key === "DEMO_KEY" || USDA_API_KEY_PATTERN.test(key);
 
 const FoodSearch = ({
   onFoodSelect,
@@ -127,7 +128,9 @@ const FoodSearch = ({
     } else {
       localStorage.removeItem("usda_api_key");
       setApiKeyError(
-        newKey ? "Enter a valid USDA API key (40 alphanumeric characters)." : null,
+        newKey
+          ? "Enter a valid USDA API key (40 alphanumeric characters)."
+          : null,
       );
     }
   };
@@ -241,7 +244,7 @@ const FoodSearch = ({
     return (
       <div
         key={food.fdcId}
-        className="flex items-center justify-between border-b px-4 py-3 transition-colors hover:bg-muted/50"
+        className="hover:bg-muted/50 flex items-center justify-between border-b px-4 py-3 transition-colors"
         style={{ height: "60px" }}
       >
         <span className="pr-4 text-sm">{food.description}</span>
@@ -278,7 +281,7 @@ const FoodSearch = ({
       transition={{ duration: 0.5 }}
     >
       <Card className="mb-6 shadow-lg">
-        <CardHeader className="rounded-t-lg bg-primary">
+        <CardHeader className="bg-primary rounded-t-lg">
           <CardTitle className="flex items-center gap-2 text-white">
             Add Foods
           </CardTitle>
@@ -297,7 +300,7 @@ const FoodSearch = ({
           </AnimatePresence>
 
           <div className="mb-6 border-b pb-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Choose any of the following options to add foods to your diet
             </p>
           </div>
@@ -309,14 +312,14 @@ const FoodSearch = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
               >
-                <div className="h-full rounded-lg border bg-muted/30 p-4">
+                <div className="bg-muted/30 h-full rounded-lg border p-4">
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
                       1
                     </span>{" "}
                     Quick Start
                   </h3>
-                  <p className="mb-3 text-sm text-muted-foreground">
+                  <p className="text-muted-foreground mb-3 text-sm">
                     Try a sample diet to see how it works
                   </p>
                   <Button
@@ -327,7 +330,7 @@ const FoodSearch = ({
                   >
                     {sampleLoading ? (
                       <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                         <span>Loading...</span>
                       </div>
                     ) : (
@@ -345,14 +348,14 @@ const FoodSearch = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <div className="h-full rounded-lg border bg-muted/30 p-4">
+                <div className="bg-muted/30 h-full rounded-lg border p-4">
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
                       2
                     </span>{" "}
                     Import from CSV
                   </h3>
-                  <p className="mb-3 text-sm text-muted-foreground">
+                  <p className="text-muted-foreground mb-3 text-sm">
                     Upload or drag & drop a CSV file with your food items
                   </p>
                   <Button
@@ -385,9 +388,9 @@ const FoodSearch = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
             >
-              <div className="rounded-lg border bg-muted/30 p-4">
+              <div className="bg-muted/30 rounded-lg border p-4">
                 <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
                     3
                   </span>{" "}
                   Search Database
@@ -420,10 +423,10 @@ const FoodSearch = ({
                   </div>
                 </form>
 
-                <div className="mb-4 ml-2 mt-3">
+                <div className="mt-3 mb-4 ml-2">
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-2 md:flex-row md:items-center">
-                      <p className="text-xs italic text-muted-foreground">
+                      <p className="text-muted-foreground text-xs italic">
                         Please enter a USDA FoodData Central API key to search
                         for food items:
                       </p>
@@ -435,13 +438,13 @@ const FoodSearch = ({
                         className="h-6 w-full self-start rounded-full md:w-64"
                       />
                     </div>
-                    <p className="text-xs italic text-muted-foreground">
+                    <p className="text-muted-foreground text-xs italic">
                       Don&apos;t have an API key? Get one{" "}
                       <a
                         href="https://fdc.nal.usda.gov/api-key-signup.html"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 font-medium text-primary underline decoration-primary decoration-1 underline-offset-2 hover:decoration-2"
+                        className="text-primary decoration-primary inline-flex items-center gap-1 font-medium underline decoration-1 underline-offset-2 hover:decoration-2"
                       >
                         here
                         <ExternalLink className="h-3 w-3" />
@@ -454,13 +457,13 @@ const FoodSearch = ({
                   {searchResults.length > 0 && (
                     <motion.div
                       ref={searchResultsRef}
-                      className="search-results mt-6 overflow-hidden rounded-md border bg-background"
+                      className="search-results bg-background mt-6 overflow-hidden rounded-md border"
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.4 }}
                     >
-                      <div className="flex items-center justify-between border-b bg-muted/50 px-4 py-2">
+                      <div className="bg-muted/50 flex items-center justify-between border-b px-4 py-2">
                         <h6 className="text-sm font-semibold">
                           Search Results ({searchResults.length} items)
                         </h6>

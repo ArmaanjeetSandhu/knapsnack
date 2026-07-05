@@ -18,7 +18,7 @@ const LoadingSpinner = ({
         className,
       )}
     >
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <Loader2 className="text-primary h-8 w-8 animate-spin" />
       <p className="text-muted-foreground">{message}</p>
     </div>
   );

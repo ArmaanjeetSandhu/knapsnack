@@ -62,10 +62,10 @@ const MacroRatioValidator = ({
         {macroEntries.map(([macro, value], index) => (
           <div key={macro} className="space-y-3">
             <div className="flex justify-between">
-              <label className="text-sm font-medium capitalize text-foreground">
+              <label className="text-foreground text-sm font-medium capitalize">
                 {macro}
               </label>
-              <span className="text-sm font-bold text-foreground">
+              <span className="text-foreground text-sm font-bold">
                 {value}%
               </span>
             </div>
@@ -90,7 +90,7 @@ const MacroRatioValidator = ({
           </div>
         ))}
         {total !== 100 && (
-          <p className="text-center text-sm font-medium text-destructive">
+          <p className="text-destructive text-center text-sm font-medium">
             Total: {total}% — must equal 100%
           </p>
         )}

@@ -96,9 +96,9 @@ const CategorisedSlider = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           {Icon && <Icon className={`h-5 w-5 ${currentColourClasses.text}`} />}
-          <h3 className="text-sm font-medium text-foreground">{title}</h3>
+          <h3 className="text-foreground text-sm font-medium">{title}</h3>
         </div>
-        <span className="text-lg font-bold text-foreground">
+        <span className="text-foreground text-lg font-bold">
           {formatValue ? formatValue(value) : value}
         </span>
       </div>
@@ -120,7 +120,7 @@ const CategorisedSlider = ({
           onChange={handleChange}
           className="absolute inset-0 h-2 w-full cursor-pointer opacity-0"
         />
-        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-2 flex justify-between text-xs">
           <span>{labels?.[0] ?? min}</span>
           <span>{labels?.[1] ?? max}</span>
         </div>
@@ -130,7 +130,7 @@ const CategorisedSlider = ({
         className={`transform transition-all duration-300 ${isAnimating ? "scale-105" : "scale-100"}`}
       >
         <div
-          className={`rounded-lg border bg-card p-4 dark:bg-card ${currentColourClasses.border} shadow-sm`}
+          className={`bg-card dark:bg-card rounded-lg border p-4 ${currentColourClasses.border} shadow-sm`}
         >
           <div className="flex items-center space-x-3">
             <div
@@ -146,12 +146,12 @@ const CategorisedSlider = ({
               >
                 {currentCategory.name}
               </h4>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-0.5 text-xs">
                 {currentCategory.description}
               </p>
             </div>
           </div>
-          <div className="mt-2 text-xs text-muted-foreground">
+          <div className="text-muted-foreground mt-2 text-xs">
             {getDetailText(currentCategory, value)}
           </div>
         </div>

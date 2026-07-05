@@ -52,21 +52,21 @@ const FeaturesSection = () => {
             return (
               <AlternatingMotionItem key={feature.id} index={idx}>
                 <div
-                  className={`group flex flex-col border-b border-muted py-2 transition-colors duration-500 last:border-b-0 sm:py-4 ${
+                  className={`group border-muted flex flex-col border-b py-2 transition-colors duration-500 last:border-b-0 sm:py-4 ${
                     isRightAligned
                       ? "items-end text-right"
                       : "items-start text-left"
                   }`}
                 >
-                  <span className="mb-4 font-mono text-xl font-bold tracking-tight text-muted-foreground/40 transition-colors duration-500 group-hover:text-foreground sm:text-2xl md:text-3xl">
+                  <span className="text-muted-foreground/40 group-hover:text-foreground mb-4 font-mono text-xl font-bold tracking-tight transition-colors duration-500 sm:text-2xl md:text-3xl">
                     {feature.id}
                   </span>
 
-                  <h3 className="mb-4 whitespace-pre-wrap text-4xl font-black leading-[0.9] tracking-tighter text-foreground transition-colors duration-300 sm:text-5xl md:text-6xl lg:text-[4rem]">
+                  <h3 className="text-foreground mb-4 text-4xl leading-[0.9] font-black tracking-tighter whitespace-pre-wrap transition-colors duration-300 sm:text-5xl md:text-6xl lg:text-[4rem]">
                     <ParsedText text={feature.title} />
                   </h3>
 
-                  <div className="max-w-2xl whitespace-pre-wrap text-lg font-bold leading-snug text-foreground sm:text-xl md:text-2xl">
+                  <div className="text-foreground max-w-2xl text-lg leading-snug font-bold whitespace-pre-wrap sm:text-xl md:text-2xl">
                     <ParsedText text={feature.description} />
                   </div>
                 </div>

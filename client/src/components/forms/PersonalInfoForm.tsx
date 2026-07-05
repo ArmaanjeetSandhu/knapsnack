@@ -245,7 +245,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
                 setShowSmokingHelp((prev) => !prev);
               }}
             >
-              <HelpCircle className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+              <HelpCircle className="text-muted-foreground hover:text-foreground h-4 w-4 transition-colors" />
             </button>
           </div>
           <AnimatePresence>
@@ -254,7 +254,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="text-base font-normal text-muted-foreground"
+                className="text-muted-foreground text-base font-normal"
               >
                 Knap[Snack] adjusts your vitamin C requirements to account for
                 the increased oxidative stress associated with smoking.
@@ -277,7 +277,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
                 setShowCaloricHelp((prev) => !prev);
               }}
             >
-              <HelpCircle className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground" />
+              <HelpCircle className="text-muted-foreground hover:text-foreground h-4 w-4 transition-colors" />
             </button>
           </div>
           <AnimatePresence>
@@ -286,7 +286,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="text-base font-normal text-muted-foreground"
+                className="text-muted-foreground text-base font-normal"
               >
                 What percentage of the calories you burn daily do you plan to
                 consume every day?
@@ -361,7 +361,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       <div className="mb-8">
         <div className="h-2 rounded-full bg-gray-200">
           <div
-            className="h-full rounded-full bg-primary transition-all duration-500"
+            className="bg-primary h-full rounded-full transition-all duration-500"
             style={{
               width: `${((currentStep + 1) / stepConfigs.length) * 100}%`,
             }}

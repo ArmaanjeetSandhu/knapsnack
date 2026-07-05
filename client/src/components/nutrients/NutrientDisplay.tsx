@@ -82,14 +82,14 @@ export const NutrientTable = ({
             <TableRow>
               <TableHead
                 onClick={() => requestSort("nutrient")}
-                className="no-select cursor-pointer font-medium text-foreground transition-colors hover:bg-muted/50"
+                className="no-select text-foreground hover:bg-muted/50 cursor-pointer font-medium transition-colors"
               >
                 Nutrient{getSortIcon("nutrient")}
               </TableHead>
               {showAmount && (
                 <TableHead
                   onClick={() => requestSort("amount")}
-                  className="no-select cursor-pointer text-right font-medium text-foreground transition-colors hover:bg-muted/50"
+                  className="no-select text-foreground hover:bg-muted/50 cursor-pointer text-right font-medium transition-colors"
                 >
                   Amount{getSortIcon("amount")}
                 </TableHead>
@@ -98,13 +98,13 @@ export const NutrientTable = ({
                 <>
                   <TableHead
                     onClick={() => requestSort("rda")}
-                    className="no-select cursor-pointer text-right font-medium text-foreground transition-colors hover:bg-muted/50"
+                    className="no-select text-foreground hover:bg-muted/50 cursor-pointer text-right font-medium transition-colors"
                   >
                     RDA{getSortIcon("rda")}
                   </TableHead>
                   <TableHead
                     onClick={() => requestSort("ul")}
-                    className="no-select cursor-pointer text-right font-medium text-foreground transition-colors hover:bg-muted/50"
+                    className="no-select text-foreground hover:bg-muted/50 cursor-pointer text-right font-medium transition-colors"
                   >
                     UL{getSortIcon("ul")}
                   </TableHead>
@@ -112,7 +112,7 @@ export const NutrientTable = ({
               )}
               <TableHead
                 onClick={() => requestSort("unit")}
-                className="no-select cursor-pointer text-right font-medium text-foreground transition-colors hover:bg-muted/50"
+                className="no-select text-foreground hover:bg-muted/50 cursor-pointer text-right font-medium transition-colors"
               >
                 Unit{getSortIcon("unit")}
               </TableHead>
@@ -124,7 +124,7 @@ export const NutrientTable = ({
               return (
                 <TableRow
                   key={key}
-                  className="cursor-pointer transition-colors hover:bg-muted/50"
+                  className="hover:bg-muted/50 cursor-pointer transition-colors"
                   onClick={() => handleNutrientClick(nutrient)}
                 >
                   <TableCell className="font-medium">
@@ -207,7 +207,7 @@ export const NutrientCards = ({
               <CardContent className="pt-6">
                 <div className="mb-2 flex items-center gap-2">
                   <BlinkingDot />
-                  <h4 className="text-sm font-medium text-muted-foreground">
+                  <h4 className="text-muted-foreground text-sm font-medium">
                     {nutrient.name}
                   </h4>
                 </div>

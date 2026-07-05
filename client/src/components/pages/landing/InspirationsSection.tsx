@@ -132,7 +132,7 @@ function InspirationsSection() {
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
         <div className="no-select relative mx-auto h-[550px] w-full font-sans md:h-[350px]">
           <motion.div
-            className="group absolute bottom-0 top-0 z-20 -ml-5 flex cursor-ew-resize items-center justify-center md:-ml-6"
+            className="group absolute top-0 bottom-0 z-20 -ml-5 flex cursor-ew-resize items-center justify-center md:-ml-6"
             style={{ x }}
             drag="x"
             dragConstraints={{ left: 0, right: containerWidth }}
@@ -172,10 +172,10 @@ function InspirationsSection() {
                     : { duration: 0.3 }
                 }
                 whileHover={{ scale: 1.25 }}
-                className="flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border border-border bg-background shadow-lg transition-colors group-hover:border-primary/50 group-focus-visible/btn:ring-2 group-focus-visible/btn:ring-primary group-focus-visible/btn:ring-offset-2 md:h-14 md:w-10"
+                className="border-border bg-background group-hover:border-primary/50 group-focus-visible/btn:ring-primary flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border shadow-lg transition-colors group-focus-visible/btn:ring-2 group-focus-visible/btn:ring-offset-2 md:h-14 md:w-10"
               >
                 <svg
-                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
+                  className="text-muted-foreground group-hover:text-primary h-3 w-3 transition-colors md:h-4 md:w-4 dark:text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -188,7 +188,7 @@ function InspirationsSection() {
                   />
                 </svg>
                 <svg
-                  className="h-3 w-3 text-muted-foreground transition-colors group-hover:text-primary dark:text-white md:h-4 md:w-4"
+                  className="text-muted-foreground group-hover:text-primary h-3 w-3 transition-colors md:h-4 md:w-4 dark:text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -206,22 +206,22 @@ function InspirationsSection() {
 
           <div
             ref={containerRef}
-            className="absolute inset-0 overflow-hidden rounded-3xl border border-border bg-card shadow-xl"
+            className="border-border bg-card absolute inset-0 overflow-hidden rounded-3xl border shadow-xl"
           >
-            <div className="absolute inset-0 flex flex-col justify-center bg-card py-4 pl-14 pr-4 text-foreground sm:py-6 sm:pl-16 sm:pr-6 md:py-8 md:pl-20 md:pr-10">
-              <span className="mb-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="bg-card text-foreground absolute inset-0 flex flex-col justify-center py-4 pr-4 pl-14 sm:py-6 sm:pr-6 sm:pl-16 md:py-8 md:pr-10 md:pl-20">
+              <span className="text-muted-foreground mb-2 block text-xs font-bold tracking-widest uppercase">
                 Inspirations
               </span>
 
-              <h2 className="mb-8 text-[clamp(1.5rem,4vw,2.5rem)] font-black leading-[0.9] tracking-tighter text-foreground">
+              <h2 className="text-foreground mb-8 text-[clamp(1.5rem,4vw,2.5rem)] leading-[0.9] font-black tracking-tighter">
                 <ParsedText text="<acc>Media</acc> That Shaped Our Process" />
               </h2>
 
               <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:gap-10">
                 <div>
-                  <div className="mb-3 flex items-center gap-2 border-b border-foreground/20 pb-2">
-                    <BookOpen className="h-5 w-5 text-foreground" />
-                    <h3 className="text-xl font-black leading-none tracking-tighter text-foreground">
+                  <div className="border-foreground/20 mb-3 flex items-center gap-2 border-b pb-2">
+                    <BookOpen className="text-foreground h-5 w-5" />
+                    <h3 className="text-foreground text-xl leading-none font-black tracking-tighter">
                       <ParsedText text="<acc>Books</acc>" />
                     </h3>
                   </div>
@@ -234,11 +234,11 @@ function InspirationsSection() {
                           rel="noopener noreferrer"
                           className="hover:underline"
                         >
-                          <span className="text-base font-bold text-foreground transition-colors sm:text-lg">
+                          <span className="text-foreground text-base font-bold transition-colors sm:text-lg">
                             <ParsedText text={title} />
                           </span>
                         </a>
-                        <span className="block text-sm font-bold text-muted-foreground md:ml-2 md:inline">
+                        <span className="text-muted-foreground block text-sm font-bold md:ml-2 md:inline">
                           <ParsedText text={`<m>${author}</m>`} />
                         </span>
                       </li>
@@ -247,9 +247,9 @@ function InspirationsSection() {
                 </div>
 
                 <div>
-                  <div className="mb-3 flex items-center gap-2 border-b border-foreground/20 pb-2">
-                    <Rss className="h-5 w-5 text-foreground" />
-                    <h3 className="text-xl font-black leading-none tracking-tighter text-foreground">
+                  <div className="border-foreground/20 mb-3 flex items-center gap-2 border-b pb-2">
+                    <Rss className="text-foreground h-5 w-5" />
+                    <h3 className="text-foreground text-xl leading-none font-black tracking-tighter">
                       <ParsedText text="<acc>Blogs</acc>" />
                     </h3>
                   </div>
@@ -262,7 +262,7 @@ function InspirationsSection() {
                           rel="noopener noreferrer"
                           className="hover:underline"
                         >
-                          <span className="text-base font-bold text-foreground transition-colors sm:text-lg">
+                          <span className="text-foreground text-base font-bold transition-colors sm:text-lg">
                             <ParsedText text={title} />
                           </span>
                         </a>
@@ -275,7 +275,7 @@ function InspirationsSection() {
 
             <motion.div
               ref={textPanelRef}
-              className="absolute inset-0 z-10 bg-primary px-6 text-white sm:px-8 md:px-10"
+              className="bg-primary absolute inset-0 z-10 px-6 text-white sm:px-8 md:px-10"
               style={{ clipPath }}
             >
               <div className="flex h-full w-full items-center justify-center">

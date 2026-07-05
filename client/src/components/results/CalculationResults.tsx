@@ -293,7 +293,7 @@ const CalculationResults = ({
                     <div className="flex items-center gap-4">
                       <metric.icon className={`h-8 w-8 ${metric.color}`} />
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">
+                        <p className="text-muted-foreground text-sm font-medium">
                           {metric.label}
                         </p>
                         <p className="text-2xl font-bold">{metric.value}</p>
@@ -349,12 +349,12 @@ const CalculationResults = ({
                       delay: index * 0.05 + 0.3,
                       ease: "easeOut",
                     }}
-                    className="group relative rounded-lg border bg-card p-4 text-card-foreground"
+                    className="group bg-card text-card-foreground relative rounded-lg border p-4"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <p
-                          className={`text-sm font-medium text-muted-foreground ${isEditing ? "mb-3" : "mb-1"}`}
+                          className={`text-muted-foreground text-sm font-medium ${isEditing ? "mb-3" : "mb-1"}`}
                         >
                           {macro.label}
                         </p>
@@ -453,7 +453,7 @@ const CalculationResults = ({
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                  className="text-muted-foreground hover:text-foreground h-6 w-6"
                                   onClick={() =>
                                     actions.resetToSystemDefault(macro.label)
                                   }
@@ -463,7 +463,7 @@ const CalculationResults = ({
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                  className="text-muted-foreground hover:text-foreground h-6 w-6"
                                   onClick={() => {
                                     if (boundKey && boundType)
                                       actions.saveTarget(
@@ -478,7 +478,7 @@ const CalculationResults = ({
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                  className="text-muted-foreground hover:text-foreground h-6 w-6"
                                   onClick={() =>
                                     actions.cancelEditing(macro.label)
                                   }
@@ -542,12 +542,12 @@ const CalculationResults = ({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, delay: 0.35, ease: "easeOut" }}
-                    className="group relative rounded-lg border bg-card p-4 text-card-foreground"
+                    className="group bg-card text-card-foreground relative rounded-lg border p-4"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <p
-                          className={`text-sm font-medium text-muted-foreground ${isEditing ? "mb-3" : "mb-1"}`}
+                          className={`text-muted-foreground text-sm font-medium ${isEditing ? "mb-3" : "mb-1"}`}
                         >
                           Water
                         </p>
@@ -632,7 +632,7 @@ const CalculationResults = ({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                className="text-muted-foreground hover:text-foreground h-6 w-6"
                                 onClick={() =>
                                   actions.resetToSystemDefault("Water")
                                 }
@@ -642,7 +642,7 @@ const CalculationResults = ({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                className="text-muted-foreground hover:text-foreground h-6 w-6"
                                 onClick={() =>
                                   actions.saveTarget("Water", waterKey, "lower")
                                 }
@@ -652,7 +652,7 @@ const CalculationResults = ({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                className="text-muted-foreground hover:text-foreground h-6 w-6"
                                 onClick={() => actions.cancelEditing("Water")}
                               >
                                 <X className="h-4 w-4" />
@@ -841,7 +841,7 @@ const CalculationResults = ({
           Modify Personal Info
         </Button>
         <Button
-          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 w-full"
           size="lg"
           onClick={handleProceed}
         >
