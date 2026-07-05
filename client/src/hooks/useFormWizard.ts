@@ -52,14 +52,12 @@ interface PersistedFormState {
   data: FormData;
 }
 
-const INTEGER_FIELD_MAX_LENGTH = 16;
-
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
-const sanitizeIntegerField = (value: unknown): string => {
-  if (typeof value !== "string" && typeof value !== "number") return "";
-  return String(value).replace(/\D/g, "").slice(0, INTEGER_FIELD_MAX_LENGTH);
+const sanitizeIntegerField = (value: unknown): number | "" => {
+  const parsed = Number.parseInt(String(value), 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : "";
 };
 
 const sanitizeNumber = (
@@ -76,7 +74,7 @@ const sanitizeEnum = <T extends string>(
   value: unknown,
   allowed: readonly T[],
   fallback: T,
-): T => (allowed.includes(value as T) ? (value as T) : fallback);
+): T => allowed.find((option) => option === value) ?? fallback;
 
 const sanitizeMacroRatios = (value: unknown): MacroRatios | null => {
   if (!isObject(value)) return null;
