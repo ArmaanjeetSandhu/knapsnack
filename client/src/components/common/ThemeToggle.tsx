@@ -44,6 +44,27 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
 
   const isLanding = variant === "landing";
 
+  const landingPillPos = isDark ? "left-[calc(50%+2px)]" : "left-1";
+  const defaultPillPos = isDark ? "left-[50%]" : "left-1";
+
+  const pillPositionClass = isLanding ? landingPillPos : defaultPillPos;
+  const pillBgClass = isLanding ? "bg-background shadow-sm" : "bg-gray-800";
+  const pillDynamicClasses = `${pillBgClass} ${pillPositionClass}`;
+
+  const darkSunClass = isLanding
+    ? "text-muted-foreground hover:text-foreground"
+    : "text-white hover:text-gray-200";
+  const lightSunClass = isLanding ? "text-amber-500" : "text-yellow-400";
+
+  const sunColorClass = isDark ? darkSunClass : lightSunClass;
+
+  const darkMoonClass = isLanding ? "text-indigo-400" : "text-blue-400";
+  const lightMoonClass = isLanding
+    ? "text-muted-foreground hover:text-foreground"
+    : "text-white hover:text-gray-200";
+
+  const moonColorClass = isDark ? darkMoonClass : lightMoonClass;
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -58,37 +79,17 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
             aria-label="Toggle theme"
           >
             <div
-              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 dark:bg-white/10 ${
-                isLanding
-                  ? `bg-background shadow-sm ${isDark ? "left-[calc(50%+2px)]" : "left-1"}`
-                  : `bg-gray-800 ${isDark ? "left-[50%]" : "left-1"}`
-              }`}
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 dark:bg-white/10 ${pillDynamicClasses}`}
             />
 
             <div
-              className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${
-                isDark
-                  ? isLanding
-                    ? "text-muted-foreground hover:text-foreground"
-                    : "text-white hover:text-gray-200"
-                  : isLanding
-                    ? "text-amber-500"
-                    : "text-yellow-400"
-              }`}
+              className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${sunColorClass}`}
             >
               <Sun className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
 
             <div
-              className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${
-                isDark
-                  ? isLanding
-                    ? "text-indigo-400"
-                    : "text-blue-400"
-                  : isLanding
-                    ? "text-muted-foreground hover:text-foreground"
-                    : "text-white hover:text-gray-200"
-              }`}
+              className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${moonColorClass}`}
             >
               <Moon className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
             </div>
