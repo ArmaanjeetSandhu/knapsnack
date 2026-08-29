@@ -1,4 +1,4 @@
-import { HelpCircle, MessageSquare } from "lucide-react";
+import { HelpCircle, MessageSquare, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "../ui/button";
@@ -38,6 +38,16 @@ export default function Footer() {
               >
                 <HelpCircle className="h-5 w-5" />
                 <span className="hidden sm:inline">FAQ</span>
+              </Button>
+            </Link>
+
+            <Link to="/privacy" aria-label="Privacy Policy">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+              >
+                <ShieldCheck className="h-5 w-5" />
+                <span className="hidden sm:inline">Privacy</span>
               </Button>
             </Link>
 
