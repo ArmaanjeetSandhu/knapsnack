@@ -130,9 +130,9 @@ function InspirationsSection() {
       className="relative flex w-full flex-col items-center justify-center overflow-hidden py-4 sm:py-8"
     >
       <div className="mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
-        <div className="no-select relative mx-auto h-[550px] w-full font-sans md:h-[350px]">
+        <div className="no-select relative mx-auto w-full font-sans md:h-[350px]">
           <motion.div
-            className="group absolute top-0 bottom-0 z-20 -ml-5 flex cursor-ew-resize items-center justify-center md:-ml-6"
+            className="group absolute top-0 bottom-0 z-20 -ml-5 hidden cursor-ew-resize items-center justify-center md:-ml-6 md:flex"
             style={{ x }}
             drag="x"
             dragConstraints={{ left: 0, right: containerWidth }}
@@ -206,9 +206,9 @@ function InspirationsSection() {
 
           <div
             ref={containerRef}
-            className="border-border bg-card absolute inset-0 overflow-hidden rounded-3xl border shadow-xl"
+            className="border-border bg-card relative overflow-hidden rounded-3xl border shadow-xl md:absolute md:inset-0"
           >
-            <div className="bg-card text-foreground absolute inset-0 flex flex-col justify-center py-4 pr-4 pl-14 sm:py-6 sm:pr-6 sm:pl-16 md:py-8 md:pr-10 md:pl-20">
+            <div className="bg-card text-foreground relative flex flex-col justify-center px-6 py-8 sm:px-8 md:absolute md:inset-0 md:pr-10 md:pl-20">
               <span className="text-muted-foreground mb-2 block text-xs font-bold tracking-widest uppercase">
                 Inspirations
               </span>
@@ -275,7 +275,7 @@ function InspirationsSection() {
 
             <motion.div
               ref={textPanelRef}
-              className="bg-primary absolute inset-0 z-10 px-6 text-white sm:px-8 md:px-10"
+              className="bg-primary absolute inset-0 z-10 hidden px-6 text-white sm:px-8 md:block md:px-10"
               style={{ clipPath }}
             >
               <div className="flex h-full w-full items-center justify-center">
