@@ -1,12 +1,12 @@
-import { ExternalLink } from "lucide-react";
-import React, { useEffect } from "react";
-
-import { Card, CardContent } from "../ui/card";
+import PolicyDocument, {
+  type LinkMap,
+  type Section,
+} from "../common/PolicyDocument";
 
 const LAST_UPDATED = "29 August 2026";
 const CONTACT_EMAIL = "armaanjeetsandhu430@gmail.com";
 
-const LINK_MAP: Record<string, string> = {
+const LINK_MAP: LinkMap = {
   "armaanjeetsandhu430@gmail.com": `mailto:${CONTACT_EMAIL}`,
   GitHub: "https://github.com/ArmaanjeetSandhu/knapsnack",
   "FoodData Central site": "https://fdc.nal.usda.gov/",
@@ -16,16 +16,8 @@ const LINK_MAP: Record<string, string> = {
     "https://www.contentful.com/legal/privacy-at-contentful/privacy-notice/",
   "Google Privacy Policy": "https://policies.google.com/privacy",
   "Buy Me a Coffee Privacy Policy": "https://www.buymeacoffee.com/privacy",
+  "Terms of Use": "/terms",
 };
-
-type Block =
-  { kind: "text"; content: string } | { kind: "list"; items: string[] };
-
-interface Section {
-  id: string;
-  title: string;
-  blocks: Block[];
-}
 
 const summaryPoints: string[] = [
   "There are no accounts, no logins, and no cookies.",
@@ -43,7 +35,7 @@ const sections: Section[] = [
       {
         kind: "text",
         content:
-          "Knap[Snack] is a free, open-source project maintained by an individual developer rather than a company. The full source code, including every line described in this policy, is public and can be inspected on [[GitHub]]. This policy explains what happens to information when you use the hosted version of the app.",
+          "Knap[Snack] is a free, open-source project maintained by an individual developer rather than a company. The full source code, including every line described in this policy, is public and can be inspected on [[GitHub]]. This policy explains what happens to information when you use the hosted version of the app. The [[Terms of Use]] cover the service itself.",
       },
     ],
   },
@@ -249,128 +241,14 @@ const sections: Section[] = [
   },
 ];
 
-const TOKEN_REGEX = /\[\[[^\]]{1,256}\]\]|\*\*[^*]{1,256}\*\*/g;
-
-const renderToken = (token: string, key: string): React.ReactNode => {
-  if (token.startsWith("**"))
-    return (
-      <strong key={key} className="text-foreground font-medium">
-        {token.slice(2, -2)}
-      </strong>
-    );
-
-  const label = token.slice(2, -2);
-  const href = LINK_MAP[label];
-  const isExternal = href?.startsWith("http");
-
-  return (
-    <a
-      key={key}
-      href={href}
-      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="text-primary inline-flex items-center gap-1 underline"
-    >
-      {label}
-      {isExternal && <ExternalLink className="h-3 w-3" />}
-    </a>
-  );
-};
-
-const parseText = (text: string): React.ReactNode[] => {
-  const nodes: React.ReactNode[] = [];
-  let lastIndex = 0;
-
-  for (const match of text.matchAll(TOKEN_REGEX)) {
-    const token = match[0];
-    const offset = match.index;
-    if (offset === undefined) continue;
-
-    if (offset > lastIndex)
-      nodes.push(
-        <span key={`text-${lastIndex}`}>{text.slice(lastIndex, offset)}</span>,
-      );
-
-    nodes.push(renderToken(token, `token-${offset}`));
-    lastIndex = offset + token.length;
-  }
-
-  if (lastIndex < text.length)
-    nodes.push(<span key={`text-${lastIndex}`}>{text.slice(lastIndex)}</span>);
-
-  return nodes;
-};
-
-const BlockRenderer = ({ block }: { readonly block: Block }) => {
-  if (block.kind === "list")
-    return (
-      <ul className="list-outside list-disc space-y-2 pl-5 marker:text-sm">
-        {block.items.map((item) => (
-          <li key={item.substring(0, 40)}>{parseText(item)}</li>
-        ))}
-      </ul>
-    );
-
-  return <p>{parseText(block.content)}</p>;
-};
-
-const PrivacyPolicyPage = () => {
-  useEffect(() => {
-    if (!globalThis.location.hash) globalThis.scrollTo(0, 0);
-  }, []);
-
-  return (
-    <div className="mx-auto w-full p-4">
-      <Card>
-        <CardContent className="p-6">
-          <div className="mb-6 border-b pb-4">
-            <h1 className="text-3xl font-bold">Privacy Policy</h1>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Last updated: {LAST_UPDATED}
-            </p>
-          </div>
-
-          <div className="bg-muted/50 mb-8 rounded-lg border p-5">
-            <h2 className="mb-3 text-lg font-semibold">The short version</h2>
-            <ul className="text-muted-foreground list-outside list-disc space-y-2 pl-5 leading-relaxed marker:text-sm">
-              {summaryPoints.map((point) => (
-                <li key={point.substring(0, 40)}>{point}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="space-y-8">
-            {sections.map((section) => (
-              <section
-                key={section.id}
-                id={section.id}
-                className="scroll-mt-5"
-                aria-labelledby={`${section.id}-heading`}
-              >
-                <h2
-                  id={`${section.id}-heading`}
-                  className="mb-3 text-xl font-semibold"
-                >
-                  {section.title}
-                </h2>
-                <div className="text-muted-foreground space-y-3 leading-relaxed">
-                  {section.blocks.map((block) => (
-                    <BlockRenderer
-                      key={
-                        block.kind === "list"
-                          ? `list-${block.items[0].substring(0, 40)}`
-                          : block.content.substring(0, 40)
-                      }
-                      block={block}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+const PrivacyPolicyPage = () => (
+  <PolicyDocument
+    title="Privacy Policy"
+    lastUpdated={LAST_UPDATED}
+    summaryPoints={summaryPoints}
+    sections={sections}
+    linkMap={LINK_MAP}
+  />
+);
 
 export default PrivacyPolicyPage;

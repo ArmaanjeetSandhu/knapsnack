@@ -33,6 +33,7 @@ import FaqPage from "./components/pages/FaqPage";
 import FeedbackPage from "./components/pages/FeedbackPage";
 import LandingPage from "./components/pages/landing/LandingPage";
 import PrivacyPolicyPage from "./components/pages/PrivacyPolicyPage";
+import TermsPage from "./components/pages/TermsPage";
 import CalculationResults from "./components/results/CalculationResults";
 import FeasibilityAnalysis from "./components/results/FeasibilityAnalysis";
 import OptimisationResults from "./components/results/OptimisationResults";
@@ -716,6 +717,7 @@ function App() {
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/" element={mainPlanner} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
