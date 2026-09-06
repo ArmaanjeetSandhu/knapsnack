@@ -6,6 +6,7 @@ import logging
 import mimetypes
 import os
 import smtplib
+import sys
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 from typing import List, Tuple, Union
@@ -56,25 +57,23 @@ load_dotenv()
 logging.basicConfig(
     level=logging.ERROR,
     format="%(asctime)s %(levelname)s %(message)s",
-    handlers=[logging.FileHandler("app.log"), logging.StreamHandler()],
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 
 static_folder = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "client", "dist")
 )
 app = Flask(__name__, static_folder=static_folder)
-CORS(
-    app,
-    resources={
-        r"/api/*": {
-            "origins": [
-                "https://knapsnack-b4b10d2b0910.herokuapp.com",
-                "http://localhost:5173",
-                "http://127.0.0.1:5173",
-            ]
-        }
-    },
-)
+
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",")
+    if origin.strip()
+]
+
+CORS(app, resources={r"/api/*": {"origins": ALLOWED_ORIGINS}})
 mimetypes.add_type("video/mp4", ".mp4")
 
 app.config["COMPRESS_REGISTER"] = True
@@ -115,13 +114,15 @@ def add_security_headers(response: Response) -> Response:
 @app.route("/robots.txt", methods=["GET"])
 def robots() -> Response:
     """Serve robots.txt file"""
+    host_url = request.host_url.rstrip("/")
+
     response = make_response(
-        """
+        f"""
 User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://knapsnack-b4b10d2b0910.herokuapp.com/sitemap.xml
+Sitemap: {host_url}/sitemap.xml
     """.strip()
     )
     response.headers["Content-Type"] = "text/plain"
@@ -149,13 +150,14 @@ def sitemap() -> Response:
 def security_txt() -> Response:
     """Serve security.txt file"""
     expires_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    host_url = request.host_url.rstrip("/")
 
     response = make_response(
         f"""
 Contact: armaanjeetsandhu430@gmail.com
 Expires: {expires_date}
 Preferred-Languages: en
-Canonical: https://knapsnack-b4b10d2b0910.herokuapp.com/.well-known/security.txt
+Canonical: {host_url}/.well-known/security.txt
     """.strip()
     )
     response.headers["Content-Type"] = "text/plain"

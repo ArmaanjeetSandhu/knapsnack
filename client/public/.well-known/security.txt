@@ -1,4 +1,4 @@
 Contact: armaanjeetsandhu430@gmail.com
-Expires: 2026-05-09T06:41:03Z
+Expires: 2027-09-07T00:00:00Z
 Preferred-Languages: en
-Canonical: https://knapsnack-b4b10d2b0910.herokuapp.com/.well-known/security.txt
+Canonical: https://knapsnack.vercel.app/.well-known/security.txt

@@ -8,7 +8,6 @@ dependencies = [
     "flask",
     "flask-compress",
     "flask-cors",
-    "gunicorn",
     "numpy",
     "pandas",
     "pulp",
@@ -20,6 +19,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "gunicorn",
     "mypy",
     "pandas-stubs",
     "pre-commit",

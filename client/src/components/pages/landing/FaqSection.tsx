@@ -110,7 +110,7 @@ const faqs = [
     answer: (
       <>
         <ParsedText text="One of Knap<acc>[Snack]</acc>'s goals is to <acc>reduce supplement dependence</acc> by optimising whole food choices, <m>but the flexibility is there if needed.</m> We guide you through the process " />
-        <SquiggleLink href="https://knapsnack-b4b10d2b0910.herokuapp.com/faq#how-do-i-include-supplements">
+        <SquiggleLink href="/faq#how-do-i-include-supplements">
           <ParsedText text="<acc>here</acc>" />
         </SquiggleLink>
         <ParsedText text="." />
