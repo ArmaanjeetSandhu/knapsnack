@@ -19,7 +19,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "gunicorn",
     "mypy",
     "pandas-stubs",
     "pre-commit",

@@ -7,7 +7,6 @@ import mimetypes
 import os
 import smtplib
 import sys
-from datetime import datetime, timedelta
 from email.message import EmailMessage
 from typing import List, Tuple, Union
 
@@ -18,7 +17,6 @@ from flask import (
     Flask,
     Response,
     jsonify,
-    make_response,
     request,
     send_file,
     send_from_directory,
@@ -108,59 +106,6 @@ def add_security_headers(response: Response) -> Response:
         )
         response.headers["Cache-Control"] = cache_setting
 
-    return response
-
-
-@app.route("/robots.txt", methods=["GET"])
-def robots() -> Response:
-    """Serve robots.txt file"""
-    host_url = request.host_url.rstrip("/")
-
-    response = make_response(
-        f"""
-User-agent: *
-Allow: /
-Disallow: /api/
-
-Sitemap: {host_url}/sitemap.xml
-    """.strip()
-    )
-    response.headers["Content-Type"] = "text/plain"
-    return response
-
-
-@app.route("/sitemap.xml", methods=["GET"])
-def sitemap() -> Response:
-    """Generate a simple sitemap"""
-    host_url = request.host_url.rstrip("/")
-
-    xml = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-        f"  <url><loc>{host_url}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>",
-        "</urlset>",
-    ]
-
-    response = make_response("\n".join(xml))
-    response.headers["Content-Type"] = "application/xml"
-    return response
-
-
-@app.route("/.well-known/security.txt", methods=["GET"])
-def security_txt() -> Response:
-    """Serve security.txt file"""
-    expires_date = (datetime.now() + timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    host_url = request.host_url.rstrip("/")
-
-    response = make_response(
-        f"""
-Contact: armaanjeetsandhu430@gmail.com
-Expires: {expires_date}
-Preferred-Languages: en
-Canonical: {host_url}/.well-known/security.txt
-    """.strip()
-    )
-    response.headers["Content-Type"] = "text/plain"
     return response
 
 

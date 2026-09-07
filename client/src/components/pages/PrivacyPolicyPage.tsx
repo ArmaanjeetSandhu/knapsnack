@@ -3,15 +3,15 @@ import PolicyDocument, {
   type Section,
 } from "../common/PolicyDocument";
 
-const LAST_UPDATED = "29 August 2026";
+const LAST_UPDATED = "07 September 2026";
 const CONTACT_EMAIL = "armaanjeetsandhu430@gmail.com";
 
 const LINK_MAP: LinkMap = {
-  "armaanjeetsandhu430@gmail.com": `mailto:${CONTACT_EMAIL}`,
+  this: `mailto:${CONTACT_EMAIL}`,
   GitHub: "https://github.com/ArmaanjeetSandhu/knapsnack",
   "FoodData Central site": "https://fdc.nal.usda.gov/",
-  "Heroku Privacy Statement":
-    "https://www.salesforce.com/company/legal/privacy/",
+  "Vercel Privacy Notice":
+    "https://vercel.com/legal/privacy-notice",
   "Contentful Privacy Notice":
     "https://www.contentful.com/legal/privacy-at-contentful/privacy-notice/",
   "Google Privacy Policy": "https://policies.google.com/privacy",
@@ -102,7 +102,7 @@ const sections: Section[] = [
       {
         kind: "text",
         content:
-          "The email field is optional and exists only so that you can be replied to. Leave it blank to send feedback anonymously. Because feedback arrives as plain email, please do not include passwords, medical details, or anything else sensitive. If you want a message you have already sent to be deleted, write to [[armaanjeetsandhu430@gmail.com]] and it will be removed.",
+          "The email field is optional and exists only so that you can be replied to. Leave it blank to send feedback anonymously. Because feedback arrives as plain email, please do not include passwords, medical details, or anything else sensitive. If you want a message you have already sent to be deleted, write to [[this]] email and it will be removed.",
       },
     ],
   },
@@ -129,7 +129,7 @@ const sections: Section[] = [
       {
         kind: "list",
         items: [
-          "**Heroku**, a Salesforce company, hosts the application. See the [[Heroku Privacy Statement]].",
+          "**Vercel** hosts the application. See the [[Vercel Privacy Notice]].",
           "**USDA FoodData Central** supplies the nutrition database. Contacted by our server, not your browser. See the [[FoodData Central site]].",
           "**Contentful** stores the blog articles. Contacted by our server, not your browser. See the [[Contentful Privacy Notice]].",
           "**Google Fonts** serves the typefaces used across the site. Contacted by your browser. See the [[Google Privacy Policy]].",
@@ -177,7 +177,7 @@ const sections: Section[] = [
       {
         kind: "text",
         content:
-          "Security issues can be reported to [[armaanjeetsandhu430@gmail.com]], as listed in the site's security.txt file.",
+          "Security issues can be reported to [[this]] email, as listed in the site's security.txt file.",
       },
     ],
   },
@@ -196,7 +196,7 @@ const sections: Section[] = [
           "To access or export your data, use the CSV export options in the app. Everything Knap[Snack] holds about you is already on your device.",
           "To erase your data, use 'Start Over' or clear the site's data in your browser.",
           "To stay anonymous when sending feedback, leave the email field blank.",
-          "To have feedback you have sent deleted, email a request to [[armaanjeetsandhu430@gmail.com]].",
+          "To have feedback you have sent deleted, email a request to [[this]] address.",
         ],
       },
       {
@@ -235,7 +235,7 @@ const sections: Section[] = [
       {
         kind: "text",
         content:
-          "Questions about privacy, or about anything described here, can be sent to [[armaanjeetsandhu430@gmail.com]].",
+          "Questions about privacy, or about anything described here, can be sent to [[this]] email.",
       },
     ],
   },
