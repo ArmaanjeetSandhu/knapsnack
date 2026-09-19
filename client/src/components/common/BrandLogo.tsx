@@ -32,7 +32,7 @@ export default function BrandLogo({ variant = "header" }: BrandLogoProps) {
   const isLanding = variant === "landing";
 
   const textClass = isLanding
-    ? "text-[17vw] sm:text-[14vw] lg:text-[11vw] text-foreground"
+    ? "text-[length:min(17vw,18svh)] sm:text-[length:min(14vw,18svh)] lg:text-[length:min(11vw,18svh)] text-foreground"
     : "text-xl sm:text-2xl text-white";
 
   return (

@@ -6,21 +6,14 @@ import {
   RotateCcw,
   ChevronDown,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 import BrandLogo from "../../common/BrandLogo";
-import Footer from "../../common/Footer";
 import ThemeToggle from "../../common/ThemeToggle";
 import { Button } from "../../ui/button";
 
-import CtaSection from "./CtaSection";
-import DietsSection from "./DietsSection";
-import FaqSection from "./FaqSection";
-import FeaturesSection from "./FeaturesSection";
-import InspirationsSection from "./InspirationsSection";
-import IntroSection from "./IntroSection";
-import OutroSection from "./OutroSection";
-import ParadigmSection from "./ParadigmSection";
+const loadLandingDetails = () => import("./LandingDetails");
+const LandingDetails = lazy(loadLandingDetails);
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -34,6 +27,7 @@ const LandingPage = ({
   onStartOver,
 }: LandingPageProps) => {
   const [confirmingStartOver, setConfirmingStartOver] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -57,18 +51,21 @@ const LandingPage = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [confirmingStartOver]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
+  const handleLearnMore = () => {
+    if (showDetails)
+      document.getElementById("intro")?.scrollIntoView({ behavior: "smooth" });
+    else setShowDetails(true);
   };
 
   return (
     <div className="bg-background text-foreground min-h-screen overflow-x-hidden scroll-smooth font-sans">
-      <div className="fixed top-4 right-4 z-50 sm:top-6 sm:right-6">
+      <div className="landing-fluid fixed top-[1.25em] right-[1.25em] z-50">
         <ThemeToggle variant="landing" />
       </div>
 
-      <section className="relative flex min-h-screen w-full flex-col items-center justify-center py-20">
+      <section className="hero-viewport relative flex w-full flex-col items-center py-4">
+        <div aria-hidden className="min-h-0 flex-1 basis-0" />
+
         <div className="relative z-10 mx-auto w-full max-w-[1204px] px-4 sm:px-6 lg:px-8">
           <BrandLogo variant="landing" />
 
@@ -158,33 +155,29 @@ const LandingPage = ({
           </div>
         </div>
 
-        <motion.button
-          onClick={() => scrollToSection("intro")}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.3, duration: 1 }}
-          className="text-muted-foreground hover:text-foreground absolute bottom-6 flex flex-col items-center transition-colors sm:bottom-10"
-        >
-          <span className="no-select mb-2 text-xs font-medium sm:text-sm">
-            Learn More
-          </span>
-          <ChevronDown className="h-5 w-5 animate-bounce sm:h-6 sm:w-6" />
-        </motion.button>
+        <div className="flex flex-1 basis-0 flex-col items-center justify-end">
+          <motion.button
+            onClick={handleLearnMore}
+            onPointerEnter={() => void loadLandingDetails()}
+            onFocus={() => void loadLandingDetails()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.3, duration: 1 }}
+            className="landing-fluid text-muted-foreground hover:text-foreground mb-[0.5em] flex flex-col items-center pt-[1.5em] transition-colors sm:mb-[1.25em]"
+          >
+            <span className="no-select mb-[0.5em] text-[0.9em] font-medium">
+              Learn More
+            </span>
+            <ChevronDown className="h-[1.6em] w-[1.6em] animate-bounce" />
+          </motion.button>
+        </div>
       </section>
 
-      <IntroSection />
-      <FeaturesSection />
-      <DietsSection />
-      <ParadigmSection />
-      <FaqSection />
-      <CtaSection onGetStarted={onGetStarted} />
-      <OutroSection />
-
-      <div className="mb-12">
-        <InspirationsSection />
-      </div>
-
-      <Footer />
+      {showDetails && (
+        <Suspense fallback={null}>
+          <LandingDetails onGetStarted={onGetStarted} />
+        </Suspense>
+      )}
     </div>
   );
 };

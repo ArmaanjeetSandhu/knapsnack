@@ -43,8 +43,11 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
   }, [toggleTheme]);
 
   const isLanding = variant === "landing";
+  const iconClass = isLanding
+    ? "h-[1.25em] w-[1.25em]"
+    : "h-3.5 w-3.5 sm:h-5 sm:w-5";
 
-  const landingPillPos = isDark ? "left-[calc(50%+2px)]" : "left-1";
+  const landingPillPos = isDark ? "left-1/2" : "left-[0.25em]";
   const defaultPillPos = isDark ? "left-[50%]" : "left-1";
 
   const pillPositionClass = isLanding ? landingPillPos : defaultPillPos;
@@ -71,27 +74,31 @@ const ThemeToggle = ({ variant = "header" }: ThemeToggleProps) => {
         <TooltipTrigger asChild>
           <button
             onClick={toggleTheme}
-            className={`no-select relative flex h-8 w-14 cursor-pointer rounded-full p-1 transition-all outline-none focus-visible:ring-2 sm:h-10 sm:w-20 ${
+            className={`no-select relative flex cursor-pointer rounded-full transition-all outline-none focus-visible:ring-2 ${
               isLanding
-                ? "border-border bg-muted/50 focus-visible:ring-primary border shadow-inner dark:border-white/10 dark:bg-[#011d16]/80"
-                : "border border-gray-700 bg-gray-900 focus-visible:ring-blue-500 dark:border-white/10 dark:bg-[#011d16]"
+                ? "border-border bg-muted/50 focus-visible:ring-primary h-[2.5em] w-[5em] border p-[0.25em] shadow-inner dark:border-white/10 dark:bg-[#011d16]/80"
+                : "h-8 w-14 border border-gray-700 bg-gray-900 p-1 focus-visible:ring-blue-500 sm:h-10 sm:w-20 dark:border-white/10 dark:bg-[#011d16]"
             }`}
             aria-label="Toggle theme"
           >
             <div
-              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 dark:bg-white/10 ${pillDynamicClasses}`}
+              className={`absolute rounded-full transition-all duration-300 dark:bg-white/10 ${
+                isLanding
+                  ? "top-[0.25em] bottom-[0.25em] w-[calc(50%-0.25em)]"
+                  : "top-1 bottom-1 w-[calc(50%-4px)]"
+              } ${pillDynamicClasses}`}
             />
 
             <div
               className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${sunColorClass}`}
             >
-              <Sun className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+              <Sun className={iconClass} />
             </div>
 
             <div
               className={`z-10 flex flex-1 items-center justify-center transition-colors duration-300 ${moonColorClass}`}
             >
-              <Moon className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+              <Moon className={iconClass} />
             </div>
           </button>
         </TooltipTrigger>
