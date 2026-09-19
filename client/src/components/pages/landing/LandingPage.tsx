@@ -17,12 +17,14 @@ const LandingDetails = lazy(loadLandingDetails);
 
 interface LandingPageProps {
   onGetStarted: () => void;
+  onGetStartedIntent?: () => void;
   hasExistingSession?: boolean;
   onStartOver?: () => void;
 }
 
 const LandingPage = ({
   onGetStarted,
+  onGetStartedIntent,
   hasExistingSession,
   onStartOver,
 }: LandingPageProps) => {
@@ -95,6 +97,8 @@ const LandingPage = ({
                   <Button
                     size="lg"
                     onClick={onGetStarted}
+                    onPointerEnter={onGetStartedIntent}
+                    onFocus={onGetStartedIntent}
                     className="w-full px-6 py-6 text-base transition-transform duration-150 focus-visible:scale-105 sm:w-auto sm:px-8 sm:text-lg"
                   >
                     <ArrowLeft className="mr-2 h-5 w-5" />
@@ -130,6 +134,8 @@ const LandingPage = ({
                     <Button
                       size="lg"
                       variant={confirmingStartOver ? "destructive" : "outline"}
+                      onPointerEnter={onGetStartedIntent}
+                      onFocus={onGetStartedIntent}
                       onClick={() => {
                         if (confirmingStartOver) onStartOver?.();
                         else setConfirmingStartOver(true);
@@ -145,6 +151,8 @@ const LandingPage = ({
                 <Button
                   size="lg"
                   onClick={onGetStarted}
+                  onPointerEnter={onGetStartedIntent}
+                  onFocus={onGetStartedIntent}
                   className="group w-full px-6 py-6 text-base sm:w-auto sm:px-8 sm:text-lg"
                 >
                   Get Started

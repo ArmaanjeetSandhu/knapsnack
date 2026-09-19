@@ -23,21 +23,7 @@ import Footer from "./components/common/Footer";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import NotificationToast from "./components/common/NotificationToast";
 import ThemeToggle from "./components/common/ThemeToggle";
-import FoodSearch from "./components/FoodSearch";
-import CalculationInputEditor from "./components/forms/CalculationInputEditor";
-import PersonalInfoForm from "./components/forms/PersonalInfoForm";
-const BlogPage = lazy(() => import("./components/pages/BlogPage"));
-const BlogPostPage = lazy(() => import("./components/pages/BlogPostPage"));
-import ErrorPage from "./components/pages/ErrorPage";
-import FaqPage from "./components/pages/FaqPage";
-import FeedbackPage from "./components/pages/FeedbackPage";
 import LandingPage from "./components/pages/landing/LandingPage";
-import PrivacyPolicyPage from "./components/pages/PrivacyPolicyPage";
-import TermsPage from "./components/pages/TermsPage";
-import CalculationResults from "./components/results/CalculationResults";
-import FeasibilityAnalysis from "./components/results/FeasibilityAnalysis";
-import OptimisationResults from "./components/results/OptimisationResults";
-import SelectedFoods from "./components/SelectedFoods";
 import { Alert, AlertDescription } from "./components/ui/alert";
 import { Button } from "./components/ui/button";
 import {
@@ -58,6 +44,7 @@ import {
 import { useCsvImport } from "./hooks/useCsvImport";
 import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import { prepareOptimisationPayload } from "./lib/foodHelpers";
+import { lazyWithPreload } from "./lib/lazyWithPreload";
 import { smoothScrollTo } from "./lib/utils";
 import api from "./services/api";
 
@@ -69,6 +56,65 @@ import type {
   UserInfo,
   FeasibilityAnalysis as FeasibilityAnalysisType,
 } from "./services/api";
+
+const PersonalInfoForm = lazyWithPreload(
+  () => import("./components/forms/PersonalInfoForm"),
+);
+const CalculationInputEditor = lazyWithPreload(
+  () => import("./components/forms/CalculationInputEditor"),
+);
+const FoodSearch = lazyWithPreload(() => import("./components/FoodSearch"));
+const SelectedFoods = lazyWithPreload(
+  () => import("./components/SelectedFoods"),
+);
+const CalculationResults = lazyWithPreload(
+  () => import("./components/results/CalculationResults"),
+);
+const FeasibilityAnalysis = lazyWithPreload(
+  () => import("./components/results/FeasibilityAnalysis"),
+);
+const OptimisationResults = lazyWithPreload(
+  () => import("./components/results/OptimisationResults"),
+);
+
+const BlogPage = lazy(() => import("./components/pages/BlogPage"));
+const BlogPostPage = lazy(() => import("./components/pages/BlogPostPage"));
+const ErrorPage = lazy(() => import("./components/pages/ErrorPage"));
+const FaqPage = lazy(() => import("./components/pages/FaqPage"));
+const FeedbackPage = lazy(() => import("./components/pages/FeedbackPage"));
+const PrivacyPolicyPage = lazy(
+  () => import("./components/pages/PrivacyPolicyPage"),
+);
+const TermsPage = lazy(() => import("./components/pages/TermsPage"));
+
+const preloadPlanner = () =>
+  Promise.all([
+    PersonalInfoForm.preload(),
+    CalculationInputEditor.preload(),
+    FoodSearch.preload(),
+    SelectedFoods.preload(),
+    CalculationResults.preload(),
+    FeasibilityAnalysis.preload(),
+    OptimisationResults.preload(),
+  ]);
+
+const whenIdle = (callback: () => void): (() => void) => {
+  if ("requestIdleCallback" in globalThis) {
+    const id = globalThis.requestIdleCallback(callback, { timeout: 3000 });
+    return () => globalThis.cancelIdleCallback(id);
+  }
+  const id = globalThis.setTimeout(callback, 1500);
+  return () => globalThis.clearTimeout(id);
+};
+
+const leaveLandingPage = async (switchView: () => void) => {
+  try {
+    await preloadPlanner();
+  } catch {
+    // Network hiccup: switch anyway and let Suspense retry the download
+  }
+  switchView();
+};
 
 const isDuplicateFood = (
   newFood: FoodItem,
@@ -162,6 +208,17 @@ function App() {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isOnLandingPage = state.showLanding && location.pathname === "/";
+
+  useEffect(() => {
+    if (!isOnLandingPage) return;
+    return whenIdle(() => {
+      preloadPlanner().catch(() => {
+        // Ignore: the views will be fetched again when they're rendered
+      });
+    });
+  }, [isOnLandingPage]);
 
   useEffect(() => {
     if (feasibilityResults) smoothScrollTo(feasibilityResultsRef);
@@ -408,7 +465,6 @@ function App() {
   };
 
   const {
-    showLanding,
     nutrientGoals,
     selectedFoods,
     optimisationResults,
@@ -599,26 +655,35 @@ function App() {
             Update your personal details to recalculate your nutritional
             targets.
           </DialogDescription>
-          <CalculationInputEditor
-            initialData={userInfo}
-            onSave={handleProfileUpdate}
-            onCancel={() => {
-              setIsEditModalOpen(false);
-              smoothScrollTo(calculationResultsRef);
-            }}
-          />
+          <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+            <CalculationInputEditor
+              initialData={userInfo}
+              onSave={handleProfileUpdate}
+              onCancel={() => {
+                setIsEditModalOpen(false);
+                smoothScrollTo(calculationResultsRef);
+              }}
+            />
+          </Suspense>
         </DialogContent>
       </Dialog>
 
-      {plannerContent}
+      <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+        {plannerContent}
+      </Suspense>
     </div>
   );
 
-  if (showLanding && location.pathname === "/")
+  if (isOnLandingPage)
     return (
       <LandingPage
-        onGetStarted={() => {
-          actions.setShowLanding(false);
+        onGetStartedIntent={() => {
+          preloadPlanner().catch(() => {
+            // Ignore: retried when the planner renders
+          });
+        }}
+        onGetStarted={async () => {
+          await leaveLandingPage(() => actions.setShowLanding(false));
 
           setTimeout(() => {
             if (!state.nutrientGoals)
@@ -633,9 +698,11 @@ function App() {
           }, 100);
         }}
         hasExistingSession={!!nutrientGoals}
-        onStartOver={() => {
-          handleReset();
-          actions.setShowLanding(false);
+        onStartOver={async () => {
+          await leaveLandingPage(() => {
+            handleReset();
+            actions.setShowLanding(false);
+          });
         }}
       />
     );
@@ -697,30 +764,34 @@ function App() {
         </div>
       </header>
       <main className="mb-8 flex-grow px-4">
-        <Routes>
-          <Route
-            path="/blog"
-            element={
-              <Suspense fallback={<LoadingSpinner message="Loading..." />}>
-                <BlogPage />
-              </Suspense>
-            }
-          />
-          <Route
-            path="/blog/:slug"
-            element={
-              <Suspense fallback={<LoadingSpinner message="Loading post..." />}>
-                <BlogPostPage />
-              </Suspense>
-            }
-          />
-          <Route path="/faq" element={<FaqPage />} />
-          <Route path="/feedback" element={<FeedbackPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/" element={mainPlanner} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+          <Routes>
+            <Route
+              path="/blog"
+              element={
+                <Suspense fallback={<LoadingSpinner message="Loading..." />}>
+                  <BlogPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/blog/:slug"
+              element={
+                <Suspense
+                  fallback={<LoadingSpinner message="Loading post..." />}
+                >
+                  <BlogPostPage />
+                </Suspense>
+              }
+            />
+            <Route path="/faq" element={<FaqPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/" element={mainPlanner} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </Suspense>
       </main>
       <Footer />
     </div>
