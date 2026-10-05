@@ -167,7 +167,6 @@ export const NutrientTable = ({
           rda={selectedNutrient.rda}
           ul={selectedNutrient.ul}
           unit={selectedNutrient.unit}
-          amount={selectedNutrient.amount}
         />
       )}
     </>
@@ -250,7 +249,6 @@ export const NutrientCards = ({
           rda={selectedNutrient.rda}
           ul={selectedNutrient.ul}
           unit={selectedNutrient.unit}
-          amount={selectedNutrient.amount}
         />
       )}
     </>
