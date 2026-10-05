@@ -173,7 +173,7 @@ interface ContentRendererProps {
 const ContentRenderer = ({ content }: ContentRendererProps) => {
   if (Array.isArray(content)) {
     return (
-      <div className="prose-p:my-0 space-y-2">
+      <div className="space-y-2">
         {content.map((item, index) => {
           const itemKey =
             typeof item === "string"

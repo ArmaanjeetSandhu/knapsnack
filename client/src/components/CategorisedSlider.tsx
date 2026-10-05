@@ -4,25 +4,42 @@ type Colour = "gray" | "green" | "blue" | "purple" | "red" | "orange";
 
 interface ColourClasses {
   text: string;
-  bg: string;
   border: string;
   bgOpacity: string;
 }
 
-const COLOURS: Colour[] = ["gray", "green", "blue", "purple", "red", "orange"];
-
-const COLOUR_MAP = COLOURS.reduce<Record<Colour, ColourClasses>>(
-  (acc, colour) => {
-    acc[colour] = {
-      text: `text-${colour}-500 dark:text-${colour}-400`,
-      bg: `bg-${colour}-500 dark:bg-${colour}-400`,
-      border: `border-${colour}-500 dark:border-${colour}-400`,
-      bgOpacity: `bg-${colour}-500/20 dark:bg-${colour}-400/20`,
-    };
-    return acc;
+const COLOUR_MAP: Record<Colour, ColourClasses> = {
+  gray: {
+    text: "text-gray-500 dark:text-gray-400",
+    border: "border-gray-500 dark:border-gray-400",
+    bgOpacity: "bg-gray-500/20 dark:bg-gray-400/20",
   },
-  {} as Record<Colour, ColourClasses>,
-);
+  green: {
+    text: "text-green-500 dark:text-green-400",
+    border: "border-green-500 dark:border-green-400",
+    bgOpacity: "bg-green-500/20 dark:bg-green-400/20",
+  },
+  blue: {
+    text: "text-blue-500 dark:text-blue-400",
+    border: "border-blue-500 dark:border-blue-400",
+    bgOpacity: "bg-blue-500/20 dark:bg-blue-400/20",
+  },
+  purple: {
+    text: "text-purple-500 dark:text-purple-400",
+    border: "border-purple-500 dark:border-purple-400",
+    bgOpacity: "bg-purple-500/20 dark:bg-purple-400/20",
+  },
+  red: {
+    text: "text-red-500 dark:text-red-400",
+    border: "border-red-500 dark:border-red-400",
+    bgOpacity: "bg-red-500/20 dark:bg-red-400/20",
+  },
+  orange: {
+    text: "text-orange-500 dark:text-orange-400",
+    border: "border-orange-500 dark:border-orange-400",
+    bgOpacity: "bg-orange-500/20 dark:bg-orange-400/20",
+  },
+};
 
 export interface Category {
   name: string;

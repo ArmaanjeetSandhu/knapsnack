@@ -123,7 +123,7 @@ const BlogPostPage = () => {
       <div className="text-muted-foreground mb-8 text-lg">
         <p>{formatDate(post.published_date ?? post.publishedAt)}</p>
       </div>
-      <div className="prose dark:prose-invert max-w-none">
+      <div>
         {post.content != null &&
           documentToReactComponents(
             post.content as Parameters<typeof documentToReactComponents>[0],

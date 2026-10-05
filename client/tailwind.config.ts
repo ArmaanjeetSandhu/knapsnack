@@ -2,18 +2,8 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
-  darkMode: ["class"],
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  safelist: [
-    {
-      pattern: /(text|bg|border)-(gray|green|blue|purple|red|orange)-(400|500)/,
-      variants: ["dark"],
-    },
-    {
-      pattern: /bg-(gray|green|blue|purple|red|orange)-(400|500)\/20/,
-      variants: ["dark"],
-    },
-  ],
   theme: {
     extend: {
       borderRadius: {
