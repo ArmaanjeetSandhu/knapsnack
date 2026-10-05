@@ -7,7 +7,7 @@ import os
 import smtplib
 import sys
 from email.message import EmailMessage
-from typing import List, Tuple, Union
+from typing import Union
 
 import numpy as np
 import requests
@@ -82,7 +82,7 @@ app.config["COMPRESS_MIMETYPES"] = [
 ]
 Compress(app)
 
-ResponseType = Union[Response, Tuple[Response, int], Tuple[str, int]]
+ResponseType = Union[Response, tuple[Response, int], tuple[str, int]]
 ERR_NO_JSON = "No JSON data provided or Content-Type not set to application/json"
 
 
@@ -248,7 +248,7 @@ def optimise_api() -> ResponseType:
 
         costs = np.array([food["price"] for food in selected_foods_data])
 
-        max_servings_list: List[float] = []
+        max_servings_list: list[float] = []
         for food in selected_foods_data:
             serving_size = float(food["servingSize"])
             max_val = food.get("maxServing")
@@ -383,7 +383,7 @@ def feedback_api() -> ResponseType:
 
 @app.route("/", defaults={"path": ""}, methods=["GET"])
 @app.route("/<path:path>", methods=["GET"])
-def serve(path: str) -> Union[Response, Tuple[str, int]]:
+def serve(path: str) -> Response | tuple[str, int]:
     """Serve static files or fallback to index.html for SPA routing."""
     static_folder_str = str(app.static_folder) if app.static_folder is not None else ""
     normalised_path = os.path.normpath(os.path.join(static_folder_str, str(path)))

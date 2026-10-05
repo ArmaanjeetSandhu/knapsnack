@@ -4,7 +4,7 @@ Utility functions for nutrient calculations.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any
 
 import pandas as pd
 
@@ -53,7 +53,7 @@ def calculate_tdee(bmr: int, activity_multiplier: float) -> int:
 
 def calculate_macros(
     daily_caloric_intake: int, pratio: float, cratio: float, fratio: float
-) -> Tuple[int, int, int, int, int]:
+) -> tuple[int, int, int, int, int]:
     """
     Calculate macronutrient targets based on caloric intake and desired ratios.
 
@@ -77,7 +77,7 @@ def calculate_macros(
     return protein, carbohydrate, fats, fibre, saturated_fats
 
 
-def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
+def extract_nutrients(nutrients_data: list[dict[str, Any]]) -> dict[str, float]:
     """
     Extract relevant nutrients from the API response and convert to our format.
     Returns nutrients per 100g.
@@ -88,7 +88,7 @@ def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
     Returns:
         Dictionary with our nutrient names as keys and values per 100g
     """
-    result: Dict[str, float] = {}
+    result: dict[str, float] = {}
     reverse_map = {v: k for k, v in NUTRIENT_MAP.items()}
     for nutrient in nutrients_data:
         api_name = nutrient.get("nutrientName")
@@ -104,9 +104,9 @@ def extract_nutrients(nutrients_data: List[Dict[str, Any]]) -> Dict[str, float]:
 
 
 def standardise_nutrient_bounds(
-    lower_bounds: Union[pd.Series[float], Dict[str, float]],
-    upper_bounds: Union[pd.Series[float], Dict[str, float]],
-) -> Tuple[Dict[str, float], Dict[str, float]]:
+    lower_bounds: pd.Series[float] | dict[str, float],
+    upper_bounds: pd.Series[float] | dict[str, float],
+) -> tuple[dict[str, float], dict[str, float]]:
     """
     Standardize nutrient bounds to dictionaries with float values.
 
@@ -117,13 +117,13 @@ def standardise_nutrient_bounds(
     Returns:
         Tuple of (lower_bounds_dict, upper_bounds_dict)
     """
-    lower_dict: Dict[str, float]
-    upper_dict: Dict[str, float]
+    lower_dict: dict[str, float]
+    upper_dict: dict[str, float]
 
-    lower_raw: Dict[str, float] = (
+    lower_raw: dict[str, float] = (
         dict(lower_bounds) if isinstance(lower_bounds, pd.Series) else lower_bounds
     )
-    upper_raw: Dict[str, float] = (
+    upper_raw: dict[str, float] = (
         dict(upper_bounds) if isinstance(upper_bounds, pd.Series) else upper_bounds
     )
 

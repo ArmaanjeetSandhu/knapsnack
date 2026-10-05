@@ -2,7 +2,7 @@
 Services for food data retrieval and processing.
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any
 
 import requests
 
@@ -11,7 +11,7 @@ from server.utils.nutrient_utils import extract_nutrients
 
 def search_foods(
     api_key: str, search_term: str, api_endpoint: str
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Search for foods using the USDA API with pagination.
 
@@ -26,13 +26,13 @@ def search_foods(
     Raises:
         requests.exceptions.RequestException: If API request fails
     """
-    search_results: List[Dict[str, Any]] = []
+    search_results: list[dict[str, Any]] = []
     page_size = 200
     page_number = 1
     total_pages = 1
 
     while page_number <= total_pages:
-        params: Dict[str, Union[str, int, bool]] = {
+        params: dict[str, str | int | bool] = {
             "api_key": api_key,
             "query": search_term,
             "dataType": "SR Legacy",

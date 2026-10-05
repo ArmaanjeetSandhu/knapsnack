@@ -5,7 +5,7 @@ Diet optimisation services.
 from __future__ import annotations
 
 from itertools import product
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import numpy as np
 import numpy.typing as npt
@@ -17,12 +17,12 @@ from server.utils.nutrient_utils import standardise_nutrient_bounds
 
 
 def analyse_feasibility(
-    selected_foods: List[Dict[str, Any]],
-    max_servings: List[float],
-    lower_bounds: Union[pd.Series[float], Dict[str, float]],
-    upper_bounds: Union[pd.Series[float], Dict[str, float]],
-    nutrient_goals: Dict[str, Any],
-) -> Dict[str, Any]:
+    selected_foods: list[dict[str, Any]],
+    max_servings: list[float],
+    lower_bounds: pd.Series[float] | dict[str, float],
+    upper_bounds: pd.Series[float] | dict[str, float],
+    nutrient_goals: dict[str, Any],
+) -> dict[str, Any]:
     """
     Analyse whether the selected foods can meet nutrient requirements.
     """
@@ -59,7 +59,7 @@ def _make_lower_bound_issue(
     display_name: str,
     min_value: float,
     max_possible: float,
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """
     Build a lower bound issue dict if max_possible falls short of min_value.
     Returns None if the bound is satisfied.
@@ -77,15 +77,15 @@ def _make_lower_bound_issue(
 
 
 def analyse_lower_bound_feasibility(
-    selected_foods: List[Dict[str, Any]],
-    max_servings: List[float],
-    lower_bounds: Dict[str, float],
-    nutrient_goals: Dict[str, Any],
-) -> List[Dict[str, Any]]:
+    selected_foods: list[dict[str, Any]],
+    max_servings: list[float],
+    lower_bounds: dict[str, float],
+    nutrient_goals: dict[str, Any],
+) -> list[dict[str, Any]]:
     """
     Analyse lower bound feasibility for nutrients.
     """
-    lower_bound_issues: List[Dict[str, Any]] = []
+    lower_bound_issues: list[dict[str, Any]] = []
 
     for nutrient, min_value in lower_bounds.items():
         if nutrient in ["protein", "carbohydrate", "fats", "fibre"]:
@@ -124,21 +124,21 @@ def analyse_lower_bound_feasibility(
 
 
 def analyse_upper_bound_feasibility(
-    selected_foods: List[Dict[str, Any]],
-    upper_bounds: Dict[str, float],
-    nutrient_goals: Dict[str, Any],
-) -> List[Dict[str, Any]]:
+    selected_foods: list[dict[str, Any]],
+    upper_bounds: dict[str, float],
+    nutrient_goals: dict[str, Any],
+) -> list[dict[str, Any]]:
     """
     Analyse upper bound feasibility for nutrients.
     Flags any single food item that exceeds a limit on its own at 1 serving.
     """
-    upper_bound_issues: List[Dict[str, Any]] = []
+    upper_bound_issues: list[dict[str, Any]] = []
     checked_nutrients: set[str] = set()
 
     def check_limit(
         nutrient_name: str,
         limit_value: float,
-        display_name_override: Optional[str] = None,
+        display_name_override: str | None = None,
     ) -> None:
         for food in selected_foods:
             val = food["nutrients"].get(nutrient_name)
@@ -176,13 +176,13 @@ def analyse_upper_bound_feasibility(
 
 
 def optimise_diet(
-    selected_foods: List[Dict[str, Any]],
+    selected_foods: list[dict[str, Any]],
     costs: npt.NDArray[np.float64],
-    max_servings: List[float],
-    nutrient_goals: Dict[str, Any],
-    lower_bounds: Union[pd.Series[float], Dict[str, float]],
-    upper_bounds: Union[pd.Series[float], Dict[str, float]],
-) -> Optional[Dict[str, Any]]:
+    max_servings: list[float],
+    nutrient_goals: dict[str, Any],
+    lower_bounds: pd.Series[float] | dict[str, float],
+    upper_bounds: pd.Series[float] | dict[str, float],
+) -> dict[str, Any] | None:
     """
     Find optimal diet by trying different overflow percentages.
     """
@@ -210,14 +210,14 @@ def optimise_diet(
 
 
 def solve_optimisation_problem(
-    selected_foods: List[Dict[str, Any]],
+    selected_foods: list[dict[str, Any]],
     costs: npt.NDArray[np.float64],
-    max_servings: List[float],
-    nutrient_goals: Dict[str, Any],
-    lower_bounds: Union[pd.Series[float], Dict[str, float]],
-    upper_bounds: Union[pd.Series[float], Dict[str, float]],
-    overflow_percentages: Tuple[int, ...],
-) -> Optional[Dict[str, Any]]:
+    max_servings: list[float],
+    nutrient_goals: dict[str, Any],
+    lower_bounds: pd.Series[float] | dict[str, float],
+    upper_bounds: pd.Series[float] | dict[str, float],
+    overflow_percentages: tuple[int, ...],
+) -> dict[str, Any] | None:
     """
     Solve the diet optimisation problem with the given parameters.
     """
@@ -305,12 +305,12 @@ def solve_optimisation_problem(
 
 
 def format_optimisation_result(
-    selected_foods: List[Dict[str, Any]],
-    x: List[pulp.LpVariable],
+    selected_foods: list[dict[str, Any]],
+    x: list[pulp.LpVariable],
     costs: npt.NDArray[np.float64],
-    nutrients: List[str],
-    overflow_percentages: Tuple[int, ...],
-) -> Dict[str, Any]:
+    nutrients: list[str],
+    overflow_percentages: tuple[int, ...],
+) -> dict[str, Any]:
     """
     Format the optimisation result for API response.
     """

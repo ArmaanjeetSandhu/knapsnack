@@ -4,7 +4,7 @@ Services for nutritional calculations.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import pandas as pd
 
@@ -17,21 +17,21 @@ from server.utils.nutrient_utils import (
 )
 
 
-def validate_age(age: int, age_min: int, age_max: int) -> Optional[str]:
+def validate_age(age: int, age_min: int, age_max: int) -> str | None:
     """Validate age is within bounds."""
     if age < age_min or age > age_max:
         return f"Age must be between {age_min} and {age_max}"
     return None
 
 
-def validate_weight(weight: int, weight_min: int, weight_max: int) -> Optional[str]:
+def validate_weight(weight: int, weight_min: int, weight_max: int) -> str | None:
     """Validate weight is within bounds."""
     if weight < weight_min or weight > weight_max:
         return f"Weight must be between {weight_min} and {weight_max} kg"
     return None
 
 
-def validate_height(height: int, height_min: int, height_max: int) -> Optional[str]:
+def validate_height(height: int, height_min: int, height_max: int) -> str | None:
     """Validate height is within bounds."""
     if height < height_min or height > height_max:
         return f"Height must be between {height_min} and {height_max} cm"
@@ -39,18 +39,18 @@ def validate_height(height: int, height_min: int, height_max: int) -> Optional[s
 
 
 def validate_input_parameters(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     age_min: int,
     age_max: int,
     weight_min: int,
     weight_max: int,
     height_min: int,
     height_max: int,
-) -> Tuple[bool, List[str]]:
+) -> tuple[bool, list[str]]:
     """
     Validate input parameters for diet calculations.
     """
-    validation_errors: List[str] = []
+    validation_errors: list[str] = []
 
     age = int(data.get("age", 0))
     if error := validate_age(age, age_min, age_max):
@@ -79,7 +79,7 @@ def calculate_nutrition_requirements(
     activity_multiplier: float,
     percentage: float,
     smoking_status: str = "no",
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculate nutritional requirements for a user.
     """
@@ -118,10 +118,10 @@ def calculate_nutrition_requirements(
 def adjust_nutrient_bounds(
     lower_bounds: pd.Series[float],
     upper_bounds: pd.Series[float],
-    custom_lower_bounds: Optional[Dict[str, float]] = None,
-    custom_upper_bounds: Optional[Dict[str, float]] = None,
+    custom_lower_bounds: dict[str, float] | None = None,
+    custom_upper_bounds: dict[str, float] | None = None,
     smoking_status: str = "no",
-) -> Tuple[pd.Series[float], pd.Series[float]]:
+) -> tuple[pd.Series[float], pd.Series[float]]:
     """
     Adjust nutrient bounds based on custom values and smoking status.
     """

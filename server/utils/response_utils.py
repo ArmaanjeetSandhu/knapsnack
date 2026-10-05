@@ -2,14 +2,12 @@
 Utility function for HTTP responses.
 """
 
-from typing import List, Optional, Tuple
-
 from flask import Response, jsonify
 
 
 def create_error_response(
-    message: str, details: Optional[List[str]] = None, status_code: int = 400
-) -> Tuple[Response, int]:
+    message: str, details: list[str] | None = None, status_code: int = 400
+) -> tuple[Response, int]:
     """
     Create a standardised error response.
 

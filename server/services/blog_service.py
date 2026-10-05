@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, cast
 
 import contentful
 
@@ -10,23 +10,37 @@ from server.config import (
     CONTENTFUL_SPACE_ID,
 )
 
-client: Optional[Any] = None
-
-try:
-    contentful_module = cast(Any, contentful)
-    client = contentful_module.Client(CONTENTFUL_SPACE_ID, CONTENTFUL_ACCESS_TOKEN)
-except Exception as e:
-    print(f"Failed to initialise Contentful client: {e}")
+_client: Any | None = None
 
 
-def _as_list(val: Any) -> List[Any]:
+def _get_client() -> Any | None:
+    """
+    Returns the Contentful client, creating it on first use.
+
+    Constructing the client fetches the space's content types over the network, so it is
+    deferred until a blog endpoint needs it. A failed attempt is not cached, so the next
+    request tries again.
+    """
+    global _client
+    if _client is None:
+        try:
+            contentful_module = cast(Any, contentful)
+            _client = contentful_module.Client(
+                CONTENTFUL_SPACE_ID, CONTENTFUL_ACCESS_TOKEN
+            )
+        except Exception as e:
+            print(f"Failed to initialise Contentful client: {e}")
+    return _client
+
+
+def _as_list(val: Any) -> list[Any]:
     """Helper to erase 'Unknown' types for Pyright without triggering Mypy's redundant cast."""
-    return cast(List[Any], val)
+    return cast(list[Any], val)
 
 
-def _as_dict(val: Any) -> Dict[str, Any]:
+def _as_dict(val: Any) -> dict[str, Any]:
     """Helper to erase 'Unknown' types for Pyright without triggering Mypy's redundant cast."""
-    return cast(Dict[str, Any], val)
+    return cast(dict[str, Any], val)
 
 
 def normalise_contentful_data(data: Any) -> Any:
@@ -62,7 +76,7 @@ def normalise_contentful_data(data: Any) -> Any:
     return data
 
 
-def extract_first_image(content: Any) -> Optional[str]:
+def extract_first_image(content: Any) -> str | None:
     """
     Traverses content (Rich Text or Markdown string) to find the first image URL.
     """
@@ -91,7 +105,7 @@ def extract_first_image(content: Any) -> Optional[str]:
                     fields = _as_dict(target_dict.get("fields", {}))
                     file_data = _as_dict(fields.get("file", {}))
 
-                    asset_url: Optional[str] = (
+                    asset_url: str | None = (
                         file_data.get("url")
                         if isinstance(file_data.get("url"), str)
                         else None
@@ -114,14 +128,14 @@ def extract_first_image(content: Any) -> Optional[str]:
     return None
 
 
-def get_all_posts() -> Optional[List[Dict[str, Any]]]:
+def get_all_posts() -> list[dict[str, Any]] | None:
     """Fetches all blog post entries from Contentful."""
+    client = _get_client()
     if not client:
-        print("Error: Contentful client not initialised.")
         return None
     try:
         entries = cast(
-            List[Any],
+            list[Any],
             client.entries(
                 {
                     "content_type": CONTENTFUL_CONTENT_TYPE_ID,
@@ -130,7 +144,7 @@ def get_all_posts() -> Optional[List[Dict[str, Any]]]:
             ),
         )
 
-        posts: List[Dict[str, Any]] = []
+        posts: list[dict[str, Any]] = []
         for entry in entries:
             fields = entry.fields() if callable(entry.fields) else entry.fields
 
@@ -162,14 +176,14 @@ def get_all_posts() -> Optional[List[Dict[str, Any]]]:
         return None
 
 
-def get_post_by_slug(slug: str) -> Optional[Dict[str, Any]]:
+def get_post_by_slug(slug: str) -> dict[str, Any] | None:
     """Fetches a single blog post entry by its slug from Contentful."""
+    client = _get_client()
     if not client:
-        print("Error: Contentful client not initialised.")
         return None
     try:
         entries = cast(
-            List[Any],
+            list[Any],
             client.entries(
                 {
                     "content_type": CONTENTFUL_CONTENT_TYPE_ID,

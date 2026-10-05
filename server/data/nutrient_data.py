@@ -5,7 +5,8 @@ Data access functions for nutrient databases.
 from __future__ import annotations
 
 import os
-from typing import Any, Callable, List, Tuple, cast
+from collections.abc import Callable
+from typing import Any, cast
 
 import pandas as pd
 
@@ -43,7 +44,7 @@ def remove_excluded_age_groups(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_process_nutrient_data(
-    filename: str, columns_to_drop: List[str]
+    filename: str, columns_to_drop: list[str]
 ) -> pd.DataFrame:
     """
     Load and process a nutrient dataframe with standard processing.
@@ -95,7 +96,7 @@ def get_age_group(age: int, gender: str) -> str:
 
 def get_nutrient_bounds(
     age: int, gender: str
-) -> Tuple[pd.Series[float], pd.Series[float]]:
+) -> tuple[pd.Series[float], pd.Series[float]]:
     """
     Calculate lower and upper bounds for nutrients based on age and gender.
 
@@ -129,12 +130,12 @@ def get_nutrient_bounds(
     ):
         raise ValueError(f"No nutrient data found for age group: {age_group}")
 
-    lower_series_list: List[pd.Series[Any]] = [
+    lower_series_list: list[pd.Series[Any]] = [
         vitamin_lower.iloc[0],
         element_lower.iloc[0],
         macro_lower.iloc[0],
     ]
-    upper_series_list: List[pd.Series[Any]] = [
+    upper_series_list: list[pd.Series[Any]] = [
         vitamin_upper.iloc[0],
         element_upper.iloc[0],
     ]
