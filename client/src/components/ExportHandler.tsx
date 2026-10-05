@@ -1,4 +1,5 @@
 import { NUTRIENT_HEADERS, getNutrientKey } from "../lib/csvConstants";
+import { downloadCsv } from "../lib/downloadCsv";
 import { calculateConsistentResults } from "../lib/resultsHelpers";
 
 import type { OptimisationApiResult, FoodItem } from "../services/api";
@@ -18,11 +19,9 @@ const handleExportCSV = (
     ...NUTRIENT_HEADERS,
   ];
 
-  let csvContent = headers.join(",") + "\n";
-
-  items.forEach((food) => {
+  const rows = items.map((food) => {
     const row: (string | number)[] = [
-      `"${food.food}"`,
+      food.food,
       food.servingSize,
       food.servings,
       food.totalServing,
@@ -32,7 +31,7 @@ const handleExportCSV = (
       const key = getNutrientKey(header);
       row.push(food.nutrients[key]?.toFixed(2) ?? "0.00");
     });
-    csvContent += row.join(",") + "\n";
+    return row;
   });
 
   const totalGrams = items.reduce((sum, food) => sum + food.totalServing, 0);
@@ -47,17 +46,9 @@ const handleExportCSV = (
     const key = getNutrientKey(header);
     footerTotals.push((totals.nutrients[key] ?? 0).toFixed(2));
   });
-  csvContent += footerTotals.join(",") + "\n";
+  rows.push(footerTotals);
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  link.setAttribute("href", url);
-  link.setAttribute("download", "diet_plan.csv");
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  downloadCsv("diet_plan.csv", headers, rows);
 };
 
 export default handleExportCSV;

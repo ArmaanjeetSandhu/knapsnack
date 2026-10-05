@@ -1,4 +1,5 @@
 import { NUTRIENT_HEADERS, getNutrientKey } from "./csvConstants";
+import { downloadCsv } from "./downloadCsv";
 
 import type {
   FoodItem,
@@ -81,9 +82,7 @@ export const exportSelectedFoodsToCSV = (foods: FoodItem[]): void => {
     ...NUTRIENT_HEADERS,
   ];
 
-  let csvContent = headers.join(",") + "\n";
-
-  foods.forEach((food) => {
+  const rows = foods.map((food) => {
     const servingSize = Number.parseFloat(String(food.servingSize)) || 100;
     const adjustedNutrients = adjustNutrientsForServingSize(
       food.nutrients,
@@ -93,7 +92,7 @@ export const exportSelectedFoodsToCSV = (foods: FoodItem[]): void => {
     const row: (string | number)[] = [
       food.integerServings ? "Yes" : "No",
       food.mustInclude ? "Yes" : "No",
-      `"${food.description}"`,
+      food.description,
       food.price ?? "",
       food.servingSize ?? "",
       food.maxServing ?? "",
@@ -105,16 +104,8 @@ export const exportSelectedFoodsToCSV = (foods: FoodItem[]): void => {
       row.push(value === undefined ? "" : value.toFixed(2));
     });
 
-    csvContent += row.join(",") + "\n";
+    return row;
   });
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  const url = URL.createObjectURL(blob);
-  link.setAttribute("href", url);
-  link.setAttribute("download", "selected_foods.csv");
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+  downloadCsv("selected_foods.csv", headers, rows);
 };

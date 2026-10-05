@@ -114,7 +114,7 @@ const FoodSearch = ({
 
   const createParseConfig = () => ({
     header: true,
-    dynamicTyping: true,
+    dynamicTyping: (field: string | number) => field !== "Food Item",
     skipEmptyLines: true,
     complete: handleParseComplete,
   });
