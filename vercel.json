@@ -24,10 +24,9 @@
         },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https://*.ctfassets.net https://img.buymeacoffee.com https://press.uchicago.edu; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.nal.usda.gov; media-src 'self'; object-src 'none'; child-src 'none'; form-action 'self'; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.ctfassets.net https://img.buymeacoffee.com https://press.uchicago.edu; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.nal.usda.gov; media-src 'self'; object-src 'none'; child-src 'none'; form-action 'self'; frame-ancestors 'none';"
         }
       ]
     },
@@ -41,7 +40,7 @@
       ]
     },
     {
-      "source": "/(.*).(png|jpg|jpeg|gif|svg|webp|mp4|woff2)",
+      "source": "/(.*).(png|jpg|jpeg|gif|svg|webp|woff2)",
       "headers": [
         {
           "key": "Cache-Control",

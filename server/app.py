@@ -3,7 +3,6 @@ Main Flask application for diet optimisation service.
 """
 
 import logging
-import mimetypes
 import os
 import smtplib
 import sys
@@ -18,7 +17,6 @@ from flask import (
     Response,
     jsonify,
     request,
-    send_file,
     send_from_directory,
 )
 from flask_compress import Compress
@@ -72,9 +70,7 @@ ALLOWED_ORIGINS = [
 ]
 
 CORS(app, resources={r"/api/*": {"origins": ALLOWED_ORIGINS}})
-mimetypes.add_type("video/mp4", ".mp4")
 
-app.config["COMPRESS_REGISTER"] = True
 app.config["COMPRESS_MIMETYPES"] = [
     "text/html",
     "text/css",
@@ -84,8 +80,6 @@ app.config["COMPRESS_MIMETYPES"] = [
     "application/xml",
     "image/svg+xml",
 ]
-app.config["COMPRESS_LEVEL"] = 6
-app.config["COMPRESS_MIN_SIZE"] = 500
 Compress(app)
 
 ResponseType = Union[Response, Tuple[Response, int], Tuple[str, int]]
@@ -360,7 +354,7 @@ def feedback_api() -> ResponseType:
         smtp_pass = os.environ.get("SMTP_PASS")
 
         if not smtp_user or not smtp_pass:
-            app.logger.exception("SMTP credentials not configured.")
+            app.logger.error("SMTP credentials not configured.")
             return create_error_response(
                 "Email sending is not configured on the server.", status_code=500
             )
@@ -396,8 +390,6 @@ def serve(path: str) -> Union[Response, Tuple[str, int]]:
     if not normalised_path.startswith(static_folder_str):
         return "Forbidden", 403
     if path != "" and os.path.exists(normalised_path):
-        if path.endswith(".mp4"):
-            return send_file(normalised_path, mimetype="video/mp4")
         return send_from_directory(static_folder_str, path)
     else:
         return send_from_directory(static_folder_str, "index.html")

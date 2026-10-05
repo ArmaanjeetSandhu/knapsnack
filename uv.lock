@@ -858,15 +858,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pytz"
-version = "2026.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ff/46/dd499ec9038423421951e4fad73051febaa13d2df82b4064f87af8b8c0c3/pytz-2026.2.tar.gz", hash = "sha256:0e60b47b29f21574376f218fe21abc009894a2321ea16c6754f3cad6eb7cdd6a", size = 320861, upload-time = "2026-05-04T01:35:29.667Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ec/dd/96da98f892250475bdf2328112d7468abdd4acc7b902b6af23f4ed958ea0/pytz-2026.2-py2.py3-none-any.whl", hash = "sha256:04156e608bee23d3792fd45c94ae47fae1036688e75032eea2e3bf0323d1f126", size = 510141, upload-time = "2026-05-04T01:35:27.408Z" },
-]
-
-[[package]]
 name = "pyyaml"
 version = "6.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -957,7 +948,6 @@ name = "server"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "brotli" },
     { name = "contentful" },
     { name = "flask" },
     { name = "flask-compress" },
@@ -965,9 +955,7 @@ dependencies = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "pulp" },
-    { name = "python-dateutil" },
     { name = "python-dotenv" },
-    { name = "pytz" },
     { name = "requests" },
 ]
 
@@ -979,13 +967,11 @@ dev = [
     { name = "pyright" },
     { name = "ruff" },
     { name = "types-flask-cors" },
-    { name = "types-pytz" },
     { name = "types-requests" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "brotli" },
     { name = "contentful" },
     { name = "flask" },
     { name = "flask-compress" },
@@ -993,9 +979,7 @@ requires-dist = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "pulp" },
-    { name = "python-dateutil" },
     { name = "python-dotenv" },
-    { name = "pytz" },
     { name = "requests" },
 ]
 
@@ -1007,7 +991,6 @@ dev = [
     { name = "pyright" },
     { name = "ruff" },
     { name = "types-flask-cors" },
-    { name = "types-pytz" },
     { name = "types-requests" },
 ]
 
@@ -1030,15 +1013,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c0/cc/2edf29ad1e4e2fb886923f64c917cdeffdffe9a8c4aacdbb0254d18bd3d3/types_flask_cors-6.0.3.20260616.tar.gz", hash = "sha256:01be3febe686e1088ed2502e24655edc17fc9f0aa33aceccd70b8a88a954b9ee", size = 10202, upload-time = "2026-06-16T07:12:00.124Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ef/b8/012cae29631499068650fb792597fddba5925360c79d9b8d0b78b83bed1a/types_flask_cors-6.0.3.20260616-py3-none-any.whl", hash = "sha256:3bfe91fcc3925f057275efae8371c256f0f71ea79b16d6160011adf987ec8f1f", size = 9927, upload-time = "2026-06-16T07:11:59.302Z" },
-]
-
-[[package]]
-name = "types-pytz"
-version = "2026.2.0.20260518"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9f/d9/9fa4019d2235bd374293e1fd4153879b28b6ae1d2bae98addd352c9713f2/types_pytz-2026.2.0.20260518.tar.gz", hash = "sha256:e5d254329e9c4e91f0781b22c43a4bb2d10bb044d97b24c4b05d45567b0eae16", size = 10871, upload-time = "2026-05-18T06:02:45.789Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/62/89/41e80670779a223d8bc8bc83019a619988cfa5c432cedac5cec23884fbc4/types_pytz-2026.2.0.20260518-py3-none-any.whl", hash = "sha256:3a12eaa38f476bd650902a9c9bb442f03f3c7dee2be5c5848bce61bd708d205a", size = 10125, upload-time = "2026-05-18T06:02:44.968Z" },
 ]
 
 [[package]]

@@ -109,9 +109,7 @@ const OptimisationResults = ({
 }: OptimisationResultsProps) => {
   const [nutrientDisplayMode, setNutrientDisplayMode] =
     useState<NutrientDisplayMode>(() =>
-      globalThis.window !== undefined && globalThis.window.innerWidth < 768
-        ? "cards"
-        : "table",
+      window.innerWidth < 768 ? "cards" : "table",
     );
 
   const [portionsSortConfig, setPortionsSortConfig] = useState<SortConfig>({

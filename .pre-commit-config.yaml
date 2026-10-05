@@ -13,7 +13,6 @@ repos:
         args: [--ignore-missing-imports, --strict]
         additional_dependencies:
           - pandas-stubs
-          - types-pytz
           - types-requests
           - types-Flask-Cors
 

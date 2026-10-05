@@ -105,13 +105,12 @@ SECURITY_HEADERS = {
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
     "X-Frame-Options": "DENY",
     "X-Content-Type-Options": "nosniff",
-    "X-XSS-Protection": "1; mode=block",
 }
 
 CONTENT_SECURITY_POLICY = (
     "default-src 'self'; "
-    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
-    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+    "script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
     "img-src 'self' data: https://*.ctfassets.net https://img.buymeacoffee.com https://press.uchicago.edu; "
     "font-src 'self' https://fonts.gstatic.com; "
     "connect-src 'self' https://api.nal.usda.gov; "
@@ -134,6 +133,5 @@ CACHE_CONTROL_SETTINGS = {
     "image/png": CACHE_IMMUTABLE,
     "image/gif": CACHE_IMMUTABLE,
     "image/webp": CACHE_IMMUTABLE,
-    "video/mp4": CACHE_IMMUTABLE,
     "default": "public, max-age=86400",
 }

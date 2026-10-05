@@ -82,8 +82,9 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
   const stepConfigs = useMemo((): WizardStep[] => {
     if (!limits) return [];
     return [
-      { title: "First, what's your gender?" },
+      { field: "gender", title: "First, what's your gender?" },
       {
+        field: "age",
         title: "How old are you?",
         validate: (value: unknown) => {
           const age = Number.parseInt(String(value));
@@ -93,6 +94,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
         },
       },
       {
+        field: "weight",
         title: "What's your weight in kilograms?",
         validate: (value: unknown) => {
           const weight = Number.parseInt(String(value));
@@ -106,6 +108,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
         },
       },
       {
+        field: "height",
         title: "And your height in centimeters?",
         validate: (value: unknown) => {
           const height = Number.parseInt(String(value));
@@ -118,10 +121,11 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
           return null;
         },
       },
-      { title: "How active are you on a daily basis?" },
-      { title: "Do you smoke?" },
-      { title: "What's your caloric goal?" },
+      { field: "activity", title: "How active are you on a daily basis?" },
+      { field: "smokingStatus", title: "Do you smoke?" },
+      { field: "percentage", title: "What's your caloric goal?" },
       {
+        field: "macroRatios",
         title: "Finally, let's set your macro ratios",
         validate: (value: unknown) => {
           if (!value) return "Please set valid macro ratios that total 100%";

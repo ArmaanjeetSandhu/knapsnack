@@ -18,6 +18,7 @@ export interface FormData {
 }
 
 export interface WizardStep {
+  field: keyof FormData;
   title?: string;
   validate?: (value: unknown) => string | null | undefined;
   [key: string]: unknown;
@@ -167,10 +168,10 @@ export function useFormWizard(
 
   const validateStep = useCallback((): boolean => {
     const currentStepData = steps[currentStep];
-    const currentValue =
-      formData[Object.keys(formData)[currentStep] as keyof FormData];
     if (currentStepData?.validate) {
-      const validationError = currentStepData.validate(currentValue);
+      const validationError = currentStepData.validate(
+        formData[currentStepData.field],
+      );
       if (validationError) {
         setError(validationError);
         return false;

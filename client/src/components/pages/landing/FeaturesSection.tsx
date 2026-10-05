@@ -62,7 +62,7 @@ const FeaturesSection = () => {
                     {feature.id}
                   </span>
 
-                  <h3 className="text-foreground mb-4 text-4xl leading-[0.9] font-black tracking-tighter whitespace-pre-wrap transition-colors duration-300 sm:text-5xl md:text-6xl lg:text-[4rem]">
+                  <h3 className="text-foreground mb-4 text-5xl leading-[0.9] font-black tracking-tighter whitespace-pre-wrap transition-colors duration-300 sm:text-7xl md:text-9xl lg:text-[4rem]">
                     <ParsedText text={feature.title} />
                   </h3>
 

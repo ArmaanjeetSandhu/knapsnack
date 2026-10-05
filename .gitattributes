@@ -6,4 +6,3 @@
 *.css text eol=lf
 *.html text eol=lf
 *.csv binary
-*.mp4 binary

@@ -4,16 +4,13 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "contentful",
-    "brotli",
     "flask",
     "flask-compress",
     "flask-cors",
     "numpy",
     "pandas",
     "pulp",
-    "python-dateutil",
     "python-dotenv",
-    "pytz",
     "requests",
 ]
 
@@ -25,7 +22,6 @@ dev = [
     "pyright",
     "ruff",
     "types-flask-cors",
-    "types-pytz",
     "types-requests",
 ]
 
