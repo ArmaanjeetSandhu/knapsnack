@@ -135,9 +135,9 @@ const prepareCalculationData = (
   height: Number.parseInt(String(data.height), 10),
   activity: data.activity,
   percentage: data.percentage,
-  protein: data.macroRatios?.protein ?? 0,
-  carbohydrate: data.macroRatios?.carbs ?? 0,
-  fats: data.macroRatios?.fat ?? 0,
+  protein: data.macroRatios.protein,
+  carbohydrate: data.macroRatios.carbs,
+  fats: data.macroRatios.fat,
   smokingStatus: data.smokingStatus,
 });
 
@@ -240,9 +240,9 @@ function App() {
         weight: Number.parseInt(String(formData.weight), 10),
         height: Number.parseInt(String(formData.height), 10),
         macroRatios: {
-          protein: formData.macroRatios?.protein ?? 0,
-          carbohydrate: formData.macroRatios?.carbs ?? 0,
-          fats: formData.macroRatios?.fat ?? 0,
+          protein: formData.macroRatios.protein,
+          carbohydrate: formData.macroRatios.carbs,
+          fats: formData.macroRatios.fat,
         },
       });
       setLastAddedIds([]);

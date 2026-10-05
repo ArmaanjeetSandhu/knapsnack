@@ -13,7 +13,7 @@ export interface FormData {
   height: string | number;
   activity: number;
   percentage: number;
-  macroRatios: MacroRatios | null;
+  macroRatios: MacroRatios;
   smokingStatus: "no" | "yes";
 }
 
@@ -31,11 +31,15 @@ export interface UseFormWizardReturn {
   handleNext: () => void;
   handlePrevious: () => void;
   handleInputChange: (field: keyof FormData, value: unknown) => void;
-  handleMacroRatiosUpdate: (ratios: MacroRatios | null) => void;
   setError: (error: string | null) => void;
 }
 
 const STORAGE_KEY = "knapsnack_form_state";
+
+const DEFAULT_MACRO_RATIOS: MacroRatios = { protein: 30, carbs: 40, fat: 30 };
+
+export const macroRatioTotal = (ratios: MacroRatios): number =>
+  ratios.protein + ratios.carbs + ratios.fat;
 
 const DEFAULT_FORM_DATA: FormData = {
   gender: "m",
@@ -44,7 +48,7 @@ const DEFAULT_FORM_DATA: FormData = {
   height: "",
   activity: 1.2,
   percentage: 100,
-  macroRatios: null,
+  macroRatios: DEFAULT_MACRO_RATIOS,
   smokingStatus: "no",
 };
 
@@ -77,8 +81,8 @@ const sanitizeEnum = <T extends string>(
   fallback: T,
 ): T => allowed.find((option) => option === value) ?? fallback;
 
-const sanitizeMacroRatios = (value: unknown): MacroRatios | null => {
-  if (!isObject(value)) return null;
+const sanitizeMacroRatios = (value: unknown): MacroRatios => {
+  if (!isObject(value)) return DEFAULT_MACRO_RATIOS;
   return {
     protein: sanitizeNumber(value.protein, 0, 100, 0),
     carbs: sanitizeNumber(value.carbs, 0, 100, 0),
@@ -153,18 +157,10 @@ export function useFormWizard(
     localStorage.setItem(STORAGE_KEY, JSON.stringify(safeState));
   }, [currentStep, formData]);
 
-  const handleInputChange = useCallback(
-    (field: keyof FormData, value: unknown) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-      setError(null);
-    },
-    [],
-  );
-
-  const handleMacroRatiosUpdate = useCallback(
-    (ratios: MacroRatios | null) => handleInputChange("macroRatios", ratios),
-    [handleInputChange],
-  );
+  const handleInputChange = (field: keyof FormData, value: unknown) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setError(null);
+  };
 
   const validateStep = useCallback((): boolean => {
     const currentStepData = steps[currentStep];
@@ -183,7 +179,7 @@ export function useFormWizard(
   const handleNext = useCallback(() => {
     if (validateStep()) {
       if (currentStep === steps.length - 1) {
-        if (formData.macroRatios) onSubmit(formData);
+        if (macroRatioTotal(formData.macroRatios) === 100) onSubmit(formData);
         else setError("Please ensure your macro ratios total 100%");
       } else {
         setCurrentStep((prev) => prev + 1);
@@ -204,7 +200,6 @@ export function useFormWizard(
     handleNext,
     handlePrevious,
     handleInputChange,
-    handleMacroRatiosUpdate,
     setError,
   };
 }

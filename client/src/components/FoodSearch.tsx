@@ -9,7 +9,7 @@ import {
   X,
 } from "lucide-react";
 import Papa from "papaparse";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "../components/ui/button";
 import {
@@ -41,9 +41,9 @@ function VirtualisedList<T>({
 }: VirtualisedListProps<T>) {
   const [scrollTop, setScrollTop] = useState(0);
 
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     setScrollTop(e.currentTarget.scrollTop);
-  }, []);
+  };
 
   const totalHeight = items.length * itemHeight;
   const startIndex = Math.floor(scrollTop / itemHeight);

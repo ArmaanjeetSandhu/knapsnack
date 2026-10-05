@@ -321,43 +321,40 @@ const SelectedFoods = ({
     [onFoodsUpdate],
   );
 
-  const handleTableMouseDown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName === "INPUT" ||
-        target.tagName === "BUTTON" ||
-        target.closest("button")
-      )
-        return;
-      if (!tableContainerRef.current) return;
-      e.preventDefault();
+  const handleTableMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (
+      target.tagName === "INPUT" ||
+      target.tagName === "BUTTON" ||
+      target.closest("button")
+    )
+      return;
+    if (!tableContainerRef.current) return;
+    e.preventDefault();
 
-      const snapshot: Record<
-        string | number,
-        { integerServings: boolean; mustInclude: boolean }
-      > = {};
-      for (const food of sortedFoodsRef.current) {
-        snapshot[food.fdcId] = {
-          integerServings: !!food.integerServings,
-          mustInclude: !!food.mustInclude,
-        };
-      }
-      initialStatesRef.current = snapshot;
-      lastCursorPageYRef.current = e.pageY;
-      lastScrollYRef.current = window.scrollY;
+    const snapshot: Record<
+      string | number,
+      { integerServings: boolean; mustInclude: boolean }
+    > = {};
+    for (const food of sortedFoodsRef.current) {
+      snapshot[food.fdcId] = {
+        integerServings: !!food.integerServings,
+        mustInclude: !!food.mustInclude,
+      };
+    }
+    initialStatesRef.current = snapshot;
+    lastCursorPageYRef.current = e.pageY;
+    lastScrollYRef.current = window.scrollY;
 
-      isDragging.current = false;
-      setMarquee({
-        startX: e.pageX,
-        startY: e.pageY,
-        currentX: e.pageX,
-        currentY: e.pageY,
-        active: false,
-      });
-    },
-    [],
-  );
+    isDragging.current = false;
+    setMarquee({
+      startX: e.pageX,
+      startY: e.pageY,
+      currentX: e.pageX,
+      currentY: e.pageY,
+      active: false,
+    });
+  };
 
   useEffect(() => {
     const onScroll = () => {

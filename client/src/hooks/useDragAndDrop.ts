@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import type { DragEvent } from "react";
 
@@ -24,7 +24,7 @@ export const useDragAndDrop = (
     return e.dataTransfer?.types?.includes("Files");
   };
 
-  const handleDragEnter = useCallback((e: DragEvent) => {
+  const handleDragEnter = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -32,9 +32,9 @@ export const useDragAndDrop = (
 
     dragCounter.current += 1;
     setIsDragging(true);
-  }, []);
+  };
 
-  const handleDragLeave = useCallback((e: DragEvent) => {
+  const handleDragLeave = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -42,32 +42,29 @@ export const useDragAndDrop = (
 
     dragCounter.current -= 1;
     if (dragCounter.current === 0) setIsDragging(false);
-  }, []);
+  };
 
-  const handleDragOver = useCallback((e: DragEvent) => {
+  const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!containsFiles(e)) return;
 
     e.dataTransfer.dropEffect = "copy";
-  }, []);
+  };
 
-  const handleDrop = useCallback(
-    (e: DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-      if (!containsFiles(e)) return;
+    if (!containsFiles(e)) return;
 
-      setIsDragging(false);
-      dragCounter.current = 0;
+    setIsDragging(false);
+    dragCounter.current = 0;
 
-      const file = e.dataTransfer.files?.[0];
-      if (file) onDrop(file);
-    },
-    [onDrop],
-  );
+    const file = e.dataTransfer.files?.[0];
+    if (file) onDrop(file);
+  };
 
   return {
     isDragging,

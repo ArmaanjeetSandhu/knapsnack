@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  macroRatioTotal,
   useFormWizard,
   type FormData,
   type WizardStep,
@@ -128,7 +129,8 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
         field: "macroRatios",
         title: "Finally, let's set your macro ratios",
         validate: (value: unknown) => {
-          if (!value) return "Please set valid macro ratios that total 100%";
+          if (macroRatioTotal(value as FormData["macroRatios"]) !== 100)
+            return "Please set valid macro ratios that total 100%";
           return null;
         },
       },
@@ -143,10 +145,9 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
     handleNext,
     handlePrevious,
     handleInputChange,
-    handleMacroRatiosUpdate,
   } = useFormWizard(stepConfigs, onSubmit);
 
-  const currentStepUI = useMemo(() => {
+  const renderStepUI = (): React.ReactNode => {
     switch (currentStep) {
       case 0:
         return (
@@ -225,15 +226,15 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
       case 7:
         return (
           <MacroRatioValidator
-            initialMacros={formData.macroRatios}
-            onValidRatios={handleMacroRatiosUpdate}
+            value={formData.macroRatios}
+            onChange={(ratios) => handleInputChange("macroRatios", ratios)}
             autoFocus={true}
           />
         );
       default:
         return null;
     }
-  }, [currentStep, formData, handleInputChange, handleMacroRatiosUpdate]);
+  };
 
   const renderTitle = (): React.ReactNode => {
     if (currentStep === 5) {
@@ -384,7 +385,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
             className="flex-1"
           >
             <h2 className="mb-6 text-2xl font-semibold">{renderTitle()}</h2>
-            <div className="mb-8">{currentStepUI}</div>
+            <div className="mb-8">{renderStepUI()}</div>
             <AnimatePresence>
               {error && (
                 <NotificationToast
