@@ -187,7 +187,7 @@ function ActionButtons({
 }
 
 function App() {
-  const { state, actions, STORAGE_KEYS } = useAppState();
+  const { state, actions } = useAppState();
   const [error, setError] = useState<string | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -260,7 +260,7 @@ function App() {
     actions.clearStorage();
     actions.setNutrientGoals(null);
     actions.setSelectedFoods([]);
-    actions.setOptimisationResults(null);
+    actions.setShowOptimisationResults(false);
     actions.setStoredResults(null);
     actions.setSnapshotFoods([]);
     actions.setUserInfo(null);
@@ -308,8 +308,8 @@ function App() {
   };
 
   const handleOptimisationSuccess = (result: OptimisationResultsState) => {
-    actions.setOptimisationResults(result);
     actions.setStoredResults(result);
+    actions.setShowOptimisationResults(true);
     actions.setSnapshotFoods(state.selectedFoods);
     setFeasibilityResults(null);
 
@@ -337,7 +337,7 @@ function App() {
       { ...food, price: 0, servingSize: 100, maxServing: 500 },
     ]);
     setLastAddedIds([food.fdcId]);
-    actions.setOptimisationResults(null);
+    actions.setShowOptimisationResults(false);
     setFeasibilityResults(null);
     setError(null);
   };
@@ -357,7 +357,7 @@ function App() {
         ...uniqueNewFoods,
       ]);
       setLastAddedIds(uniqueNewFoods.map((f) => f.fdcId));
-      actions.setOptimisationResults(null);
+      actions.setShowOptimisationResults(false);
       setFeasibilityResults(null);
     }
   };
@@ -373,20 +373,18 @@ function App() {
   const { isDragging, dragHandlers } = useDragAndDrop(handleFileDrop);
 
   const handleViewPreviousResults = () => {
-    if (state.storedResults)
-      actions.setOptimisationResults(state.storedResults);
+    if (state.storedResults) actions.setShowOptimisationResults(true);
   };
 
   const handleHideResults = () => {
     setLastAddedIds([]);
-    actions.setOptimisationResults(null);
+    actions.setShowOptimisationResults(false);
     scrollToFoodSelection(state.selectedFoods.length > 0);
   };
 
   const handleViewCalculationResults = () => {
     setLastAddedIds([]);
     actions.setShowCalculationResults(true);
-    localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "true");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -399,7 +397,6 @@ function App() {
       }
     }
     actions.setShowCalculationResults(false);
-    localStorage.setItem(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, "false");
     actions.setHasVisitedFoodSelection(true);
   };
 
@@ -428,8 +425,8 @@ function App() {
         setPlanHistory(updatedHistory);
         setCurrentPlanIndex(updatedHistory.length - 1);
 
-        actions.setOptimisationResults(newResult);
         actions.setStoredResults(newResult);
+        actions.setShowOptimisationResults(true);
       } else {
         setError(
           "Failed to generate an alternative plan with these specific random costs. Try again.",
@@ -450,7 +447,6 @@ function App() {
     if (currentPlanIndex > 0) {
       const newIndex = currentPlanIndex - 1;
       setCurrentPlanIndex(newIndex);
-      actions.setOptimisationResults(planHistory[newIndex]);
       actions.setStoredResults(planHistory[newIndex]);
     }
   };
@@ -459,7 +455,6 @@ function App() {
     if (currentPlanIndex < planHistory.length - 1) {
       const newIndex = currentPlanIndex + 1;
       setCurrentPlanIndex(newIndex);
-      actions.setOptimisationResults(planHistory[newIndex]);
       actions.setStoredResults(planHistory[newIndex]);
     }
   };

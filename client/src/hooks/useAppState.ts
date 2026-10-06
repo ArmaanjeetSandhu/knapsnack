@@ -22,6 +22,7 @@ const STORAGE_KEYS = {
   USER_INFO: "knapsnack_user_info",
   OPTIMIZATION_RESULTS: "knapsnack_optimisation_results",
   SNAPSHOT_FOODS: "knapsnack_snapshot_foods",
+  SHOW_OPTIMISATION_RESULTS: "knapsnack_show_optimisation_results",
   SHOW_CALCULATION_RESULTS: "knapsnack_show_calculation_results",
   ADJUSTED_LOWER_BOUNDS: "knapsnack_adjusted_lower_bounds",
   ADJUSTED_UPPER_BOUNDS: "knapsnack_adjusted_upper_bounds",
@@ -39,6 +40,13 @@ function readStorage<T>(key: StorageKey, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+function writeStorage(key: StorageKey, value: unknown): void {
+  const isEmpty =
+    value === null || (Array.isArray(value) && value.length === 0);
+  if (isEmpty) localStorage.removeItem(key);
+  else localStorage.setItem(key, JSON.stringify(value));
 }
 
 export interface AppState {
@@ -60,7 +68,7 @@ export interface AppActions {
   setShowLanding: Dispatch<SetStateAction<boolean>>;
   setNutrientGoals: Dispatch<SetStateAction<NutrientGoals | null>>;
   setSelectedFoods: Dispatch<SetStateAction<FoodItem[]>>;
-  setOptimisationResults: Dispatch<SetStateAction<OptimisationResults | null>>;
+  setShowOptimisationResults: Dispatch<SetStateAction<boolean>>;
   setSnapshotFoods: Dispatch<SetStateAction<FoodItem[]>>;
   setStoredResults: Dispatch<SetStateAction<OptimisationResults | null>>;
   setShowCalculationResults: Dispatch<SetStateAction<boolean>>;
@@ -75,7 +83,6 @@ export interface AppActions {
 export interface UseAppStateReturn {
   state: AppState;
   actions: AppActions;
-  STORAGE_KEYS: typeof STORAGE_KEYS;
 }
 
 export function useAppState(): UseAppStateReturn {
@@ -91,14 +98,6 @@ export function useAppState(): UseAppStateReturn {
     readStorage<FoodItem[]>(STORAGE_KEYS.SELECTED_FOODS, []),
   );
 
-  const [optimisationResults, setOptimisationResults] =
-    useState<OptimisationResults | null>(() =>
-      readStorage<OptimisationResults | null>(
-        STORAGE_KEYS.OPTIMIZATION_RESULTS,
-        null,
-      ),
-    );
-
   const [snapshotFoods, setSnapshotFoods] = useState<FoodItem[]>(() =>
     readStorage<FoodItem[]>(STORAGE_KEYS.SNAPSHOT_FOODS, []),
   );
@@ -110,6 +109,13 @@ export function useAppState(): UseAppStateReturn {
         null,
       ),
     );
+
+  const [showOptimisationResults, setShowOptimisationResults] =
+    useState<boolean>(() =>
+      readStorage<boolean>(STORAGE_KEYS.SHOW_OPTIMISATION_RESULTS, false),
+    );
+
+  const optimisationResults = showOptimisationResults ? storedResults : null;
 
   const [showCalculationResults, setShowCalculationResults] = useState<boolean>(
     () => {
@@ -159,56 +165,42 @@ export function useAppState(): UseAppStateReturn {
     });
 
   useEffect(() => {
-    if (selectedFoods.length > 0)
-      localStorage.setItem(
-        STORAGE_KEYS.SELECTED_FOODS,
-        JSON.stringify(selectedFoods),
-      );
+    writeStorage(STORAGE_KEYS.SELECTED_FOODS, selectedFoods);
   }, [selectedFoods]);
 
   useEffect(() => {
-    if (nutrientGoals)
-      localStorage.setItem(
-        STORAGE_KEYS.NUTRIENT_GOALS,
-        JSON.stringify(nutrientGoals),
-      );
+    writeStorage(STORAGE_KEYS.NUTRIENT_GOALS, nutrientGoals);
   }, [nutrientGoals]);
 
   useEffect(() => {
-    if (userInfo)
-      localStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(userInfo));
+    writeStorage(STORAGE_KEYS.USER_INFO, userInfo);
   }, [userInfo]);
 
   useEffect(() => {
-    if (optimisationResults)
-      localStorage.setItem(
-        STORAGE_KEYS.OPTIMIZATION_RESULTS,
-        JSON.stringify(optimisationResults),
-      );
-  }, [optimisationResults]);
+    writeStorage(STORAGE_KEYS.OPTIMIZATION_RESULTS, storedResults);
+  }, [storedResults]);
 
   useEffect(() => {
-    if (snapshotFoods.length > 0)
-      localStorage.setItem(
-        STORAGE_KEYS.SNAPSHOT_FOODS,
-        JSON.stringify(snapshotFoods),
-      );
+    writeStorage(
+      STORAGE_KEYS.SHOW_OPTIMISATION_RESULTS,
+      showOptimisationResults,
+    );
+  }, [showOptimisationResults]);
+
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.SHOW_CALCULATION_RESULTS, showCalculationResults);
+  }, [showCalculationResults]);
+
+  useEffect(() => {
+    writeStorage(STORAGE_KEYS.SNAPSHOT_FOODS, snapshotFoods);
   }, [snapshotFoods]);
 
   useEffect(() => {
-    if (adjustedLowerBounds)
-      localStorage.setItem(
-        STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS,
-        JSON.stringify(adjustedLowerBounds),
-      );
+    writeStorage(STORAGE_KEYS.ADJUSTED_LOWER_BOUNDS, adjustedLowerBounds);
   }, [adjustedLowerBounds]);
 
   useEffect(() => {
-    if (adjustedUpperBounds)
-      localStorage.setItem(
-        STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS,
-        JSON.stringify(adjustedUpperBounds),
-      );
+    writeStorage(STORAGE_KEYS.ADJUSTED_UPPER_BOUNDS, adjustedUpperBounds);
   }, [adjustedUpperBounds]);
 
   useEffect(() => {
@@ -248,7 +240,7 @@ export function useAppState(): UseAppStateReturn {
       setShowLanding,
       setNutrientGoals,
       setSelectedFoods,
-      setOptimisationResults,
+      setShowOptimisationResults,
       setSnapshotFoods,
       setStoredResults,
       setShowCalculationResults,
@@ -259,6 +251,5 @@ export function useAppState(): UseAppStateReturn {
       setHasVisitedFoodSelection,
       clearStorage,
     },
-    STORAGE_KEYS,
   };
 }
