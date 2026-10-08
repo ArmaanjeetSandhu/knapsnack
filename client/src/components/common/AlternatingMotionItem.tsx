@@ -4,13 +4,16 @@ import React from "react";
 interface AlternatingMotionItemProps {
   index: number;
   children: React.ReactNode;
+  align?: "alternate" | "start";
 }
 
 export const AlternatingMotionItem = ({
   index,
   children,
+  align = "alternate",
 }: AlternatingMotionItemProps) => {
   const isEven = index % 2 === 0;
+  const alternating = isEven ? "self-start text-left" : "self-end text-right";
 
   return (
     <motion.div
@@ -18,8 +21,8 @@ export const AlternatingMotionItem = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px" }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`flex w-full max-w-4xl flex-col ${
-        isEven ? "self-start text-left" : "self-end text-right"
+      className={`flex w-full flex-col ${
+        align === "start" ? "text-left" : `max-w-4xl ${alternating}`
       }`}
     >
       {children}

@@ -1,14 +1,9 @@
-import {
-  motion,
-  useMotionValue,
-  useTransform,
-  useMotionTemplate,
-  animate,
-  PanInfo,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { BookOpen, Rss } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { useRevealSlider } from "../../../hooks/useRevealSlider";
+import DragHandle from "../../common/DragHandle";
 import FillText from "../../common/FillText";
 import { ParsedText } from "../../common/ParsedText";
 
@@ -39,51 +34,32 @@ const BOOKS: [string, string, string][] = [
 
 const BLOGS: [string, string][] = [
   ["https://macrofactorapp.com/articles/", "MacroFactor's Blog"],
-  ["https://cronometer.com/blog/", "CronoMeter's Blog"],
+  ["https://cronometer.com/blog/", "Cronometer's Blog"],
   ["https://gutbites.org/stories/", "Gut Bites MD's Blog"],
   ["https://tbthealth.substack.com/", "Truth Be Told"],
 ];
 
 function InspirationsSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const textPanelRef = useRef<HTMLDivElement>(null);
-  const prevWidthRef = useRef<number>(0);
-  const containerWidthRef = useRef<number>(1000);
 
-  const [containerWidth, setContainerWidth] = useState(0);
   const [textArea, setTextArea] = useState({ width: 0, height: 0 });
   const [isMobile, setIsMobile] = useState(true);
-  const x = useMotionValue(5000);
 
-  const [isAtRight, setIsAtRight] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = x.on("change", (latestX) => {
-      const w = containerWidthRef.current || 1000;
-      setIsAtRight(latestX > w / 2);
-    });
-
-    return () => unsubscribe();
-  }, [x]);
+  const {
+    containerRef,
+    containerWidth,
+    x,
+    isAtRight,
+    clipPath,
+    snapTo,
+    handleDragEnd,
+    handleToggle,
+  } = useRevealSlider();
 
   useEffect(() => {
     const measure = () => {
       const md = window.innerWidth >= 768;
       setIsMobile(!md);
-
-      if (containerRef.current) {
-        const w = containerRef.current.offsetWidth;
-        setContainerWidth(w);
-        containerWidthRef.current = w;
-
-        const prevW = prevWidthRef.current || w;
-        const ratio = x.get() / prevW;
-
-        if (ratio > 0.5) x.set(w);
-        else x.set(0);
-
-        prevWidthRef.current = w;
-      }
 
       if (textPanelRef.current) {
         const rect = textPanelRef.current.getBoundingClientRect();
@@ -98,31 +74,7 @@ function InspirationsSection() {
     measure();
     globalThis.addEventListener("resize", measure);
     return () => globalThis.removeEventListener("resize", measure);
-  }, [x]);
-
-  const clipPathRight = useTransform(x, (latestX) => {
-    const w = containerWidthRef.current || 1000;
-    const progress = Math.min(Math.max(latestX / w, 0), 1);
-    return 100 - progress * 100;
-  });
-
-  const clipPath = useMotionTemplate`inset(0% ${clipPathRight}% 0% 0%)`;
-
-  const snapTo = (t: number) =>
-    animate(x, t, { type: "spring", stiffness: 300, damping: 30 });
-
-  const handleDragEnd = (
-    _e: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo,
-  ) => {
-    const vel = info.velocity.x;
-    if (vel < -300) return snapTo(0);
-    if (vel > 300) return snapTo(containerWidth);
-    snapTo(x.get() < containerWidth / 2 ? 0 : containerWidth);
-  };
-
-  const handleToggle = () =>
-    x.get() > containerWidth / 2 ? snapTo(0) : snapTo(containerWidth);
+  }, []);
 
   return (
     <section
@@ -150,57 +102,11 @@ function InspirationsSection() {
                 if (e.key === "ArrowRight") snapTo(containerWidth);
               }}
             >
-              <motion.div
-                animate={
-                  isAtRight
-                    ? {
-                        scale: [1, 1.15, 1],
-                        boxShadow: [
-                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                          "0px 0px 0px 12px rgba(128, 128, 128, 0.25)",
-                          "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                        ],
-                      }
-                    : {
-                        scale: 1,
-                        boxShadow: "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                      }
-                }
-                transition={
-                  isAtRight
-                    ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-                    : { duration: 0.3 }
-                }
-                whileHover={{ scale: 1.25 }}
-                className="border-border bg-background group-hover:border-primary/50 group-focus-visible/btn:ring-primary flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border shadow-lg transition-colors group-focus-visible/btn:ring-2 group-focus-visible/btn:ring-offset-2 md:h-14 md:w-10"
-              >
-                <svg
-                  className="text-muted-foreground group-hover:text-primary h-3 w-3 transition-colors md:h-4 md:w-4 dark:text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={3}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-                <svg
-                  className="text-muted-foreground group-hover:text-primary h-3 w-3 transition-colors md:h-4 md:w-4 dark:text-white"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={3}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </motion.div>
+              <DragHandle
+                pulse={isAtRight}
+                className="md:h-14 md:w-10"
+                iconClassName="md:h-4 md:w-4"
+              />
             </button>
           </motion.div>
 

@@ -4,7 +4,7 @@ import { ParsedText } from "../../common/ParsedText";
 const features = [
   {
     id: "01",
-    title: "<acc>No AI</acc>\nOnly Math",
+    title: "<acc>No AI</acc>\nOnly Maths",
     description:
       "<m>Deterministic results every time</m>\nNot probabilistic guesses",
   },
@@ -62,7 +62,7 @@ const FeaturesSection = () => {
                     {feature.id}
                   </span>
 
-                  <h3 className="text-foreground mb-4 text-5xl leading-[0.9] font-black tracking-tighter whitespace-pre-wrap transition-colors duration-300 sm:text-7xl md:text-9xl lg:text-[4rem]">
+                  <h3 className="text-foreground mb-4 text-[clamp(3rem,7vw,4rem)] leading-[0.9] font-black tracking-tighter whitespace-pre-wrap transition-colors duration-300">
                     <ParsedText text={feature.title} />
                   </h3>
 

@@ -1,17 +1,12 @@
-import {
-  animate,
-  motion,
-  PanInfo,
-  useMotionTemplate,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
+import { useRevealSlider } from "../../../hooks/useRevealSlider";
+import DragHandle from "../../common/DragHandle";
 import { ParsedText } from "../../common/ParsedText";
 
 const OUTRO_TEXT =
-  "The diet problem became one of the founding motivations for linear programming as a field. When <acc>Stigler</acc> posed it in <acc>1945</acc>, he estimated the cheapest healthy diet by hand through heroic effort, <m>arriving at an answer he suspected was near-optimal but couldn't prove.</m> A few years later, once the <acc>simplex method</acc> existed, a computer confirmed the true optimum, and Stigler's painstaking human guess had been off by about <acc>0.5%</acc>. That simplex method forms the foundation of how Knap<acc>[Snack]</acc> finds optimal diets for you today. The original problem was formulated for a <acc>70kg</acc> male, with a consideration for <acc>9</acc> nutrients and <acc>77</acc> foods. But Knap<acc>[Snack]</acc> is built for everyone, and takes into account no less than <acc>26</acc> nutrients, <m>with as many foods as you like.</m>";
+  "The diet problem became one of the founding motivations for linear programming as a field. When <acc>Stigler</acc> posed it in <acc>1945</acc>, he estimated the cheapest healthy diet by hand through heroic effort, <m>arriving at an answer he suspected was near-optimal but couldn't prove.</m> A few years later, once the <acc>simplex method</acc> existed, nine clerks with desk calculators worked out the true optimum, and Stigler's painstaking guess had been off by about <acc>0.6%</acc>. That simplex method forms the foundation of how Knap<acc>[Snack]</acc> finds optimal diets for you today. The original problem was formulated for a <acc>70kg</acc> male, with a consideration for <acc>9</acc> nutrients and <acc>77</acc> foods. But Knap<acc>[Snack]</acc> is built for everyone, and takes into account no less than <acc>26</acc> nutrients, <m>with as many foods as you like.</m>";
 
 const IMAGE_SRC =
   "https://press.uchicago.edu/.imaging/mte/ucp/400x400/dam/ucp/books/authors/S/Stigler_George_J_au5239134.jpg/jcr:content/Stigler_George_J_au5239134.jpg";
@@ -56,62 +51,6 @@ function fitTextToHeight(textEl: HTMLElement, targetHeight: number) {
     const ratio = targetHeight / currentHeight;
     textEl.style.lineHeight = `${0.85 * ratio}`;
   }
-}
-
-function DragHandle({ pulse }: Readonly<{ pulse: boolean }>) {
-  return (
-    <motion.div
-      animate={
-        pulse
-          ? {
-              scale: [1, 1.15, 1],
-              boxShadow: [
-                "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-                "0px 0px 0px 12px rgba(128, 128, 128, 0.25)",
-                "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-              ],
-            }
-          : {
-              scale: 1,
-              boxShadow: "0px 0px 0px 0px rgba(128, 128, 128, 0)",
-            }
-      }
-      transition={
-        pulse
-          ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-          : { duration: 0.3 }
-      }
-      whileHover={{ scale: 1.25 }}
-      className="border-border bg-background group-hover:border-primary/50 group-focus-visible/btn:ring-primary flex h-12 w-8 items-center justify-center gap-[1px] rounded-full border shadow-lg transition-colors group-focus-visible/btn:ring-2 group-focus-visible/btn:ring-offset-2"
-    >
-      <svg
-        className="text-muted-foreground group-hover:text-primary h-3 w-3 transition-colors dark:text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={3}
-          d="M15 19l-7-7 7-7"
-        />
-      </svg>
-      <svg
-        className="text-muted-foreground group-hover:text-primary h-3 w-3 transition-colors dark:text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={3}
-          d="M9 5l7 7-7 7"
-        />
-      </svg>
-    </motion.div>
-  );
 }
 
 function StiglerImage() {
@@ -219,47 +158,19 @@ function OutroDesktop() {
 }
 
 function OutroMobile() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const textPanelRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const prevWidthRef = useRef<number>(0);
-  const containerWidthRef = useRef<number>(1000);
 
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [isAtRight, setIsAtRight] = useState(true);
-
-  const x = useMotionValue(5000);
-
-  useEffect(() => {
-    const unsubscribe = x.on("change", (latestX) => {
-      const w = containerWidthRef.current || 1000;
-      setIsAtRight(latestX > w / 2);
-    });
-
-    return () => unsubscribe();
-  }, [x]);
-
-  useEffect(() => {
-    const measure = () => {
-      if (!containerRef.current) return;
-
-      const w = containerRef.current.offsetWidth;
-      setContainerWidth(w);
-      containerWidthRef.current = w;
-
-      const prevW = prevWidthRef.current || w;
-      const ratio = x.get() / prevW;
-
-      if (ratio > 0.5) x.set(w);
-      else x.set(0);
-
-      prevWidthRef.current = w;
-    };
-
-    measure();
-    globalThis.addEventListener("resize", measure);
-    return () => globalThis.removeEventListener("resize", measure);
-  }, [x]);
+  const {
+    containerRef,
+    containerWidth,
+    x,
+    isAtRight,
+    clipPath,
+    snapTo,
+    handleDragEnd,
+    handleToggle,
+  } = useRevealSlider();
 
   useEffect(() => {
     const matchHeight = () => {
@@ -276,30 +187,6 @@ function OutroMobile() {
 
     return () => resizeObserver.disconnect();
   }, []);
-
-  const clipPathRight = useTransform(x, (latestX) => {
-    const w = containerWidthRef.current || 1000;
-    const progress = Math.min(Math.max(latestX / w, 0), 1);
-    return 100 - progress * 100;
-  });
-
-  const clipPath = useMotionTemplate`inset(0% ${clipPathRight}% 0% 0%)`;
-
-  const snapTo = (t: number) =>
-    animate(x, t, { type: "spring", stiffness: 300, damping: 30 });
-
-  const handleDragEnd = (
-    _e: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo,
-  ) => {
-    const vel = info.velocity.x;
-    if (vel < -300) return snapTo(0);
-    if (vel > 300) return snapTo(containerWidth);
-    snapTo(x.get() < containerWidth / 2 ? 0 : containerWidth);
-  };
-
-  const handleToggle = () =>
-    x.get() > containerWidth / 2 ? snapTo(0) : snapTo(containerWidth);
 
   return (
     <div className="no-select relative h-[520px] w-full font-sans">

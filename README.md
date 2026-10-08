@@ -117,7 +117,3 @@ $$
 Foods marked as 'Discrete Servings' will not be recommended in fractional amounts, e.g., 1.5 eggs → $x_i \in \mathbb{Z}^+$
 
 Foods marked as 'Must Include' will be guaranteed to appear in your meal plan → $y_i = 1$
-
----
-
-Visualise the repo structure [here](https://mango-dune-07a8b7110.1.azurestaticapps.net/?repo=ArmaanjeetSandhu%2Fknapsnack).
