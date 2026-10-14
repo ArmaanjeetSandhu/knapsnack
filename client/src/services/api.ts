@@ -13,20 +13,6 @@ export interface FoodItem {
   mustInclude?: boolean;
 }
 
-export interface ServiceLimits {
-  AGE_MIN: number;
-  AGE_MAX: number;
-  WEIGHT_MIN: number;
-  WEIGHT_MAX: number;
-  HEIGHT_MIN: number;
-  HEIGHT_MAX: number;
-}
-
-export interface ServiceConfig {
-  usda_api_configured: boolean;
-  limits: ServiceLimits;
-}
-
 export interface SearchFoodResponse {
   results: FoodItem[];
 }
@@ -158,15 +144,6 @@ async function extractError(
 }
 
 const api = {
-  async getServiceConfig(): Promise<ServiceConfig | null> {
-    const response = await fetch(`${config.apiUrl}/config`);
-    if (!response.ok) {
-      console.warn("Failed to fetch server config");
-      return null;
-    }
-    return response.json() as Promise<ServiceConfig>;
-  },
-
   async searchFood(query: string, apiKey: string): Promise<SearchFoodResponse> {
     const response = await fetch(`${config.apiUrl}/search_food`, {
       method: "POST",

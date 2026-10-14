@@ -14,8 +14,7 @@ _client: Any | None = None
 
 
 def _get_client() -> Any | None:
-    """
-    Returns the Contentful client, creating it on first use.
+    """Returns the Contentful client, creating it on first use.
 
     Constructing the client fetches the space's content types over the network, so it is
     deferred until a blog endpoint needs it. A failed attempt is not cached, so the next
@@ -24,7 +23,7 @@ def _get_client() -> Any | None:
     global _client
     if _client is None:
         try:
-            contentful_module = cast(Any, contentful)
+            contentful_module = cast("Any", contentful)
             _client = contentful_module.Client(
                 CONTENTFUL_SPACE_ID, CONTENTFUL_ACCESS_TOKEN
             )
@@ -34,18 +33,21 @@ def _get_client() -> Any | None:
 
 
 def _as_list(val: Any) -> list[Any]:
-    """Helper to erase 'Unknown' types for Pyright without triggering Mypy's redundant cast."""
-    return cast(list[Any], val)
+    """Helper to erase 'Unknown' types for Pyright without triggering Mypy's redundant
+    cast.
+    """
+    return cast("list[Any]", val)
 
 
 def _as_dict(val: Any) -> dict[str, Any]:
-    """Helper to erase 'Unknown' types for Pyright without triggering Mypy's redundant cast."""
-    return cast(dict[str, Any], val)
+    """Helper to erase 'Unknown' types for Pyright without triggering Mypy's redundant
+    cast.
+    """
+    return cast("dict[str, Any]", val)
 
 
 def normalise_contentful_data(data: Any) -> Any:
-    """
-    Recursively converts Contentful SDK objects (Entries, Assets, Links, datetimes)
+    """Recursively converts Contentful SDK objects (Entries, Assets, Links, datetimes)
     into JSON-serialisable dictionaries and strings.
     """
     if isinstance(data, list):
@@ -77,9 +79,7 @@ def normalise_contentful_data(data: Any) -> Any:
 
 
 def extract_first_image(content: Any) -> str | None:
-    """
-    Traverses content (Rich Text or Markdown string) to find the first image URL.
-    """
+    """Traverses content (Rich Text or Markdown string) to find the first image URL."""
     if not content:
         return None
 
@@ -135,7 +135,7 @@ def get_all_posts() -> list[dict[str, Any]] | None:
         return None
     try:
         entries = cast(
-            list[Any],
+            "list[Any]",
             client.entries(
                 {
                     "content_type": CONTENTFUL_CONTENT_TYPE_ID,
@@ -183,7 +183,7 @@ def get_post_by_slug(slug: str) -> dict[str, Any] | None:
         return None
     try:
         entries = cast(
-            list[Any],
+            "list[Any]",
             client.entries(
                 {
                     "content_type": CONTENTFUL_CONTENT_TYPE_ID,

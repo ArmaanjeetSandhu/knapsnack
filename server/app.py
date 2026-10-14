@@ -103,23 +103,6 @@ def add_security_headers(response: Response) -> Response:
     return response
 
 
-@app.route("/api/config", methods=["GET"])
-def get_config_api() -> Response:
-    """API endpoint to fetch configuration constants."""
-    return jsonify(
-        {
-            "limits": {
-                "AGE_MIN": AGE_MIN,
-                "AGE_MAX": AGE_MAX,
-                "WEIGHT_MIN": WEIGHT_MIN,
-                "WEIGHT_MAX": WEIGHT_MAX,
-                "HEIGHT_MIN": HEIGHT_MIN,
-                "HEIGHT_MAX": HEIGHT_MAX,
-            }
-        }
-    )
-
-
 @app.route("/api/posts", methods=["GET"])
 def get_posts_api() -> ResponseType:
     """API endpoint to fetch all blog posts."""
@@ -161,10 +144,10 @@ def search_food_api() -> ResponseType:
 
         return jsonify({"results": search_results})
     except requests.exceptions.RequestException as e:
-        app.logger.exception(f"API request failed: {str(e)}")
+        app.logger.exception(f"API request failed: {e!s}")
         return create_error_response("API request failed", status_code=500)
     except Exception as e:
-        app.logger.exception(f"An error occurred: {str(e)}")
+        app.logger.exception(f"An error occurred: {e!s}")
         return create_error_response("An internal error has occurred", status_code=500)
 
 
@@ -212,13 +195,13 @@ def calculate_api() -> ResponseType:
         return jsonify(result)
 
     except KeyError as e:
-        app.logger.exception(f"Missing required field: {str(e)}")
-        return create_error_response(f"A required field is missing: {str(e)}")
+        app.logger.exception(f"Missing required field: {e!s}")
+        return create_error_response(f"A required field is missing: {e!s}")
     except ValueError as e:
-        app.logger.exception(f"Invalid value: {str(e)}")
-        return create_error_response(f"An invalid value was provided: {str(e)}")
+        app.logger.exception(f"Invalid value: {e!s}")
+        return create_error_response(f"An invalid value was provided: {e!s}")
     except Exception as e:
-        app.logger.exception(f"Error occurred: {str(e)}")
+        app.logger.exception(f"Error occurred: {e!s}")
         return create_error_response(
             "An internal server error has occurred.", status_code=500
         )
@@ -330,7 +313,7 @@ def optimise_api() -> ResponseType:
 
     except Exception as e:
         app.logger.exception(
-            f"Error occurred during optimisation: {str(e)}", exc_info=True
+            f"Error occurred during optimisation: {e!s}", exc_info=True
         )
         return create_error_response(
             "An internal error has occurred. Please try again later.", status_code=500
@@ -375,7 +358,7 @@ def feedback_api() -> ResponseType:
         return jsonify({"success": True, "message": "Feedback sent successfully."})
 
     except Exception as e:
-        app.logger.exception(f"Failed to send feedback email: {str(e)}", exc_info=True)
+        app.logger.exception(f"Failed to send feedback email: {e!s}", exc_info=True)
         return create_error_response(
             "An internal error has occurred while sending feedback", status_code=500
         )
@@ -391,8 +374,7 @@ def serve(path: str) -> Response | tuple[str, int]:
         return "Forbidden", 403
     if path != "" and os.path.exists(normalised_path):
         return send_from_directory(static_folder_str, path)
-    else:
-        return send_from_directory(static_folder_str, "index.html")
+    return send_from_directory(static_folder_str, "index.html")
 
 
 if __name__ == "__main__":

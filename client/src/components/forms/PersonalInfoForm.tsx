@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   macroRatioTotal,
@@ -8,19 +8,15 @@ import {
   type FormData,
   type WizardStep,
 } from "../../hooks/useFormWizard";
+import { LIMITS } from "../../lib/limits";
 import { preventInvalidIntegerChars } from "../../lib/utils";
-import api from "../../services/api";
-import LoadingSpinner from "../common/LoadingSpinner";
 import NotificationToast from "../common/NotificationToast";
-import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 import ActivitySlider from "./sliders/ActivitySlider";
 import CalorieTargetSlider from "./sliders/CalorieTargetSlider";
 import MacroRatioValidator from "./sliders/MacroRatioValidator";
-
-import type { ServiceLimits } from "../../services/api";
 
 interface SelectionOption<T extends string> {
   label: string;
@@ -56,6 +52,52 @@ function SelectionGroup<T extends string>({
   );
 }
 
+const STEP_CONFIGS: WizardStep[] = [
+  { field: "gender", title: "First, what's your gender?" },
+  {
+    field: "age",
+    title: "How old are you?",
+    validate: (value: unknown) => {
+      const age = Number.parseInt(String(value));
+      if (!value || age < LIMITS.AGE_MIN || age > LIMITS.AGE_MAX)
+        return `Age must be between ${LIMITS.AGE_MIN} and ${LIMITS.AGE_MAX}`;
+      return null;
+    },
+  },
+  {
+    field: "weight",
+    title: "What's your weight in kilograms?",
+    validate: (value: unknown) => {
+      const weight = Number.parseInt(String(value));
+      if (!value || weight < LIMITS.WEIGHT_MIN || weight > LIMITS.WEIGHT_MAX)
+        return `Weight must be between ${LIMITS.WEIGHT_MIN} and ${LIMITS.WEIGHT_MAX} kg`;
+      return null;
+    },
+  },
+  {
+    field: "height",
+    title: "And your height in centimeters?",
+    validate: (value: unknown) => {
+      const height = Number.parseInt(String(value));
+      if (!value || height < LIMITS.HEIGHT_MIN || height > LIMITS.HEIGHT_MAX)
+        return `Height must be between ${LIMITS.HEIGHT_MIN} and ${LIMITS.HEIGHT_MAX} cm`;
+      return null;
+    },
+  },
+  { field: "activity", title: "How active are you on a daily basis?" },
+  { field: "smokingStatus", title: "Do you smoke?" },
+  { field: "percentage", title: "What's your caloric goal?" },
+  {
+    field: "macroRatios",
+    title: "Finally, let's set your macro ratios",
+    validate: (value: unknown) => {
+      if (macroRatioTotal(value as FormData["macroRatios"]) !== 100)
+        return "Please set valid macro ratios that total 100%";
+      return null;
+    },
+  },
+];
+
 interface PersonalInfoFormProps {
   onSubmit: (data: FormData) => void;
 }
@@ -63,79 +105,6 @@ interface PersonalInfoFormProps {
 const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
   const [showSmokingHelp, setShowSmokingHelp] = useState(false);
   const [showCaloricHelp, setShowCaloricHelp] = useState(false);
-  const [limits, setLimits] = useState<ServiceLimits | null>(null);
-  const [configError, setConfigError] = useState(false);
-
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const configData = await api.getServiceConfig();
-        if (configData?.limits) setLimits(configData.limits);
-        else setConfigError(true);
-      } catch (error) {
-        console.error("Failed to load validation limits:", error);
-        setConfigError(true);
-      }
-    };
-    fetchConfig();
-  }, []);
-
-  const stepConfigs = useMemo((): WizardStep[] => {
-    if (!limits) return [];
-    return [
-      { field: "gender", title: "First, what's your gender?" },
-      {
-        field: "age",
-        title: "How old are you?",
-        validate: (value: unknown) => {
-          const age = Number.parseInt(String(value));
-          if (!value || age < limits.AGE_MIN || age > limits.AGE_MAX)
-            return `Age must be between ${limits.AGE_MIN} and ${limits.AGE_MAX}`;
-          return null;
-        },
-      },
-      {
-        field: "weight",
-        title: "What's your weight in kilograms?",
-        validate: (value: unknown) => {
-          const weight = Number.parseInt(String(value));
-          if (
-            !value ||
-            weight < limits.WEIGHT_MIN ||
-            weight > limits.WEIGHT_MAX
-          )
-            return `Weight must be between ${limits.WEIGHT_MIN} and ${limits.WEIGHT_MAX} kg`;
-          return null;
-        },
-      },
-      {
-        field: "height",
-        title: "And your height in centimeters?",
-        validate: (value: unknown) => {
-          const height = Number.parseInt(String(value));
-          if (
-            !value ||
-            height < limits.HEIGHT_MIN ||
-            height > limits.HEIGHT_MAX
-          )
-            return `Height must be between ${limits.HEIGHT_MIN} and ${limits.HEIGHT_MAX} cm`;
-          return null;
-        },
-      },
-      { field: "activity", title: "How active are you on a daily basis?" },
-      { field: "smokingStatus", title: "Do you smoke?" },
-      { field: "percentage", title: "What's your caloric goal?" },
-      {
-        field: "macroRatios",
-        title: "Finally, let's set your macro ratios",
-        validate: (value: unknown) => {
-          if (macroRatioTotal(value as FormData["macroRatios"]) !== 100)
-            return "Please set valid macro ratios that total 100%";
-          return null;
-        },
-      },
-    ];
-  }, [limits]);
 
   const {
     currentStep,
@@ -145,7 +114,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
     handleNext,
     handlePrevious,
     handleInputChange,
-  } = useFormWizard(stepConfigs, onSubmit);
+  } = useFormWizard(STEP_CONFIGS, onSubmit);
 
   const renderStepUI = (): React.ReactNode => {
     switch (currentStep) {
@@ -301,7 +270,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
         </div>
       );
     }
-    return stepConfigs[currentStep]?.title as string;
+    return STEP_CONFIGS[currentStep]?.title as string;
   };
 
   useEffect(() => {
@@ -349,18 +318,6 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
     return () => globalThis.removeEventListener("keydown", handleKeyPress);
   }, [handleNext, handlePrevious, currentStep, formData]);
 
-  if (!limits && !configError)
-    return <LoadingSpinner message="Loading configuration..." />;
-
-  if (configError)
-    return (
-      <Alert variant="destructive" className="mx-auto mt-8 max-w-2xl">
-        <AlertDescription>
-          Failed to load application configuration. Please refresh the page.
-        </AlertDescription>
-      </Alert>
-    );
-
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-8">
@@ -368,7 +325,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
           <div
             className="bg-primary h-full rounded-full transition-all duration-500"
             style={{
-              width: `${((currentStep + 1) / stepConfigs.length) * 100}%`,
+              width: `${((currentStep + 1) / STEP_CONFIGS.length) * 100}%`,
             }}
           />
         </div>
@@ -408,7 +365,7 @@ const PersonalInfoForm = ({ onSubmit }: PersonalInfoFormProps) => {
             Previous
           </Button>
           <Button onClick={handleNext} className="flex items-center gap-2">
-            {currentStep === stepConfigs.length - 1 ? "Submit" : "Next"}
+            {currentStep === STEP_CONFIGS.length - 1 ? "Submit" : "Next"}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

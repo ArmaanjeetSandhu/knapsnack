@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { LIMITS } from "../../lib/limits";
 import { Button } from "../ui/button";
 
 import type { UserInfo } from "../../services/api";
@@ -352,8 +353,8 @@ export default function CalculationInputEditor({
         icon={<Calendar className="h-5 w-5 text-gray-500 dark:text-gray-400" />}
         label="Age"
         value={age}
-        min={19}
-        max={100}
+        min={LIMITS.AGE_MIN}
+        max={LIMITS.AGE_MAX}
         step={1}
         onChange={setAge}
         display={`${age} years`}
@@ -363,8 +364,8 @@ export default function CalculationInputEditor({
         icon={<Weight className="h-5 w-5 text-gray-500 dark:text-gray-400" />}
         label="Weight"
         value={weight}
-        min={30}
-        max={200}
+        min={LIMITS.WEIGHT_MIN}
+        max={LIMITS.WEIGHT_MAX}
         step={1}
         onChange={setWeight}
         display={`${weight} kg`}
@@ -374,8 +375,8 @@ export default function CalculationInputEditor({
         icon={<Ruler className="h-5 w-5 text-gray-500 dark:text-gray-400" />}
         label="Height"
         value={height}
-        min={135}
-        max={200}
+        min={LIMITS.HEIGHT_MIN}
+        max={LIMITS.HEIGHT_MAX}
         step={1}
         onChange={setHeight}
         display={`${height} cm`}

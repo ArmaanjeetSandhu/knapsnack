@@ -19,8 +19,7 @@ from server.config import (
 
 
 def calculate_bmr(gender: str, weight: int, height: int, age: int) -> int:
-    """
-    Calculate Basal Metabolic Rate using the Mifflin-St Jeor equation.
+    """Calculate Basal Metabolic Rate using the Mifflin-St Jeor equation.
 
     Args:
         gender: 'm' for male, 'f' for female
@@ -33,13 +32,11 @@ def calculate_bmr(gender: str, weight: int, height: int, age: int) -> int:
     """
     if gender.lower() == "m":
         return round(10 * weight + 6.25 * height - 5 * age + 5)
-    else:
-        return round(10 * weight + 6.25 * height - 5 * age - 161)
+    return round(10 * weight + 6.25 * height - 5 * age - 161)
 
 
 def calculate_tdee(bmr: int, activity_multiplier: float) -> int:
-    """
-    Calculate Total Daily Energy Expenditure based on BMR and activity level.
+    """Calculate Total Daily Energy Expenditure based on BMR and activity level.
 
     Args:
         bmr: Basal Metabolic Rate in calories
@@ -54,8 +51,7 @@ def calculate_tdee(bmr: int, activity_multiplier: float) -> int:
 def calculate_macros(
     daily_caloric_intake: int, pratio: float, cratio: float, fratio: float
 ) -> tuple[int, int, int, int, int]:
-    """
-    Calculate macronutrient targets based on caloric intake and desired ratios.
+    """Calculate macronutrient targets based on caloric intake and desired ratios.
 
     Args:
         daily_caloric_intake: Total daily calories
@@ -78,8 +74,7 @@ def calculate_macros(
 
 
 def extract_nutrients(nutrients_data: list[dict[str, Any]]) -> dict[str, float]:
-    """
-    Extract relevant nutrients from the API response and convert to our format.
+    """Extract relevant nutrients from the API response and convert to our format.
     Returns nutrients per 100g.
 
     Args:
@@ -107,8 +102,7 @@ def standardise_nutrient_bounds(
     lower_bounds: pd.Series[float] | dict[str, float],
     upper_bounds: pd.Series[float] | dict[str, float],
 ) -> tuple[dict[str, float], dict[str, float]]:
-    """
-    Standardize nutrient bounds to dictionaries with float values.
+    """Standardise nutrient bounds to dictionaries with float values.
 
     Args:
         lower_bounds: Lower bounds for nutrients as Series or Dict

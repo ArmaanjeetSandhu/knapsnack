@@ -12,8 +12,7 @@ from server.utils.nutrient_utils import extract_nutrients
 def search_foods(
     api_key: str, search_term: str, api_endpoint: str
 ) -> list[dict[str, Any]]:
-    """
-    Search for foods using the USDA API with pagination.
+    """Search for foods using the USDA API with pagination.
 
     Args:
         api_key: USDA API key

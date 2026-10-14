@@ -8,8 +8,7 @@ from flask import Response, jsonify
 def create_error_response(
     message: str, details: list[str] | None = None, status_code: int = 400
 ) -> tuple[Response, int]:
-    """
-    Create a standardised error response.
+    """Create a standardised error response.
 
     Args:
         message: Main error message

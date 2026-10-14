@@ -47,9 +47,7 @@ def validate_input_parameters(
     height_min: int,
     height_max: int,
 ) -> tuple[bool, list[str]]:
-    """
-    Validate input parameters for diet calculations.
-    """
+    """Validate input parameters for diet calculations."""
     validation_errors: list[str] = []
 
     age = int(data.get("age", 0))
@@ -80,9 +78,7 @@ def calculate_nutrition_requirements(
     percentage: float,
     smoking_status: str = "no",
 ) -> dict[str, Any]:
-    """
-    Calculate nutritional requirements for a user.
-    """
+    """Calculate nutritional requirements for a user."""
     bmr = calculate_bmr(gender, weight, height, age)
     tdee = calculate_tdee(bmr, activity_multiplier)
     daily_caloric_intake = round(percentage * tdee)
@@ -122,9 +118,7 @@ def adjust_nutrient_bounds(
     custom_upper_bounds: dict[str, float] | None = None,
     smoking_status: str = "no",
 ) -> tuple[pd.Series[float], pd.Series[float]]:
-    """
-    Adjust nutrient bounds based on custom values and smoking status.
-    """
+    """Adjust nutrient bounds based on custom values and smoking status."""
     key_map = {"Fibre (g)": "fibre", "Saturated Fats (g)": "saturated_fats"}
 
     if custom_lower_bounds:

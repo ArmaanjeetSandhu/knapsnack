@@ -23,9 +23,7 @@ def analyse_feasibility(
     upper_bounds: pd.Series[float] | dict[str, float],
     nutrient_goals: dict[str, Any],
 ) -> dict[str, Any]:
-    """
-    Analyse whether the selected foods can meet nutrient requirements.
-    """
+    """Analyse whether the selected foods can meet nutrient requirements."""
     lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
         lower_bounds, upper_bounds
     )
@@ -60,9 +58,8 @@ def _make_lower_bound_issue(
     min_value: float,
     max_possible: float,
 ) -> dict[str, Any] | None:
-    """
-    Build a lower bound issue dict if max_possible falls short of min_value.
-    Returns None if the bound is satisfied.
+    """Build a lower bound issue dict if max_possible falls short of min_value. Returns
+    None if the bound is satisfied.
     """
     if max_possible >= min_value:
         return None
@@ -82,8 +79,7 @@ def analyse_lower_bound_feasibility(
     lower_bounds: dict[str, float],
     nutrient_goals: dict[str, Any],
 ) -> list[dict[str, Any]]:
-    """
-    Analyse lower bound feasibility for nutrients.
+    """Analyse lower bound feasibility for nutrients.
     """
     lower_bound_issues: list[dict[str, Any]] = []
 
@@ -128,9 +124,8 @@ def analyse_upper_bound_feasibility(
     upper_bounds: dict[str, float],
     nutrient_goals: dict[str, Any],
 ) -> list[dict[str, Any]]:
-    """
-    Analyse upper bound feasibility for nutrients.
-    Flags any single food item that exceeds a limit on its own at 1 serving.
+    """Analyse upper bound feasibility for nutrients. Flags any single food item that
+    exceeds a limit on its own at 1 serving.
     """
     upper_bound_issues: list[dict[str, Any]] = []
     checked_nutrients: set[str] = set()
@@ -183,10 +178,8 @@ def optimise_diet(
     lower_bounds: pd.Series[float] | dict[str, float],
     upper_bounds: pd.Series[float] | dict[str, float],
 ) -> dict[str, Any] | None:
-    """
-    Find optimal diet by trying different overflow percentages.
-    """
-    overflow_percentages = range(0, 11)
+    """Find optimal diet by trying different overflow percentages."""
+    overflow_percentages = range(11)
     nutrients = ["protein", "carbohydrate", "fats"]
 
     all_combinations = product(overflow_percentages, repeat=len(nutrients))
@@ -218,9 +211,7 @@ def solve_optimisation_problem(
     upper_bounds: pd.Series[float] | dict[str, float],
     overflow_percentages: tuple[int, ...],
 ) -> dict[str, Any] | None:
-    """
-    Solve the diet optimisation problem with the given parameters.
-    """
+    """Solve the diet optimisation problem with the given parameters."""
     lower_bounds_dict, upper_bounds_dict = standardise_nutrient_bounds(
         lower_bounds, upper_bounds
     )
@@ -311,9 +302,7 @@ def format_optimisation_result(
     nutrients: list[str],
     overflow_percentages: tuple[int, ...],
 ) -> dict[str, Any]:
-    """
-    Format the optimisation result for API response.
-    """
+    """Format the optimisation result for API response."""
     num_foods = len(selected_foods)
     servings = np.array([x[i].value() for i in range(num_foods)])
 

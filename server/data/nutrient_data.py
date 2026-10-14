@@ -35,7 +35,7 @@ def remove_excluded_age_groups(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with excluded age groups removed
     """
-    df_any = cast(Any, df)
+    df_any = cast("Any", df)
     raw_mask = df_any[LIFE_STAGE_GROUP_COL].str.contains(
         "|".join(EXCLUDED_AGE_GROUPS), na=False
     )
@@ -78,20 +78,19 @@ def get_age_group(age: int, gender: str) -> str:
 
     if age <= 3:
         return "Children 1-3 y"
-    elif 4 <= age <= 8:
+    if 4 <= age <= 8:
         return "Children 4-8 y"
-    elif 9 <= age <= 13:
+    if 9 <= age <= 13:
         return f"{gender_prefix} 9-13 y"
-    elif 14 <= age <= 18:
+    if 14 <= age <= 18:
         return f"{gender_prefix} 14-18 y"
-    elif 19 <= age <= 30:
+    if 19 <= age <= 30:
         return f"{gender_prefix} 19-30 y"
-    elif 31 <= age <= 50:
+    if 31 <= age <= 50:
         return f"{gender_prefix} 31-50 y"
-    elif 51 <= age <= 70:
+    if 51 <= age <= 70:
         return f"{gender_prefix} 51-70 y"
-    else:
-        return f"{gender_prefix} > 70 y"
+    return f"{gender_prefix} > 70 y"
 
 
 def get_nutrient_bounds(
