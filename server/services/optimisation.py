@@ -79,8 +79,7 @@ def analyse_lower_bound_feasibility(
     lower_bounds: dict[str, float],
     nutrient_goals: dict[str, Any],
 ) -> list[dict[str, Any]]:
-    """Analyse lower bound feasibility for nutrients.
-    """
+    """Analyse lower bound feasibility for nutrients."""
     lower_bound_issues: list[dict[str, Any]] = []
 
     for nutrient, min_value in lower_bounds.items():
