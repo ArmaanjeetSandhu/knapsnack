@@ -722,32 +722,34 @@ function App() {
             <NavigationMenu>
               <NavigationMenuList className="space-x-1 sm:space-x-1">
                 <NavigationMenuItem>
-                  <Link to="/blog" aria-label="Blog">
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
-                    >
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+                  >
+                    <Link to="/blog" aria-label="Blog">
                       <Newspaper className="h-5 w-5" />
                       <span className="hidden sm:inline">Blog</span>
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <a
-                    href="https://github.com/ArmaanjeetSandhu/knapsnack"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="View project on GitHub"
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
                   >
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+                    <a
+                      href="https://github.com/ArmaanjeetSandhu/knapsnack"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="View project on GitHub"
                     >
                       <GithubLogoIcon size={20} weight="bold" />
                       <span className="hidden sm:inline">GitHub</span>
-                    </Button>
-                  </a>
+                    </a>
+                  </Button>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem className="ml-1 sm:ml-2">

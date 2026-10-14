@@ -31,45 +31,49 @@ export default function Footer() {
           </a>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <Link to="/faq" aria-label="Frequently Asked Questions">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
-              >
+            <Button
+              asChild
+              variant="ghost"
+              className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+            >
+              <Link to="/faq" aria-label="Frequently Asked Questions">
                 <HelpCircle className="h-5 w-5" />
                 <span className="hidden sm:inline">FAQ</span>
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link to="/terms" aria-label="Terms of Use">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
-              >
+            <Button
+              asChild
+              variant="ghost"
+              className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+            >
+              <Link to="/terms" aria-label="Terms of Use">
                 <FileText className="h-5 w-5" />
                 <span className="hidden sm:inline">Terms</span>
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link to="/privacy" aria-label="Privacy Policy">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
-              >
+            <Button
+              asChild
+              variant="ghost"
+              className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+            >
+              <Link to="/privacy" aria-label="Privacy Policy">
                 <ShieldCheck className="h-5 w-5" />
                 <span className="hidden sm:inline">Privacy</span>
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link to="/feedback" aria-label="Provide Feedback">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
-              >
+            <Button
+              asChild
+              variant="ghost"
+              className="flex items-center gap-2 px-1 text-white hover:bg-transparent hover:text-gray-300 sm:px-4"
+            >
+              <Link to="/feedback" aria-label="Provide Feedback">
                 <MessageSquare className="h-5 w-5" />
                 <span className="hidden sm:inline">Feedback</span>
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

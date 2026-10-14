@@ -18,12 +18,12 @@ const ErrorPage = () => (
     <p className="mb-8 max-w-md text-xl text-gray-600 dark:text-gray-400">
       Uh-oh! The page you are looking for doesn&apos;t exist or has been moved.
     </p>
-    <Link to="/">
-      <Button className="flex items-center gap-2">
+    <Button asChild className="flex items-center gap-2">
+      <Link to="/">
         <Home className="h-4 w-4" />
         Back to Home
-      </Button>
-    </Link>
+      </Link>
+    </Button>
   </div>
 );
 
